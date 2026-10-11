@@ -334,6 +334,7 @@ body{background:var(--bg)}
 }
 #tab-design:has(#tools:not([hidden])) #tabbar{display:none}
 
+#btn-export{display:none!important}
 </style>
 
 <div class="wrap" dir="rtl" lang="ar">
@@ -984,7 +985,8 @@ const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(
 function defaults(){const X=OCC[S.occ][S.lang],s=S.subj.trim(),T0=THEMES[S.theme],sh=T0&&T0.short;let bd=X.body(s);if(sh)bd=bd.split('\n').slice(0,sh).join('\n');const r={title:X.titles[Math.min(S.titleIdx,X.titles.length-1)],intro:X.intro(S.gender),role:X.role(s,S.gender),body:bd,from:X.from,name:S.lang!=='ar'?'Mohamed Lemine Ould Ahmed':'محمد الأمين ولد أحمد',date:todayStr(S.lang)};const tx=T0&&T0.txt&&T0.txt[S.lang];if(tx)Object.assign(r,tx);return r;}
 function applyDefaults(){const d=defaults();Object.keys(d).forEach(k=>{if(!S.edited[k]){S[k]=d[k];const el=$('#f-'+k);if(el)el.value=d[k];}});paintTitleChips();}
 const SUBJEN={'الرياضيات':'Mathematics','الفيزياء':'Physics','اللغة العربية':'Arabic','اللغة الفرنسية':'French','اللغة الإنجليزية':'English','العلوم الطبيعية':'Natural Sciences','التاريخ والجغرافيا':'History and Geography','التربية المدنية':'Civic Education','الجغرافيا':'Geography','الفيزياء والكيمياء':'Physics and Chemistry'};
-function setSubjDefault(){if(S.edited.subj)return;const T=THEMES[S.theme];S.subj=T?(S.lang==='fr'?T.subjFr:S.lang==='en'?(SUBJEN[T.subj]||''):T.subj):'';$('#f-subj').value=S.subj;}
+function subjMap(){const m={};Object.values(THEMES).forEach(T=>{if(T&&T.subj){const en=SUBJEN[T.subj]||'';[T.subj,T.subjFr,en].forEach(v=>{if(v)m[v.trim().toLowerCase()]={ar:T.subj,fr:T.subjFr,en:en};});}});return m;}
+function setSubjDefault(){if(S.edited.subj){const e=subjMap()[String(S.subj).trim().toLowerCase()];if(e&&e[S.lang]){S.subj=e[S.lang];$('#f-subj').value=S.subj;}return;}const T=THEMES[S.theme];S.subj=T?(S.lang==='fr'?T.subjFr:S.lang==='en'?(SUBJEN[T.subj]||''):T.subj):'';$('#f-subj').value=S.subj;}
 function paintTitleChips(){const X=OCC[S.occ][S.lang];$('#title-chips').innerHTML=X.titles.map((t,i)=>`<button type="button" class="chip pick" data-i="${i}" aria-pressed="${!S.edited.title&&i===S.titleIdx}">${esc(t)}</button>`).join('');}
 
 /* ---------- plain (no-theme) decoration ---------- */
@@ -1622,7 +1624,7 @@ async function makeImage(){
     clearTimeout(bgTimer);setBg();await bgReady;
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     fitAll();
-    const cv=await Promise.race([new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),40000)),html2canvas($('#cert'),{scale:WM?1:2,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy').forEach(x=>x.remove());d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}})]);
+    const cv=await Promise.race([new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),40000)),html2canvas($('#cert'),{scale:WM?1:2,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}})]);
     $('#m-img').src=cv.toDataURL('image/png');$('#m-img').hidden=false;window.lastCv=cv;
     $('#m-msg').textContent='هذه معاينة التصميم قبل الإرسال.';
   }catch(err){$('#m-msg').textContent='تعذّر إنشاء المعاينة ('+((err&&err.message)||'؟')+'). يمكنك الإرسال بدونها.';}
@@ -1704,7 +1706,7 @@ $('#btn-submit').onclick=async()=>{
 
 /* init */
 $('#f-date').value=S.date;$('#f-subj').value=S.subj;syncTheme();paintColors();applyDefaults();renderImgs();setScale();render();clearTimeout(bgTimer);setBg();
-try{const dr=JSON.parse(localStorage.getItem('kd_draft')||'null');if(dr&&dr.t&&Date.now()-dr.t<6048e5&&dr.d){const ni=S.images;if(loadDesign(dr.d)){S.images=ni;const d0=defaults();['title','intro','name','subj','role','body','from','date'].forEach(k=>{S.edited[k]=(S[k]!==d0[k]);});applyDefaults();renderImgs();render();}}}catch(_){}
+try{const dr=JSON.parse(localStorage.getItem('kd_draft')||'null');if(dr&&dr.t&&Date.now()-dr.t<6048e5&&dr.d){const ni=S.images;if(loadDesign(dr.d)){S.images=ni;const d0=defaults();['title','intro','name','role','body','from','date'].forEach(k=>{S.edited[k]=(S[k]!==d0[k]);});{const T=THEMES[S.theme],ds=T?(S.lang==='fr'?T.subjFr:S.lang==='en'?(SUBJEN[T.subj]||''):T.subj):'';S.edited.subj=(S.subj!==ds);}setSubjDefault();applyDefaults();renderImgs();render();}}}catch(_){}
 {let last='';setInterval(()=>{try{const j=JSON.stringify(designConfig(false));if(j!==last){last=j;localStorage.setItem('kd_draft',JSON.stringify({t:Date.now(),d:JSON.parse(j)}));}}catch(_){}},4000);}
 
 })();
