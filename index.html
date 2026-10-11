@@ -1255,7 +1255,7 @@ function setOrient(o){S.orient=o==='p'?'p':'l';W=S.orient==='p'?906:1280;H=S.ori
 function setScale(){const w=wrap.clientWidth;scale=w/W;stage.style.setProperty('--hs',Math.round(Math.max(40,Math.min(130,36/scale)))+'px');stage.style.transform=`scale(${scale})`;wrap.style.height=(H*scale)+'px';}
 if('ResizeObserver' in window)new ResizeObserver(setScale).observe(wrap);else window.addEventListener('resize',setScale);
 if(document.fonts){if(document.fonts.ready)document.fonts.ready.then(fitAll);if(document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',()=>{fitAll();if(S.st)fixSel();});}
-if(WM){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="460" height="320"><g transform="rotate(-24 230 160)" fill="#1a2440" fill-opacity="0.10" font-family="Cairo,Arial,sans-serif" font-weight="700" text-anchor="middle"><text x="230" y="150" font-size="46">معاينة فقط</text><text x="230" y="200" font-size="24">PREVIEW</text></g></svg>`;$('#wm').style.backgroundImage=`url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;stage.addEventListener('contextmenu',e=>e.preventDefault());}
+if(WM){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250"><g transform="rotate(-24 200 125)" font-family="Cairo,Arial,sans-serif" font-weight="700" text-anchor="middle"><text x="200" y="135" font-size="40" fill="#1a2440" fill-opacity="0.17" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5" paint-order="stroke">معاينة فقط</text></g></svg>`;$('#wm').style.backgroundImage=`url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;stage.addEventListener('contextmenu',e=>e.preventDefault());}
 /* ---------- photos: drag, corner handle, pinch ---------- */
 const ptrs=new Map();let gst=null;
 const MG=6;
@@ -1659,9 +1659,14 @@ $('#btn-submit').onclick=async()=>{
       if(JSON.stringify(order).length<900000)break;order=null;
     }
     if(!order)throw new Error('big');
-    await fdb.collection('orders').add(order);
+    const ref=await fdb.collection('orders').add(order);
     $('#m-title').textContent='تم إرسال طلبك ✓';$('#m-msg').textContent='وصلنا طلبك وسنتواصل معك قريباً على رقمك.';
-    const wa=$('#m-wa');if(WA){wa.href='https://wa.me/'+WA;wa.textContent='تحدث معنا على واتساب';wa.hidden=false;}
+    const wa=$('#m-wa');if(WA){const tx='طلب جديد 🎓\nالاسم: '+order.client+'\nالهاتف: '+order.phone+'\nالطلب: '+order.item+'\nالكمية: '+order.qty+(order.notes?'\nملاحظات: '+order.notes:'')+'\nرقم الطلب: '+ref.id;const link='https://wa.me/'+WA+'?text='+encodeURIComponent(tx);wa.href=link;wa.textContent='أرسل الطلب والصورة على واتساب';wa.hidden=false;
+      let file=null;try{if(preview){const bl=await (await fetch(preview)).blob();file=new File([bl],'order-'+ref.id+'.jpg',{type:'image/jpeg'});}}catch(_){}
+      const can=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
+      wa.onclick=ev=>{if(can){ev.preventDefault();navigator.share({files:[file],text:tx}).catch(()=>{});}};
+      $('#m-msg').textContent='وصلنا طلبك ✓ اضغط الزر لإرسال نسخة من الطلب مع صورة التصميم لنا على واتساب.';
+      if(can){try{await navigator.share({files:[file],text:tx});$('#m-msg').textContent='وصلنا طلبك ✓ شكراً لك.';}catch(_){}}}
   }catch(e){
     modal.hidden=true;er.textContent=(e&&e.message==='big')?'الصور كبيرة جداً. قلّل عددها أو حجمها ثم أعد الإرسال.':'تعذّر إرسال الطلب. تحقق من الاتصال وأعد المحاولة.';er.hidden=false;
   }finally{btn.disabled=false;btn.textContent=t0;}
