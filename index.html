@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>صمّم شهادتك</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -120,6 +120,14 @@ a.btn.primary{color:var(--accent-fg)}
 .tb{pointer-events:none;user-select:none;-webkit-user-select:none}
 .tb .in{pointer-events:none}
 .cert{touch-action:none}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}input,textarea,select{-webkit-user-select:text;user-select:text;font-size:16px}
+#seg-mv,#mv-hint{display:none!important}
+html[lang=fr] #tabbar button span{font-size:10px;letter-spacing:-.2px}
+#modal #m-text,#modal .steps,#modal #m-copy,#modal #m-copied,#modal .field>.lbl{display:none}
+#modal #m-img{pointer-events:none;-webkit-touch-callout:none;user-select:none}
+.preview.pvc .stage-wrap,.preview.pvc .addbar,.preview.pvc .tools,.preview.pvc .mvhint,.preview.pvc .mvseg{display:none!important}
+#pv-toggle{min-height:36px;min-width:44px;padding:0 12px;font-size:18px;line-height:1}
+
 .tb.fx{overflow:visible}
 .tb.sel .in,.xt.sel{outline:2px dashed #222;outline-offset:3px;box-shadow:0 0 0 2px #fff}
 .tb.drag .in,.xt.drag{background:rgba(47,124,246,.16)}
@@ -394,7 +402,7 @@ body{background:var(--bg)}
         <div class="field" id="frame-box"><span class="lbl">إطار الورقة (بدون ثيم)</span><div class="seg" id="seg-frame" role="group" aria-label="إطار الورقة"></div></div>
       </div>
 
-<div class="step" hidden>
+<div class="step" data-tab="img" hidden>
         <h2><span class="no">5</span>الصور</h2>
         <div class="drop" id="drop">
           <span>صورة الأستاذ، شعار المدرسة، أو أي صورة تريدها على الشهادة</span>
@@ -412,12 +420,14 @@ body{background:var(--bg)}
         <div class="field"><label class="lbl" for="c-phone">رقم الهاتف / واتساب</label><input type="tel" id="c-phone" inputmode="tel" autocomplete="tel"></div>
         <div class="field"><label class="lbl" for="c-email">البريد الإلكتروني (اختياري)</label><input type="email" id="c-email" autocomplete="email" dir="ltr"></div>
         <div class="field"><label class="lbl" for="c-qty">عدد النسخ</label><input type="number" id="c-qty" min="1" value="1"></div>
-        <div class="field"><label class="lbl" for="c-names">أسماء الذكور (اختياري)</label><textarea class="short" id="c-names" rows="3" placeholder="اسم في كل سطر"></textarea></div>
-        <div class="field"><label class="lbl" for="c-names-f">أسماء الإناث (اختياري)</label><textarea class="short" id="c-names-f" rows="3" placeholder="اسم في كل سطر"></textarea><span class="hint">سيُصنع التصميم نفسه لكل اسم، وتتغيّر الصيغة (للأستاذ / للأستاذة) حسب النوع، وعدد النسخ يُحسب تلقائياً.</span></div>
+        <div id="c-names-wrap" hidden>
+          <div class="field"><label class="lbl" for="c-names">أسماء الذكور</label><textarea class="short" id="c-names" rows="3" placeholder="اسم في كل سطر"></textarea></div>
+          <div class="field"><label class="lbl" for="c-names-f">أسماء الإناث</label><textarea class="short" id="c-names-f" rows="3" placeholder="اسم في كل سطر"></textarea><span class="hint" id="c-names-n"></span></div>
+        </div>
         <div class="field"><label class="lbl" for="c-notes">ملاحظات (اختياري)</label><textarea class="short" id="c-notes"></textarea></div>
         <p class="err" id="c-err" role="alert" hidden></p>
         <button type="button" class="btn primary block" id="btn-submit">إرسال الطلب</button>
-        <p class="hint">يظهر ملخص الطلب مع صورة المعاينة لترسلهما عبر واتساب، وتصلك النسخة النهائية الخالية من العلامة بعد تأكيد الطلب.</p>
+        <p class="hint">بعد الإرسال يصلنا طلبك مباشرة مع تصميمك، وسنتواصل معك على واتساب.</p>
       </div>
 
     </div>
@@ -1600,7 +1610,7 @@ $('#btn-undo').onclick=()=>histGo(-1);$('#btn-redo').onclick=()=>histGo(1);
 setTimeout(()=>{try{HIST.cur=histSnap();}catch(_){}histBtns();},1200);
 function resetOrn(){S.divT='o1';S.div='e2';S.dc=null;S.dcv='a';S.dn=null;S.dnv='a';S.sg=null;S.sgv='a';S.sgd='s1';S.dsz={};S.off={};S.st=null;segSync('seg-dc','dcv');segSync('seg-dn','dnv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-div','div');}
 $('#btn-clear').onclick=()=>{['title','intro','name','role','body','from','date'].forEach(k=>{S[k]='';S.edited[k]=true;const el=$('#f-'+k);if(el)el.value='';});S.off={};S.fmt={};render();renderTools();};
-$('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset.v);};setMv('txt');
+$('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset.v);};setMv('lock');
 
 /* final image */
 const modal=$('#modal');
@@ -1612,10 +1622,10 @@ async function makeImage(){
     clearTimeout(bgTimer);setBg();await bgReady;
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     fitAll();
-    const cv=await html2canvas($('#cert'),{scale:WM?1.5:2,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy').forEach(x=>x.remove());d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}});
+    const cv=await Promise.race([new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),40000)),html2canvas($('#cert'),{scale:WM?1:2,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy').forEach(x=>x.remove());d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}})]);
     $('#m-img').src=cv.toDataURL('image/png');$('#m-img').hidden=false;window.lastCv=cv;
-    $('#m-msg').textContent='اضغط مطولاً على الصورة لحفظها في هاتفك، أو انقر بزر الفأرة الأيمن على الحاسوب.';
-  }catch(err){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
+    $('#m-msg').textContent='هذه معاينة التصميم قبل الإرسال.';
+  }catch(err){$('#m-msg').textContent='تعذّر إنشاء المعاينة ('+((err&&err.message)||'؟')+'). يمكنك الإرسال بدونها.';}
 }
 $('#btn-export').onclick=()=>{modal.hidden=false;makeImage();};
 $('#m-close').onclick=()=>{modal.hidden=true;};
@@ -1628,17 +1638,20 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.hidden=true;})
 (function(){const sec=document.getElementById('tab-design');if(!sec)return;
 const ICON={theme:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
 text:'<path d="M5 6.5V5h14v1.5M12 5v14M9 19h6"/>',color:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/>',
-orn:'<path d="M12 4c2 3 5 3.5 7 3-1 3-3 4.5-7 5-4-.5-6-2-7-5 2 .5 5 0 7-3zM12 12.5V20M8.5 20h7"/>',send:'<path d="M4 12l16-8-6 16-2.5-6.5z"/>'};
-const NAMES={theme:'الثيم',text:'النص',color:'الألوان',orn:'الزخارف',send:'الطلب'};
-const ORD=['theme','text','color','orn','send'];
+orn:'<path d="M12 4c2 3 5 3.5 7 3-1 3-3 4.5-7 5-4-.5-6-2-7-5 2 .5 5 0 7-3zM12 12.5V20M8.5 20h7"/>',send:'<path d="M4 12l16-8-6 16-2.5-6.5z"/>',img:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/>'};
+const NAMES={theme:'الثيم',text:'النص',img:'الصور',color:'الألوان',orn:'الزخارف',send:'الطلب'};
+const ORD=['theme','text','img','color','orn','send'];
 const have=ORD.filter(k=>sec.querySelector('[data-tab="'+k+'"]'));
 const bar=document.createElement('nav');bar.id='tabbar';bar.setAttribute('role','tablist');bar.setAttribute('aria-label','أقسام التصميم');
 have.forEach(k=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.dataset.t=k;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg><span>'+NAMES[k]+'</span>';b.onclick=()=>show(k,true);bar.appendChild(b);});
 sec.appendChild(bar);
-function show(k,go){sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
+function show(k,go){try{setMv({text:'txt',orn:'orn',img:'img'}[k]||'lock');}catch(_){}sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
   if(go&&window.innerWidth<=860){const c=sec.querySelector('.controls'),pv=sec.querySelector('.preview');if(c&&pv){const y=c.getBoundingClientRect().top+scrollY-pv.offsetHeight-6;try{window.scrollTo({top:Math.max(0,y),behavior:'smooth'});}catch(e){window.scrollTo(0,Math.max(0,y));}}}}
 show('theme');
 })();
+
+{const pv=document.querySelector('.preview .pv-head');if(pv&&!document.getElementById('pv-toggle')){const b=document.createElement('button');b.type='button';b.className='btn';b.id='pv-toggle';b.textContent='▲';b.setAttribute('aria-label','إخفاء المعاينة');b.onclick=()=>{const p=document.querySelector('.preview'),c=p.classList.toggle('pvc');b.textContent=c?'▼':'▲';b.setAttribute('aria-label',c?'إظهار المعاينة':'إخفاء المعاينة');};pv.appendChild(b);}}
+document.addEventListener('gesturestart',e=>e.preventDefault());document.addEventListener('contextmenu',e=>{if(!/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))e.preventDefault();});
 window.dbg_={THEMES,loadImgEl,drawSlices,drawSlices0,busyTop,setBUSY:v=>{},get W(){return W}};
 
 
@@ -1658,34 +1671,29 @@ async function sendOrder(order){let err=null;
   }catch(e){err=e;}
   if(fdb){try{const ref=await Promise.race([fdb.collection('orders').add(order),new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),30000))]);return ref.id;}catch(e){err=e;}}
   throw err;}
+{const qe=$('#c-qty'),w=$('#c-names-wrap'),hn=$('#c-names-n'),upd=()=>{const q=parseInt(qe.value)||1;w.hidden=q<2||q>100;hn.textContent=q>1?'اكتب '+q+' أسماء بالضبط في الخانتين معاً، وتتغيّر الصيغة (للأستاذ / للأستاذة) حسب النوع.':'';};qe.addEventListener('input',upd);qe.addEventListener('change',upd);upd();}
 $('#btn-submit').onclick=async()=>{
   const er=$('#c-err'),btn=$('#btn-submit'),v=id=>$(id).value.trim(),nm=v('#c-name'),ph=v('#c-phone');
   if(!nm){er.textContent='اكتب اسمك.';er.hidden=false;$('#c-name').focus();return;}
   if(ph.replace(/\D/g,'').length<8){er.textContent='اكتب رقم هاتف صحيح من 8 أرقام على الأقل.';er.hidden=false;$('#c-phone').focus();return;}
+  {const q0=Math.max(1,parseInt(v('#c-qty'))||1);if(q0>1&&q0<=100){const c=['#c-names','#c-names-f'].reduce((a,id)=>a+($(id).value||'').split('\n').filter(x=>x.trim()).length,0);if(c!==q0){er.textContent='عدد النسخ '+q0+': يجب كتابة '+q0+' أسماء بالضبط في خانتي الذكور والإناث (المكتوب الآن '+c+').';er.hidden=false;$('#c-names').focus();return;}}}
   if(!(FBC.apiKey&&FBC.apiKey.indexOf('PASTE')<0&&FBC.projectId)){er.textContent='إرسال الطلبات غير مفعّل بعد. تواصل معنا مباشرة.';er.hidden=false;return;}
   er.hidden=true;btn.disabled=true;const t0=btn.textContent;btn.textContent='جارٍ الإرسال…';
   const f=$('#m-text').closest('.field');
   try{
     modal.hidden=false;$('#m-title').textContent='جارٍ إرسال الطلب…';f.querySelectorAll('#m-text,.steps,#m-copy,#m-copied,.lbl').forEach(x=>x.hidden=true);$('#m-wa').hidden=true;
-    window.lastCv=null;$('#m-msg').textContent='1/3 جارٍ تجهيز الصورة…';await Promise.race([makeImage(),new Promise(r=>setTimeout(r,25000))]);$('#m-msg').textContent='2/3 جارٍ تحضير الطلب…';
-    let preview='';const cv=window.lastCv;
-    if(cv){const c2=document.createElement('canvas'),r=Math.min(1,800/cv.width);c2.width=Math.round(cv.width*r);c2.height=Math.round(cv.height*r);const x=c2.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c2.width,c2.height);x.drawImage(cv,0,0,c2.width,c2.height);preview=c2.toDataURL('image/jpeg',0.68);}
-    let order=null;const rd=(id,tag)=>($(id).value||'').split('\n').map(x=>x.trim().replace(/[()]/g,'').slice(0,60)).filter(Boolean).map(x=>x+' ('+tag+')'),nms=[...rd('#c-names','ذكر'),...rd('#c-names-f','أنثى')].slice(0,40);
+    $('#m-msg').textContent='جارٍ تحضير الطلب…';const preview='';
+    let order=null;const qn=Math.max(1,Math.min(10000,parseInt(v('#c-qty'))||1)),rd=(id,tag)=>($(id).value||'').split('\n').map(x=>x.trim().replace(/[()]/g,'').slice(0,60)).filter(Boolean).map(x=>x+' ('+tag+')'),nms=qn>1?[...rd('#c-names','ذكر'),...rd('#c-names-f','أنثى')].slice(0,200):[];
     for(const [mx,q,bx] of [[560,.7,900],[420,.6,640],[300,.5,480]]){
       const design=designConfig(true);design.images=[];if(S.bg&&S.bg.src){const sb=await shrink(S.bg.src,bx,q);design.bg=sb?Object.assign({},S.bg,{src:sb.src}):null;}
       for(const im of S.images.slice(0,4)){const s=await shrink(im.src,mx,q);if(s)design.images.push({src:s.src,ar:s.ar,x:im.x,y:im.y,w:im.w,shape:im.shape,layer:im.layer,op:im.op});}
-      order={client:cut(nm,120),phone:cut(ph,40),email:cut(v('#c-email'),120),item:cut(OCC[S.occ].label+' · '+themeName(),160),qty:Math.max(1,Math.min(10000,nms.length||parseInt(v('#c-qty'))||1)),price:0,status:'new',notes:cut((nms.length?'الأسماء:\n'+nms.join('\n')+'\n\n':'')+v('#c-notes'),1800),design,preview,createdAt:Date.now(),source:'app'};
+      order={client:cut(nm,120),phone:cut(ph,40),email:cut(v('#c-email'),120),item:cut(OCC[S.occ].label+' · '+themeName(),160),qty:qn,price:0,status:'new',notes:cut((nms.length?'الأسماء:\n'+nms.join('\n')+'\n\n':'')+v('#c-notes'),1800),design,preview,createdAt:Date.now(),source:'app'};
       if(JSON.stringify(order).length<900000)break;order=null;
     }
     if(!order)throw new Error('big');
-    $('#m-msg').textContent='3/3 جارٍ إرسال الطلب…';const ref={id:await sendOrder(order)};
+    $('#m-msg').textContent='جارٍ إرسال الطلب…';const ref={id:await sendOrder(order)};
     $('#m-title').textContent='تم إرسال طلبك ✓';$('#m-msg').textContent='وصلنا طلبك وسنتواصل معك قريباً على رقمك.';
-    const wa=$('#m-wa');if(WA){const tx='طلب جديد 🎓\nالاسم: '+order.client+'\nالهاتف: '+order.phone+'\nالطلب: '+order.item+'\nالكمية: '+order.qty+(order.notes?'\nملاحظات: '+order.notes:'')+'\nرقم الطلب: '+ref.id;const link='https://wa.me/'+WA+'?text='+encodeURIComponent(tx);wa.href=link;wa.textContent='أرسل الطلب والصورة على واتساب';wa.hidden=false;
-      let file=null;try{if(preview){const bl=await (await fetch(preview)).blob();file=new File([bl],'order-'+ref.id+'.jpg',{type:'image/jpeg'});}}catch(_){}
-      const can=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
-      wa.onclick=ev=>{if(can){ev.preventDefault();navigator.share({files:[file],text:tx}).catch(()=>{});}};
-      $('#m-msg').textContent='وصلنا طلبك ✓ اضغط الزر لإرسال نسخة من الطلب مع صورة التصميم لنا على واتساب.';
-      if(can){try{await navigator.share({files:[file],text:tx});$('#m-msg').textContent='وصلنا طلبك ✓ شكراً لك.';}catch(_){}}}
+    const wa=$('#m-wa');if(WA){const tx='طلب جديد 🎓\nالاسم: '+order.client+'\nالهاتف: '+order.phone+'\nالطلب: '+order.item+'\nالكمية: '+order.qty+(order.notes?'\nملاحظات: '+order.notes:'')+'\nرقم الطلب: '+ref.id;const link='https://wa.me/'+WA+'?text='+encodeURIComponent(tx);wa.href=link;wa.textContent='أرسل الطلب على واتساب';wa.hidden=false;$('#m-msg').textContent='وصلنا طلبك ✓ اضغط الزر لإرسال نسخة من الطلب لنا على واتساب أيضاً.';}
   }catch(e){
     modal.hidden=true;er.textContent=(e&&e.message==='big')?'الصور كبيرة جداً. قلّل عددها أو حجمها ثم أعد الإرسال.':'تعذّر إرسال الطلب. تحقق من الاتصال وأعد المحاولة. ('+((e&&(e.code||e.message))||'؟')+')';er.hidden=false;
   }finally{btn.disabled=false;btn.textContent=t0;}
@@ -1700,4 +1708,108 @@ try{const dr=JSON.parse(localStorage.getItem('kd_draft')||'null');if(dr&&dr.t&&D
 {let last='';setInterval(()=>{try{const j=JSON.stringify(designConfig(false));if(j!==last){last=j;localStorage.setItem('kd_draft',JSON.stringify({t:Date.now(),d:JSON.parse(j)}));}}catch(_){}},4000);}
 
 })();
+</script>
+<script>
+(function(){
+const FR={
+'صمّم شهادتك':'Concevez votre certificat',
+'اختر المناسبة والثيم والألوان، وأضف صورتك، ثم أرسل الطلب':'Choisissez l’occasion, le thème et les couleurs, ajoutez votre photo, puis envoyez la commande',
+'المعاينة المباشرة':'Aperçu en direct',
+'A4 · اضغط على أي عنصر لتعديله، واسحبه لتحريكه':'A4 · touchez un élément pour le modifier, glissez-le pour le déplacer',
+'معاينة الصورة':'Aperçu de l’image',
+'تراجع':'Annuler','↶ تراجع':'↶ Annuler','إعادة':'Rétablir','↷ إعادة':'↷ Rétablir',
+'＋ صورة':'＋ Image','＋ نص':'＋ Texte','↺ استعادة الافتراضي':'↺ Par défaut','▢ ورقة فارغة':'▢ Page vierge',
+'المعاينة عليها علامة مائية لحماية التصميم.':'L’aperçu porte un filigrane qui protège le design.',
+'معاينة فقط':'Aperçu seulement',
+'المناسبة واللغة':'Occasion et langue','المناسبة':'Occasion','اتجاه الورقة':'Orientation de la feuille',
+'أفقي (بالعرض)':'Paysage','عمودي (بالطول)':'Portrait','لغة الشهادة':'Langue du certificat','العربية':'Arabe',
+'صيغة الشهادة':'Genre du certificat','للأستاذ / للتلميذ':'Masculin (professeur / élève)','للأستاذة / للتلميذة':'Féminin (professeure / élève)',
+'تكريم أستاذ':'Hommage à un enseignant','تلميذ متفوق':'Élève excellent','شهادة شكر':'Certificat de remerciement',
+'شهادة امتنان':'Certificat de gratitude','شهادة تخرج':'Certificat de fin d’études','شهادة تفوق':'Certificat d’excellence','شهادة تقدير':'Certificat de reconnaissance','شهادة تكريم':'Certificat d’hommage','شهادة عرفان':'Certificat de reconnaissance','شهادة مشاركة':'Certificat de participation','شهادة نجاح':'Certificat de réussite','شهادة شكر وتقدير':'Certificat de remerciement et de reconnaissance','شهادة خضراء':'Certificat vert','شهادة كحلية':'Certificat bleu marine','الشهادة':'Certificat',
+'الثيم':'Thème','الثيم (اختياري)':'Thème (facultatif)','لون الثيم':'Couleur du thème',
+'لكل مناسبة ثيماتها. يمكنك اختيار «بدون ثيم» لشهادة بسيطة وأنيقة.':'Chaque occasion a ses thèmes. Choisissez « Sans thème » pour un certificat simple et élégant.',
+'بدون ثيم':'Sans thème','خلفيتك الخاصة':'Votre propre fond',
+'«خلفيتك الخاصة»: ارفعي أي صورة لتكون خلفية الشهادة، ثم أضيفي نصوصك وخطوطك وصورك بنفسك. اشرحي في ملاحظات الطلب ما تريدين.':'« Votre propre fond » : importez une image comme fond du certificat, puis ajoutez vous-même vos textes, polices et images. Expliquez ce que vous souhaitez dans les remarques de la commande.',
+'إطار الورقة (بدون ثيم)':'Cadre de la page (sans thème)','إطار الورقة':'Cadre de la page','← رجوع للقائمة':'← Retour à la liste',
+'أزرق وتقنية':'Bleu et technologie','ذهبي وفاخر وألوان':'Doré, luxe et couleurs','الطلاب والتخرج':'Étudiants et remise de diplôme','الزهور':'Fleurs','الأوسمة والشرائط':'Médailles et rubans','القرآن الكريم':'Saint Coran','عام':'Général','الأطباء والصحة':'Médecins et santé','التربية المدنية':'Éducation civique','الرياضيات':'Mathématiques','الفيزياء':'Physique','فيزياء وكيمياء':'Physique-chimie','الفيزياء والكيمياء':'Physique-chimie','العلوم الطبيعية':'Sciences naturelles','التاريخ والجغرافيا':'Histoire-géographie','الجغرافيا':'Géographie','الفرنسية':'Français','الإنجليزية':'Anglais','اللغة الإنجليزية':'Langue anglaise','اللغة العربية':'Langue arabe','اللغة الفرنسية':'Langue française','التاريخ':'Date','زهور':'Fleurs','وسام':'Médaille','تخرج وتفوق':'Diplôme et excellence','وسام ذهبي (فارغ)':'Médaille dorée (vide)',
+'الكتابة':'Texte','النص':'Texte','نص الشهادة':'Texte du certificat','عنوان الشهادة':'Titre du certificat','عبارة التقديم':'Phrase d’introduction','الاسم على الشهادة':'Nom sur le certificat','الصفة':'Fonction','المادة (اختياري)':'Matière (facultatif)','مثال: الرياضيات':'Exemple : Mathématiques','عبارة الإهداء':'Dédicace',
+'نمط الخط (للعربية)':'Style de police (arabe)','نمط الخط (للفرنسية والإنجليزية)':'Style de police (français et anglais)','نمط الخط':'Style de police','تلقائي':'Automatique',
+'رقعة':'Roqaa','نسخ':'Naskh','مخطوط':'Manuscrit','حبر':'Encre','كوفي':'Coufique','عصري':'Moderne','العربية (ريشة وحبر)':'Arabe (plume et encre)','نسخ (أميري)':'Naskh (Amiri)','نسخ حديث':'Naskh moderne','كلاسيكي':'Classique','مائل (Script)':'Italique (Script)','Cinzel رسمي':'Cinzel officiel','Didot فاخر':'Didot luxe','لطيف':'Lateef','ميرزا':'Mirza','القاهرة':'Cairo','المسيري':'El Messiri','لالزار':'Lalezar','رقّاص':'Rakkas','تجوّل':'Tajawal','كلاسيكي بإطار ذهبي':'Classique à cadre doré',
+'الألوان':'Couleurs','لون الورق:':'Couleur du papier :','اللون الأساسي الثاني (الكحلي):':'Deuxième couleur principale (bleu marine) :','لون التمييز (الاسم):':'Couleur d’accent (nom) :','لون الكتابة:':'Couleur du texte :','لون مخصص':'Couleur personnalisée','مخصص':'Perso',
+'الذهبي والرسومات الجاهزة جزء من الثيم ولا يتغير. يتغير لون الورق واللون الأساسي الثاني (الكحلي)، ولون الاسم، ولون الكتابة.':'L’or et les dessins prêts font partie du thème et ne changent pas. Seuls changent la couleur du papier, la deuxième couleur principale (bleu marine), la couleur du nom et celle du texte.',
+'في هذا الثيم تتغير كل الألوان: الورق واللون الأساسي الثاني والزخارف والنصوص.':'Dans ce thème, toutes les couleurs changent : papier, deuxième couleur principale, ornements et textes.',
+'الزخارف':'Ornements','الزخارف والفواصل':'Ornements et séparateurs','زخرفة العنوان (التيجان والزخارف الكبيرة)':'Ornement du titre (couronnes et grands ornements)','زخرفة العنوان':'Ornement du titre','عدد زخارف العنوان (فوق العنوان / أسفل الشهادة / تحت العنوان)':'Nombre d’ornements du titre (au-dessus du titre / bas du certificat / sous le titre)','عدد زخارف العنوان':'Nombre d’ornements du titre','الفواصل بين الكتابة (خطوط بزخارف صغيرة)':'Séparateurs entre les textes (lignes à petits ornements)','الفواصل بين الكتابة':'Séparateurs entre les textes','عدد الفواصل بين الكتابة':'Nombre de séparateurs','عدد الفواصل':'Nombre de séparateurs','خطوط التوقيع والتاريخ (اختاري الشكل)':'Lignes de signature et de date (choisissez la forme)','شكل خط التوقيع':'Forme de la ligne de signature','عدد خطوط التوقيع (مستقلة عن الفواصل، أسفل الشهادة)':'Nombre de lignes de signature (indépendantes des séparateurs, en bas du certificat)','عدد خطوط التوقيع':'Nombre de lignes de signature','بدون':'Aucun',
+'كل زخرفة تظهر افتراضيًا في الشهادات التي لا تحوي زخارف مرسومة. غيّري عددها أو شكلها من هنا، وحرّكيها من زر «الزخارف» تحت المعاينة.':'Chaque ornement apparaît par défaut sur les certificats sans ornements dessinés. Changez leur nombre ou leur forme ici, et déplacez-les avec le bouton « Ornements » sous l’aperçu.',
+'لا توجد زخارف الآن. أضيفيها من الخطوة 4 (عدد زخارف العنوان / الفواصل).':'Aucun ornement pour le moment. Ajoutez-en à l’étape 4 (nombre d’ornements du titre / séparateurs).',
+'خط بسيط':'Ligne simple','خط مزدوج':'Ligne double','خط ونقطة':'Ligne et point','نقاط':'Points','خط بنهايات مزخرفة':'Ligne à extrémités ornées','خط بزخرفة صغيرة':'Ligne à petit ornement','خط بأوراق':'Ligne à feuilles','تاج':'Couronne','تاج ملكي':'Couronne royale','وردة وأوراق':'Rose et feuilles','زخرفة حلزونية':'Ornement en spirale','خط بوردة':'Ligne à rose','خط بثلاث معينات':'Ligne à trois losanges','خط بزهرة':'Ligne à fleur','خط بقوسين':'Ligne à deux arcs','خط بمعين':'Ligne à losange','خط بنجمة':'Ligne à étoile','خط بنقطتين':'Ligne à deux points','خط ثقيل ورفيع':'Ligne épaisse et fine','خط متلاشي':'Ligne dégradée','خط متموج':'Ligne ondulée','خط مدبب':'Ligne effilée','خط منقط':'Ligne pointillée',
+'الحجم':'Taille','الشفافية':'Opacité','الخط':'Police','الخط الافتراضي':'Police par défaut','اللون':'Couleur','العرض':'Largeur','الارتفاع':'Hauteur','الدوران':'Rotation','حذف':'Supprimer','حذف الصورة':'Supprimer l’image','حذف النص':'Supprimer le texte','تصغير':'Réduire','تكبير':'Agrandir','الافتراضي':'Par défaut','الاسم':'Nom','العنوان':'Titre','الصورة':'Image','الصور':'Images','الصورة كاملة':'Image entière','ملء مع قصّ':'Remplir (rogner)','تمديد':'Étirer','ملاءمة الصورة':'Ajustement de l’image','شكل الصورة':'Forme de l’image','دائرة بإطار':'Cercle avec cadre','مربع بإطار':'Carré avec cadre','بدون إطار':'Sans cadre','موضع الصورة':'Position de l’image','أمام الكتابة':'Devant le texte','خلف الكتابة':'Derrière le texte','نسبة الصورة الأصلية':'Proportions d’origine','تحريك':'Déplacer','يمين':'Droite','يسار':'Gauche','أعلى':'Haut','أسفل':'Bas','غامق':'Foncé','نص جديد':'Nouveau texte','نص مضاف':'Texte ajouté','إغلاق':'Fermer','إغلاق ✕':'Fermer ✕','إعادة التنسيق والموضع':'Réinitialiser style et position','إعادة الترتيب والتنسيق الأصلي':'Rétablir la disposition d’origine','الشكل':'Forme','السماكة':'Épaisseur','قلب':'Retourner','⇅ قلب عمودي (فتح/غلق)':'⇅ Retourner verticalement','⇆ قلب أفقي':'⇆ Retourner horizontalement','فاصل':'Séparateur','خط / فاصل':'Ligne / séparateur','الصورة النهائية':'Image finale','ماذا تحرّك':'Que déplacer',
+'اضغط لاختيارها ثم عدّلها من الشريط تحت المعاينة':'Touchez pour la sélectionner puis modifiez-la dans la barre sous l’aperçu',
+'اضغط على أي كتابة أو فاصل أو صورة في الشهادة لتعديل حجمها ولونها وخطها ونصها من الشريط تحت المعاينة، واسحبها لتحريكها':'Touchez un texte, un séparateur ou une image du certificat pour modifier sa taille, sa couleur, sa police et son texte depuis la barre sous l’aperçu, et glissez-le pour le déplacer',
+'اضغط على الصورة في الشهادة لاختيارها: اسحبها لتحريكها، ومن النقاط الزرقاء غيّر العرض أو الارتفاع أو الحجم كله.':'Touchez l’image sur le certificat pour la sélectionner : glissez-la pour la déplacer, et utilisez les points bleus pour changer la largeur, la hauteur ou la taille totale.',
+'أضف صورة، ثم حرّكها وغيّر حجمها بيدك على الشهادة.':'Ajoutez une image, puis déplacez-la et redimensionnez-la directement sur le certificat.',
+'صورة الأستاذ، شعار المدرسة، أو أي صورة تريدها على الشهادة':'Photo de l’enseignant, logo de l’école ou toute image que vous souhaitez sur le certificat','إضافة صورة':'Ajouter une image',
+'الطلب':'Commande','بيانات الطلب':'Détails de la commande','اسمك':'Votre nom','رقم الهاتف / واتساب':'Téléphone / WhatsApp','البريد الإلكتروني (اختياري)':'E-mail (facultatif)','عدد النسخ':'Nombre d’exemplaires','أسماء الذكور':'Noms masculins','أسماء الإناث':'Noms féminins','اسم في كل سطر':'Un nom par ligne','ملاحظات (اختياري)':'Remarques (facultatif)','إرسال الطلب':'Envoyer la commande',
+'بعد الإرسال يصلنا طلبك مباشرة مع تصميمك، وسنتواصل معك على واتساب.':'Après l’envoi, nous recevons directement votre commande avec votre design et nous vous contacterons sur WhatsApp.',
+'جارٍ تجهيز الصورة…':'Préparation de l’image…','هذه معاينة التصميم قبل الإرسال.':'Ceci est un aperçu du design avant l’envoi.','جارٍ إرسال الطلب…':'Envoi de la commande…','جارٍ الإرسال…':'Envoi…','جارٍ تحضير الطلب…':'Préparation de la commande…',
+'تم إرسال طلبك ✓':'Votre commande a été envoyée ✓','وصلنا طلبك وسنتواصل معك قريباً على رقمك.':'Nous avons reçu votre commande et vous contacterons bientôt sur votre numéro.','وصلنا طلبك ✓ اضغط الزر لإرسال نسخة من الطلب لنا على واتساب أيضاً.':'Nous avons reçu votre commande ✓ Touchez le bouton pour nous en envoyer aussi une copie sur WhatsApp.','وصلنا طلبك ✓ شكراً لك.':'Nous avons reçu votre commande ✓ Merci.','أرسل الطلب على واتساب':'Envoyer la commande sur WhatsApp',
+'اكتب اسمك.':'Saisissez votre nom.','اكتب رقم هاتف صحيح من 8 أرقام على الأقل.':'Saisissez un numéro de téléphone valide (8 chiffres minimum).','إرسال الطلبات غير مفعّل بعد. تواصل معنا مباشرة.':'L’envoi des commandes n’est pas encore activé. Contactez-nous directement.','الصور كبيرة جداً. قلّل عددها أو حجمها ثم أعد الإرسال.':'Les images sont trop lourdes. Réduisez leur nombre ou leur taille puis renvoyez.',
+'كامل':'Complet','بسيط':'Simple','قفل':'Verrouillé','لون الورق':'Couleur du papier','اللون الأساسي الثاني (الكحلي)':'Deuxième couleur principale (bleu marine)','لون التمييز (الاسم)':'Couleur d’accent (nom)','لون الكتابة':'Couleur du texte',
+'اضغط على الصورة في الشهادة لاختيارها: اسحبها لتحريكها، ومن النقاط الزرقاء غيّر العرض أو الارتفاع أو الحجم كله. على الهاتف يمكنك التكبير بإصبعين.':'Touchez l’image sur le certificat pour la sélectionner : glissez-la pour la déplacer, et utilisez les points bleus pour changer la largeur, la hauteur ou la taille totale. Sur téléphone, vous pouvez aussi zoomer avec deux doigts.',
+'الذهبي والرسومات الجاهزة جزء من الثيم ولا يتغير. يتغير لون الورق واللون الأساسي الثاني (الكحلي)، ولون الاسم، ولون باقي الكتابة.':'L’or et les dessins prêts font partie du thème et ne changent pas. Seuls changent la couleur du papier, la deuxième couleur principale (bleu marine), la couleur du nom et celle du reste du texte.',
+'أقسام التصميم':'Sections du design','إخفاء المعاينة':'Masquer l’aperçu','إظهار المعاينة':'Afficher l’aperçu','الأسماء':'Noms'
+};
+const PH=[['وحبوب دواء','et comprimés'],['وآية','et verset'],['إطار تخرج','Cadre de remise de diplôme'],['قبعة التخرج','Chapeau de diplômé'],['خطوط قطرية','lignes diagonales'],['رأس رقمي','tête numérique'],['حبوب دواء','comprimés'],['نبض القلب','battement de cœur'],['سماعة قلب','stéthoscope'],['آية','verset'],['الإنجليزية','Anglais'],['الفرنسية','Français'],['الرياضيات','Mathématiques'],['الفيزياء والكيمياء','Physique-chimie'],['العلوم الطبيعية','Sciences naturelles'],['التاريخ والجغرافيا','Histoire-géographie'],['الجغرافيا','Géographie'],['التربية المدنية','Éducation civique'],['القرآن الكريم','Saint Coran'],['العربية','Arabe'],['الفيزياء','Physique'],['تخرج وتفوق','Diplôme et excellence'],['أزرق وتقنية','Bleu et technologie'],['الأوسمة والشرائط','Médailles et rubans'],['وسام ذهبي','Médaille dorée'],['وسام','Médaille'],['زهور','Fleurs'],['عام','Général']];
+const V={'آية':'verset','حريرية':'soyeuses','فاتحة':'claire','مع':'avec','كلاسيكي':'classique','ووردة':'et rose','وردة':'rose','أبيض':'Blanc','أخضر':'Vert','فاتح':'clair','مزرق':'bleuté','أزرق':'Bleu','كريمي':'Crème','معطف':'blouse','سماعة':'stéthoscope','أسود':'Noir','ذهبي':'doré','ذهبية':'dorés','أوراق':'feuilles','كحلية':'marine','كحلي':'Bleu marine','إطار':'Cadre','رمادي':'Gris','رمادية':'grise','حريري':'soyeux','بيج':'Beige','بنفسجي':'Violet','بني':'Marron','غامق':'foncé','بوردو':'Bordeaux','تركوازي':'Turquoise','رملي':'Sable','وردي':'Rose','ناعم':'doux','أمواج':'vagues','شرائط':'rubans','بشرائط':'à rubans','بأشرطة':'à rubans','هندسي':'géométrique','شبكة':'grille','زرقاء':'bleue','مربعات':'carreaux','بيضاء':'blancs','دوائر':'cercles','إلكترونية':'électroniques','تروس':'engrenages','أسهم':'flèches','هرمتان':'deux pyramides','مركزي':'central','طبي':'médical','نبض':'pouls','سداسيات':'hexagones','فارغ':'vide','أغصان':'rameaux','صليب':'croix','شعار':'logo','مستشفى':'hôpital','مؤطرة':'encadré','عاجي':'ivoire','بإطار':'à cadre','وإطار':'et cadre','مضيئة':'lumineuse','دانتيل':'dentelle','نافرة':'en relief','بحواف':'à bords','بزخارف':'à ornements','الزوايا':'des coins','رفيع':'fin','مزخرف':'orné','فاخر':'luxe','رخام':'Marbre','طبية':'médicale','شهادة':'Certificat','داكن':'foncé','وشعار':'et logo','وذهبي':'et doré','وتقنية':'et technologie','وفاخر':'et luxe','وألوان':'et couleurs','وكتب':'et livres','قبعة':'chapeau','تفوق':'Excellence','تخرج':'Diplôme','رقمي':'numérique','رأس':'tête','ذهبيّة':'dorés','بنجمة':'à étoile','نقاط':'points','خط':'Ligne','صورة':'Image','زخرفة':'Ornement','بنهايات':'à extrémités','مزخرفة':'ornées','الافتراضي':'par défaut'};
+const MONTHS={};
+function wordTr(w){if(V[w])return V[w];if(w[0]==='و'&&V[w.slice(1)])return 'et '+V[w.slice(1)];if(/^\d+$/.test(w))return w;return null;}
+function segTr(s){let t=s;for(const [a,b] of PH){if(t.indexOf(a)>=0)t=t.split(a).join('\u0001'+b+'\u0002');}
+  const parts=t.split(/(\u0001[^\u0002]*\u0002|\s+|[()—\-:،,])/).filter(x=>x!=='');let unknown=false;
+  const out=parts.map(p=>{if(p[0]==='\u0001')return p.slice(1,-1);if(/^\s+$/.test(p)||/^[()—\-:،,]$/.test(p))return p;const r=wordTr(p);if(r===null){if(/[؀-ۿ]/.test(p))unknown=true;return p;}return r;});
+  return unknown?null:out.join('').replace(/\s+/g,' ').replace(/^(\w)/,c=>c.toUpperCase()).replace(/\(\s+/g,'(').replace(/\s+\)/g,')');}
+const PAT=[
+ [/^عدد النسخ (\d+): يجب كتابة (\d+) أسماء بالضبط في خانتي الذكور والإناث \(المكتوب الآن (\d+)\)\.$/,(m)=>'Nombre d’exemplaires '+m[1]+' : il faut saisir exactement '+m[2]+' noms dans les champs masculins et féminins (actuellement '+m[3]+').'],
+ [/^اكتب (\d+) أسماء بالضبط في الخانتين معاً، وتتغيّر الصيغة \(للأستاذ \/ للأستاذة\) حسب النوع\.$/,(m)=>'Saisissez exactement '+m[1]+' noms dans les deux champs ; la forme (professeur / professeure) s’adapte au genre.'],
+ [/^تعذّر إرسال الطلب\. تحقق من الاتصال وأعد المحاولة\. \((.*)\)$/,(m)=>'Échec de l’envoi. Vérifiez la connexion et réessayez. ('+m[1]+')'],
+ [/^تعذّر إنشاء المعاينة \((.*)\)\. يمكنك الإرسال بدونها\.$/,(m)=>'Impossible de créer l’aperçu ('+m[1]+'). Vous pouvez envoyer sans.'],
+ [/^لون مخصص (.+)$/,(m)=>{const r=tr(m[1]);return r?'Couleur personnalisée : '+r:null}],
+ [/^صورة (\d+)$/,(m)=>'Image '+m[1]],
+ [/^زخرفة (\d+)$/,(m)=>'Ornement '+m[1]],
+ [/^خط بنهايات مزخرفة (\d+)$/,(m)=>'Ligne à extrémités ornées '+m[1]],
+ [/^(.+?) (\d+)(?: \((.+)\))?$/,(m)=>{const b=tr(m[1]);if(!b)return null;let s=b+' '+m[2];if(m[3]){const x=tr(m[3])||(V[m[3]]||null);if(!x)return null;s+=' ('+x+')';}return s;}]
+];
+function tr(k){if(FR[k])return FR[k];for(const [re,fn] of PAT){const m=re.exec(k);if(m){const r=fn(m);if(r)return r;}}
+  if(k.indexOf(' — ')>=0||/[؀-ۿ]/.test(k)){const segs=k.split(' — ');const o=[];for(const s of segs){const r=FR[s]||segTr(s);if(!r)return null;o.push(r);}return o.join(' — ');}return null;}
+window.__tr=tr;
+})();
+
+(function(){
+const AR=/[؀-ۿ]/,ATTR=['placeholder','aria-label','title','alt'];
+let lang='ar';try{lang=localStorage.getItem('kl')||((navigator.language||'').slice(0,2)==='fr'?'fr':'ar');}catch(_){}
+const otxt=new WeakMap(),oatt=new WeakMap();let busy=false;
+const skip=n=>{const p=n.parentElement;return !p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.tagName)||p.closest('#cert,#stage,[data-nt]');};
+function doText(n){if(skip(n))return;
+  if(lang==='fr'){if(otxt.has(n)&&n.nodeValue===otxt.get(n).t)return;const o=n.nodeValue;if(!AR.test(o))return;const k=o.trim().replace(/\s+/g,' ');const t=window.__tr(k);if(t){const lead=o.match(/^\s*/)[0],trail=o.match(/\s*$/)[0],nv=lead+t+trail;otxt.set(n,{o:o,t:nv});n.nodeValue=nv;}}
+  else if(otxt.has(n)){const r=otxt.get(n);if(n.nodeValue===r.t)n.nodeValue=r.o;otxt.delete(n);}}
+function doAttr(e){if(e.closest('#cert,#stage,[data-nt]'))return;let m=oatt.get(e);for(const a of ATTR){const v=e.getAttribute(a);if(v==null)continue;
+  if(lang==='fr'){if(m&&m[a]&&v===m[a].t)continue;const o=v;if(!AR.test(o))continue;const t=window.__tr(o.trim().replace(/\s+/g,' '));if(t){m=m||{};m[a]={o:o,t:t};e.setAttribute(a,t);}}
+  else if(m&&m[a]){if(v===m[a].t)e.setAttribute(a,m[a].o);delete m[a];}}
+  if(m)oatt.set(e,m);}
+function sweep(root){root=root||document.body;busy=true;try{
+  if(root.nodeType===3){doText(root);return;}
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())doText(n);
+  if(root.matches&&root.matches('['+ATTR.join('],[')+']'))doAttr(root);
+  root.querySelectorAll('['+ATTR.join('],[')+']').forEach(doAttr);}finally{busy=false;}}
+const mo=new MutationObserver(ms=>{if(busy||lang!=='fr')return;busy=true;try{for(const m of ms){
+  if(m.type==='childList')m.addedNodes.forEach(x=>{if(x.nodeType===3)doText(x);else if(x.nodeType===1)sweepNow(x);});
+  else if(m.type==='characterData')doText(m.target);
+  else if(m.type==='attributes')doAttr(m.target);}}finally{busy=false;}});
+function sweepNow(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())doText(n);if(root.matches&&root.matches('['+ATTR.join('],[')+']'))doAttr(root);root.querySelectorAll('['+ATTR.join('],[')+']').forEach(doAttr);}
+function apply(){document.documentElement.lang=lang;document.documentElement.dir=lang==='fr'?'ltr':'rtl';sweep();const b=document.getElementById('lang-sw');if(b)b.textContent=lang==='fr'?'العربية':'Français';
+  const ti=document.querySelector('title');if(ti){if(lang==='fr'){if(!ti.dataset.ar)ti.dataset.ar=ti.textContent;const t=window.__tr(ti.dataset.ar.trim());if(t)ti.textContent=t;}else if(ti.dataset.ar)ti.textContent=ti.dataset.ar;}}
+function mk(){const b=document.createElement('button');b.type='button';b.id='lang-sw';b.setAttribute('data-nt','1');b.style.cssText='position:fixed;top:8px;left:8px;z-index:60;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(0,0,0,.2);background:#fff;color:#1a2440;font:700 13px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.15)';
+  b.onclick=()=>{lang=lang==='fr'?'ar':'fr';try{localStorage.setItem('kl',lang);}catch(_){}apply();};document.body.appendChild(b);}
+mk();mo.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTR});apply();
+window.__setLang=l=>{lang=l;apply();};
+})();
+
 </script>
