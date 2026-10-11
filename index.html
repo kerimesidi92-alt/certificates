@@ -1704,7 +1704,7 @@ $('#btn-submit').onclick=async()=>{
 
 /* init */
 $('#f-date').value=S.date;$('#f-subj').value=S.subj;syncTheme();paintColors();applyDefaults();renderImgs();setScale();render();clearTimeout(bgTimer);setBg();
-try{const dr=JSON.parse(localStorage.getItem('kd_draft')||'null');if(dr&&dr.t&&Date.now()-dr.t<6048e5&&dr.d){const ni=S.images;if(loadDesign(dr.d)){S.images=ni;renderImgs();render();}}}catch(_){}
+try{const dr=JSON.parse(localStorage.getItem('kd_draft')||'null');if(dr&&dr.t&&Date.now()-dr.t<6048e5&&dr.d){const ni=S.images;if(loadDesign(dr.d)){S.images=ni;const d0=defaults();['title','intro','name','subj','role','body','from','date'].forEach(k=>{S.edited[k]=(S[k]!==d0[k]);});applyDefaults();renderImgs();render();}}}catch(_){}
 {let last='';setInterval(()=>{try{const j=JSON.stringify(designConfig(false));if(j!==last){last=j;localStorage.setItem('kd_draft',JSON.stringify({t:Date.now(),d:JSON.parse(j)}));}}catch(_){}},4000);}
 
 })();
