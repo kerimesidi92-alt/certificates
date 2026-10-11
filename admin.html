@@ -1693,19 +1693,25 @@ async function initStore(){
 }
 const waLink=p=>{let d=String(p||'').replace(/\D/g,'');if(d.length<8)return '';if(d.length===8)d='222'+d;return 'https://wa.me/'+d;};
 const stLabel=v=>(STATUS.find(s=>s[0]===v)||[0,'جديد'])[1];
+let view='act';
 function renderOrders(){
-  const total=orders.reduce((a,o)=>a+(+o.qty||0)*(+o.price||0),0);
+  const all=orders;orders=all.filter(o=>!!o.archived===(view==='arch'));const total=orders.reduce((a,o)=>a+(+o.qty||0)*(+o.price||0),0);
   $('#ocount').textContent=orders.filter(o=>o.status==='new'||!o.status).length||'';
   $('#sum').innerHTML=STATUS.map(([v,l])=>`<span class="chip st-${v}"><span>${l}: ${orders.filter(o=>(o.status||'new')===v).length}</span></span>`).join('')+`<span class="chip" style="color:var(--fg)">المجموع: <bdi dir="ltr">${total} MRU</bdi></span>`;
   $('#store-note').textContent=noteOverride||(storeMode==='db'?'الطلبات تصل مباشرة من الزبائن وتُحفظ في Firebase.':'الحفظ المشترك غير متاح هنا، فالطلبات تُحفظ في هذا المتصفح فقط.');
   $('#olist').innerHTML=orders.length?orders.map(o=>{
     const id=esc(o.id),st=o.status||'new',qty=Math.max(1,+o.qty||1),price=+o.price||0,wa=waLink(o.phone);
-    return `<li class="ord"><div class="o-main"><strong>${esc(o.client)}</strong><small>${esc(o.item||'—')}</small>${o.phone?`<small><bdi dir="ltr">${esc(o.phone)}</bdi></small>`:''}${o.email?`<small><bdi dir="ltr">${esc(o.email)}</bdi></small>`:''}${o.notes?`<small>ملاحظات: ${esc(o.notes)}</small>`:''}</div><button type="button" class="chip st-${st}" data-cycle="${id}" aria-label="تغيير الحالة"><span>${stLabel(st)}</span></button><div class="o-num"><bdi dir="ltr">${qty} ×</bdi><input class="pin" type="number" min="0" data-price="${id}" value="${price||''}" placeholder="السعر" aria-label="سعر القطعة"><bdi dir="ltr">= ${qty*price} MRU</bdi></div><div class="o-actions">${o.preview&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(o.preview)?`<img class="pv" src="${o.preview}" alt="معاينة" data-pv="${id}">`:''}${o.design?`<button type="button" class="btn" data-open="${id}">فتح التصميم</button>`:''}${wa?`<a class="btn" href="${wa}" target="_blank" rel="noopener">واتساب الزبون</a>`:''}<button type="button" class="btn ghost" data-del="${id}">${confirmDel===o.id?'تأكيد الحذف':'حذف'}</button></div></li>`;
+    return `<li class="ord"><div class="o-main"><strong>${esc(o.client)}</strong><small>${esc(o.item||'—')}</small>${o.phone?`<small><bdi dir="ltr">${esc(o.phone)}</bdi></small>`:''}${o.email?`<small><bdi dir="ltr">${esc(o.email)}</bdi></small>`:''}${o.notes?`<small>ملاحظات: ${esc(o.notes)}</small>`:''}</div><button type="button" class="chip st-${st}" data-cycle="${id}" aria-label="تغيير الحالة"><span>${stLabel(st)}</span></button><div class="o-num"><bdi dir="ltr">${qty} ×</bdi><input class="pin" type="number" min="0" data-price="${id}" value="${price||''}" placeholder="السعر" aria-label="سعر القطعة"><bdi dir="ltr">= ${qty*price} MRU</bdi></div><div class="o-actions">${o.preview&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(o.preview)?`<img class="pv" src="${o.preview}" alt="معاينة" data-pv="${id}">`:''}${o.design?`<button type="button" class="btn" data-open="${id}">فتح التصميم</button>`:''}${wa?`<a class="btn" href="${wa}" target="_blank" rel="noopener">واتساب الزبون</a>`:''}${st==='new'?`<button type="button" class="btn primary" data-acc="${id}">قبول</button>`:''}${o.archived?`<button type="button" class="btn" data-arch="${id}" data-to="0">استرجاع</button>`:`<button type="button" class="btn" data-arch="${id}" data-to="1">حفظ</button>`}<button type="button" class="btn ghost" data-del="${id}">${confirmDel===o.id?'تأكيد الإلغاء':'إلغاء'}</button></div></li>`;
   }).join(''):'<li class="empty">لا توجد طلبات بعد. الصقي أول رسالة طلب من الزبون، أو أضيفي طلباً يدوياً.</li>';
+  orders=all;paintView();
 }
 const byId=id=>orders.find(o=>String(o.id)===id);
+function paintView(){let b=document.getElementById('viewbar');if(!b){b=document.createElement('div');b.id='viewbar';b.style.cssText='display:flex;gap:8px;margin:10px 0';b.innerHTML='<button type="button" class="btn" data-v="act">الطلبات</button><button type="button" class="btn" data-v="arch">المحفوظات <span id="acount"></span></button>';$('#sum').before(b);b.onclick=e=>{const x=e.target.closest('[data-v]');if(x){view=x.dataset.v;renderOrders();}};}
+  b.querySelectorAll('[data-v]').forEach(x=>{const on=x.dataset.v===view;x.classList.toggle('primary',on);});const n=orders.filter(o=>o.archived).length;$('#acount').textContent=n?'('+n+')':'';}
 $('#olist').addEventListener('click',e=>{
   const pv=e.target.closest('[data-pv]');if(pv){$('#m-img').src=pv.src;$('#m-img').hidden=false;$('#m-msg').textContent='معاينة الطلب كما أرسلها الزبون.';$('#m-title').textContent='معاينة الطلب';modal.hidden=false;return;}
+  const ac=e.target.closest('[data-acc]');if(ac){store.update(ac.dataset.acc,{status:'progress'});return;}
+  const ar=e.target.closest('[data-arch]');if(ar){store.update(ar.dataset.arch,{archived:ar.dataset.to==='1'});return;}
   const c=e.target.closest('[data-cycle]'),op=e.target.closest('[data-open]'),d=e.target.closest('[data-del]');
   if(c){const o=byId(c.dataset.cycle);if(o)store.update(o.id,{status:STATUS[(STATUS.findIndex(s=>s[0]===(o.status||'new'))+1)%STATUS.length][0]});}
   else if(op){openOrder(op.dataset.open);}
