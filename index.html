@@ -1413,6 +1413,10 @@ function addText(){
   S.sel=-1;S.st='x:'+id;render();renderTools();fixSel();const ta=$('#tools [data-a=text]');if(ta){ta.focus();ta.select();}
 }
 const toolsBox=$('#tools');
+
+/* close the tools sheet: tap outside it, or drag its header down */
+document.addEventListener('pointerdown',e=>{if(toolsBox.hidden)return;const t=e.target;if(!t||!t.closest)return;if(t.closest('#tools,#stage,#stagewrap,.cert,.preview,select,option,.modal,#tabbar,#login'))return;try{pick('none');}catch(_){}},true);
+{let y0=null;toolsBox.addEventListener('touchstart',e=>{y0=e.target.closest('.tl-h')?e.touches[0].clientY:null;},{passive:true});toolsBox.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0>60){try{pick('none');}catch(_){}}y0=null;},{passive:true});}
 toolsBox.addEventListener('input',e=>{
   const a=e.target.dataset.a;if(!a)return;
   const im=S.images[S.sel];
@@ -1688,7 +1692,7 @@ $('#btn-submit').onclick=async()=>{
     let order=null;const qn=Math.max(1,Math.min(10000,parseInt(v('#c-qty'))||1)),rd=(id,tag)=>($(id).value||'').split('\n').map(x=>x.trim().replace(/[()]/g,'').slice(0,60)).filter(Boolean).map(x=>x+' ('+tag+')'),nms=qn>1?[...rd('#c-names','ذكر'),...rd('#c-names-f','أنثى')].slice(0,200):[];
     for(const [mx,q,bx] of [[560,.7,900],[420,.6,640],[300,.5,480]]){
       const design=designConfig(true);design.images=[];if(S.bg&&S.bg.src){const sb=await shrink(S.bg.src,bx,q);design.bg=sb?Object.assign({},S.bg,{src:sb.src}):null;}
-      for(const im of S.images.slice(0,4)){const s=await shrink(im.src,mx,q);if(s)design.images.push({src:s.src,ar:s.ar,x:im.x,y:im.y,w:im.w,shape:im.shape,layer:im.layer,op:im.op});}
+      for(const im of S.images.slice(0,4)){const s=await shrink(im.src,mx,q);if(s)design.images.push({src:s.src,ar:s.ar,x:im.x,y:im.y,w:im.w,h:im.h,fit:im.fit,z:im.z,shape:im.shape,layer:im.layer,op:im.op});}
       order={client:cut(nm,120),phone:cut(ph,40),email:cut(v('#c-email'),120),item:cut(OCC[S.occ].label+' · '+themeName(),160),qty:qn,price:0,status:'new',notes:cut((nms.length?'الأسماء:\n'+nms.join('\n')+'\n\n':'')+v('#c-notes'),1800),design,preview,createdAt:Date.now(),source:'app'};
       if(JSON.stringify(order).length<900000)break;order=null;
     }
