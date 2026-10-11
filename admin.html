@@ -120,6 +120,7 @@ a.btn.primary{color:var(--accent-fg)}
 .tb{pointer-events:none;user-select:none;-webkit-user-select:none}
 .tb .in{pointer-events:none}
 .cert{touch-action:none}
+#seg-mv,#mv-hint{display:none!important}
 .preview.pvc .stage-wrap,.preview.pvc .addbar,.preview.pvc .tools,.preview.pvc .mvhint,.preview.pvc .mvseg{display:none!important}
 #pv-toggle{min-height:36px;min-width:44px;padding:0 12px;font-size:18px;line-height:1}
 
@@ -434,7 +435,7 @@ body{background:var(--bg)}
         <div class="field" id="frame-box"><span class="lbl">إطار الورقة (بدون ثيم)</span><div class="seg" id="seg-frame" role="group" aria-label="إطار الورقة"></div></div>
       </div>
 
-<div class="step" hidden>
+<div class="step" data-tab="img" hidden>
         <h2><span class="no">5</span>الصور</h2>
         <div class="drop" id="drop">
           <span>صورة الأستاذ، شعار المدرسة، أو أي صورة تريدها على الشهادة</span>
@@ -474,6 +475,7 @@ body{background:var(--bg)}
     <div class="m-panel">
       <div class="row" style="justify-content:space-between">
         <strong id="m-title">الصورة النهائية</strong>
+        <button type="button" class="btn primary" id="m-print" hidden>🖨 طباعة</button>
         <button type="button" class="btn" id="m-close">إغلاق</button>
       </div>
       <p class="hint" id="m-msg">جارٍ تجهيز الصورة…</p>
@@ -1432,6 +1434,10 @@ function addText(){
   S.sel=-1;S.st='x:'+id;render();renderTools();fixSel();const ta=$('#tools [data-a=text]');if(ta){ta.focus();ta.select();}
 }
 const toolsBox=$('#tools');
+
+/* close the tools sheet: tap outside it, or drag its header down */
+document.addEventListener('pointerdown',e=>{if(toolsBox.hidden)return;const t=e.target;if(!t||!t.closest)return;if(t.closest('#tools,#stage,#stagewrap,.cert,.preview,select,option,.modal,#tabbar,#login'))return;try{pick('none');}catch(_){}},true);
+{let y0=null;toolsBox.addEventListener('touchstart',e=>{y0=e.target.closest('.tl-h')?e.touches[0].clientY:null;},{passive:true});toolsBox.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0>60){try{pick('none');}catch(_){}}y0=null;},{passive:true});}
 toolsBox.addEventListener('input',e=>{
   const a=e.target.dataset.a;if(!a)return;
   const im=S.images[S.sel];
@@ -1625,23 +1631,29 @@ $('#btn-undo').onclick=()=>histGo(-1);$('#btn-redo').onclick=()=>histGo(1);
 setTimeout(()=>{try{HIST.cur=histSnap();}catch(_){}histBtns();},1200);
 function resetOrn(){S.divT='o1';S.div='e2';S.dc=null;S.dcv='a';S.dn=null;S.dnv='a';S.sg=null;S.sgv='a';S.sgd='s1';S.dsz={};S.off={};S.st=null;segSync('seg-dc','dcv');segSync('seg-dn','dnv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-div','div');}
 $('#btn-clear').onclick=()=>{['title','intro','name','role','body','from','date'].forEach(k=>{S[k]='';S.edited[k]=true;const el=$('#f-'+k);if(el)el.value='';});S.off={};S.fmt={};render();renderTools();};
-$('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset.v);};setMv('txt');
+$('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset.v);};setMv('lock');
 
 /* final image */
 const modal=$('#modal');
 async function makeImage(){
-  $('#m-img').hidden=true;$('#m-msg').textContent='جارٍ تجهيز الصورة…';
+  $('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-msg').textContent='جارٍ تجهيز الصورة…';
   try{
     if(typeof html2canvas!=='function')throw new Error('no lib');
     if(S.sel!==-1||S.st){S.sel=-1;S.st=null;markSel();renderTools();}
     clearTimeout(bgTimer);setBg();await bgReady;
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     fitAll();
-    const cv=await html2canvas($('#cert'),{scale:WM?1.5:2,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}});
-    $('#m-img').src=cv.toDataURL('image/png');$('#m-img').hidden=false;window.lastCv=cv;
+    const run=sc=>html2canvas($('#cert'),{scale:sc,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}});
+    let cv;try{cv=await run(WM?1.5:3);}catch(_){cv=await run(2);}
+    $('#m-img').src=cv.toDataURL('image/png');$('#m-img').hidden=false;window.lastCv=cv;{const pb=$('#m-print');if(pb)pb.hidden=false;}
     $('#m-msg').textContent='اضغط مطولاً على الصورة لحفظها في هاتفك، أو انقر بزر الفأرة الأيمن على الحاسوب.';
   }catch(err){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
 }
+
+$('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height;
+  const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);
+  const d=fr.contentWindow.document;d.open();d.write('<!doctype html><html><head><meta charset="utf-8"><style>@page{size:A4 '+(land?'landscape':'portrait')+';margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:100vw;height:100vh;object-fit:contain}</style></head><body><img id="i"></body></html>');d.close();
+  const im=d.getElementById('i');im.onload=()=>{setTimeout(()=>{try{fr.contentWindow.focus();fr.contentWindow.print();}catch(_){}setTimeout(()=>fr.remove(),60000);},200);};im.src=cv.toDataURL('image/png');};
 $('#btn-export').onclick=()=>{modal.hidden=false;makeImage();};
 
 /* export all names as one ZIP */
@@ -1665,7 +1677,7 @@ async function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=
       const cv=window.lastCv;if(!cv)throw new Error('x');const bl=await new Promise(r=>cv.toBlob(r,'image/png'));
       files.push({name:String(i+1).padStart(2,'0')+'-'+names[i].replace(/[\\/:*?"<>|]/g,'').slice(0,40)+'.png',data:new Uint8Array(await bl.arrayBuffer())});
       const fg=document.createElement('figure');fg.style.cssText='margin:0;text-align:center;font-size:14px';const im=document.createElement('img');im.src=URL.createObjectURL(bl);im.alt=names[i];im.style.cssText='width:100%;border:1px solid #ccc;border-radius:6px';const cp=document.createElement('figcaption');cp.textContent=(i+1)+'. '+names[i];fg.append(im,cp);gal.append(fg);}
-    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=URL.createObjectURL(makeZip(files));a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';gal.prepend(a);$('#m-img').hidden=true;
+    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=URL.createObjectURL(makeZip(files));a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';gal.prepend(a);$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}
     $('#m-title').textContent='الأسماء ('+files.length+')';$('#m-msg').textContent='كل الشهادات أدناه بحجمها الكامل. اضغطي كليك يمين على أي صورة ← حفظ الصورة، أو نزّلي الكل بزر «تنزيل ZIP».';
   }catch(_){$('#m-msg').textContent='تعذّر تصدير كل الأسماء. جرّبي اسمًا اسمًا.';}
   nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;}
@@ -1680,14 +1692,14 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.hidden=true;})
 (function(){const sec=document.getElementById('tab-design');if(!sec)return;
 const ICON={theme:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
 text:'<path d="M5 6.5V5h14v1.5M12 5v14M9 19h6"/>',color:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/>',
-orn:'<path d="M12 4c2 3 5 3.5 7 3-1 3-3 4.5-7 5-4-.5-6-2-7-5 2 .5 5 0 7-3zM12 12.5V20M8.5 20h7"/>',send:'<path d="M4 12l16-8-6 16-2.5-6.5z"/>'};
-const NAMES={theme:'الثيم',text:'النص',color:'الألوان',orn:'الزخارف',send:'الطلب'};
-const ORD=['theme','text','color','orn','send'];
+orn:'<path d="M12 4c2 3 5 3.5 7 3-1 3-3 4.5-7 5-4-.5-6-2-7-5 2 .5 5 0 7-3zM12 12.5V20M8.5 20h7"/>',send:'<path d="M4 12l16-8-6 16-2.5-6.5z"/>',img:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/>'};
+const NAMES={theme:'الثيم',text:'النص',img:'الصور',color:'الألوان',orn:'الزخارف',send:'الطلب'};
+const ORD=['theme','text','img','color','orn','send'];
 const have=ORD.filter(k=>sec.querySelector('[data-tab="'+k+'"]'));
 const bar=document.createElement('nav');bar.id='tabbar';bar.setAttribute('role','tablist');bar.setAttribute('aria-label','أقسام التصميم');
 have.forEach(k=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.dataset.t=k;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg><span>'+NAMES[k]+'</span>';b.onclick=()=>show(k,true);bar.appendChild(b);});
 sec.appendChild(bar);
-function show(k,go){sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
+function show(k,go){try{setMv({text:'txt',orn:'orn',img:'img'}[k]||'lock');}catch(_){}sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
   if(go&&window.innerWidth<=860){const c=sec.querySelector('.controls'),pv=sec.querySelector('.preview');if(c&&pv){const y=c.getBoundingClientRect().top+scrollY-pv.offsetHeight-6;try{window.scrollTo({top:Math.max(0,y),behavior:'smooth'});}catch(e){window.scrollTo(0,Math.max(0,y));}}}}
 show('theme');
 })();
