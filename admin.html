@@ -453,7 +453,7 @@ body{background:var(--bg)}
 
       <div class="bar" id="openbar" hidden>
         <div><div class="t" id="openbar-t"></div><div class="hint" id="openbar-msg" role="status">الصور لا تُحفظ في الطلب. أضيفيها قبل إنشاء الصورة النهائية.</div></div>
-        <div class="row"><button type="button" class="btn primary" id="btn-save-order">حفظ التعديلات</button><button type="button" class="btn" id="btn-close-order">إغلاق</button></div>
+        <div class="row"><button type="button" class="btn primary" id="btn-save-order">حفظ التعديلات</button><button type="button" class="btn" id="btn-orig">↺ تصميم الزبون الأصلي</button><button type="button" class="btn" id="btn-close-order">إغلاق وتصميم جديد</button></div>
       </div>
 
       <div class="pv-head">
@@ -462,7 +462,7 @@ body{background:var(--bg)}
       </div>
       <div class="seg mvseg" id="seg-mv" role="group" aria-label="ماذا تحرّك"><button type="button" data-v="txt">الكتابة</button><button type="button" data-v="orn">الزخارف</button><button type="button" data-v="img">الصور</button><button type="button" data-v="lock"><svg class="ic-lock" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> قفل</button></div>
       <p class="hint mvhint" id="mv-hint"></p>
-      <div class="addbar"><button type="button" class="btn" id="btn-undo" aria-label="تراجع" disabled>↶ تراجع</button><button type="button" class="btn" id="btn-redo" aria-label="إعادة" disabled>↷ إعادة</button><button type="button" class="btn" id="btn-addimg">＋ صورة</button><button type="button" class="btn" id="btn-addtext">＋ نص</button></div>
+      <div class="addbar"><button type="button" class="btn" id="btn-undo" aria-label="تراجع" disabled>↶ تراجع</button><button type="button" class="btn" id="btn-redo" aria-label="إعادة" disabled>↷ إعادة</button><button type="button" class="btn" id="btn-addimg">＋ صورة</button><button type="button" class="btn" id="btn-addtext">＋ نص</button><button type="button" class="btn" id="btn-new">✦ تصميم جديد</button></div>
       <div class="addbar quick"><button type="button" class="btn" id="btn-reset">↺ استعادة الافتراضي</button><button type="button" class="btn" id="btn-clear">▢ ورقة فارغة</button></div>
       <div class="stage-wrap" id="stagewrap"><div id="stage"></div></div>
       <div class="tools" id="tools" hidden></div>
@@ -475,7 +475,7 @@ body{background:var(--bg)}
     <div class="m-panel">
       <div class="row" style="justify-content:space-between">
         <strong id="m-title">الصورة النهائية</strong>
-        <button type="button" class="btn primary" id="m-print" hidden>🖨 طباعة</button>
+        <a class="btn primary" id="m-dl" hidden download="certificate.png" style="text-decoration:none">⬇ تنزيل الصورة</a><button type="button" class="btn primary" id="m-print" hidden>🖨 طباعة</button>
         <button type="button" class="btn" id="m-close">إغلاق</button>
       </div>
       <p class="hint" id="m-msg">جارٍ تجهيز الصورة…</p>
@@ -980,6 +980,7 @@ const todayStr=l=>{const d=new Date();return l==='en'?MONTHS.en[d.getMonth()]+' 
 /* ---------- state ---------- */
 const S={orient:'l',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
   images:[],off:{},ln:[],bg:null,mv:'txt',dnv:'a',fmt:{},xt:[],st:null,dn:null,fontL:'classic',frame:'full',sel:-1,edited:{title:false,intro:false,name:false,subj:false,role:false,body:false,from:false,date:false},openOrder:null};
+const S0=JSON.stringify(S);
 const stage=$('#stage'),wrap=$('#stagewrap');
 stage.innerHTML='<div class="cert" id="cert"><img id="bg" alt="" draggable="false" hidden><div id="plain"></div><div id="layer"></div>'+(WM?'<div class="wm" id="wm"></div>':'')+'</div>';
 const cert=$('#cert'),bgEl=$('#bg'),plainEl=$('#plain'),layer=$('#layer');
@@ -1009,8 +1010,8 @@ function cleanDesign(d){
 }
 function loadDesign(raw){
   const d=cleanDesign(raw);if(!d)return false;
-  const imgs=d.images;delete d.images;Object.assign(S,d);S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);if(imgs.length)S.images=imgs;S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
-  syncControls();renderImgs();render();renderTools();return true;
+  const imgs=d.images;delete d.images;Object.assign(S,d);S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
+  syncControls();renderImgs();render();renderTools();try{histReset();}catch(_){}return true;
 }
 const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromCharCode(c));return btoa(x);};
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0)));
@@ -1309,6 +1310,7 @@ function render(){
   if(typeof syncOrderItem==='function')syncOrderItem();
   if(typeof updHint==='function')updHint();
 }
+function newDesign(){Object.assign(S,JSON.parse(S0));setOrient(S.orient);S.openOrder=null;S.sel=-1;S.st=null;S.folder=null;S.themeTouched=false;S.bg=null;S.images=[];syncControls();$('#f-date').value=S.date;$('#f-subj').value=S.subj;syncTheme();paintColors();applyDefaults();renderImgs();setScale();render();clearTimeout(bgTimer);setBg();renderTools();try{histReset();}catch(_){}const ob=document.getElementById('openbar');if(ob)ob.hidden=true;}
 function setOrient(o){S.orient=o==='p'?'p':'l';W=S.orient==='p'?906:1280;H=S.orient==='p'?1280:906;stage.style.setProperty('--cw',W+'px');stage.style.setProperty('--ch',H+'px');wrap.dataset.o=S.orient;const t=$('#themes');if(t)t.classList.toggle('port',S.orient==='p');setScale();}
 function setScale(){const w=wrap.clientWidth;scale=w/W;stage.style.setProperty('--hs',Math.round(Math.max(40,Math.min(130,36/scale)))+'px');stage.style.transform=`scale(${scale})`;wrap.style.height=(H*scale)+'px';}
 if('ResizeObserver' in window)new ResizeObserver(setScale).observe(wrap);else window.addEventListener('resize',setScale);
@@ -1429,7 +1431,7 @@ function renderTools(){setTimeout(revealSel,30);
   const head=t=>`<div class="tl-h"><b>${t}</b><button type="button" class="btn ghost" data-a="close">إغلاق ✕</button></div>`;
   if(S.sel>=0&&S.images[S.sel]){
     const im=S.images[S.sel];
-    box.innerHTML=head('الصورة')+`<div class="tl-r"><span>العرض</span><input type="range" min="40" max="${W}" value="${im.w}" data-a="iw"><b id="v-iw">${im.w}</b></div><div class="tl-r"><span>الارتفاع</span><input type="range" min="30" max="${H}" value="${imgH(im)}" data-a="ih"><b id="v-ih">${imgH(im)}</b></div><div class="tl-r"><span>تكبير</span><input type="range" min="100" max="400" value="${im.zm||100}" data-a="izm"></div><div class="tl-r"><span>الشفافية</span><input type="range" min="10" max="100" value="${im.op}" data-a="iop"></div><div class="tl-g"><select data-a="fit" aria-label="ملاءمة الصورة"><option value="cover"${imgFit(im)==='cover'?' selected':''}>ملء مع قصّ</option><option value="100% 100%"${imgFit(im)==='100% 100%'?' selected':''}>تمديد</option><option value="contain"${imgFit(im)==='contain'?' selected':''}>الصورة كاملة</option></select><select data-a="shape" aria-label="شكل الصورة"><option value="round"${im.shape==='round'?' selected':''}>دائرة بإطار</option><option value="square"${im.shape==='square'?' selected':''}>مربع بإطار</option><option value="free"${im.shape==='free'?' selected':''}>بدون إطار</option></select><select data-a="layer" aria-label="موضع الصورة"><option value="front"${im.layer==='front'?' selected':''}>أمام الكتابة</option><option value="back"${im.layer==='back'?' selected':''}>خلف الكتابة</option></select></div>`+nav+`<div class="tl-g"><button type="button" class="btn ghost" data-a="pan" style="${im.pan?'background:#222;color:#fff':''}">${im.pan?'✔ ':''}تحريك الصورة داخل الإطار</button><button type="button" class="btn ghost" data-a="iar">نسبة الصورة الأصلية</button><button type="button" class="btn ghost" data-a="del">حذف الصورة</button></div>`;
+    box.innerHTML=head('الصورة')+`<div class="tl-r"><span>العرض</span><input type="range" min="40" max="${W}" value="${im.w}" data-a="iw"><b id="v-iw">${im.w}</b></div><div class="tl-r"><span>الارتفاع</span><input type="range" min="30" max="${H}" value="${imgH(im)}" data-a="ih"><b id="v-ih">${imgH(im)}</b></div><div class="tl-r"><span>تكبير</span><input type="range" min="100" max="400" value="${im.zm||100}" data-a="izm"></div><div class="tl-r"><span title="أعلى ← أسفل">↕ رأسي</span><input type="range" dir="ltr" min="0" max="100" value="${im.py==null?50:im.py}" data-a="ipy" aria-label="موضع الصورة: أعلى إلى أسفل" title="يسار = أعلى الصورة، يمين = أسفلها"></div><div class="tl-r"><span title="يسار ← يمين">↔ أفقي</span><input type="range" dir="ltr" min="0" max="100" value="${im.px==null?50:im.px}" data-a="ipx" aria-label="موضع الصورة: يسار إلى يمين" title="يسار = يسار الصورة، يمين = يمينها"></div><div class="tl-r"><span>الشفافية</span><input type="range" min="10" max="100" value="${im.op}" data-a="iop"></div><div class="tl-g"><select data-a="fit" aria-label="ملاءمة الصورة"><option value="cover"${imgFit(im)==='cover'?' selected':''}>ملء مع قصّ</option><option value="100% 100%"${imgFit(im)==='100% 100%'?' selected':''}>تمديد</option><option value="contain"${imgFit(im)==='contain'?' selected':''}>الصورة كاملة</option></select><select data-a="shape" aria-label="شكل الصورة"><option value="round"${im.shape==='round'?' selected':''}>دائرة بإطار</option><option value="square"${im.shape==='square'?' selected':''}>مربع بإطار</option><option value="free"${im.shape==='free'?' selected':''}>بدون إطار</option></select><select data-a="layer" aria-label="موضع الصورة"><option value="front"${im.layer==='front'?' selected':''}>أمام الكتابة</option><option value="back"${im.layer==='back'?' selected':''}>خلف الكتابة</option></select></div>`+nav+`<div class="tl-g"><button type="button" class="btn ghost" data-a="pan" style="${im.pan?'background:#222;color:#fff':''}">${im.pan?'✔ ':''}تحريك الصورة داخل الإطار</button><button type="button" class="btn ghost" data-a="iar">نسبة الصورة الأصلية</button><button type="button" class="btn ghost" data-a="del">حذف الصورة</button></div>`;
     box.hidden=false;return;}
   const el=S.st?selEl():null;
   if(!el){box.hidden=true;box.innerHTML='';return;}
@@ -1470,6 +1472,7 @@ toolsBox.addEventListener('input',e=>{
     if(a==='iw'){im.w=+e.target.value;clampImg(im);applyBox(S.sel);syncImgTools();return;}
     if(a==='ih'){im.h=+e.target.value;clampImg(im);applyBox(S.sel);syncImgTools();return;}
     if(a==='izm'){im.zm=+e.target.value;applyBox(S.sel);return;}
+    if(a==='ipx'||a==='ipy'){im[a==='ipx'?'px':'py']=+e.target.value;applyBox(S.sel);return;}
     if(a==='iop'){im.op=+e.target.value;const el=layer.querySelector(`.c-img[data-i="${S.sel}"]`);if(el)el.style.opacity=im.op/100;return;}
     return;}
   const st0=S.st;
@@ -1651,6 +1654,7 @@ function histRestore(js){const d=JSON.parse(js);d.images=(d.images||[]).map(im=>
   const c=cleanDesign(d);if(!c)return;const imgs=c.images;delete c.images;Object.assign(S,c);S.dnv=c.dn==null?'a':String(c.dn);S.dcv=c.dc==null?'a':String(c.dc);S.sgv=c.sg==null?'a':String(c.sg);setOrient(c.or);S.images=imgs;S.sel=-1;S.st=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
   ['title','intro','name','subj','role','body','from','date'].forEach(k=>{const el=$('#f-'+k);if(el)el.value=S[k];});
   syncControls();renderImgs();render();renderTools();}
+function histReset(){HIST.u=[];HIST.r=[];try{HIST.cur=histSnap();}catch(_){HIST.cur=null;}histBtns();}
 function histBtns(){const u=$('#btn-undo'),r=$('#btn-redo');if(u)u.disabled=!HIST.u.length;if(r)r.disabled=!HIST.r.length;}
 function histCommit(){if(HIST.busy||!HIST.cur)return;let n;try{n=histSnap();}catch(_){return;}if(n===HIST.cur)return;HIST.u.push(HIST.cur);if(HIST.u.length>60)HIST.u.shift();HIST.cur=n;HIST.r=[];histBtns();}
 function histSoon(){clearTimeout(HIST.tm);HIST.tm=setTimeout(histCommit,350);}
@@ -1666,8 +1670,9 @@ $('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset
 
 /* final image */
 const modal=$('#modal');
-async function makeImage(){
-  $('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-msg').textContent='جارٍ تجهيز الصورة…';
+function modalReset(){const g=document.getElementById('m-gal');if(g)g.remove();$('#m-title').textContent='الصورة النهائية';const dl=$('#m-dl');if(dl)dl.hidden=true;}
+async function makeImage(keep){
+  if(!keep)modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-msg').textContent='جارٍ تجهيز الصورة…';
   try{
     if(typeof html2canvas!=='function')throw new Error('no lib');
     if(S.sel!==-1||S.st){S.sel=-1;S.st=null;markSel();renderTools();}
@@ -1677,7 +1682,8 @@ async function makeImage(){
     const run=sc=>html2canvas($('#cert'),{scale:sc,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}});
     let cv;try{cv=await run(WM?1.5:3);}catch(_){cv=await run(2);}
     $('#m-img').src=cv.toDataURL('image/png');$('#m-img').hidden=false;window.lastCv=cv;{const pb=$('#m-print');if(pb)pb.hidden=false;}
-    $('#m-msg').textContent='اضغط مطولاً على الصورة لحفظها في هاتفك، أو انقر بزر الفأرة الأيمن على الحاسوب.';
+    if(!keep)cv.toBlob(b=>{if(!b)return;if(window.__dlu)URL.revokeObjectURL(window.__dlu);window.__dlu=URL.createObjectURL(b);const dl=$('#m-dl'),oo=S.openOrder&&byId(S.openOrder);dl.href=window.__dlu;dl.download=(((oo&&oo.client)||'certificate')+(S.name?'-'+S.name:'')).replace(/[\\/:*?"<>|]/g,'').slice(0,60)+'.png';dl.hidden=false;},'image/png');
+    $('#m-msg').textContent='اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';
   }catch(err){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
 }
 
@@ -1704,11 +1710,11 @@ function nmApply(n,g){const old=defaults();['title','intro','role','body','from'
 async function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
   const names=[...sel.options].map(o=>o.value).filter(Boolean),gs=[...sel.options].filter(o=>o.value).map(o=>o.dataset.g||'');if(!names.length)return;const keep=S.name,keepG=S.gender,t0=btn.textContent;btn.disabled=true;const files=[];let gal=document.getElementById('m-gal');if(!gal){gal=document.createElement('div');gal.id='m-gal';gal.style.cssText='display:flex;flex-direction:column;gap:18px;margin-top:10px';$('#m-img').after(gal);}gal.innerHTML='';
   try{modal.hidden=false;
-    for(let i=0;i<names.length;i++){btn.textContent='جارٍ التصدير '+(i+1)+'/'+names.length;nmApply(names[i],gs[i]);window.lastCv=null;await makeImage();
+    for(let i=0;i<names.length;i++){btn.textContent='جارٍ التصدير '+(i+1)+'/'+names.length;nmApply(names[i],gs[i]);window.lastCv=null;await makeImage(true);
       const cv=window.lastCv;if(!cv)throw new Error('x');const bl=await new Promise(r=>cv.toBlob(r,'image/png'));
       files.push({name:String(i+1).padStart(2,'0')+'-'+names[i].replace(/[\\/:*?"<>|]/g,'').slice(0,40)+'.png',data:new Uint8Array(await bl.arrayBuffer())});
       const fg=document.createElement('figure');fg.style.cssText='margin:0;text-align:center;font-size:14px';const im=document.createElement('img');im.src=URL.createObjectURL(bl);im.alt=names[i];im.style.cssText='width:100%;border:1px solid #ccc;border-radius:6px';const cp=document.createElement('figcaption');cp.textContent=(i+1)+'. '+names[i];fg.append(im,cp);gal.append(fg);}
-    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=URL.createObjectURL(makeZip(files));a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';gal.prepend(a);$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}
+    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=URL.createObjectURL(makeZip(files));a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';gal.prepend(a);$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}{const dl=$('#m-dl');if(dl)dl.hidden=true;}
     $('#m-title').textContent='الأسماء ('+files.length+')';$('#m-msg').textContent='كل الشهادات أدناه بحجمها الكامل. اضغطي كليك يمين على أي صورة ← حفظ الصورة، أو نزّلي الكل بزر «تنزيل ZIP».';
   }catch(_){$('#m-msg').textContent='تعذّر تصدير كل الأسماء. جرّبي اسمًا اسمًا.';}
   nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;}
@@ -1786,7 +1792,7 @@ const byId=id=>orders.find(o=>String(o.id)===id);
 function paintView(){let b=document.getElementById('viewbar');if(!b){b=document.createElement('div');b.id='viewbar';b.style.cssText='display:flex;gap:8px;margin:10px 0';b.innerHTML='<button type="button" class="btn" data-v="act">الطلبات</button><button type="button" class="btn" data-v="arch">المحفوظات <span id="acount"></span></button>';$('#sum').before(b);b.onclick=e=>{const x=e.target.closest('[data-v]');if(x){view=x.dataset.v;renderOrders();}};}
   b.querySelectorAll('[data-v]').forEach(x=>{const on=x.dataset.v===view;x.classList.toggle('primary',on);});const n=orders.filter(o=>o.archived).length;$('#acount').textContent=n?'('+n+')':'';}
 $('#olist').addEventListener('click',e=>{
-  const pv=e.target.closest('[data-pv]');if(pv){$('#m-img').src=pv.src;$('#m-img').hidden=false;$('#m-msg').textContent='معاينة الطلب كما أرسلها الزبون.';$('#m-title').textContent='معاينة الطلب';modal.hidden=false;return;}
+  const pv=e.target.closest('[data-pv]');if(pv){modalReset();$('#m-img').src=pv.src;$('#m-img').hidden=false;$('#m-msg').textContent='معاينة الطلب كما أرسلها الزبون.';$('#m-title').textContent='معاينة الطلب';modal.hidden=false;return;}
   const ac=e.target.closest('[data-acc]');if(ac){const o=byId(ac.dataset.acc);if(!o)return;const ns=ac.dataset.st;store.update(o.id,{status:ns});
     const q=Math.max(1,+o.qty||1),pr=+o.price||0,nm=(o.client||''),it=(o.item||'—'),tot=pr?'\nالسعر: '+(q*pr)+' MRU':'';
     const tx={progress:'مرحباً '+nm+' 👋\nقبلنا طلبك ✓\nالطلب: '+it+'\nالكمية: '+q+tot+'\nسنتواصل معك قريباً. شكراً لثقتك بنا.',
@@ -1841,8 +1847,10 @@ function openOrder(id){
   sel.hidden=!nl.length;sel.innerHTML=nl.length?'<option value="">الأسماء ('+nl.length+')</option>'+nl.map(n=>'<option data-g="'+n.g+'" value="'+esc(n.n)+'">'+esc(n.n)+(n.g==='f'?' (أنثى)':n.g==='m'?' (ذكر)':'')+'</option>').join(''):'';
   showTab('design');
 }
-$('#btn-save-order').onclick=()=>{if(!S.openOrder)return;store.update(S.openOrder,{design:designConfig(true)}).then(()=>{$('#openbar-msg').textContent='تم حفظ التعديلات في الطلب.';});};
-$('#btn-close-order').onclick=()=>{S.openOrder=null;$('#openbar').hidden=true;};
+$('#btn-save-order').onclick=()=>{if(!S.openOrder)return;const o=byId(S.openOrder),upd={design:designConfig(true)};if(o&&!o.design0&&o.design)upd.design0=o.design;let note='';if(JSON.stringify(upd).length>900000){upd.design=designConfig(false);note=' (حُفظ التصميم بدون الصور لأن حجمها كبير)';}store.update(S.openOrder,upd).then(()=>{$('#openbar-msg').textContent='تم حفظ التعديلات. تصميم الزبون الأصلي محفوظ ويمكن استرجاعه.'+note;});};
+$('#btn-orig').onclick=()=>{const keep=S.openOrder,o=keep&&byId(keep);if(!o)return;const d=o.design0||o.design;if(d&&loadDesign(d)){S.openOrder=keep;$('#openbar').hidden=false;$('#openbar-msg').textContent='تم استرجاع تصميم الزبون الأصلي. اضغطي «حفظ التعديلات» لتثبيته في الطلب.';}};
+$('#btn-close-order').onclick=()=>{newDesign();};
+$('#btn-new').onclick=()=>{const b=$('#btn-new');if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='تأكيد: مسح كل شيء؟';setTimeout(()=>{b.dataset.c='';b.textContent='✦ تصميم جديد';},3500);return;}b.dataset.c='';b.textContent='✦ تصميم جديد';newDesign();};
 
 
 /* init */
