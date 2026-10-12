@@ -104,8 +104,9 @@ a.btn.primary{color:var(--accent-fg)}
 .t-role,.t-date{font-family:var(--font-ui);font-weight:600;color:var(--ink)}
 .c-img{position:absolute;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .c-img .ph{position:absolute;inset:0;background-repeat:no-repeat;background-position:center;background-size:cover;box-sizing:border-box}
-.c-img.round .ph{border:5px solid var(--acc);border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,.25)}
-.c-img.square .ph{border:5px solid var(--acc);border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.c-img.nob .ph{border:0!important;box-shadow:none!important}
+.c-img.round .ph{border:5px solid var(--ibc,var(--acc));border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.c-img.square .ph{border:5px solid var(--ibc,var(--acc));border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.25)}
 .c-img.free .ph{background-size:100% 100%}
 .c-img.sel{outline:3px dashed #222;outline-offset:4px;box-shadow:0 0 0 2px #fff}
 .c-img .rh{display:none;position:absolute;right:-12px;bottom:-12px;width:40px;height:40px;border-radius:50%;background:#222;border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:nwse-resize;touch-action:none}
@@ -967,11 +968,11 @@ let scale=1;
 const dflt=k=>{const T=THEMES[S.theme];if(!T)return PLAIN[k];if(T.svg)return k==='paper'?T.pp:k==='deep'?T.dd:k==='accent'?T.aa:TDEF.ink;if(T.dI&&k==='ink')return T.dI;if(T.dA&&k==='accent')return T.dA;return k==='paper'?h2(T.p0):k==='deep'?h2(T.n0.map(c=>Math.min(255,Math.round(c*1.6+14)))):TDEF[k];};
 const eff=k=>S[k]||dflt(k);
 const cut=(v,n)=>String(v==null?'':v).slice(0,n);
-const designConfig=imgs=>{const d={v:3,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,ar,x,y,w,h,fit,shape,layer,op,z})=>({src,ar,x,y,w,h,fit,shape,layer,op,z}));return d;};
+const designConfig=imgs=>{const d={v:3,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
 const num=(v,a,b,d)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):d;};
 function cleanImg(im){
   if(!im||typeof im.src!=='string'||im.src.length>450000||!/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(im.src))return null;
-  return {src:im.src,ar:num(im.ar,0.05,20,1),x:Math.round(num(im.x,-2000,2000,100)),y:Math.round(num(im.y,-2000,2000,100)),w:Math.round(num(im.w,40,1100,190)),shape:['round','square','free'].includes(im.shape)?im.shape:'round',layer:im.layer==='back'?'back':'front',z:im.z==null?undefined:Math.round(num(im.z,0,9999,0)),op:Math.round(num(im.op,10,100,100)),h:Math.round(num(im.h,30,1400,im.shape==='free'?num(im.w,40,1100,190)*num(im.ar,0.05,20,1):num(im.w,40,1100,190))),fit:['cover','fill','contain'].includes(im.fit)?im.fit:undefined,px:Math.round(num(im.px,0,100,50)),py:Math.round(num(im.py,0,100,50)),zm:Math.round(num(im.zm,100,400,100))};
+  return {src:im.src,ar:num(im.ar,0.05,20,1),x:Math.round(num(im.x,-2000,2000,100)),y:Math.round(num(im.y,-2000,2000,100)),w:Math.round(num(im.w,40,1100,190)),shape:['round','square','free'].includes(im.shape)?im.shape:'round',layer:im.layer==='back'?'back':'front',z:im.z==null?undefined:Math.round(num(im.z,0,9999,0)),op:Math.round(num(im.op,10,100,100)),h:Math.round(num(im.h,30,1400,im.shape==='free'?num(im.w,40,1100,190)*num(im.ar,0.05,20,1):num(im.w,40,1100,190))),fit:['cover','fill','contain'].includes(im.fit)?im.fit:undefined,px:Math.round(num(im.px,0,100,50)),py:Math.round(num(im.py,0,100,50)),zm:Math.round(num(im.zm,100,400,100)),bd:im.bd?1:undefined,bc:/^#[0-9a-fA-F]{6}$/.test(im.bc||'')?im.bc:undefined};
 }
 const OFFK=['title','intro','name','role','body','from','date','dvh','dvt','dvb','dvr','dvf','dvm','dvq','dvp','dvs','dvu'];
 function cleanDsz(o){const r={};if(o&&typeof o==='object')['dvh','dvt','dvb','dvr','dvf','dvm','dvq','dvp','dvs','dvu'].forEach(k=>{const v=o[k];if(Array.isArray(v)&&v.length>=2){const d=k==='dvh'?[1,1,0,1,0]:[1,1,0,0,0],a=num(v[0],0.3,4,1),b=num(v[1],0.4,4,1),rt=Math.round(num(v[2],-180,180,d[2])),fy=v[3]==null?d[3]:(+v[3]?1:0),fx=v[4]==null?d[4]:(+v[4]?1:0);if(Math.abs(a-1)>.01||Math.abs(b-1)>.01||rt!==d[2]||fy!==d[3]||fx!==d[4])r[k]=[Math.round(a*100)/100,Math.round(b*100)/100,rt,fy,fx];}});return r;}
@@ -1169,7 +1170,7 @@ const imgBS=im=>{const f=imgFit(im),z=(im.zm||100)/100;if(f!=='cover'||z<=1.001)
 const imgBP=im=>(im.px==null?50:im.px)+'% '+(im.py==null?50:im.py)+'%';
 function panRange(im){const w=im.w,h=imgH(im),ar=im.ar||1,z=(im.zm||100)/100;if(imgFit(im)!=='cover')return [0,0];const s=Math.max(w,h/ar)*z;return [s-w,s*ar-h];}
 function imgsHTML(){
-  return S.images.map((im,i)=>`<div class="c-img ${im.shape}${i===S.sel?' sel':''}" data-i="${i}" style="left:${im.x}px;top:${im.y}px;width:${im.w}px;height:${imgH(im)}px;opacity:${im.op/100};z-index:${im.layer==='back'?1:(im.z!=null?10+im.z:6)}"><div class="ph" style="background-image:url('${im.src}');background-size:${imgBS(im)};background-position:${imgBP(im)}"></div><i class="rh"></i><i class="rhx"></i><i class="rhy"></i></div>`).join('');
+  return S.images.map((im,i)=>`<div class="c-img ${im.shape}${im.bd?' nob':''}${i===S.sel?' sel':''}" data-i="${i}" style="left:${im.x}px;top:${im.y}px;width:${im.w}px;height:${imgH(im)}px;opacity:${im.op/100};z-index:${im.layer==='back'?1:(im.z!=null?10+im.z:6)}"><div class="ph" style="${im.bc?'border-color:'+im.bc+';':''}background-image:url(\'${im.src}\');background-size:${imgBS(im)};background-position:${imgBP(im)}"></div><i class="rh"></i><i class="rhx"></i><i class="rhy"></i></div>`).join('');
 }
 function fitAll(){
   layer.querySelectorAll('.tb').forEach(b=>{
@@ -1408,7 +1409,7 @@ function renderTools(){setTimeout(revealSel,30);
   const head=t=>`<div class="tl-h"><b>${t}</b><button type="button" class="btn ghost" data-a="close">إغلاق ✕</button></div>`;
   if(S.sel>=0&&S.images[S.sel]){
     const im=S.images[S.sel];
-    box.innerHTML=head('الصورة')+`<div class="tl-r"><span>العرض</span><input type="range" min="40" max="${W}" value="${im.w}" data-a="iw"><b id="v-iw">${im.w}</b></div><div class="tl-r"><span>الارتفاع</span><input type="range" min="30" max="${H}" value="${imgH(im)}" data-a="ih"><b id="v-ih">${imgH(im)}</b></div><div class="tl-r"><span>تكبير</span><input type="range" min="100" max="400" value="${im.zm||100}" data-a="izm"></div><div class="tl-r"><span title="أعلى ← أسفل">↕ رأسي</span><input type="range" dir="ltr" min="0" max="100" value="${im.py==null?50:im.py}" data-a="ipy" aria-label="موضع الصورة: أعلى إلى أسفل" title="يسار = أعلى الصورة، يمين = أسفلها"></div><div class="tl-r"><span title="يسار ← يمين">↔ أفقي</span><input type="range" dir="ltr" min="0" max="100" value="${im.px==null?50:im.px}" data-a="ipx" aria-label="موضع الصورة: يسار إلى يمين" title="يسار = يسار الصورة، يمين = يمينها"></div><div class="tl-r"><span>الشفافية</span><input type="range" min="10" max="100" value="${im.op}" data-a="iop"></div><div class="tl-g"><select data-a="fit" aria-label="ملاءمة الصورة"><option value="cover"${imgFit(im)==='cover'?' selected':''}>ملء مع قصّ</option><option value="100% 100%"${imgFit(im)==='100% 100%'?' selected':''}>تمديد</option><option value="contain"${imgFit(im)==='contain'?' selected':''}>الصورة كاملة</option></select><select data-a="shape" aria-label="شكل الصورة"><option value="round"${im.shape==='round'?' selected':''}>دائرة بإطار</option><option value="square"${im.shape==='square'?' selected':''}>مربع بإطار</option><option value="free"${im.shape==='free'?' selected':''}>بدون إطار</option></select><select data-a="layer" aria-label="موضع الصورة"><option value="front"${im.layer==='front'?' selected':''}>أمام الكتابة</option><option value="back"${im.layer==='back'?' selected':''}>خلف الكتابة</option></select></div>`+nav+`<div class="tl-g"><button type="button" class="btn ghost" data-a="pan" style="${im.pan?'background:#222;color:#fff':''}">${im.pan?'✔ ':''}تحريك الصورة داخل الإطار</button><button type="button" class="btn ghost" data-a="iar">نسبة الصورة الأصلية</button><button type="button" class="btn ghost" data-a="del">حذف الصورة</button></div>`;
+    box.innerHTML=head('الصورة')+`<div class="tl-r"><span>العرض</span><input type="range" min="40" max="${W}" value="${im.w}" data-a="iw"><b id="v-iw">${im.w}</b></div><div class="tl-r"><span>الارتفاع</span><input type="range" min="30" max="${H}" value="${imgH(im)}" data-a="ih"><b id="v-ih">${imgH(im)}</b></div><div class="tl-r"><span>تكبير</span><input type="range" min="100" max="400" value="${im.zm||100}" data-a="izm"></div><div class="tl-r"><span title="أعلى ← أسفل">↕ رأسي</span><input type="range" dir="ltr" min="0" max="100" value="${im.py==null?50:im.py}" data-a="ipy" aria-label="موضع الصورة: أعلى إلى أسفل" title="يسار = أعلى الصورة، يمين = أسفلها"></div><div class="tl-r"><span title="يسار ← يمين">↔ أفقي</span><input type="range" dir="ltr" min="0" max="100" value="${im.px==null?50:im.px}" data-a="ipx" aria-label="موضع الصورة: يسار إلى يمين" title="يسار = يسار الصورة، يمين = يمينها"></div><div class="tl-r"><span>الشفافية</span><input type="range" min="10" max="100" value="${im.op}" data-a="iop"></div><div class="tl-g"><select data-a="fit" aria-label="ملاءمة الصورة"><option value="cover"${imgFit(im)==='cover'?' selected':''}>ملء مع قصّ</option><option value="100% 100%"${imgFit(im)==='100% 100%'?' selected':''}>تمديد</option><option value="contain"${imgFit(im)==='contain'?' selected':''}>الصورة كاملة</option></select><select data-a="shape" aria-label="شكل الصورة"><option value="round"${im.shape==='round'?' selected':''}>دائرة بإطار</option><option value="square"${im.shape==='square'?' selected':''}>مربع بإطار</option><option value="free"${im.shape==='free'?' selected':''}>بدون إطار</option></select><select data-a="layer" aria-label="موضع الصورة"><option value="front"${im.layer==='front'?' selected':''}>أمام الكتابة</option><option value="back"${im.layer==='back'?' selected':''}>خلف الكتابة</option></select></div>`+nav+`<div class="tl-g"><button type="button" class="btn ghost" data-a="pan" style="${im.pan?'background:#222;color:#fff':''}">${im.pan?'✔ ':''}تحريك الصورة داخل الإطار</button><button type="button" class="btn ghost" data-a="iar">نسبة الصورة الأصلية</button><button type="button" class="btn ghost" data-a="ires">إعادة الضبط</button><button type="button" class="btn ghost" data-a="ibd">${im.bd?'إظهار الإطار':'إخفاء الإطار'}</button><label class="btn ghost" style="display:flex;align-items:center;gap:6px;justify-content:center"${im.bd||im.shape==='free'?' hidden':''}>لون الإطار <input type="color" data-a="ibc" value="${im.bc||'#b8913a'}" style="width:34px;height:28px;padding:0;border:0;background:none"></label><button type="button" class="btn ghost" data-a="del">حذف الصورة</button></div>`;
     box.hidden=false;return;}
   const el=S.st?selEl():null;
   if(!el){box.hidden=true;box.innerHTML='';return;}
@@ -1449,6 +1450,7 @@ toolsBox.addEventListener('input',e=>{
     if(a==='iw'){im.w=+e.target.value;clampImg(im);applyBox(S.sel);syncImgTools();return;}
     if(a==='ih'){im.h=+e.target.value;clampImg(im);applyBox(S.sel);syncImgTools();return;}
     if(a==='izm'){im.zm=+e.target.value;applyBox(S.sel);return;}
+    if(a==='ibc'){im.bc=e.target.value;const el=layer.querySelector(`.c-img[data-i="${S.sel}"] .ph`);if(el)el.style.borderColor=im.bc;return;}
     if(a==='ipx'||a==='ipy'){im[a==='ipx'?'px':'py']=+e.target.value;applyBox(S.sel);return;}
     if(a==='iop'){im.op=+e.target.value;const el=layer.querySelector(`.c-img[data-i="${S.sel}"]`);if(el)el.style.opacity=im.op/100;return;}
     return;}
@@ -1472,6 +1474,7 @@ toolsBox.addEventListener('change',e=>{
     if(a==='fit'){im.fit=e.target.value==='100% 100%'?'fill':e.target.value;render();return;}
     if(a==='shape'){const v=e.target.value;if(v==='free'){im.h=Math.round(im.w*im.ar);im.fit='fill';}else if(im.shape==='free'){im.h=im.w;im.fit='cover';}im.shape=v;clampImg(im);render();renderTools();return;}
     if(a==='layer'){im.layer=e.target.value;render();return;}
+    if(a==='ibc'){im.bc=e.target.value;const el=layer.querySelector(`.c-img[data-i="${S.sel}"] .ph`);if(el)el.style.borderColor=im.bc;return;}
     return;}
   if(S.st&&S.st.startsWith('l:')&&a==='lstyle'){const l=lnOf(S.st);l.s=e.target.value;render();renderTools();return;}
   const st=S.st;if(!st||a!=='font')return;const isX=st.startsWith('x:'),fm=isX?xtOf(st):fmOf(st);
@@ -1483,6 +1486,8 @@ toolsBox.addEventListener('click',e=>{
   if(im){
     if(a==='n'){im.x+=+b.dataset.dx;im.y+=+b.dataset.dy;clampImg(im);applyBox(S.sel);return;}
     if(a==='pan'){im.pan=!im.pan;if(im.pan&&(imgFit(im)!=='cover'))im.fit='cover';render();renderTools();return;}
+    if(a==='ires'){im.zm=100;im.px=50;im.py=50;im.pan=false;im.bd=0;im.bc=undefined;im.fit=undefined;render();renderTools();return;}
+    if(a==='ibd'){im.bd=im.bd?0:1;render();renderTools();return;}
     if(a==='iar'){im.h=Math.round(im.w*im.ar);clampImg(im);applyBox(S.sel);syncImgTools();return;}
     if(a==='del'){S.images.splice(S.sel,1);S.sel=-1;renderImgs();render();renderTools();return;}
     return;}
@@ -1731,7 +1736,7 @@ $('#btn-submit').onclick=async()=>{
     if(!order)throw new Error('big');
     $('#m-msg').textContent='جارٍ إرسال الطلب…';const ref={id:await sendOrder(order)};
     $('#m-title').textContent='تم إرسال طلبك ✓';$('#m-msg').textContent='وصلنا طلبك وسنتواصل معك قريباً على رقمك.';
-    const wa=$('#m-wa');if(WA){const tx='طلب جديد 🎓\nالاسم: '+order.client+'\nالهاتف: '+order.phone+'\nالطلب: '+order.item+'\nالكمية: '+order.qty+(order.notes?'\nملاحظات: '+order.notes:'')+'\nرقم الطلب: '+ref.id;const link='https://wa.me/'+WA+'?text='+encodeURIComponent(tx);wa.href=link;wa.textContent='أرسل الطلب على واتساب';wa.hidden=false;$('#m-msg').textContent='وصلنا طلبك ✓ جارٍ فتح واتساب… اضغط «إرسال» هناك لتصلنا نسخة من الطلب. وإن لم يفتح اضغط الزر.';setTimeout(()=>{try{location.href=link;}catch(_){}},900);}
+    const wa=$('#m-wa');if(WA){const tx='طلب جديد\nالاسم: '+order.client+'\nالهاتف: '+order.phone+'\nالطلب: '+order.item+'\nالكمية: '+order.qty+(order.notes?'\nملاحظات: '+order.notes:'')+'\nرقم الطلب: '+ref.id;const link='https://wa.me/'+WA+'?text='+encodeURIComponent(tx);wa.href=link;wa.textContent='أرسل الطلب على واتساب';wa.hidden=false;$('#m-msg').textContent='وصلنا طلبك ✓ جارٍ فتح واتساب… اضغط «إرسال» هناك لتصلنا نسخة من الطلب. وإن لم يفتح اضغط الزر.';setTimeout(()=>{try{location.href=link;}catch(_){}},900);}
   }catch(e){
     modal.hidden=true;er.textContent=(e&&e.message==='big')?'الصور كبيرة جداً. قلّل عددها أو حجمها ثم أعد الإرسال.':'تعذّر إرسال الطلب. تحقق من الاتصال وأعد المحاولة. ('+((e&&(e.code||e.message))||'؟')+')';er.hidden=false;
   }finally{btn.disabled=false;btn.textContent=t0;}
