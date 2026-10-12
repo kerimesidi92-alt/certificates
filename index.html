@@ -336,6 +336,13 @@ body{background:var(--bg)}
 #tab-design:has(#tools:not([hidden])) #tabbar{display:none}
 
 #btn-export{display:none!important}
+@media (min-width:861px){
+  .tools{right:auto!important;transform:none!important;top:12px;bottom:auto!important;max-height:calc(100vh - 24px)!important;border-radius:16px!important;align-content:start;box-shadow:0 14px 34px rgba(0,0,0,.35)!important}
+}
+/* while an editing panel is open, hide the secondary rows so the certificate stays in view */
+.preview:has(.tools:not([hidden])) .pv-head,.preview:has(.tools:not([hidden])) .mvseg,.preview:has(.tools:not([hidden])) .mvhint,.preview:has(.tools:not([hidden])) .addbar.quick,.preview:has(.tools:not([hidden])) #btn-addimg,.preview:has(.tools:not([hidden])) #btn-addtext,.preview:has(.tools:not([hidden])) #btn-new,.preview:has(.tools:not([hidden])) #openbar-msg,.preview:has(.tools:not([hidden])) #btn-close-order,.preview:has(.tools:not([hidden])) #nm-sel,.preview:has(.tools:not([hidden])) #btn-zip{display:none}
+.preview:has(.tools:not([hidden])) .addbar{grid-template-columns:1fr 1fr}
+@media (max-width:860px){.tools{max-height:40vh!important}}
 </style>
 
 <div class="wrap" dir="rtl" lang="ar">
@@ -1402,7 +1409,7 @@ const fontList=()=>S.lang==='ar'?AR_F:LA_F;
 const toHex=c=>{const m=String(c).match(/\d+/g);return m?'#'+m.slice(0,3).map(v=>(+v).toString(16).padStart(2,'0')).join(''):'#111111';};
 const fmOf=k=>(S.fmt[k]=S.fmt[k]||{});
 function syncImgTools(){const im=S.images[S.sel],b=$('#tools');if(!im||!b)return;const w=b.querySelector('[data-a=iw]'),h=b.querySelector('[data-a=ih]');if(w){w.max=W;w.value=im.w;}if(h){h.max=H;h.value=imgH(im);}const a=b.querySelector('#v-iw'),c=b.querySelector('#v-ih');if(a)a.textContent=im.w;if(c)c.textContent=imgH(im);}
-function revealSel(){const box=$('#tools');if(!box||box.hidden)return;requestAnimationFrame(()=>{const el=selEl()||(S.sel>=0?layer.querySelector('.c-img.sel'):null);if(!el)return;const r=el.getBoundingClientRect(),t=box.getBoundingClientRect(),lim=t.top-12;if(r.bottom>lim)window.scrollBy({top:r.bottom-lim+8,behavior:'auto'});else if(r.top<70)window.scrollBy({top:r.top-80,behavior:'auto'});});}
+function revealSel(){const box=$('#tools');if(!box||box.hidden||innerWidth>=861)return;requestAnimationFrame(()=>{const el=selEl()||(S.sel>=0?layer.querySelector('.c-img.sel'):null);if(!el)return;const r=el.getBoundingClientRect(),t=box.getBoundingClientRect(),lim=t.top-12;if(r.bottom>lim)window.scrollBy({top:r.bottom-lim+8,behavior:'auto'});else if(r.top<70)window.scrollBy({top:r.top-80,behavior:'auto'});});}
 function renderTools(){setTimeout(revealSel,30);
   const box=$('#tools');if(!box)return;
   const nav=`<div class="tl-r"><span>تحريك</span><div class="tl-n"><button type="button" data-a="n" data-dx="-6" data-dy="0" aria-label="يسار">◀︎</button><button type="button" data-a="n" data-dx="0" data-dy="-6" aria-label="أعلى">▲︎</button><button type="button" data-a="n" data-dx="0" data-dy="6" aria-label="أسفل">▼︎</button><button type="button" data-a="n" data-dx="6" data-dy="0" aria-label="يمين">▶︎</button></div></div>`;
@@ -1745,6 +1752,8 @@ $('#btn-submit').onclick=async()=>{
 
 
 
+/* desktop: dock the editing panel over the controls column so the certificate stays visible */
+(function(){const dock=()=>{const b=document.getElementById('tools'),c=document.querySelector('#tab-design .controls');if(!b||!c)return;if(innerWidth<861){b.style.left='';b.style.width='';return;}const r=c.getBoundingClientRect();if(r.width<50)return;b.style.left=r.left+'px';b.style.width=r.width+'px';};const o=renderTools;renderTools=function(){const v=o.apply(this,arguments);dock();setTimeout(dock,60);return v;};addEventListener('resize',dock);setInterval(dock,800);})();
 /* init */
 $('#f-date').value=S.date;$('#f-subj').value=S.subj;syncTheme();paintColors();applyDefaults();renderImgs();setScale();render();clearTimeout(bgTimer);setBg();
 try{const dr=JSON.parse(localStorage.getItem('kd_draft')||'null');if(dr&&dr.t&&Date.now()-dr.t<6048e5&&dr.d){const ni=S.images;if(loadDesign(dr.d)){S.images=ni;const d0=defaults();['title','intro','name','role','body','from','date'].forEach(k=>{S.edited[k]=(S[k]!==d0[k]);});{const T=THEMES[S.theme],ds=T?(S.lang==='fr'?T.subjFr:S.lang==='en'?(SUBJEN[T.subj]||''):T.subj):'';S.edited.subj=(S.subj!==ds);}setSubjDefault();applyDefaults();renderImgs();render();}}}catch(_){}
