@@ -291,7 +291,18 @@ img{-webkit-user-drag:none}
 /* preview watermark: light dark text only */
 #cardbox .card::after,#lbcardbox .card::after,#xbox.wmx .card::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:60;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='110'%3E%3Ctext x='80' y='60' transform='rotate(-28 80 57)' text-anchor='middle' font-family='Cairo,Tahoma,sans-serif' font-size='17' font-weight='700' fill='%23000' fill-opacity='.11'%3E%D9%85%D8%B9%D8%A7%D9%8A%D9%86%D8%A9 %D9%81%D9%82%D8%B7%3C/text%3E%3C/svg%3E") 0 0/70% auto}
 body.nowm #cardbox .card::after,body.nowm #lbcardbox .card::after{display:none}
-</style></head><body>
+</style><style>html,body{touch-action:manipulation}</style>
+<script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
+<style>
+/* edit sheet never hides the card: small sheet, card on top */
+@media (max-width:860px){body #tools{max-height:40vh}
+body:has(#tools:not([hidden])) .stage{height:25vh!important}}
+body.fs .stagewrap{padding:58px 8px 8px}
+body.fs .stage{height:calc(100vh - 66px)!important;height:calc(100dvh - 66px)!important;align-items:start}
+body.fs:has(#tools:not([hidden])) .stage{height:calc(100dvh - 66px - 40dvh)!important}
+body.fs #tools{max-height:40vh;max-height:40dvh}
+body.fs .fsx{top:10px;left:10px;top:max(10px,env(safe-area-inset-top))}
+</style><style>body:has(#tools:not([hidden])) .acts2{display:none}</style></head><body>
 
 <div class="wrap">
 <header class="top">
@@ -997,7 +1008,7 @@ function buildBar(){
     if(!fr&&!I.bd)adv+='<label class="selr" style="margin-top:8px"><span>'+t.bc+'</span><input class="cin" type="color" data-ibc value="'+(I.bc||S.ac)+'"></label>';
     h+='<details class="adv"><summary>'+L('خيارات متقدمة','Options avancées')+'</summary>'+adv+'</details>';
   }
-  box.hidden=false;box.innerHTML=h;placeTools();
+  box.hidden=false;box.innerHTML=h;placeTools();if(innerWidth<860&&!document.body.classList.contains('fs')){var pvq=$('#pv');if(pvq){var y=pvq.getBoundingClientRect().top+scrollY-4;if(scrollY<y)scrollTo(0,y);}}
 }
 /* ---- history ---- */
 function snap(){return JSON.stringify(S,function(k,v){return k==='sel'?undefined:v;});}
@@ -1540,6 +1551,19 @@ document.addEventListener('contextmenu',function(e){if(!/INPUT|TEXTAREA/.test((e
 document.addEventListener('dragstart',function(e){e.preventDefault();});
 
 commit();build();
+/* autosave design on the phone */
+var PK='kerima-inv-draft';
+function dbo(){return new Promise(function(res,rej){try{var r=indexedDB.open('kerima-inv',1);r.onupgradeneeded=function(){r.result.createObjectStore('kv');};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};}catch(e){rej(e);}});}
+function kvSet(v){return dbo().then(function(db){return new Promise(function(res,rej){var t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,PK);t.oncomplete=res;t.onerror=function(){rej(t.error);};});}).catch(function(){try{localStorage.setItem(PK,v);}catch(_){}});}
+function kvGet(){return dbo().then(function(db){return new Promise(function(res,rej){var q=db.transaction('kv').objectStore('kv').get(PK);q.onsuccess=function(){res(q.result);};q.onerror=function(){rej(q.error);};});}).catch(function(){return null;}).then(function(v){if(v)return v;try{return localStorage.getItem(PK);}catch(_){return null;}});}
+function pack(){var src={};Object.keys(IMGSRC).forEach(function(k){if(k.charAt(0)==='k'&&IMGSRC[k])src[k]=IMGSRC[k];});return JSON.stringify({t:Date.now(),uid:uid,S:snap(),src:src});}
+var lastSaved=snap();
+function persist(){var j=snap();if(j===lastSaved)return;lastSaved=j;kvSet(pack());}
+setInterval(persist,2500);
+document.addEventListener('visibilitychange',function(){if(document.hidden)persist();});
+window.addEventListener('pagehide',persist);
+kvGet().then(function(v){try{if(!v)return;var o=JSON.parse(v);if(!o||!o.S||Date.now()-o.t>5184e6)return;var st=JSON.parse(o.S);if(!st||!st.tpl)return;
+ Object.keys(o.src||{}).forEach(function(k){IMGSRC[k]=o.src[k];});uid=Math.max(uid,o.uid||1);(st.imgs||[]).forEach(function(I){var k=I.key||'';if(k.indexOf('a:')===0){var aa=ASSETS[k.slice(2)];if(aa)IMGSRC[k]=aa.d;}else if(k.indexOf('v:')===0)IMGSRC[k]='';});st.sel=null;st.lang=S.lang;S=st;hist=[snap()];hpos=0;lastSaved=hist[0];build();}catch(e){}});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){render();});
 })();
 </script>
