@@ -1,5 +1,8 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<style>html,body{touch-action:manipulation}</style>
+<script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
+
 <title>إدارة الشهادات</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -361,7 +364,7 @@ body{background:var(--bg)}
     <nav class="tabs" role="tablist" aria-label="الأقسام">
       <button class="tab" role="tab" data-tab="orders" aria-selected="true" id="t-orders">الطلبات<span class="count" id="ocount"></span></button>
       <button class="tab" role="tab" data-tab="design" aria-selected="false" id="t-design">التصميم</button>
-    <a class="tab" href="invitations-admin.html" style="text-decoration:none;display:inline-flex;align-items:center">أدمين الدعوات</a><button type="button" class="tab" id="btn-logout">خروج</button></nav>
+    <button type="button" class="tab" id="btn-logout">خروج</button></nav>
 
   </header>
 
