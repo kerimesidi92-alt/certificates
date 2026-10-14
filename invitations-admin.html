@@ -1683,6 +1683,8 @@ document.body.classList.add('nowm');
 function mkBox(wm,id){var b=document.createElement('div');b.className='cardbox';b.id=id||'xbox';if(wm)b.classList.add('wmx');b.innerHTML='<div class="card"></div>';b.style.cssText='position:fixed;left:-99999px;top:0;filter:none;';document.body.appendChild(b);var st=JSON.parse(JSON.stringify(S));st.sel=null;drawCard(b,st,600,true);return b;}
 function fname(wm){var o=curOrder&&byId(curOrder);return ((o&&o.client)||'card').replace(/[^\w؀-ۿ]+/g,'-').slice(0,40)+(wm?'-preview':'-print');}
 var modal=$('#modal'),lastUrl=null,lastBlob=null;
+function preloadBox(box){var urls=[];[].forEach.call(box.querySelectorAll('*'),function(e){var bg=e.style&&e.style.backgroundImage;if(bg){var m=/url\(["']?(.*?)["']?\)/.exec(bg);if(m&&m[1])urls.push(m[1]);}if(e.tagName==='IMG'&&e.src)urls.push(e.src);});
+ return Promise.all(urls.map(function(u){return new Promise(function(res){var im=new Image();im.onload=function(){(im.decode?im.decode():Promise.resolve()).then(res,res);};im.onerror=res;im.src=u;});}));}
 async function makeImage(wm){
  $('#m-img').hidden=true;$('#m-print').hidden=true;$('#m-dl').hidden=true;$('#m-msg').textContent='جارٍ تجهيز الصورة…';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
  var box=null;
@@ -1690,7 +1692,11 @@ async function makeImage(wm){
   if(S.sel){S.sel=null;buildBar();render();}
   if(document.fonts&&document.fonts.ready)await document.fonts.ready;
   box=mkBox(wm);var z=dimsOf(S),px=Math.min(4000,Math.round(z[0]/2.54*300)),ratio=Math.max(1,Math.min(7,px/600));if(wm)ratio=Math.min(ratio,2);
-  var blob=await htmlToImage.toBlob(box,{pixelRatio:ratio,cacheBust:false,style:{position:'static',left:'0',top:'0',margin:'0'}});
+  await preloadBox(box);
+  var opt={pixelRatio:ratio,cacheBust:false,style:{position:'static',left:'0',top:'0',margin:'0'}};
+  try{await htmlToImage.toBlob(box,{pixelRatio:1,cacheBust:false,style:opt.style});}catch(_){}
+  await new Promise(function(r){setTimeout(r,150);});
+  var blob=await htmlToImage.toBlob(box,opt);
   if(!blob)throw new Error('empty');
   if(lastUrl)URL.revokeObjectURL(lastUrl);lastUrl=URL.createObjectURL(blob);lastBlob=blob;
   $('#m-img').src=lastUrl;$('#m-img').hidden=false;var dl=$('#m-dl');dl.href=lastUrl;dl.download=fname(wm)+'.png';dl.hidden=false;$('#m-print').hidden=false;
