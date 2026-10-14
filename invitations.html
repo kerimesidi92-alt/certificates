@@ -335,7 +335,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="invitations-images.js?v=1"></script>
+<script src="invitations-images.js?v=1"></script><script src="ornaments-extra.js?v=1"></script>
 <script>
 (function(){
 var IM=(function(){var A="!#$%&'()*+,-./0123456789:;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~",T=new Int16Array(128).fill(-1),C={};for(var i=0;i<91;i++)T[A.charCodeAt(i)]=i;
@@ -655,7 +655,8 @@ function applyAuto(I,st){
   else{var w=Math.min(100-2*mg,(H-2*mg)/I.ar);I.w=Math.round(w*10)/10;I.h=Math.round(w*I.ar*10)/10;}
   I.x=50;I.y=50;I.bw=I.w;I.bh=I.h;I.sc=100;
 }
-var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',55,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',80,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','19'];
+Object.assign(ASSETS,window.XASSETS||{});
+var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',55,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',80,''],['20','فواصل وزخارف جديدة (للتلوين)','Séparateurs et ornements',70,''],['21','إكاليل وإطارات ملوّنة (ألوانها ثابتة)','Couronnes et cadres',70,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','19','20','21'];
 function catOf(nm){var p=nm.slice(0,2);return p==='08'?'13':p;}
 
 var LBM=0;
@@ -683,12 +684,18 @@ document.addEventListener('click',function(e){
   if(e.target.closest('[data-lbclose]')||e.target.id==='lb'){lbClose();return;}
 },true);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){lbClose();if(document.body.classList.contains('fs')){document.body.classList.remove('fs');render();}}});
+function monoOpen(){if(document.getElementById('monoov'))return;var d=document.createElement('div');d.id='monoov';d.style.cssText='position:fixed;inset:0;z-index:9999;background:#fff';d.innerHTML='<iframe src="monogram.html" style="width:100%;height:100%;border:0" title="monogram"></iframe>';document.body.appendChild(d);}
+function monoClose(){var d=document.getElementById('monoov');if(d)d.remove();}
+function monoAdd(png,w,h){var key='k'+(uid++);IMGSRC[key]=png;var ar=+(h/w).toFixed(4),w0=Math.min(46,Math.max(8,60/ar)),id=uid++;
+  S.imgs.push({id:id,key:key,ar:ar,x:50,y:50,w:+w0.toFixed(2),h:+(w0*ar).toFixed(2),fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0});
+  S.sel='i:'+id;S.tab='img';commit();build();}
+window.addEventListener('message',function(e){var f=document.querySelector('#monoov iframe');if(!f||e.source!==f.contentWindow)return;var m=e.data||{};if(m.kind==='kerima-mono'&&m.png){monoAdd(m.png,m.w,m.h);monoClose();}else if(m.kind==='kerima-mono-close')monoClose();});
 function addAsset(nm){
   var a=ASSETS[nm],c=LIBC.filter(function(x){return x[0]===catOf(nm)})[0],key='a:'+nm;if(nm.slice(0,8)==='09_kcor_'){a={w:100,h:75,d:''};}IMGSRC[key]=a.d;
-  var z=dimsOf(S),H0=100*z[1]/z[0],w0=c[3],ar=+(a.h/a.w).toFixed(4),h0=Math.round(w0*ar*10)/10,x=50,y=50;
+  var z=dimsOf(S),H0=100*z[1]/z[0],w0=(/^2[01]/.test(nm)&&a.h>a.w?Math.max(8,Math.min(c[3],60*a.w/a.h)):c[3]),ar=+(a.h/a.w).toFixed(4),h0=Math.round(w0*ar*10)/10,x=50,y=50;
   if(c[4]==='c'){x=w0*.5-2;y=(h0/2-2)/H0*100;}
   var id=uid++,o={id:id,key:key,ar:ar,x:x,y:y,w:w0,h:h0,fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0};
-  if(nm.slice(0,2)==='09'){var kk9=nm.slice(0,8)==='09_kcor_';o.vf=kk9?'kc'+nm.slice(8):nm.slice(10);o.key='v:'+o.vf;if(!kk9)o.auto='fill';IMGSRC[o.key]='';}else if(nm.slice(0,2)==='14'||nm.slice(0,2)==='16'||nm.slice(0,2)==='18'){o.vf='cal:'+nm;o.vc='#a9852f';o.key='v:'+nm;IMGSRC[o.key]='';}else if(nm.slice(0,2)==='08'){o.auto='fit';}
+  if(nm.slice(0,2)==='09'){var kk9=nm.slice(0,8)==='09_kcor_';o.vf=kk9?'kc'+nm.slice(8):nm.slice(10);o.key='v:'+o.vf;if(!kk9)o.auto='fill';IMGSRC[o.key]='';}else if(nm.slice(0,2)==='14'||nm.slice(0,2)==='16'||nm.slice(0,2)==='18'||nm.slice(0,2)==='20'){o.vf='cal:'+nm;o.vc='#a9852f';o.key='v:'+nm;IMGSRC[o.key]='';}else if(nm.slice(0,2)==='08'){o.auto='fit';}
   if(o.auto)applyAuto(o,S);S.imgs.push(o);
   S.sel='i:'+id;commit();build();
 }
@@ -1108,7 +1115,7 @@ function mgBuild(d,g,H,sc,yc){
     else if(it.t==='l'){tx.push({text:'',f:{ar:'Amiri',fr:'Amiri'},sz:1,col:col,x:+Xp.toFixed(2),y:+Yp.toFixed(2),rot:0,ln:+(it.len*sc).toFixed(2),nw:1});}
     else{var a=ASSETS[it.nm];if(!a)return;var key='a:'+it.nm,w=+(it.w*sc).toFixed(2),ar=+(a.h/a.w).toFixed(4);IMGSRC[key]=a.d;
       var o={key:key,ar:ar,x:+Xp.toFixed(2),y:+Yp.toFixed(2),w:w,h:+(w*ar).toFixed(2),fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0};
-      var c2=it.nm.slice(0,2);if(c2==='14'||c2==='16'||c2==='18'){o.vf='cal:'+it.nm;o.vc=col||'#a9852f';o.key='v:'+it.nm;IMGSRC[o.key]='';}
+      var c2=it.nm.slice(0,2);if(c2==='14'||c2==='16'||c2==='18'||c2==='20'){o.vf='cal:'+it.nm;o.vc=col||'#a9852f';o.key='v:'+it.nm;IMGSRC[o.key]='';}
       im.push(o);}
   });
   return {txts:tx,imgs:im};
@@ -1221,7 +1228,7 @@ function buildCtl(){
     if(OGRP==='all'){
       var ot='<div class="msg">'+(ar2?'اختاري مجلداً. كل ما فيه يتحرك ويكبر ويصغر ويتلوّن.':'Choisissez un dossier.')+'</div><div class="lib" style="grid-template-columns:repeat(2,minmax(0,1fr))">';
       ot+='<button class="fold" data-ogrp="_nm"><div style="height:78px;display:grid;place-items:center;width:60%">'+ornament({orn:S.orn==='none'?'amp':S.orn,lang:S.lang,E:S.E,tmp:1},'#a9852f')+'</div><span>'+(ar2?'زخرفة بين الاسمين':'Séparateur des noms')+'</span><small>'+ORN.length+'</small></button>';
-      ot+='<button class="fold" data-ogrp="_mono"><div style="height:78px;display:grid;place-items:center;font:700 44px/1 \'Playfair Display\',serif;color:#a9852f">S<span style="font:34px \'Great Vibes\',cursive;margin:0 2px">&amp;</span>A</div><span>'+(ar2?'شعار الحرفين (مونوغرام)':'Monogramme')+'</span><small>10</small></button>';
+      ot+='<button class="fold" data-ogrp="_mono"><div style="height:78px;display:grid;place-items:center;font:700 44px/1 \'Playfair Display\',serif;color:#a9852f">S<span style="font:34px \'Great Vibes\',cursive;margin:0 2px">&amp;</span>A</div><span>'+(ar2?'الأحرف المزخرفة (صمّم شعارك)':'Monogramme')+'</span><small>59</small></button>';
       HIDC.slice().sort().reverse().forEach(function(cid){var nms=Object.keys(ASSETS).filter(function(nm){return catOf(nm)===cid});if(!nms.length)return;var c=LIBC.filter(function(x){return x[0]===cid})[0];
         ot+='<button class="fold" data-ogrp="'+cid+'"><img src="'+ASSETS[nms[0]].d+'" alt="" draggable="false"><span>'+(c?c[ar2?1:2]:cid)+'</span><small>'+nms.length+'</small></button>';});
       h+=panel(ar2?'الزخارف':'Ornements',ot+'</div>');
@@ -1331,7 +1338,7 @@ document.addEventListener('click',function(e){
   el=e.target.closest('[data-mgi]');if(el){mgInit().sep={k:'i',t:'',nm:el.dataset.mgi};buildCtl();return;}
   el=e.target.closest('[data-mgcolreset]');if(el){mgInit().col={};buildCtl();return;}
   el=e.target.closest('[data-mgop]');if(el){var k0=el.dataset.mgop,v0=el.dataset.v;mgOp(k0,k0==='mv'?v0.split(',').map(Number):(k0==='sc'?+v0:null));return;}
-  el=e.target.closest('[data-ogrp]');if(el){OGRP=el.dataset.ogrp;buildCtl();return;}
+  el=e.target.closest('[data-ogrp]');if(el){if(el.dataset.ogrp==='_mono'){monoOpen();return;}OGRP=el.dataset.ogrp;buildCtl();return;}
   el=e.target.closest('[data-tgrp]');if(el){TGRP=el.dataset.tgrp;buildCtl();return;}
   el=e.target.closest('[data-libcat]');if(el){LIBCAT=el.dataset.libcat;buildCtl();return;}
   el=e.target.closest('[data-asset]');if(el){addAsset(el.dataset.asset);return;}
