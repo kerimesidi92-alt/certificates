@@ -338,7 +338,7 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 @media print{body>*:not(#printwrap){display:none!important}#printwrap{display:block!important;position:static!important}#printwrap #xbox{filter:none!important;position:static!important;margin:0}}
 </style><style>html,body{touch-action:manipulation}</style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
-</head><body style="padding-block:14px">
+<style>#card,#card *,#lbcardbox .card,#lbcardbox .card *{touch-action:none}</style><style>@media (max-width:860px){body #tools{max-height:40vh}body:has(#tools:not([hidden])) .stage{height:25vh!important}}body:has(#tools:not([hidden])) .acts2{display:none}body.fs .stagewrap{padding:58px 8px 8px}body.fs .stage{height:calc(100vh - 66px)!important;height:calc(100dvh - 66px)!important;align-items:start}body.fs:has(#tools:not([hidden])) .stage{height:calc(100dvh - 66px - 40dvh)!important}body.fs #tools{max-height:40vh;max-height:40dvh}body.fs .fsx{top:10px;left:10px}</style></head><body style="padding-block:14px">
 <div class="atop"><div class="abrand"><b>إدارة بطاقات الدعوات</b><small>الطلبات والتصميم · للإدارة فقط</small></div>
 <nav class="atabs" role="tablist"><button type="button" role="tab" data-atab="orders" aria-selected="true" id="t-orders">الطلبات<span id="ocount"></span></button><button type="button" role="tab" data-atab="design" aria-selected="false">التصميم</button><button type="button" id="btn-logout">خروج</button></nav></div>
 <section id="a-orders">
@@ -1067,14 +1067,14 @@ function buildBar(){
     var tools=pill('fh',t.fh)+pill('fv',t.fv)+pill('dup',t.dup)+pill('fitp',L('ملاءمة الورقة','Ajuster au papier'),!!I.auto)+pill('idel',t.del);
     h+='<div class="pills pl2">'+tools+'</div>';
     var adv='';
-    if(!fr)adv+=sl(t.izm,30,400,I.zm,'data-iv="zm"','zm')+sl(t.ipy,0,100,I.py==null?50:I.py,'data-iv="py"','py')+sl(t.ipx,0,100,I.px==null?50:I.px,'data-iv="px"','px');
+    if(!fr)adv+=sg(t.izm,sl(t.izm,30,400,I.zm,'data-iv="zm"','zm'))+sg(t.ipy,sl(t.ipy,0,100,I.py==null?50:I.py,'data-iv="py"','py'))+sg(t.ipx,sl(t.ipx,0,100,I.px==null?50:I.px,'data-iv="px"','px'));
     adv+='<div class="pills" style="margin-top:8px">'+pill('iar',L('ضبط الارتفاع حسب نسبة الصورة الأصلية','Proportion d\'origine'));
     if(!fr)adv+=pill('pan',L('تحريك الصورة داخل الإطار','Déplacer dans le cadre'),!!I.pan)+pill('bd',I.bd?t.bdOn:t.bdOff)+pill('ires',L('إلغاء تكبير الصورة وإزاحتها داخل الإطار','Réinitialiser'));
     adv+='</div>';
     if(!fr&&!I.bd)adv+='<label class="selr" style="margin-top:8px"><span>'+t.bc+'</span><input class="cin" type="color" data-ibc value="'+(I.bc||S.ac)+'"></label>';
-    h+='<details class="adv"><summary>'+L('خيارات متقدمة','Options avancées')+'</summary>'+adv+'</details>';
+    h+='<div class="sg" style="padding:6px 0"><div class="sgt" style="padding:0 14px">'+L('تحريك وضبط الصورة','Déplacer et ajuster')+'</div>'+adv+'</div>';
   }
-  box.hidden=false;box.innerHTML=h;placeTools();
+  box.hidden=false;box.innerHTML=h;placeTools();if(innerWidth<860&&!document.body.classList.contains('fs')){var pvq=$('#pv');if(pvq){setTimeout(function(){if(pvq.getBoundingClientRect().top>60)pvq.scrollIntoView({block:'start'});},80);}}
 }
 /* ---- history ---- */
 function snap(){return JSON.stringify(S,function(k,v){return k==='sel'?undefined:v;});}
