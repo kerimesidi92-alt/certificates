@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a"><meta name="robots" content="noindex,nofollow">
 <title>إدارة بطاقات الدعوات</title><link rel="icon" href="icon.svg" type="image/svg+xml">
 
@@ -336,9 +336,11 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 #toast.err{background:#b3261e}
 .othumb .cardbox{filter:none;box-shadow:0 2px 8px #0003}
 @media print{body>*:not(#printwrap){display:none!important}#printwrap{display:block!important;position:static!important}#printwrap #xbox{filter:none!important;position:static!important;margin:0}}
-</style></head><body style="padding-block:14px">
+</style><style>html,body{touch-action:manipulation}</style>
+<script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
+</head><body style="padding-block:14px">
 <div class="atop"><div class="abrand"><b>إدارة بطاقات الدعوات</b><small>الطلبات والتصميم · للإدارة فقط</small></div>
-<nav class="atabs" role="tablist"><button type="button" role="tab" data-atab="orders" aria-selected="true" id="t-orders">الطلبات<span id="ocount"></span></button><button type="button" role="tab" data-atab="design" aria-selected="false">التصميم</button><a href="admin.html" style="text-decoration:none;display:inline-flex;align-items:center;padding:0 10px;font-weight:700;color:inherit">أدمين الشهادات</a><button type="button" id="btn-logout">خروج</button></nav></div>
+<nav class="atabs" role="tablist"><button type="button" role="tab" data-atab="orders" aria-selected="true" id="t-orders">الطلبات<span id="ocount"></span></button><button type="button" role="tab" data-atab="design" aria-selected="false">التصميم</button><button type="button" id="btn-logout">خروج</button></nav></div>
 <section id="a-orders">
  <div style="display:grid;gap:16px">
   <details class="apanel"><summary>طلب يدوي</summary>
