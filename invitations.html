@@ -1161,17 +1161,20 @@ var CALW='بارك الله لكما',CALF=['Aref Ruqaa','Aref Ruqaa Ink','Katib
 function gallery(){
   var t=T(),ar=S.lang==='ar',h='<div class="panel"><h2>'+t.sThemeT+'</h2><div class="msg">'+t.themeNote+'</div><div class="tpls">'+tileBlank(S.tpl==='blank')+tileMine()+'</div>';
   var GT=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']],TG={f1:'col',f2:'col',f3:'col',t15:'dark',t17:'dark',t18:'dark',t01:'flw',t02:'flw',t04:'flw',t05:'flw',t11:'flw',b1:'flw',t12:'flw',t13:'flw'};
-  var list=TPL.slice(1).filter(function(p){return p.shape===S.shape});
-  if(!list.length)return h+'<div class="msg">'+(ar?'لا توجد ثيمات جاهزة لهذا الشكل بعد. اختاري «بدون قالب» أو غيّري شكل الورقة.':'Aucun modèle prêt pour cette forme pour le moment.')+'</div></div>';
+  var list=TPL.slice(1);
+  var inGrp=function(p,gid){return gid.indexOf('sh:')===0?p.shape===gid.slice(3):(TG[p.id]||'oth')===gid;};
   if(TGRP==='all'){
     h+='<div class="lib" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px">';
-    GT.forEach(function(g){var m=list.filter(function(p){return (TG[p.id]||'oth')===g[0]});if(!m.length)return;
+    GT.forEach(function(g){var m=list.filter(function(p){return inGrp(p,g[0])});if(!m.length)return;
       h+='<button class="fold" data-tgrp="'+g[0]+'"><div class="cardbox th" data-t="'+m[0].id+'"><div class="card"></div></div><span>'+(ar?g[1]:g[2])+'</span><small>'+m.length+'</small></button>';});
+    Object.keys(SH).forEach(function(q){var m=list.filter(function(p){return p.shape===q}),nm=(t.shapes&&t.shapes[q])||q;
+      h+='<button class="fold" data-tgrp="sh:'+q+'">'+(m.length?'<div class="cardbox th" data-t="'+m[0].id+'"><div class="card"></div></div>':'<div style="height:78px;display:grid;place-items:center;width:60%">'+thumbShape(q)+'</div>')+'<span>'+(ar?'شكل: ':'Forme : ')+nm+'</span><small>'+m.length+'</small></button>';});
     return h+'</div></div>';
   }
-  var g0=GT.filter(function(g){return g[0]===TGRP})[0]||GT[3];
+  var g0=GT.filter(function(g){return g[0]===TGRP})[0]||(TGRP.indexOf('sh:')===0?[TGRP,(ar?'شكل: ':'Forme : ')+((t.shapes&&t.shapes[TGRP.slice(3)])||TGRP.slice(3)),(ar?'شكل: ':'Forme : ')+((t.shapes&&t.shapes[TGRP.slice(3)])||TGRP.slice(3))]:GT[3]);
   h+='<div class="row" style="margin-top:12px"><button class="opt" data-tgrp="all">\u2190 '+(ar?'كل المجلدات':'Tous les dossiers')+'</button></div><h3 class="gh">'+(ar?g0[1]:g0[2])+'</h3><div class="tpls">';
-  list.forEach(function(p){if((TG[p.id]||'oth')!==g0[0])return;h+=btn('tile',S.tpl===p.id,'data-tpl="'+p.id+'"','<div class="tb"><div class="cardbox th" data-t="'+p.id+'"><div class="card"></div></div></div><span>'+p.n[S.lang]+'</span>');});
+  var cnt=0;list.forEach(function(p){if(!inGrp(p,g0[0]))return;cnt++;h+=btn('tile',S.tpl===p.id,'data-tpl="'+p.id+'"','<div class="tb"><div class="cardbox th" data-t="'+p.id+'"><div class="card"></div></div></div><span>'+p.n[S.lang]+'</span>');});
+  if(!cnt)h+='<div class="msg" style="grid-column:1/-1">'+(ar?'هذا المجلد فارغ حالياً، ستُضاف إليه ثيمات قريباً.':'Ce dossier est vide pour le moment.')+'</div>';
   return h+'</div></div>';
 }
 function panel(title,inner){return '<div class="panel"><h2>'+title+'</h2>'+inner+'</div>';}
