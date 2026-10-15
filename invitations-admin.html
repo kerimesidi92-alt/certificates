@@ -203,7 +203,7 @@ body:has(#tools:not([hidden])) #tabbar{display:none}
 .tile{font:inherit;font-size:12px;background:var(--surface2);color:var(--fg);border:1.5px solid var(--line);border-radius:14px;padding:8px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:700}
 .tile[aria-pressed="true"]{border:2.5px solid var(--hl)}
 .tile.dashed{border-style:dashed;background:transparent}
-.tile .tb{height:96px;display:grid;place-items:center;width:100%}
+.tile .tb{height:116px;display:grid;place-items:center;width:100%}
 .tile .plus{font-size:28px;color:var(--muted)}
 .imgs .row2{display:flex;align-items:center;gap:8px}
 
@@ -418,7 +418,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
-<script src="invitations-images.js?v=1"></script><script src="ornaments-extra.js?v=3"></script>
+<script src="invitations-images.js?v=1"></script><script src="ornaments-extra.js?v=3"></script><script src="invitations-new.js?v=1"></script>
 <script>
 (function(){
 var IM=(function(){var A="!#$%&'()*+,-./0123456789:;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~",T=new Int16Array(128).fill(-1),C={};for(var i=0;i<91;i++)T[A.charCodeAt(i)]=i;
@@ -515,7 +515,17 @@ var TPL=[
  {id:'b3',n:{ar:'أعشاب مجففة',fr:'Herbes séchées'},shape:'square',size:4,arts:[],frame:'none',bg:'#fbfaf8',ac:'#9a6b4a',ink:'#5a4030',ev:'wedding',bimg:'b3',ar:1.0,txt:{x:33,t:16,b:16,w:52,s:0.75},d:{fa:'El Messiri',orn:'leaf',dst:'big',ev:'حفل زفاف',evfr:'Mariage'}},
  {id:'f1',n:{ar:'ورد أزرق مائي',fr:'Aquarelle bleue'},shape:'rect',size:5,arts:[],frame:'none',bg:'#fffbf0',ac:'#b8923f',ink:null,ev:'wedding',fimg:'f1',dx:13},
  {id:'f2',n:{ar:'ورد أزرق ناعم',fr:'Bleuets doux'},shape:'rect',size:5,arts:[],frame:'none',bg:'#fffdf8',ac:'#2f4f9a',ink:null,ev:'wedding',fimg:'f2',dx:15},
- {id:'f3',n:{ar:'ورد بنفسجي',fr:'Fleurs violettes'},shape:'rect',size:5,arts:[],frame:'none',bg:'#ffffff',ac:'#7a5aa8',ink:null,ev:'wedding',fimg:'f3',dx:0}
+ {id:'f3',n:{ar:'ورد بنفسجي',fr:'Fleurs violettes'},shape:'rect',size:5,arts:[],frame:'none',bg:'#ffffff',ac:'#7a5aa8',ink:null,ev:'wedding',fimg:'f3',dx:0},
+ {id:'a1',n:{ar:'ورد أحمر أسفل',fr:'Roses rouges en bas'},shape:'arch',size:2,arts:[],frame:'none',bg:'#f6efe6',ac:'#8b1e3f',ink:'#7a1c35',ev:'wedding',bimg:'a1',pimg:'a1',ar:1.4835,txt:{x:50,t:24,b:34,w:66,s:1.0},d:{fa:'Aref Ruqaa',orn:'leaf',dst:'line',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a2',n:{ar:'إطار ذهبي بورد أحمر',fr:'Cadre doré roses rouges'},shape:'arch',size:2,cm:[10,13.4],arts:[],frame:'none',bg:'#f6f1e7',ac:'#b8923f',ink:'#7a1c35',ev:'wedding',bimg:'a2',ar:1.3415,txt:{x:46,t:30,b:25,w:54,s:1},d:{fa:'Amiri',orn:'swirl',dst:'big',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a3',n:{ar:'أوراق خضراء وورد كريمي',fr:'Feuillage et roses crème'},shape:'arch',size:2,arts:[],frame:'none',bg:'#f5efe4',ac:'#8a9a6a',ink:'#4a5a3a',ev:'wedding',bimg:'a3',ar:1.502,txt:{x:46,t:24,b:24,w:56,s:1.0},d:{fa:'Amiri',orn:'leaf',dst:'line',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a4',n:{ar:'ورد أبيض أسفل',fr:'Fleurs blanches en bas'},shape:'arch',size:2,arts:[],frame:'none',bg:'#f6f4f0',ac:'#8a8a5a',ink:'#2b2b26',ev:'wedding',bimg:'a4',pimg:'a4',ar:1.4886,txt:{x:50,t:22,b:34,w:68,s:1.0},d:{fa:'Aref Ruqaa',orn:'dots',dst:'line',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a5',n:{ar:'نقش ناتئ كريمي',fr:'Relief crème'},shape:'arch',size:2,arts:[],frame:'none',bg:'#ece0cc',ac:'#a08a5a',ink:'#3a3025',ev:'wedding',bimg:'a5',pimg:'a5',ar:1.502,txt:{x:50,t:26,b:26,w:56,s:1.0},d:{fa:'Amiri',orn:'flower',dst:'line',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a6',n:{ar:'قوس بيج وزهرة بيضاء',fr:'Arche beige fleur blanche'},shape:'arch',size:2,arts:[],frame:'none',bg:'#e6dcd0',ac:'#a89070',ink:'#4a3b30',ev:'wedding',bimg:'a6',ar:1.502,txt:{x:50,t:26,b:12,w:62,s:1.05},d:{fa:'Amiri',orn:'line',dst:'big',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a7',n:{ar:'ورد وردي في الزاويتين',fr:'Roses roses aux coins'},shape:'arch',size:2,arts:[],frame:'none',bg:'#fbf7f5',ac:'#b24f6b',ink:'#b24f6b',ev:'wedding',bimg:'a7',pimg:'a7',ar:1.502,txt:{x:50,t:24,b:28,w:64,s:1.0},d:{fa:'Aref Ruqaa',orn:'leaf',dst:'line',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a8',n:{ar:'قوس رمادي وزهرة بيضاء',fr:'Arche grise fleur blanche'},shape:'arch',size:2,arts:[],frame:'none',bg:'#d8cfc3',ac:'#8a7a5a',ink:'#4a4a46',ev:'wedding',bimg:'a8',pimg:'a8',ar:1.5022,txt:{x:50,t:24,b:14,w:62,s:1.05},d:{fa:'Amiri',orn:'star',dst:'big',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a9',n:{ar:'ستائر وباقات باستيل',fr:'Rideaux et bouquets'},shape:'arch',size:2,arts:[],frame:'none',bg:'#f6f3f0',ac:'#8a7a6a',ink:'#4a4a4a',ev:'wedding',bimg:'a9',pimg:'a9',ar:1.502,txt:{x:50,t:36,b:22,w:46,s:0.9},d:{fa:'Aref Ruqaa',orn:'swirl',dst:'line',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}},
+ {id:'a10',n:{ar:'أوراق وزهور بيضاء',fr:'Feuillage fleurs blanches'},shape:'arch',size:2,cm:[10,13.2],arts:[],frame:'none',bg:'#f8f0e2',ac:'#b8923f',ink:'#4a5a3a',ev:'wedding',bimg:'a10',ar:1.3227,txt:{x:42,t:30,b:26,w:48,s:.95},d:{fa:'Amiri',orn:'leaf',dst:'line',ev:'يتشرفان بدعوتكم لحضور حفل زفافهما',evfr:'Ont le plaisir de vous inviter à leur mariage'}}
 ];
 
 /* ---- watercolor flower image: background removed, flower colour changeable ---- */
@@ -738,7 +748,8 @@ function applyAuto(I,st){
   else{var w=Math.min(100-2*mg,(H-2*mg)/I.ar);I.w=Math.round(w*10)/10;I.h=Math.round(w*I.ar*10)/10;}
   I.x=50;I.y=50;I.bw=I.w;I.bh=I.h;I.sc=100;
 }
-Object.assign(ASSETS,window.XASSETS||{});
+Object.assign(ASSETS,window.XASSETS||{});Object.assign(ASSETS,window.XASSETS2||{});
+(function(){var X=window.XBG||{};Object.keys(X).forEach(function(k){BGIMG[k]=X[k];});})();var PREVIMG=window.XPV||{};
 var RCAT=['14','16','18','20','22','23'];
 var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',55,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',80,''],['20','الفواصل (للتلوين)','Séparateurs',70,''],['22','خواتم وقلوب (للتلوين)','Alliances',50,''],['23','ما لا نهاية (للتلوين)','Infini',60,''],['24','إكاليل ودوائر','Couronnes',60,''],['25','إطارات ذهبية وزوايا','Cadres dorés',70,''],['26','زوايا وظلال وأخرى','Coins et ombres',60,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','19','20','22','23','24','25','26'];
 function catOf(nm){var p=nm.slice(0,2);return p==='08'?'13':p;}
@@ -989,6 +1000,7 @@ function drawCard(box,st,wpx,thumb){
   var sc=(sh==='circle'||sh==='oval')?.8:1;if(st.arts.indexOf('wreath')>-1)sc=Math.min(sc,.78);
   var h='',I;if(st.tpl==='mine'&&st.bgKey&&IMGSRC[st.bgKey])h+='<img src="'+U(IMGSRC[st.bgKey])+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none" draggable="false">';
   var tp=TPL.filter(function(x){return x.id===st.tpl})[0];
+  if(thumb&&tp&&tp.pimg&&PREVIMG[tp.pimg]){card.innerHTML='<img src="'+PREVIMG[tp.pimg]+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0" draggable="false">';return;}
   if(tp&&tp.bimg&&BGIMG[tp.bimg])h+='<img src="'+U(BGIMG[tp.bimg])+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:'+(tp.ar&&Math.abs(H/100/tp.ar-1)<.1?'fill':'cover')+';z-index:0;pointer-events:none'+(+st.bh?';filter:hue-rotate('+(+st.bh)+'deg)':'')+'" draggable="false">';
   if(tp&&tp.fimg){var fu=flowerUrl(tp.fimg,st.fl);if(fu)h+='<img src="'+U(fu)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left top;z-index:0;pointer-events:none" draggable="false">';}
   st.imgs.forEach(function(m){applyAuto(m,st);h+=picHtml(thumb?{sel:null,imgs:[]}:st,m);});
@@ -1243,7 +1255,7 @@ function mgOp(kind,v){
 var CALW='بارك الله لكما',CALF=['Aref Ruqaa','Aref Ruqaa Ink','Katibeh','Reem Kufi','Mirza','Rakkas','Lalezar','El Messiri','Lateef','Amiri','Scheherazade New','Noto Nastaliq Urdu','Ruwudu','Jomhuria','Vibes','Blaka','Blaka Ink','Marhey','Lemonada','Amiri Quran','Gulzar','Kufam'],TGRP='all',FGRP='all',OGRP='all';
 function gallery(){
   var t=T(),ar=S.lang==='ar',h='<div class="panel"><h2>'+t.sThemeT+'</h2><div class="msg">'+t.themeNote+'</div><div class="tpls">'+tileBlank(S.tpl==='blank')+tileMine()+'</div>';
-  var GT=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']],TG={f1:'col',f2:'col',f3:'col',t15:'dark',t17:'dark',t18:'dark',t01:'flw',t02:'flw',t04:'flw',t05:'flw',t11:'flw',b1:'flw',t12:'flw',t13:'flw'};
+  var GT=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']],TG={f1:'col',f2:'col',f3:'col',t15:'dark',t17:'dark',t18:'dark',t01:'flw',t02:'flw',t04:'flw',t05:'flw',t11:'flw',b1:'flw',t12:'flw',t13:'flw',a1:'flw',a2:'flw',a3:'flw',a4:'flw',a5:'flw',a6:'flw',a7:'flw',a8:'flw',a9:'flw',a10:'flw'};
   var list=TPL.slice(1);
   var inGrp=function(p,gid){return gid.indexOf('sh:')===0?p.shape===gid.slice(3):(TG[p.id]||'oth')===gid;};
   if(TGRP==='all'){
@@ -1735,13 +1747,19 @@ function fname(wm){var o=curOrder&&byId(curOrder);return ((o&&o.client)||'card')
 var modal=$('#modal'),lastUrl=null,lastBlob=null;
 function preloadBox(box){var urls=[];[].forEach.call(box.querySelectorAll('*'),function(e){var bg=e.style&&e.style.backgroundImage;if(bg){var m=/url\(["']?(.*?)["']?\)/.exec(bg);if(m&&m[1])urls.push(m[1]);}if(e.tagName==='IMG'&&e.src)urls.push(e.src);});
  return Promise.all(urls.map(function(u){return new Promise(function(res){var im=new Image();im.onload=function(){(im.decode?im.decode():Promise.resolve()).then(res,res);};im.onerror=res;im.src=u;});}));}
+var HQST=null;
+function loadHQ(){return new Promise(function(res){if(window.HQ)return res(true);var sc=document.createElement('script');sc.src='invitations-hq.js?v=1';sc.onload=function(){res(!!window.HQ)};sc.onerror=function(){res(false)};document.head.appendChild(sc);});}
+async function hqOn(){if(HQST)return;if(!(await loadHQ()))return;HQST={a:{},bg:{}};
+ Object.keys(HQ.a).forEach(function(k){if(ASSETS[k]){HQST.a[k]=ASSETS[k];ASSETS[k]={w:ASSETS[k].w,h:ASSETS[k].h,d:HQ.a[k].d};}});
+ Object.keys(HQ.bg).forEach(function(k){HQST.bg[k]=BGIMG[k];try{Object.defineProperty(BGIMG,k,{value:HQ.bg[k],writable:true,configurable:true});}catch(_){}});}
+function hqOff(){if(!HQST)return;Object.keys(HQST.a).forEach(function(k){ASSETS[k]=HQST.a[k];});Object.keys(HQST.bg).forEach(function(k){try{Object.defineProperty(BGIMG,k,{value:HQST.bg[k],writable:true,configurable:true});}catch(_){}});HQST=null;}
 async function makeImage(wm){
  $('#m-img').hidden=true;$('#m-print').hidden=true;$('#m-dl').hidden=true;$('#m-msg').textContent='جارٍ تجهيز الصورة…';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
  var box=null;
  try{if(!window.htmlToImage)throw new Error('lib');
   if(S.sel){S.sel=null;buildBar();render();}
   if(document.fonts&&document.fonts.ready)await document.fonts.ready;
-  box=mkBox(wm);var z=dimsOf(S),px=Math.min(4000,Math.round(z[0]/2.54*300)),ratio=Math.max(1,Math.min(7,px/600));if(wm)ratio=Math.min(ratio,2);
+  await hqOn();box=mkBox(wm);var z=dimsOf(S),px=Math.min(4000,Math.round(z[0]/2.54*300)),ratio=Math.max(1,Math.min(7,px/600));if(wm)ratio=Math.min(ratio,2);
   await preloadBox(box);
   var fec=await fontEmbedCSS(box);
   var opt={pixelRatio:ratio,cacheBust:false,fontEmbedCSS:fec,style:{position:'static',left:'0',top:'0',margin:'0'}};
@@ -1753,7 +1771,7 @@ async function makeImage(wm){
   $('#m-img').src=lastUrl;$('#m-img').hidden=false;var dl=$('#m-dl');dl.href=lastUrl;dl.download=fname(wm)+'.png';dl.hidden=false;$('#m-print').hidden=false;
   $('#m-msg').textContent=wm?'معاينة للزبون. النسخة النظيفة من زر «الصورة النهائية».':'اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';
  }catch(e){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا ('+((e&&e.message)||'خطأ')+'). يمكنك التقاط صورة للشاشة.';}
- if(box)box.remove();}
+ if(box)box.remove();hqOff();}
 $('#btn-export').onclick=function(){modal.hidden=false;makeImage(false);};
 $('#m-wm').onclick=function(){makeImage(true);};
 $('#m-close').onclick=function(){modal.hidden=true;};
