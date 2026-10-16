@@ -882,7 +882,7 @@ function art(st,H){
   s+=frameSvg(sh,H,st.frm?'none':st.frame,st.fcol||a,bg,st.fin||0);
   return '<svg class="art" viewBox="0 0 100 '+H+'" preserveAspectRatio="none">'+s+'</svg>';
 }
-var ORN=['amp','and','heart','rings','line','leaf','swirl','star','dots','crescent','flower','infinity','double','lnTS','lnTL','lnKS','lnKL','ampL','andL','heartL','ringsL','dotsL','crescentL','infinityL','none'];
+var ORN=['amp','sym','symL','and','heart','rings','line','leaf','swirl','star','dots','crescent','flower','infinity','double','lnTS','lnTL','lnKS','lnKL','ampL','andL','heartL','ringsL','dotsL','crescentL','infinityL','none'];
 var ORNLN={lnTS:[14,.25],lnTL:[46,.25],lnKS:[14,1.2],lnKL:[46,1.2]};
 function olenOn(o){return !!ORNLN[o]||/L$/.test(o)&&o!=='none';}
 function olenCtl(){if(!olenOn(S.orn))return '';var ar=S.lang==='ar',d=ORNLN[S.orn]?ORNLN[S.orn][0]:14,v=S.olen!=null?S.olen:d;return '<label class="rr" style="display:grid;gap:6px;margin:8px 0"><span>'+(ar?'طول الخط':'Longueur du trait')+'</span><input type="range" min="4" max="80" step="1" value="'+v+'" data-olen dir="ltr"></label>';}
@@ -892,6 +892,7 @@ function ornament(st,col){
   var tm=st.tmp,sideL=function(inner){var L=st.olen!=null?st.olen:14,w=tm?'26px':'calc('+L+'cqw)',ln='<i style="display:block;flex:none;width:'+w+';height:'+(tm?'1px':'calc(.3cqw*var(--s,1))')+';background:'+col+';min-width:1px"></i>';return '<span style="display:inline-flex;align-items:center;gap:'+(tm?'5px':'calc(2.5cqw*var(--s,1))')+'">'+ln+inner+ln+'</span>';};
   if(ORNLN[o]){var L0=st.olen!=null?st.olen:ORNLN[o][0],th0=ORNLN[o][1];return '<i style="display:block;width:'+(tm?'46px':'calc('+L0+'cqw)')+';height:'+(tm?(th0>.5?'4px':'1px'):'calc('+th0+'cqw*var(--s,1))')+';min-height:1px;background:'+col+';border-radius:2px"></i>';}
   if(o==='and'||o==='andL'){var wd='<span style="color:'+col+';font-family:\''+fontOf(st,'or')+'\';font-size:'+(tm?'22px':'calc(7cqw*var(--s,1))')+';font-style:'+(st.lang==='ar'?'normal':'italic')+'">'+(st.lang==='ar'?'و':'and')+'</span>';return o==='and'?wd:sideL(wd);}
+  if(o==='sym'||o==='symL'){var sf=(st.E&&st.E.or&&st.E.or.f&&st.E.or.f.fr)||'Great Vibes',sy='<span style="color:'+col+';font-family:\''+sf+'\';font-size:'+(tm?'26px':'calc(9cqw*var(--s,1))')+'">&amp;</span>';return o==='sym'?sy:sideL(sy);}
   if(o==='ampL')return sideL('<span style="color:'+col+';font-family:\''+fontOf(st,'or')+'\';font-size:'+(tm?'24px':'calc(8cqw*var(--s,1))')+'">'+(st.lang==='ar'?'و':'&amp;')+'</span>');
   if(/^(heart|rings|dots|crescent|infinity)L$/.test(o)){var ii=ornament({orn:o.slice(0,-1),lang:st.lang,E:st.E,tmp:st.tmp,olen:st.olen},col);return sideL(ii);}
   if(o==='amp')return '<span style="color:'+col+';font-family:\''+fontOf(st,'or')+'\';font-size:'+(st.tmp?'24px':'calc(8cqw*var(--s,1))')+'">'+(st.lang==='ar'?'و':'&amp;')+'</span>';
