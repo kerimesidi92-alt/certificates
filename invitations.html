@@ -124,7 +124,8 @@ body #tools details.adv{padding:6px 12px}
 body #tools details.adv .sx{margin:6px 0}
 body #tools details.adv .sxr{gap:6px}
 @media (max-width:860px){body #tools{max-height:68vh}}
-.fsx{display:none}
+.fsx{display:none}body.fs{overflow:hidden;overscroll-behavior:none}#tools{overscroll-behavior:contain}.bar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.fsmv{display:none}body.fs .fsmv{display:flex;gap:6px;position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;z-index:500}.fsmv button{background:#fff;color:var(--fg);border:1.5px solid var(--line);border-radius:99px;padding:9px 12px;font:inherit;font-weight:700;font-size:13px}.fsmv button[aria-pressed="true"]{background:var(--hl);color:#fff;border-color:var(--hl)}
+body[data-mv="txt"] #card .pic,body[data-mv="txt"] #card .el[data-e="or"]{pointer-events:none}body[data-mv="img"] #card .el{pointer-events:none}body[data-mv="orn"] #card .el:not([data-e="or"]){pointer-events:none}
 .hnd{position:absolute;right:-15px;bottom:-15px;width:30px;height:30px;border-radius:50%;background:var(--hl);border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.4);z-index:20;touch-action:none;cursor:nwse-resize}
 .hnd.rot{right:auto;bottom:auto;left:50%;top:-34px;margin-left:-15px;cursor:grab;background:#fff;border-color:var(--hl)}
 .hnd.rot::after{content:'\21BB';position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-style:normal;color:var(--hl);line-height:1}
@@ -315,7 +316,7 @@ body.fs .fsx{top:10px;left:10px;top:max(10px,env(safe-area-inset-top))}
     <div class="pv-head"><div><b id="pv-t"></b><div class="note" id="pv-s"></div></div><button class="btn" id="pv-toggle" type="button">&#9650;&#xFE0E;</button></div>
     <div class="acts" id="acts"></div>
     <div class="acts2" id="acts2"></div>
-    <div class="stagewrap"><div class="stage" id="stage"><div class="ghost" id="ghost"></div><div class="cardbox" id="cardbox"><div class="card" id="card"></div></div><button class="fsx" id="fsx">✕ إغلاق</button></div></div>
+    <div class="stagewrap"><div class="stage" id="stage"><div class="ghost" id="ghost"></div><div class="cardbox" id="cardbox"><div class="card" id="card"></div></div><button class="fsx" id="fsx">✕ إغلاق</button><div class="fsmv" id="fsmv"><button data-mvf="all">الكل</button><button data-mvf="txt">النص</button><button data-mvf="img">الصور</button><button data-mvf="orn">الزخرفة</button></div></div></div>
     <div class="dim" id="dim"></div>
     <div class="seg" id="zoom" style="align-self:center"></div>
   </div>
@@ -335,7 +336,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script><script src="invitations-images.js?v=1"></script><script src="ornaments-extra.js?v=3"></script><script src="invitations-new.js?v=2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script><script src="invitations-images.js?v=1"></script><script src="ornaments-extra.js?v=3"></script><script src="invitations-new.js?v=3"></script><script src="invitations-more.js?v=1" async></script>
 <script>
 (function(){
 var IM=(function(){var A="!#$%&'()*+,-./0123456789:;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~",T=new Int16Array(128).fill(-1),C={};for(var i=0;i<91;i++)T[A.charCodeAt(i)]=i;
@@ -442,7 +443,37 @@ var TPL=[
  {id:'a7',n:{ar:'ورد وردي في الزاويتين',fr:'Roses roses aux coins'},shape:'arch',size:2,arts:[],frame:'none',bg:'#fbf7f5',ac:'#b24f6b',ink:'#b24f6b',ev:'wedding',bimg:'a7',ar:1.502,txt:{x:50,t:24,b:28,w:64,s:1.0},d:{fa:'Aref Ruqaa',orn:'leaf',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Vous invitent à leur mariage'}},
  {id:'a8',n:{ar:'قوس رمادي وزهرة بيضاء',fr:'Arche grise fleur blanche'},shape:'arch',size:2,arts:[],frame:'none',bg:'#d8cfc3',ac:'#8a7a5a',ink:'#4a4a46',ev:'wedding',bimg:'a8',ar:1.5022,txt:{x:50,t:24,b:14,w:62,s:1.05},d:{fa:'Amiri',orn:'star',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Vous invitent à leur mariage'}},
  {id:'a9',n:{ar:'ستائر وباقات باستيل',fr:'Rideaux et bouquets'},shape:'arch',size:2,arts:[],frame:'none',bg:'#f6f3f0',ac:'#8a7a6a',ink:'#4a4a4a',ev:'wedding',bimg:'a9',ar:1.502,txt:{x:50,t:36,b:22,w:56,s:.85},d:{fa:'Aref Ruqaa',orn:'swirl',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Vous invitent à leur mariage'}},
- {id:'a10',n:{ar:'أوراق وزهور بيضاء',fr:'Feuillage fleurs blanches'},shape:'arch',size:2,cm:[10,13.2],arts:[],frame:'none',bg:'#f8f0e2',ac:'#b8923f',ink:'#4a5a3a',ev:'wedding',bimg:'a10',ar:1.3227,txt:{x:42,t:30,b:26,w:48,s:.95},d:{fa:'Amiri',orn:'leaf',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Vous invitent à leur mariage'}}
+ {id:'a10',n:{ar:'أوراق وزهور بيضاء',fr:'Feuillage fleurs blanches'},shape:'arch',size:2,cm:[10,13.2],arts:[],frame:'none',bg:'#f8f0e2',ac:'#b8923f',ink:'#4a5a3a',ev:'wedding',bimg:'a10',ar:1.3227,txt:{x:42,t:30,b:26,w:48,s:.95},d:{fa:'Amiri',orn:'leaf',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Vous invitent à leur mariage'}},
+ {id:'n01',n:{ar:'عروسان وخطوط',fr:'Couple et lignes'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#8a7a6a',ink:'#2b2a26',ev:'wedding',bimg:'x01',ar:1.5,txt:{x:48,t:14,b:44,w:70,s:1},d:{fa:'Reem Kufi',fn:'Italiana',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'دعوة زفاف',evfr:'Wedding invitation'}},
+ {id:'n02',n:{ar:'ورد أزرق جانبي',fr:'Fleurs bleues'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#4a74c0',ink:'#2f4a7a',ev:'wedding',bimg:'x02',ar:1.5,txt:{x:62,t:12,b:14,w:56,s:0.9},d:{fa:'Aref Ruqaa',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n03',n:{ar:'ورد أزرق مائي علوي',fr:'Aquarelle bleue haut'},shape:'rect',size:2,cm:[10,14.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#4a74c0',ink:'#2f4a7a',ev:'wedding',bimg:'x03',ar:1.4133,txt:{x:60,t:24,b:10,w:58,s:0.94},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n04',n:{ar:'غيمة بنفسجية',fr:'Nuage violet'},shape:'rect',size:2,cm:[10,14.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#7a5aa8',ink:'#5a3f7a',ev:'wedding',bimg:'x04',ar:1.4078,txt:{x:48,t:22,b:24,w:56,s:0.9},d:{fa:'Aref Ruqaa',fn:'Pinyon Script',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'حفل زفاف',evfr:'Mariage'}},
+ {id:'n05',n:{ar:'أوراق ذهبية ناعمة',fr:'Feuilles dorées'},shape:'rect',size:2,cm:[10,14.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#6b5430',ev:'wedding',bimg:'x05',ar:1.4078,txt:{x:50,t:14,b:14,w:60,s:0.97},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n06',n:{ar:'أوراق خضراء رمادية',fr:'Feuillage sauge'},shape:'rect',size:2,cm:[10,12.5],arts:[],frame:'none',bg:'#fbf8f1',ac:'#7a8a5a',ink:'#3f5a3f',ev:'wedding',bimg:'x06',ar:1.2496,txt:{x:50,t:16,b:20,w:66,s:1},d:{fa:'Amiri',fn:'Cormorant Garamond',fe:'Cormorant Garamond',orn:'leaf',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n07',n:{ar:'ورد أحمر وإطار ذهبي',fr:'Roses et cadre doré'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#7a1c35',ev:'wedding',bimg:'x07',ar:1.5,txt:{x:50,t:16,b:18,w:62,s:1},d:{fa:'Aref Ruqaa',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'swirl',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n08',n:{ar:'كحلي وزهور بيضاء',fr:'Marine et gypsophile'},shape:'rect',size:2,cm:[10,14.2],arts:[],frame:'none',bg:'#1c1c1c',ac:'#d9c08a',ink:'#f1ead8',ev:'wedding',bimg:'x08',ar:1.4156,txt:{x:50,t:20,b:22,w:64,s:1},d:{fa:'Aref Ruqaa',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n09',n:{ar:'أزرق مائي بإطار ذهبي',fr:'Aquarelle et cadre doré'},shape:'rect',size:2,cm:[10,14.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#2f4a7a',ev:'wedding',bimg:'x09',ar:1.4133,txt:{x:50,t:16,b:18,w:60,s:0.97},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n10',n:{ar:'أوراق خضراء وورد أبيض',fr:'Feuilles et roses blanches'},shape:'rect',size:2,cm:[10,14.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a8450',ink:'#3f5a3f',ev:'wedding',bimg:'x10',ar:1.41,txt:{x:50,t:14,b:28,w:64,s:1},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'leaf',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n11',n:{ar:'إكليل أخضر',fr:'Couronne verte'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#3f5a3f',ev:'wedding',bimg:'x11',ar:1.5,txt:{x:50,t:17,b:34,w:50,s:0.72},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n12',n:{ar:'إطار أزرق بسيط',fr:'Cadre bleu simple'},shape:'rect',size:2,cm:[10,14.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#5a5aa8',ink:'#2b2a6a',ev:'wedding',bimg:'x12',ar:1.4133,txt:{x:50,t:12,b:18,w:70,s:1},d:{fa:'Amiri',fn:'Playfair Display',fe:'Montserrat',orn:'line',dst:'line',ev:'دعوة زفاف',evfr:'Invitation'}},
+ {id:'n13',n:{ar:'قوس وردي وبسملة',fr:'Arche rose'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#6b4a3a',ev:'wedding',bimg:'x13',ar:1.5,txt:{x:34,t:20,b:14,w:54,s:0.87},d:{fa:'Aref Ruqaa',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'',evfr:'Mariage'}},
+ {id:'n14',n:{ar:'ورد ذهبي ناعم',fr:'Fleurs dorées'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#6b5430',ev:'wedding',bimg:'x14',ar:1.5,txt:{x:50,t:18,b:18,w:60,s:0.97},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n15',n:{ar:'إطار ذهبي عرضي',fr:'Cadre doré paysage'},shape:'land',size:2,cm:[15,10.5],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#6b5430',ev:'wedding',bimg:'x15',ar:0.7006,txt:{x:50,t:18,b:18,w:62,s:0.77},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n16',n:{ar:'إطار مقوّس بالورد',fr:'Cadre arrondi fleuri'},shape:'land',size:2,cm:[15,10.5],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a7b48',ink:'#6b5430',ev:'wedding',bimg:'x16',ar:0.6972,txt:{x:50,t:20,b:20,w:52,s:0.72},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'حفل زفاف',evfr:'Mariage'}},
+ {id:'n17',n:{ar:'زوايا مزخرفة',fr:'Coins ornés'},shape:'rect',size:2,cm:[10,14.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#a9852f',ink:'#6b5430',ev:'wedding',bimg:'x17',ar:1.4046,txt:{x:50,t:16,b:18,w:66,s:1},d:{fa:'Reem Kufi',fn:'Cinzel',fe:'Cormorant Garamond',orn:'star',dst:'lines',ev:'دعوة زفاف',evfr:'Invitation'}},
+ {id:'n18',n:{ar:'داليا ذهبية',fr:'Dahlias dorés'},shape:'rect',size:2,cm:[10,14.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a7b48',ink:'#6b5430',ev:'wedding',bimg:'x18',ar:1.4071,txt:{x:50,t:18,b:20,w:56,s:0.9},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n19',n:{ar:'إطار زهور عرضي',fr:'Cadre fleuri paysage'},shape:'land',size:2,cm:[15,11.1],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a7b48',ink:'#6b5430',ev:'wedding',bimg:'x19',ar:0.7413,txt:{x:50,t:22,b:22,w:56,s:0.72},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n20',n:{ar:'عنابي مربع',fr:'Bordeaux carré'},shape:'square',size:4,arts:[],frame:'none',bg:'#1c1c1c',ac:'#d9b46a',ink:'#f0e0c8',ev:'wedding',bimg:'x20',ar:0.9966,txt:{x:50,t:16,b:16,w:58,s:0.94},d:{fa:'Aref Ruqaa',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n21',n:{ar:'كريمي مربع',fr:'Crème carré'},shape:'square',size:4,arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#6b5430',ev:'wedding',bimg:'x21',ar:0.9907,txt:{x:50,t:18,b:18,w:60,s:0.97},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n22',n:{ar:'ورد ثلاثي الأبعاد',fr:'Roses 3D'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#1c1c1c',ac:'#d9b46a',ink:'#f0e0c8',ev:'wedding',bimg:'x22',ar:1.5021,txt:{x:50,t:24,b:22,w:52,s:0.84},d:{fa:'Aref Ruqaa',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'big',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n23',n:{ar:'باقة علوية وفاصل',fr:'Bouquet haut'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#6b5430',ev:'wedding',bimg:'x23',ar:1.5,txt:{x:50,t:36,b:8,w:66,s:1},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n24',n:{ar:'لافندر بزوايا وفاصل',fr:'Lavande et filet'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a8450',ink:'#5a3f7a',ev:'wedding',bimg:'x24',ar:1.5,txt:{x:50,t:12,b:52,w:66,s:0.93},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n25',n:{ar:'شريط أزرق رمادي',fr:'Bande bleu gris'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#b8923f',ink:'#2f4a6a',ev:'wedding',bimg:'x25',ar:1.5,txt:{x:50,t:35,b:41,w:62,s:0.46},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n26',n:{ar:'إطار ذهبي منقوش',fr:'Cadre doré ciselé'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#a9852f',ink:'#6b5430',ev:'wedding',bimg:'x26',ar:1.5,txt:{x:50,t:16,b:16,w:58,s:0.94},d:{fa:'Aref Ruqaa',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'swirl',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n27',n:{ar:'شريط رمادي بنفسجي',fr:'Bande gris lilas'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a8450',ink:'#4a4a6a',ev:'wedding',bimg:'x27',ar:1.5,txt:{x:50,t:37,b:39,w:62,s:0.46},d:{fa:'Amiri',fn:'Great Vibes',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n28',n:{ar:'لافندر علوي',fr:'Lavande haut'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#7a5aa8',ink:'#5a3f7a',ev:'wedding',bimg:'x28',ar:1.5,txt:{x:46,t:22,b:24,w:60,s:0.97},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n29',n:{ar:'لافندر بزوايا',fr:'Lavande coins'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a8450',ink:'#5a3f7a',ev:'wedding',bimg:'x29',ar:1.5,txt:{x:50,t:12,b:52,w:66,s:0.93},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}},
+ {id:'n30',n:{ar:'لافندر وزخرفة',fr:'Lavande ornement'},shape:'rect',size:2,cm:[10,15.0],arts:[],frame:'none',bg:'#fbf8f1',ac:'#9a6a8a',ink:'#5a3f7a',ev:'wedding',bimg:'x30',ar:1.5,txt:{x:50,t:47,b:20,w:64,s:0.85},d:{fa:'Amiri',fn:'Playfair Display',fe:'Cormorant Garamond',orn:'amp',dst:'line',ev:'ندعوكم لحضور زفافنا',evfr:'Invitation de mariage'}}
 ];
 
 /* ---- watercolor flower image: background removed, flower colour changeable ---- */
@@ -666,9 +697,10 @@ function applyAuto(I,st){
   I.x=50;I.y=50;I.bw=I.w;I.bh=I.h;I.sc=100;
 }
 Object.assign(ASSETS,window.XASSETS||{});Object.assign(ASSETS,window.XASSETS2||{});
+window.__mergeMore=function(){var X=window.XMORE;if(!X||window.__mm)return;window.__mm=1;Object.keys(X).forEach(function(k){ASSETS[k]=X[k];});var B2=window.XBG2||{};Object.keys(B2).forEach(function(k){BGIMG[k]=B2[k];});try{if(typeof S!=='undefined'&&typeof build==='function')build();}catch(_e){}};if(window.XMORE)window.__mergeMore();
 (function(){var X=window.XBG||{};Object.keys(X).forEach(function(k){BGIMG[k]=X[k];});})();var PREVIMG=window.XPV||{};
 var RCAT=['14','16','18','20','22','23'];
-var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',55,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',80,''],['20','الفواصل (للتلوين)','Séparateurs',70,''],['22','خواتم وقلوب (للتلوين)','Alliances',50,''],['23','ما لا نهاية (للتلوين)','Infini',60,''],['24','إكاليل ودوائر','Couronnes',60,''],['25','إطارات ذهبية وزوايا','Cadres dorés',70,''],['26','زوايا وظلال وأخرى','Coins et ombres',60,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','19','20','22','23','24','25','26'];
+var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',55,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',80,''],['20','الفواصل (للتلوين)','Séparateurs',70,''],['22','خواتم وقلوب (للتلوين)','Alliances',50,''],['23','ما لا نهاية (للتلوين)','Infini',60,''],['24','إكاليل ودوائر','Couronnes',60,''],['25','إطارات ذهبية وزوايا','Cadres dorés',70,''],['26','زوايا وظلال وأخرى','Coins et ombres',60,''],['27','باقات وزوايا أزهار','Bouquets et angles',60,''],['28','أشرطة وأغصان أزهار (فواصل)','Guirlandes de fleurs',60,''],['29','أكاليل وأقواس أزهار','Couronnes et arches',60,''],['30','حدائق وأسوار','Jardins et balustrades',60,''],['32','ثريات','Lustres',60,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','19','20','22','23','24','25','26'];
 function catOf(nm){var p=nm.slice(0,2);return p==='08'?'13':p;}
 
 var LBM=0;
@@ -690,6 +722,7 @@ document.addEventListener('click',function(e){
   var pf=e.target.closest('[data-pf]');if(pf){var oo=selObj();if(oo){oo.o.f=oo.o.f||{};oo.o.f[S.lang]=pf.dataset.pf;lbClose();commit();buildBar();render();}e.stopImmediatePropagation();return;}
   var b=e.target.closest('[data-zoom]');if(b){e.stopPropagation();lbAsset(b.dataset.zoom);return;}
   if(e.target.closest('#prevcard')){document.body.classList.add('fs');render();return;}
+  var mq=e.target.closest&&e.target.closest('[data-mvf]');if(mq){S.mvf=mq.dataset.mvf;render();return;}
   if(e.target.closest('#fsx')){document.body.classList.remove('fs');render();return;}
   b=e.target.closest('[data-lbm]');if(b){LBM=+b.dataset.lbm;var im=document.getElementById('lbimg');if(im)im.className='lbimg m'+LBM;[].forEach.call(document.querySelectorAll('[data-lbm]'),function(x){x.setAttribute('aria-pressed',String(+x.dataset.lbm===LBM))});return;}
   b=e.target.closest('[data-lbadd]');if(b){lbClose();addAsset(b.dataset.lbadd);return;}
@@ -849,10 +882,18 @@ function art(st,H){
   s+=frameSvg(sh,H,st.frm?'none':st.frame,st.fcol||a,bg,st.fin||0);
   return '<svg class="art" viewBox="0 0 100 '+H+'" preserveAspectRatio="none">'+s+'</svg>';
 }
-var ORN=['amp','heart','rings','line','leaf','swirl','star','dots','crescent','flower','infinity','double','none'];
+var ORN=['amp','and','heart','rings','line','leaf','swirl','star','dots','crescent','flower','infinity','double','lnTS','lnTL','lnKS','lnKL','ampL','andL','heartL','ringsL','dotsL','crescentL','infinityL','none'];
+var ORNLN={lnTS:[14,.25],lnTL:[46,.25],lnKS:[14,1.2],lnKL:[46,1.2]};
+function olenOn(o){return !!ORNLN[o]||/L$/.test(o)&&o!=='none';}
+function olenCtl(){if(!olenOn(S.orn))return '';var ar=S.lang==='ar',d=ORNLN[S.orn]?ORNLN[S.orn][0]:14,v=S.olen!=null?S.olen:d;return '<label class="rr" style="display:grid;gap:6px;margin:8px 0"><span>'+(ar?'طول الخط':'Longueur du trait')+'</span><input type="range" min="4" max="80" step="1" value="'+v+'" data-olen dir="ltr"></label>';}
 function ornament(st,col){
   var o=st.orn,sv=function(vb,inner,fill){return '<svg viewBox="'+vb+'" fill="'+(fill?col:'none')+'" stroke="'+(fill?'none':col)+'" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';};
   if(o==='none')return '';
+  var tm=st.tmp,sideL=function(inner){var L=st.olen!=null?st.olen:14,w=tm?'26px':'calc('+L+'cqw)',ln='<i style="display:block;flex:none;width:'+w+';height:'+(tm?'1px':'calc(.3cqw*var(--s,1))')+';background:'+col+';min-width:1px"></i>';return '<span style="display:inline-flex;align-items:center;gap:'+(tm?'5px':'calc(2.5cqw*var(--s,1))')+'">'+ln+inner+ln+'</span>';};
+  if(ORNLN[o]){var L0=st.olen!=null?st.olen:ORNLN[o][0],th0=ORNLN[o][1];return '<i style="display:block;width:'+(tm?'46px':'calc('+L0+'cqw)')+';height:'+(tm?(th0>.5?'4px':'1px'):'calc('+th0+'cqw*var(--s,1))')+';min-height:1px;background:'+col+';border-radius:2px"></i>';}
+  if(o==='and'||o==='andL'){var wd='<span style="color:'+col+';font-family:\''+fontOf(st,'or')+'\';font-size:'+(tm?'22px':'calc(7cqw*var(--s,1))')+';font-style:'+(st.lang==='ar'?'normal':'italic')+'">'+(st.lang==='ar'?'و':'and')+'</span>';return o==='and'?wd:sideL(wd);}
+  if(o==='ampL')return sideL('<span style="color:'+col+';font-family:\''+fontOf(st,'or')+'\';font-size:'+(tm?'24px':'calc(8cqw*var(--s,1))')+'">'+(st.lang==='ar'?'و':'&amp;')+'</span>');
+  if(/^(heart|rings|dots|crescent|infinity)L$/.test(o)){var ii=ornament({orn:o.slice(0,-1),lang:st.lang,E:st.E,tmp:st.tmp,olen:st.olen},col);return sideL(ii);}
   if(o==='amp')return '<span style="color:'+col+';font-family:\''+fontOf(st,'or')+'\';font-size:'+(st.tmp?'24px':'calc(8cqw*var(--s,1))')+'">'+(st.lang==='ar'?'و':'&amp;')+'</span>';
   if(o==='heart')return sv('0 0 24 22','<path d="M12 21C4 14 1 10.500 1 6.500A5.500 5.500 0 0112 4.500 5.500 5.500 0 0123 6.500C23 10.500 20 14 12 21z"/>',1);
   if(o==='rings')return sv('0 0 40 24','<circle cx="14" cy="14" r="8"/><circle cx="26" cy="14" r="8"/><path d="M20 1.500l2.500 3L20 7.500 17.500 4.500z" fill="'+col+'" stroke="none"/>');
@@ -961,7 +1002,7 @@ function drawCard(box,st,wpx,thumb){
   });
   card.innerHTML=h;
 }
-function render(){
+function render(){try{applyMv();}catch(_e){}
   var t=T(),z=dimsOf(S),stage=$('#stage'),sw_=stage.clientWidth,sh_=stage.clientHeight||420,w;
   var gW=21,gH=29.7;
   var FS=document.body.classList.contains('fs');if(S.zoom==='real'&&!FS){var mw=Math.max(z[0],gW),mh=Math.max(z[1],gH),f=Math.min(sw_/mw,sh_/mh)*.96;w=z[0]*f;
@@ -1010,7 +1051,7 @@ function buildSide(){
   var sh='<div class="panel"><h2>'+t.orn+'</h2><div class="hs">';
   FRM.slice(0,0).forEach(function(q){sh+='<button data-k="frame" data-v="'+q+'" aria-pressed="'+(S.frame===q)+'"><svg viewBox="0 0 100 62">'+(q==='none'?'<text x="50" y="36" text-anchor="middle" font-size="12" fill="currentColor">&#8212;</text>':frameSvg('land',62,q,'#a9852f','#fff'))+'</svg></button>';});
   ORN.forEach(function(q){sh+='<button data-k="orn" data-v="'+q+'" aria-pressed="'+(S.orn===q)+'">'+(q==='none'?'<span style="color:var(--muted)">&#8212;</span>':ornament({orn:q,lang:S.lang,E:S.E,tmp:1},'#a9852f'))+'</button>';});
-  st.innerHTML=sh+'</div></div>';
+  st.innerHTML=sh+'</div>'+olenCtl()+'</div>';
 }
 function placeTools(){
   var tl=$('#tools'),sd=$('#side'),ct=$('#controls');if(!tl)return;
@@ -1194,7 +1235,7 @@ function mgOp(kind,v){
 var CALW='بارك الله لكما',CALF=['Aref Ruqaa','Aref Ruqaa Ink','Katibeh','Reem Kufi','Mirza','Rakkas','Lalezar','El Messiri','Lateef','Amiri','Scheherazade New','Noto Nastaliq Urdu','Ruwudu','Jomhuria','Vibes','Blaka','Blaka Ink','Marhey','Lemonada','Amiri Quran','Gulzar','Kufam'],TGRP='all',FGRP='all',OGRP='all';
 function gallery(){
   var t=T(),ar=S.lang==='ar',h='<div class="panel"><h2>'+t.sThemeT+'</h2><div class="msg">'+t.themeNote+'</div><div class="tpls">'+tileBlank(S.tpl==='blank')+tileMine()+'</div>';
-  var GT=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']],TG={f1:'col',f2:'col',f3:'col',t15:'dark',t17:'dark',t18:'dark',t01:'flw',t02:'flw',t04:'flw',t05:'flw',t11:'flw',b1:'flw',t12:'flw',t13:'flw',a1:'flw',a2:'flw',a3:'flw',a4:'flw',a5:'flw',a6:'flw',a7:'flw',a8:'flw',a9:'flw',a10:'flw'};
+  var GT=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']],TG={f1:'col',f2:'col',f3:'col',t15:'dark',t17:'dark',t18:'dark',t01:'flw',t02:'flw',t04:'flw',t05:'flw',t11:'flw',b1:'flw',t12:'flw',t13:'flw',a1:'flw',a2:'flw',a3:'flw',a4:'flw',a5:'flw',a6:'flw',a7:'flw',a8:'flw',a9:'flw',a10:'flw',n01:'flw',n02:'flw',n03:'flw',n04:'flw',n05:'flw',n06:'flw',n07:'flw',n08:'dark',n09:'flw',n10:'flw',n11:'flw',n12:'flw',n13:'flw',n14:'flw',n15:'flw',n16:'flw',n17:'flw',n18:'flw',n19:'flw',n20:'dark',n21:'flw',n22:'dark',n23:'flw',n24:'flw',n25:'flw',n26:'flw',n27:'flw',n28:'flw',n29:'flw',n30:'flw'};
   var list=TPL.slice(1);
   var inGrp=function(p,gid){return gid.indexOf('sh:')===0?p.shape===gid.slice(3):(TG[p.id]||'oth')===gid;};
   if(TGRP==='all'){
@@ -1239,6 +1280,10 @@ function buildCtl(){
     var kt='';KCOR.forEach(function(q,i){kt+=ft('k:'+i,ASSETS['09_kcor_'+i].d);});
     var gt='';['19_fr_f_floral', '19_fr_sh3_02', '19_fr_sh3_05', '19_fr_sh3_06', '19_fr_sh4_08', '19_fr_sh4_09', '19_fr_sh5_11', '19_fr_sh5_12', '19_fr_sh5_13', '19_fr_sh5_14', '19_fr_sh5_17', '19_fr_sh5_18', '19_fr_sh5_19', '19_fr_sh5_20'].forEach(function(q){if(ASSETS[q])gt+=ft('f:'+q,ASSETS[q].d);});
     grp(ar_?'إطارات ذهبية فاخرة':'Cadres dorés',gt);
+    function fxg(title,arr){var o='';arr.forEach(function(q){if(ASSETS[q])o+=ft('f:'+q,ASSETS[q].d);});if(o)grp(title,o);}
+    fxg(ar_?'إطارات ذهبية وخطوط (جديدة)':'Cadres dorés et lignes (nouveau)',["19_fr_x_f01", "19_fr_x_f04", "19_fr_x_f02", "19_fr_x_f06", "19_fr_x_f07", "19_fr_x_f08", "19_fr_x_f09", "19_fr_x_f10", "19_fr_x_f11", "19_fr_x_f12", "19_fr_x_f13", "19_fr_x_f14", "19_fr_x_f17"]);
+    fxg(ar_?'أقواس وعروسان ومواليد':'Arches, couples, naissance',["19_fr_x_f15", "19_fr_x_f16", "19_fr_x_f18", "19_fr_x_f19", "19_fr_x_f20", "19_fr_x_f05", "19_fr_x_f03"]);
+    fxg(ar_?'إطارات زهور وأوراق (جديدة)':'Cadres fleuris (nouveau)',["19_fr_x_r48", "19_fr_x_r49", "19_fr_x_r50", "19_fr_x_r51", "19_fr_x_r53", "19_fr_x_r54", "19_fr_x_r58", "19_fr_x_s10_09", "19_fr_x_s10_10", "19_fr_x_s10_11", "19_fr_x_s10_12", "19_fr_x_s10_13", "19_fr_x_s10_14", "19_fr_x_s10_15", "19_fr_x_s10_16", "19_fr_x_s10_17", "19_fr_x_s10_18", "19_fr_x_s10_19", "19_fr_x_s10_20", "19_fr_x_s10_21", "19_fr_x_s10_22", "19_fr_x_s10_23", "19_fr_x_s10_24", "19_fr_x_s10_25", "19_fr_x_s10_26", "19_fr_x_s10_27", "19_fr_x_s10_28", "19_fr_x_s10_29", "19_fr_x_s10_30", "19_fr_x_s10_31", "19_fr_x_s10_32"]);
     var gn='';["19_fr_n01","19_fr_n02","19_fr_n03","19_fr_n04","19_fr_n05","19_fr_n06","19_fr_n07","19_fr_n08","19_fr_n09","19_fr_n10","19_fr_n11","19_fr_n12","19_fr_n13","19_fr_n14","19_fr_nh1"].forEach(function(q){if(ASSETS[q])gn+=ft('f:'+q,ASSETS[q].d);});
     grp(ar_?'إطارات الورد الأحمر والكريمي (15)':'Cadres roses rouges (15)',gn);
     grp(ar_?'إطارات زوايا للأعراس (10)':'Cadres d\'angle mariage (10)',kt);
@@ -1325,7 +1370,7 @@ function buildCtl(){
       var GG=mgGrp();
       if(GG){mh+='<div class="msg" style="margin-top:12px;font-weight:700;color:var(--fg)">'+lab('الشعار الأخير الذي أضفتِه (يتحرك ويكبر كله معاً):','Dernier monogramme :')+'</div><div class="row" style="align-items:center"><button class="opt" data-mgop="sc" data-v="1.1">'+lab('تكبير','Agrandir')+' +</button><button class="opt" data-mgop="sc" data-v="0.9">'+lab('تصغير','Réduire')+' −</button></div><div class="row" style="align-items:center"><button class="opt" data-mgop="mv" data-v="-3,0">←︎</button><button class="opt" data-mgop="mv" data-v="3,0">→︎</button><button class="opt" data-mgop="mv" data-v="0,-2">↑︎</button><button class="opt" data-mgop="mv" data-v="0,2">↓︎</button></div><div class="row" style="align-items:center"><label class="mini" style="display:flex;align-items:center;gap:6px">'+lab('لون الكل','Couleur') +' <input class="cin" type="color" data-mgcolall value="'+inkOf(S)+'"></label><button class="opt" data-mgop="del">'+lab('حذف هذا الشعار','Supprimer')+'</button></div>';}
       h+=panel(lab('شعار الحرفين','Monogramme'),back+mh);
-    }else if(OGRP==='_nm'){h+=panel(ar2?'زخرفة بين الاسمين':'Séparateur',back+og+'</div>');}
+    }else if(OGRP==='_nm'){h+=panel(ar2?'زخرفة بين الاسمين':'Séparateur',back+olenCtl()+og+'</div>');}
     else{var c2=LIBC.filter(function(x){return x[0]===OGRP})[0],oa='<div class="lib">';Object.keys(ASSETS).forEach(function(nm){if(catOf(nm)===OGRP)oa+=zmb(nm);});
       var cw='';
       h+=panel(c2?c2[ar2?1:2]:'',back+cw+'<div class="msg">'+t.libHint+'</div>'+oa+'</div>');}
@@ -1339,6 +1384,8 @@ var ICON={frm:'<rect x="3.500" y="3.500" width="17" height="17" rx="2"/><rect x=
 text:'<path d="M5 6.500V5h14v1.500M12 5v14M9 19h6"/>',color:'<circle cx="12" cy="12" r="8.500"/><path d="M12 3.500v17M12 3.500a8.500 8.500 0 0 1 0 17z" fill="currentColor"/>',
 orn:'<path d="M12 4c2 3 5 3.500 7 3-1 3-3 4.500-7 5-4-.5-6-2-7-5 2 .5 5 0 7-3zM12 12.500V20M8.500 20h7"/>',send:'<path d="M4 12l16-8-6 16-2.500-6.500z"/>',img:'<rect x="3.500" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.600"/><path d="M4 17l5-4.500 3.500 3 3-2.500 4.500 4"/>'};
 function curMv(){return MVOF[S.tab]||'lock';}
+function mvKind(){var f=document.body.classList.contains('fs')&&S.mvf;return f?(f==='all'?'all':f):curMv();}
+function applyMv(){var k=mvKind();document.body.setAttribute('data-mv',k);[].forEach.call(document.querySelectorAll('#fsmv button'),function(b){b.setAttribute('aria-pressed',String((S.mvf||curMv())===b.dataset.mvf||(!S.mvf&&b.dataset.mvf===curMv())));});}
 var TABS=['theme','lib','frm','text','img','color','orn','send'],MVOF={lib:'img',text:'txt',orn:'orn',img:'img'};
 function thDraw(){
   [].forEach.call(document.querySelectorAll('.th'),function(el){
@@ -1366,7 +1413,7 @@ function setPressed(el){
 function applyTpl(id){
   var p=TPL.filter(function(x){return x.id===id})[0];
   var prevT=S.tpl;S.tpl=id;S.arts=p.arts.slice();S.frame=p.frame;S.fl='';S.bh='0';S.paper='';S.E=newE();
-  if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}S.orn=p.d.orn;S.dst=p.d.dst;}
+  if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}else{if(p.d.fn){S.E.n1.f.fr=p.d.fn;S.E.n2.f.fr=p.d.fn;}if(p.d.fe){S.E.ev.f.fr=p.d.fe;S.E.dt.f.fr=p.d.fe;}}S.orn=p.d.orn;S.olen=null;S.dst=p.d.dst;}
   if(p.shape){S.bg=p.bg;S.ac=p.ac;S.ink=p.ink||null;}S.noText=false;
   if(p.dx!=null)['ev','n1','or','n2','dt','ln'].forEach(function(k){S.E[k].dx=p.dx;});
 }
@@ -1424,7 +1471,7 @@ document.addEventListener('click',function(e){
     if(k==='shape'){S.szSet=0;S.zoom='real';S.shape=v;S.size=Math.min(2,SH[v].sizes.length-1);S.custom=null;commit();var y=window.scrollY;buildCtl();buildSide();render();window.scrollTo(0,y);return;}
     if(k==='size'){S.size=+v;S.custom=null;S.zoom='real';S.szSet=1;}
     else if(k==='event'){S.event=v;S.evText=T().events[v];S.ed.ev=0;var inp=$('#evt');if(inp)inp.value=S.evText;}
-    else S[k]=v;
+    else{S[k]=v;if(k==='orn')S.olen=null;}
     setPressed(el);commit();render();return;}
   if(e.target.closest('#lang button')){var l=e.target.closest('#lang button');S.lang=l.dataset.l;
     [].forEach.call(document.querySelectorAll('#lang button'),function(x){x.setAttribute('aria-pressed',x===l?'true':'false')});
@@ -1501,6 +1548,7 @@ document.addEventListener('input',function(e){
   if(id==='tm'&&t.value){S.time=t.value;render();return;}
   if(id==='qty'){S.qty=t.value;return;}
   if(id==='btxt'){o=selObj();if(o){o.o.text=t.value;render();}return;}
+  if(t.hasAttribute('data-olen')){S.olen=+t.value;render();return;}
   if(t.hasAttribute('data-bsize')){o=selObj();if(o){o.o.sz=t.value/100;var vz=document.getElementById('v-bsize');if(vz)vz.textContent=Math.round(t.value);render();}return;}
   if(t.hasAttribute('data-brot')){o=selObj();if(o){o.o.rot=+t.value;var vr=document.getElementById('v-brot');if(vr)vr.textContent=t.value;render();}return;}
   if(t.hasAttribute('data-bcin')){o=selObj();if(o){o.o.col=t.value;render();}return;}
@@ -1515,6 +1563,18 @@ document.addEventListener('input',function(e){
 var ptrs={},drag=null,pinch=null;
 function cardRect(){return $('#card').getBoundingClientRect();}
 var scl=null;
+
+(function(){var y0=0;
+document.addEventListener('touchstart',function(e){y0=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchmove',function(e){
+  var t=e.target.closest?e.target.closest('#tools'):null,fs=document.body.classList.contains('fs');
+  if(t&&getComputedStyle(t).position==='fixed'||t&&fs){
+    var dy=e.touches[0].clientY-y0,top=t.scrollTop<=0,bot=t.scrollTop+t.clientHeight>=t.scrollHeight-1;
+    if(t.scrollHeight<=t.clientHeight+1||(dy>0&&top)||(dy<0&&bot)){if(e.cancelable)e.preventDefault();}
+    return;}
+  if(fs&&e.cancelable&&!e.target.closest('.lb,#lb,select,input[type=range]'))e.preventDefault();
+},{passive:false});
+})();
 document.addEventListener('pointerdown',function(e){
   var hd=e.target.closest&&e.target.closest('.hnd');
   if(hd&&e.target.closest('#card')){var oh=selObj();if(oh){var he=hd.parentNode.getBoundingClientRect(),cx=he.left+he.width/2,cy=he.top+he.height/2;
