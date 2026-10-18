@@ -1605,7 +1605,8 @@ const RCDEEPS=[['#c0272d','أحمر'],['#7d1230','بوردو'],['#17803f','أخ�
 const PSUB=['thx','med','arabic','fr','eng','math','phys','hist'],PGRP=['clr','thx','tech','gen','lux','med','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
 
 /* ---- published designs (Firestore) + folder covers ---- */
-let PUB=[],PUBALL=[],COV={},__pubSub=0;
+let PUB=[],PUBALL=[],COV={},CF=[],__pubSub=0;
+function applyCF(){Object.keys(FOLDERS).forEach(k=>{if(k.slice(0,2)==='u_')delete FOLDERS[k];});CF.forEach(c=>{if(c&&c.id&&c.name)FOLDERS['u_'+c.id]=String(c.name).slice(0,40);});}
 const pgOf=p=>FOLDERS[p.folder]?p.folder:'mine';
 const pcard=p=>`<button type="button" class="theme" data-p="${esc(p.id)}" aria-pressed="false"><img class="th-img" src="${p.thumb||THBLANK}" alt="" loading="lazy">${esc(p.name||'تصميم')}</button>`;
 const thImg=k=>`<img class="th-img" data-th="${k}" src="${themeThumb(k)}" alt="" loading="lazy">`;
@@ -1615,6 +1616,7 @@ function pubApply(){PUB=PUBALL.filter(p=>p.on!==false&&p.thumb);try{syncTheme();
 function loadPub(){
   const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);if(!db||__pubSub)return;__pubSub=1;
   try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{PUBALL=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
+  try{db.collection('config').doc('folders').onSnapshot(d=>{CF=(d.exists&&d.data()&&d.data().list)||[];applyCF();pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
 window.__loadPub=loadPub;
@@ -1624,7 +1626,7 @@ async function applyPub(id){
   const f=S.folder;resetOrn();if(!loadDesign(raw))return;S.folder=f;$('#gender-box').hidden=S.occ==='thanks';try{syncTheme();paintColors();}catch(_){}render();
 }
 const G_GEN=['mine','clr','thx','tech','gen','lux','med','stu','flo','rib'],G_SUBJ=['quran','civic','arabic','fr','eng','math','phys','nat','hist'];
-const orderG=a=>{const r=g=>{let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
+const orderG=a=>{const r=g=>{if(g.slice(0,2)==='u_')return .5;let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
 function syncTheme(){
   $('#themes').classList.toggle('port',S.orient==='p');
   const ks=Object.keys(THEMES).filter(k=>(S.orient==='l'||!THEMES[k].svg)&&!(THEMES[k].lo&&S.orient==='p')&&!(THEMES[k].po&&S.orient==='l')&&!(S.orient==='p'&&(!PGRP.includes(grpOf(k))||(PSUB.includes(grpOf(k))&&THEMES[k].o!=='p')))&&!(THEMES[k].av&&!AV_OK)).sort((a,b)=>((THEMES[a].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(a)?0:1)-(((THEMES[b].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(b)?0:1)));
