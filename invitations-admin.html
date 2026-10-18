@@ -123,7 +123,7 @@ body #tools details.adv{padding:6px 12px}
 body #tools details.adv .sx{margin:6px 0}
 body #tools details.adv .sxr{gap:6px}
 @media (max-width:860px){body #tools{max-height:68vh}}
-.fsx{display:none}body.fs{overflow:hidden;overscroll-behavior:none}#tools{overscroll-behavior:contain}.bar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.fsmv{display:none}body.fs .fsmv{display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 110px);gap:5px;position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;z-index:500}.fsmv button{background:#fff;color:var(--fg);border:1.5px solid var(--line);border-radius:99px;padding:7px 10px;font:inherit;font-weight:700;font-size:12px}.fsmv button[aria-pressed="true"]{background:var(--hl);color:#fff;border-color:var(--hl)}
+.fsx{display:none}body.fs{overflow:hidden;overscroll-behavior:none}#tools{overscroll-behavior:contain}.bar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.fsmv{display:none}body.fs .fsmv{display:flex;flex-wrap:nowrap;overflow-x:auto;left:112px;right:8px;gap:5px;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:fixed;top:max(10px,env(safe-area-inset-top));right:10px;z-index:500}.fsmv button{flex:none;white-space:nowrap;background:#fff;color:var(--fg);border:1.5px solid var(--line);border-radius:99px;padding:7px 10px;font:inherit;font-weight:700;font-size:12px}.fsmv button[aria-pressed="true"]{background:var(--hl);color:#fff;border-color:var(--hl)}
 body[data-mv="txt"] #card .pic:not(.mono),body[data-mv="txt"] #card .el[data-e="or"]{pointer-events:none}body[data-mv="img"] #card .el,body[data-mv="img"] #card .pic.stk{pointer-events:none}body[data-mv="stk"] #card .el,body[data-mv="stk"] #card .pic.usr{pointer-events:none}body[data-mv="orn"] #card .el:not([data-e="or"]),body[data-mv="orn"] #card .pic:not(.mono){pointer-events:none}.lib .lt{content-visibility:auto;contain-intrinsic-size:116px 116px}#tools input[type=range]{touch-action:pan-y;height:34px}.pm{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .hnd{position:absolute;right:-15px;bottom:-15px;width:30px;height:30px;border-radius:50%;background:var(--hl);border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.4);z-index:20;touch-action:none;cursor:nwse-resize}
 .hnd.rot{right:auto;bottom:auto;left:50%;top:-34px;margin-left:-15px;cursor:grab;background:#fff;border-color:var(--hl)}
@@ -392,7 +392,7 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
     <div class="pv-head"><div><b id="pv-t"></b><div class="note" id="pv-s"></div></div><button class="abtn pri" id="btn-export" type="button">الصورة النهائية</button><button class="btn" id="pv-toggle" type="button">&#9650;&#xFE0E;</button></div>
     <div class="acts" id="acts"></div>
     <div class="acts2" id="acts2"></div>
-    <div class="stagewrap"><div class="stage" id="stage"><div class="ghost" id="ghost"></div><div class="cardbox" id="cardbox"><div class="card" id="card"></div></div><button class="fsx" id="fsx">✕ إغلاق</button><div class="fsmv" id="fsmv"><button data-mvf="all">الكل</button><button data-mvf="txt">النص</button><button data-mvf="img">الصور</button><button data-mvf="stk">الزخارف</button><button data-mvf="orn">بين الاسمين</button></div></div></div>
+    <div class="stagewrap"><div class="stage" id="stage"><div class="ghost" id="ghost"></div><div class="cardbox" id="cardbox"><div class="card" id="card"></div></div><button class="fsx" id="fsx">✕ إغلاق</button><div class="fsmv" id="fsmv"><button data-mvf="all">الكل</button><button data-mvf="txt">النص</button><button data-mvf="img">الصور</button><button data-mvf="stk">المكتبة</button><button data-mvf="orn">الزخرفة</button></div></div></div>
     <div class="dim" id="dim"></div>
     <div class="seg" id="zoom" style="align-self:center"></div>
   </div>
@@ -1545,7 +1545,7 @@ function addImage(file){
 /* ---- events ---- */
 document.addEventListener('click',function(e){
   var el=e.target.closest('[data-tpl]');if(el){if(el.dataset.tpl==='mine'){if(S.tpl==='mine'||!S.bgKey){$('#bgf').click();return;}S.tpl='mine';S.arts=[];S.frame='none';commit();build();return;}applyTpl(el.dataset.tpl);commit();build();return;}
-  el=e.target.closest('[data-tab]');if(el){TGRP='all';LIBCAT='all';FGRP='all';S.tab=el.dataset.tab;S.sel=null;build();window.scrollTo(0,0);return;}
+  el=e.target.closest('[data-tab]');if(el){TGRP='all';LIBCAT='all';FGRP='all';OGRP='all';S.tab=el.dataset.tab;S.sel=null;build();window.scrollTo(0,0);return;}
   if(e.target.closest('#pv-toggle')){var pvx=$('#pv'),c=pvx.classList.toggle('pvc');$('#pv-toggle').innerHTML=c?'&#9660;&#xFE0E;':'&#9650;&#xFE0E;';return;}
   if(e.target.id==='blankp'){S.arts=[];S.frame='none';S.frm=null;S.tpl='blank';S.imgs=[];S.txts=[];S.orn='none';S.noText=true;S.bgKey=null;S.bh='0';S.paper='';S.fl='';S.fin=0;S.sel=null;commit();build();return;}
   if(e.target.id==='notext'){S.noText=!S.noText;S.sel=null;commit();build();return;}
