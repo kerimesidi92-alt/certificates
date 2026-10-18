@@ -1605,20 +1605,22 @@ const RCDEEPS=[['#c0272d','أحمر'],['#7d1230','بوردو'],['#17803f','أخ�
 const PSUB=['thx','med','arabic','fr','eng','math','phys','hist'],PGRP=['clr','thx','tech','gen','lux','med','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
 
 /* ---- published designs (Firestore) + folder covers ---- */
-let PUB=[],PUBALL=[],COV={};
+let PUB=[],PUBALL=[],COV={},__pubSub=0;
 const pgOf=p=>FOLDERS[p.folder]?p.folder:'mine';
 const pcard=p=>`<button type="button" class="theme" data-p="${esc(p.id)}" aria-pressed="false"><img class="th-img" src="${p.thumb||THBLANK}" alt="" loading="lazy">${esc(p.name||'تصميم')}</button>`;
 const thImg=k=>`<img class="th-img" data-th="${k}" src="${themeThumb(k)}" alt="" loading="lazy">`;
 const pImg=p=>`<img class="th-img" src="${(p&&p.thumb)||THBLANK}" alt="">`;
 function coverOf(g,m,pm){const c=COV[g];if(c&&c.slice(0,2)==='p:'){const p=pm.find(x=>x.id===c.slice(2));if(p)return pImg(p);}if(c&&m.includes(c))return thImg(c);return m.length?thImg(m[0]):pImg(pm[0]);}
-async function loadPub(){
-  const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);if(!db)return;
-  try{const col=db.collection('designs');const q=await(window.__ADM?col.get():col.where('on','==',true).get());PUBALL=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));PUB=PUBALL.filter(p=>p.on!==false&&p.thumb&&p.cfg);}catch(_){}
-  try{const c=await db.collection('config').doc('covers').get();COV=c.exists?(c.data()||{}):{};}catch(_){}
-  try{syncTheme();}catch(_){}try{if(window.__pubUI)window.__pubUI();}catch(_){}
+function pubApply(){PUB=PUBALL.filter(p=>p.on!==false&&p.thumb);try{syncTheme();}catch(_){}try{if(window.__pubUI)window.__pubUI();}catch(_){}}
+function loadPub(){
+  const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);if(!db||__pubSub)return;__pubSub=1;
+  try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{PUBALL=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
+  try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
-function applyPub(id){
-  const p=PUB.find(x=>x.id===id);if(!p)return;let raw;try{raw=JSON.parse(p.cfg);}catch(_){return;}
+window.__loadPub=loadPub;
+async function fetchCfg(id){const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);const d=await db.collection('dcfg').doc(id).get();return JSON.parse(d.data().cfg);}
+async function applyPub(id){
+  const p=PUB.find(x=>x.id===id);if(!p)return;let raw;try{raw=await fetchCfg(id);}catch(_){return;}
   const f=S.folder;resetOrn();if(!loadDesign(raw))return;S.folder=f;$('#gender-box').hidden=S.occ==='thanks';try{syncTheme();paintColors();}catch(_){}render();
 }
 const G_GEN=['mine','clr','thx','tech','gen','lux','med','stu','flo','rib'],G_SUBJ=['quran','civic','arabic','fr','eng','math','phys','nat','hist'];
