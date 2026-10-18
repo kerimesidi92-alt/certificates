@@ -406,7 +406,8 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 </div>
 
 
-<div id="sv-bar"><button type="button" class="abtn pri" id="btn-savemine">💾︎ حفظ في تصاميمي</button><button type="button" class="abtn" id="btn-savenew" hidden>＋ حفظ كتصميم جديد</button></div>
+<div id="sv-bar"><button type="button" class="abtn pri" id="btn-savemine">💾︎ حفظ في تصاميمي</button><button type="button" class="abtn" id="btn-savenew" hidden>＋ حفظ كتصميم جديد</button>
+ <button type="button" class="abtn" id="btn-defsave" style="flex-basis:100%">✎︎ حفظ النص والتنسيق كتلقائي لهذا الثيم</button><button type="button" class="abtn" id="btn-defall">تطبيق على كل ثيمات المجلد</button><button type="button" class="abtn" id="btn-defdel">↺︎ إرجاع الأصل</button></div>
 <div class="wrap">
 <header class="top">
   <div><h1 id="t-title"></h1><p class="note" id="t-note"></p></div>
@@ -1424,6 +1425,14 @@ var CALW='بارك الله لكما',CALF=['Aref Ruqaa','Aref Ruqaa Ink','Katib
 
 /* ---- published designs (Firestore) ---- */
 var PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
+function TOVM(){return window.__TOV||{};}
+function jclone(x){return JSON.parse(JSON.stringify(x));}
+function applyOvTpl(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov)return;var t=ov.t||{},o=ov.o;
+ if(t.evText!=null)S.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f])S[f]=t[f];});
+ if(o){if(o.E)S.E=jclone(o.E);if(o.orn!=null){S.orn=o.orn;S.olen=o.olen==null?null:o.olen;}if(o.dst!=null)S.dst=o.dst;
+  if(o.txts)S.txts=jclone(o.txts).map(function(x){x.id=uid++;return x;});}}
+function applyOvTexts(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov||!ov.t)return;var t=ov.t;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f])S[f]=t[f];});if(t.evText!=null&&!S.ed.ev)S.evText=t.evText;}
+
 var GTN=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']];
 function fldName(g,ar){if(g==='allt')return ar?'الكل':'Tous';if(g==='mine')return ar?'تصاميم من عندنا':'Nos créations';
  if(g.slice(0,2)==='u_'){var c=CF.filter(function(x){return 'u_'+x.id===g})[0];return c?c.name:(ar?'تصاميم من عندنا':'Nos créations');}
@@ -1438,6 +1447,7 @@ function loadPub(){var db=window.__fdb;if(!db||__pubSub)return;__pubSub=1;
  try{var col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(function(q){var all=q.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return (b.ord||0)-(a.ord||0)});PUBDEL=all.filter(function(p){return p.del===true});PUBALL=all.filter(function(p){return p.del!==true});pubApply();},function(){__pubSub=0;});}catch(_){__pubSub=0;}
  try{db.collection('config').doc('folders').onSnapshot(function(d){CF=(d.exists&&d.data()&&d.data().list)||[];pubApply();},function(){});}catch(_){}
  try{db.collection('config').doc('hidden').onSnapshot(function(d){var x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},function(){});}catch(_){}
+ try{db.collection('config').doc('defaults').onSnapshot(function(d){window.__TOV=(d.exists&&d.data()&&d.data().m)||{};pubApply();},function(){});}catch(_){}
  try{db.collection('config').doc('covers').onSnapshot(function(d){COV=d.exists?(d.data()||{}):{};pubApply();},function(){});}catch(_){}}
 window.__loadPub=loadPub;
 async function fetchCfg(id){var d=await window.__fdb.collection('dcfg').doc(id).get();return JSON.parse(d.data().cfg);}
@@ -1645,6 +1655,7 @@ function applyTpl(id){
   if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}else{if(p.d.fn){S.E.n1.f.fr=p.d.fn;S.E.n2.f.fr=p.d.fn;}if(p.d.fe){S.E.ev.f.fr=p.d.fe;S.E.dt.f.fr=p.d.fe;}}S.orn=p.d.orn;S.olen=null;S.dst=p.d.dst;}
   if(p.shape){S.bg=p.bg;S.ac=p.ac;S.ink=p.ink||null;}S.noText=false;
   if(p.dx!=null)['ev','n1','or','n2','dt','ln'].forEach(function(k){S.E[k].dx=p.dx;});
+  applyOvTpl();
 }
 function addBg(file){
   var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
@@ -1712,7 +1723,7 @@ document.addEventListener('click',function(e){
     setPressed(el);commit();render();return;}
   if(e.target.closest('#lang button')){var l=e.target.closest('#lang button');S.lang=l.dataset.l;
     [].forEach.call(document.querySelectorAll('#lang button'),function(x){x.setAttribute('aria-pressed',x===l?'true':'false')});
-    ['n1','n2','line'].forEach(function(f){if(!S.ed[f])S[f]=DEF[S.lang][f];});if(!S.ed.ev)S.evText=UI[S.lang].events[S.event];commit();build();return;}
+    ['n1','n2','line'].forEach(function(f){if(!S.ed[f])S[f]=DEF[S.lang][f];});if(!S.ed.ev)S.evText=UI[S.lang].events[S.event];applyOvTexts();commit();build();return;}
   if(e.target.id==='capply'){var w=Math.max(3,Math.min(60,+$('#cw').value||10)),hh=$('#chh')?Math.max(3,Math.min(60,+$('#chh').value||10)):w;S.custom=[w,hh];S.zoom='real';S.szSet=1;commit();var y2=window.scrollY;buildCtl();render();window.scrollTo(0,y2);return;}
   if(e.target.id==='addimg'||e.target.id==='addimg2'){$('#imgf').click();return;}
   if(e.target.id==='addtxt'){var id=uid++;S.txts.push({id:id,text:T().newTxt,f:{},sz:1,col:null,x:50,y:50});S.sel='t:'+id;S.tab='text';commit();build();return;}
@@ -2210,6 +2221,27 @@ var PUBEDIT=null;
    else if(m==='pkill'){if(!confirm('حذف هذا التصميم نهائيًا؟ لا يمكن التراجع.'))return;await db().collection('designs').doc(b.dataset.id).delete();try{await db().collection('dcfg').doc(b.dataset.id).delete();}catch(_){}}
   }catch(_){msg('تعذّرت العملية. تأكدي من القواعد.',1);}});
  mgUI();
+})();
+
+
+/* ---- default text + layout per template (admin) ---- */
+(function(){
+ var db=function(){return window.__fdb;},msg=function(t,e){try{toast(t,e);}catch(_){}},LN={ar:'العربية',fr:'الفرنسية'};
+ function tn(id){var p=TPL.filter(function(x){return x.id===id})[0];return p?(p.n&&p.n.ar)||id:id;}
+ function realTpl(){return TPL.slice(1).some(function(p){return p.id===S.tpl})?S.tpl:null;}
+ function pkg(lay){var r={t:{evText:S.evText,n1:S.n1,n2:S.n2,line:S.line}};if(lay)r.o={E:jclone(S.E),orn:S.orn,olen:S.olen==null?null:S.olen,dst:S.dst,txts:jclone(S.txts||[])};return r;}
+ async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:window.__TOV});try{pubApply();}catch(_){}}
+ function grp(){var p=TPL.filter(function(x){return x.id===S.tpl})[0];if(TGRP&&TGRP!=='all'&&TGRP!=='allt'&&TGRP!=='mine'&&TGRP.slice(0,2)!=='u_')return TGRP;return 'sh:'+(p?p.shape:'rect');}
+ function tplsOf(g){var l=TPL.slice(1);if(g.indexOf('sh:')===0)return l.filter(function(p){return p.shape===g.slice(3)});return l.filter(function(p){return ((window.__TGMAP||{})[p.id]||'oth')===g;});}
+ $('#btn-defsave').onclick=async function(){var id=realTpl();if(!id){msg('اختاري ثيمًا من القائمة أولًا.',1);return;}window.__TOV=window.__TOV||{};
+  window.__TOV[id+'|'+S.lang]=pkg(true);try{await write();msg('حُفظ النص والتنسيق كتلقائي لـ«'+tn(id)+'» ('+LN[S.lang]+'). يصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
+ $('#btn-defdel').onclick=async function(){var id=realTpl();if(!id)return;var k=id+'|'+S.lang;if(!(window.__TOV||{})[k]){msg('لا يوجد نص تلقائي محفوظ لهذا الثيم بهذه اللغة.');return;}
+  delete window.__TOV[k];try{await write();S.ed={};applyTpl(id);S.n1=DEF[S.lang].n1;S.n2=DEF[S.lang].n2;S.line=DEF[S.lang].line;commit();build();render();msg('رُجع النص الأصلي لهذا الثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
+ $('#btn-defall').onclick=async function(){var id=realTpl();if(!id){msg('اختاري ثيمًا من المجلد أولًا.',1);return;}
+  var g=grp(),ks=tplsOf(g);if(!confirm('تطبيق النص التلقائي الحالي ('+LN[S.lang]+') على '+ks.length+' ثيم في «'+fldName(g,true)+'»؟'))return;
+  var lay=confirm('هل تريدين تطبيق التنسيق أيضًا (أماكن الكتابة والأحجام والزخارف)؟\nموافق = النص والتنسيق، إلغاء = النص فقط. التنسيق قد لا يناسب كل الثيمات.');
+  var p=pkg(lay);window.__TOV=window.__TOV||{};ks.forEach(function(q){var key=q.id+'|'+S.lang,old=window.__TOV[key]||{};var n={t:jclone(p.t)};var o=lay?jclone(p.o):old.o;if(o)n.o=o;window.__TOV[key]=n;});
+  try{await write();msg('طُبّق على '+ks.length+' ثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
 })();
 
 /* the engine's own order tab is not needed here */
