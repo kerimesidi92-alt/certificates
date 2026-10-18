@@ -29,6 +29,12 @@
 .cvr .h{display:flex;align-items:center;gap:10px}.cvr .h img{width:64px;aspect-ratio:1280/906;object-fit:cover;border-radius:6px;border:1px solid #ddd}
 .cvr .h b{flex:1}.cvg{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}
 .cvg .theme{padding:4px;font-size:11px}
+
+.mgg{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.mgi{border:1px solid var(--line,#e3dccd);border-radius:10px;padding:6px;display:grid;gap:4px;font-size:12px;text-align:center;min-width:0}
+.mgi .th-img{width:100%;aspect-ratio:1280/906;object-fit:cover;border-radius:6px;background:#fff;border:1px solid #ddd}
+.mgi button{min-height:32px;font-size:12px;padding:2px 6px}
+.trr{display:flex;align-items:center;gap:8px;border-top:1px solid #eee;padding:6px 0}.trr img{width:56px;aspect-ratio:1280/906;object-fit:cover;border-radius:6px;border:1px solid #ddd;background:#fff}.trr b{flex:1;font-size:13px}
 </style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
@@ -530,6 +536,8 @@ body{background:var(--bg)}
   <section id="tab-mine" class="studio" hidden style="display:block">
     <div class="box" style="margin-bottom:14px"><h2>تصاميمي</h2><p class="hint">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="hint" id="pb-msg" role="status"></p></div>
     <div class="box" style="margin-bottom:14px"><h2>مجلداتي</h2><p class="hint">أنشئي مجلدات بأسمائك (تظهر للزبائن بعد وضع تصميم منشور فيها). يمكنك أيضًا إنشاء مجلد جديد عند نشر أي تصميم.</p><div id="fd-list"></div><button type="button" class="btn" id="fd-add">＋ مجلد جديد</button></div>
+    <div class="box" style="margin-bottom:14px"><h2>إدارة المجلدات</h2><p class="hint">اختاري مجلدًا لترين محتواه. «حذف» ينقل العنصر إلى المحذوفات (يمكن إرجاعه)، و«إخفاء المجلد» يخفيه كله عن الزبائن.</p><select id="mg-f"></select><div id="mg-bar" style="display:flex;gap:8px;flex-wrap:wrap"></div><div id="mg-list" class="mgg"></div></div>
+    <div class="box" style="margin-bottom:14px"><h2>المحذوفات</h2><div id="tr-list"></div></div>
     <div class="box"><h2>صورة غلاف كل مجلد</h2><div id="cv-list"></div></div>
   </section>
   <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="الصورة النهائية">
@@ -1655,7 +1663,7 @@ const RCDEEPS=[['#c0272d','أحمر'],['#7d1230','بوردو'],['#17803f','أخ�
 const PSUB=['thx','med','arabic','fr','eng','math','phys','hist'],PGRP=['clr','thx','tech','gen','lux','med','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
 
 /* ---- published designs (Firestore) + folder covers ---- */
-let PUB=[],PUBALL=[],COV={},CF=[],__pubSub=0;
+let PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
 function applyCF(){Object.keys(FOLDERS).forEach(k=>{if(k.slice(0,2)==='u_')delete FOLDERS[k];});CF.forEach(c=>{if(c&&c.id&&c.name)FOLDERS['u_'+c.id]=String(c.name).slice(0,40);});}
 const pgOf=p=>FOLDERS[p.folder]?p.folder:'mine';
 const pcard=p=>`<button type="button" class="theme" data-p="${esc(p.id)}" aria-pressed="false"><img class="th-img" src="${p.thumb||THBLANK}" alt="" loading="lazy">${esc(p.name||'تصميم')}</button>`;
@@ -1665,8 +1673,9 @@ function coverOf(g,m,pm){const c=COV[g];if(c&&c.slice(0,2)==='p:'){const p=pm.fi
 function pubApply(){PUB=PUBALL.filter(p=>p.on!==false&&p.thumb);try{syncTheme();}catch(_){}try{if(window.__pubUI)window.__pubUI();}catch(_){}}
 function loadPub(){
   const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);if(!db||__pubSub)return;__pubSub=1;
-  try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{PUBALL=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
+  try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{{const all=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));PUBDEL=all.filter(p=>p.del===true);PUBALL=all.filter(p=>p.del!==true);}pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
   try{db.collection('config').doc('folders').onSnapshot(d=>{CF=(d.exists&&d.data()&&d.data().list)||[];applyCF();pubApply();},()=>{});}catch(_){}
+  try{db.collection('config').doc('hidden').onSnapshot(d=>{const x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
 window.__loadPub=loadPub;
@@ -1679,8 +1688,8 @@ const G_GEN=['mine','clr','thx','tech','gen','lux','med','stu','flo','rib'],G_SU
 const orderG=a=>{const r=g=>{if(g.slice(0,2)==='u_')return .5;let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
 function syncTheme(){
   $('#themes').classList.toggle('port',S.orient==='p');
-  const ks=Object.keys(THEMES).filter(k=>(S.orient==='l'||!THEMES[k].svg)&&!(THEMES[k].lo&&S.orient==='p')&&!(THEMES[k].po&&S.orient==='l')&&!(S.orient==='p'&&(!PGRP.includes(grpOf(k))||(PSUB.includes(grpOf(k))&&THEMES[k].o!=='p')))&&!(THEMES[k].av&&!AV_OK)).sort((a,b)=>((THEMES[a].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(a)?0:1)-(((THEMES[b].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(b)?0:1)));
-  const pubs=PUB.filter(p=>(p.or||'l')===S.orient);const gs0=[...new Set(ks.map(grpOf).concat(pubs.map(pgOf)))].sort((x,y)=>S.orient==='p'?PGRP.indexOf(x)-PGRP.indexOf(y):0),gs=orderG(ks.some(k=>THEMES[k].rc)?['clr',...gs0]:gs0),none=`<button type="button" class="theme" data-k="none" aria-pressed="${S.theme==='none'}"><div class="th-img th-none">✦︎</div>بدون ثيم</button><button type="button" class="theme" data-k="custom" aria-pressed="${S.theme==='custom'}"><div class="th-img th-up">${S.bg?`<img src="${S.bg.src}" alt="">`:'＋'}</div>خلفيتك الخاصة</button>`;
+  const ks=Object.keys(THEMES).filter(k=>HID.items.indexOf(k)<0&&(S.orient==='l'||!THEMES[k].svg)&&!(THEMES[k].lo&&S.orient==='p')&&!(THEMES[k].po&&S.orient==='l')&&!(S.orient==='p'&&(!PGRP.includes(grpOf(k))||(PSUB.includes(grpOf(k))&&THEMES[k].o!=='p')))&&!(THEMES[k].av&&!AV_OK)).sort((a,b)=>((THEMES[a].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(a)?0:1)-(((THEMES[b].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(b)?0:1)));
+  const pubs=PUB.filter(p=>(p.or||'l')===S.orient);const gs0=[...new Set(ks.map(grpOf).concat(pubs.map(pgOf)))].sort((x,y)=>S.orient==='p'?PGRP.indexOf(x)-PGRP.indexOf(y):0),gs=orderG(ks.some(k=>THEMES[k].rc)?['clr',...gs0]:gs0).filter(g=>HID.folders.indexOf(g)<0),none=`<button type="button" class="theme" data-k="none" aria-pressed="${S.theme==='none'}"><div class="th-img th-none">✦︎</div>بدون ثيم</button><button type="button" class="theme" data-k="custom" aria-pressed="${S.theme==='custom'}"><div class="th-img th-up">${S.bg?`<img src="${S.bg.src}" alt="">`:'＋'}</div>خلفيتك الخاصة</button>`;
   const card=k=>`<button type="button" class="theme" data-k="${k}" aria-pressed="${S.theme===k}"><img class="th-img" data-th="${k}" src="${themeThumb(k)}" alt="" loading="lazy">${THEMES[k].name}</button>`;
   let f=S.folder;if(f===null)f='';
   if(gs.length<2){$('#themes').innerHTML=none+ks.map(card).join('')+pubs.map(pcard).join('');return;}
@@ -1944,7 +1953,7 @@ $('#order-form').addEventListener('submit',e=>{
   function ui(){
     lbl();
     $('#fd-list').innerHTML=CF.length?CF.map(c=>`<div class="row2" style="grid-template-columns:1fr auto auto;align-items:center;margin-bottom:6px"><b>${esc(c.name)}</b><button class="btn" data-f="ren" data-id="${esc(c.id)}" style="min-height:36px">تسمية</button><button class="btn" data-f="del" data-id="${esc(c.id)}" style="min-height:36px">حذف</button></div>`).join(''):'<p class="hint">لا توجد مجلدات خاصة بعد.</p>';
-    $('#pb-list').innerHTML=PUBALL.length?PUBALL.map(p=>`<div class="pubit ${p.or==='p'?'p':''} ${p.on===false?'off':''}"><img src="${p.thumb||''}" alt=""><div class="pi"><b>${esc(p.name||'')}</b><span class="hint">${FOLDERS[pgOf(p)]} · ${p.on===false?'محفوظ (غير منشور)':'منشور للزبائن'}</span><div class="pb"><button class="btn" data-a="edit" data-id="${p.id}">تعديل</button>${p.on===false?`<button class="btn primary" data-a="pub" data-id="${p.id}">نشر للزبون</button>`:`<button class="btn" data-a="ren" data-id="${p.id}">الاسم/المجلد</button><button class="btn" data-a="unpub" data-id="${p.id}">إلغاء النشر</button>`}<button class="btn" data-a="del" data-id="${p.id}">حذف</button></div></div></div>`).join(''):'<p class="hint">لا توجد تصاميم بعد.</p>';
+    $('#pb-list').innerHTML=PUBALL.length?PUBALL.slice(0,window.__PL||20).map(p=>`<div class="pubit ${p.or==='p'?'p':''} ${p.on===false?'off':''}"><img src="${p.thumb||''}" alt=""><div class="pi"><b>${esc(p.name||'')}</b><span class="hint">${FOLDERS[pgOf(p)]} · ${p.on===false?'محفوظ (غير منشور)':'منشور للزبائن'}</span><div class="pb"><button class="btn" data-a="edit" data-id="${p.id}">تعديل</button>${p.on===false?`<button class="btn primary" data-a="pub" data-id="${p.id}">نشر للزبون</button>`:`<button class="btn" data-a="ren" data-id="${p.id}">الاسم/المجلد</button><button class="btn" data-a="unpub" data-id="${p.id}">إلغاء النشر</button>`}<button class="btn" data-a="del" data-id="${p.id}">حذف</button></div></div></div>`).join('')+(PUBALL.length>(window.__PL||20)?'<button class="btn" data-a="more" style="width:100%">عرض المزيد ('+(PUBALL.length-(window.__PL||20))+')</button>':''):'<p class="hint">لا توجد تصاميم بعد.</p>';
     $('#cv-list').innerHTML=Object.keys(FOLDERS).map(g=>{const m=Object.keys(THEMES).filter(k=>grpOf(k)===g||(g==='clr'&&THEMES[k].rc)),pm=PUBALL.filter(p=>pgOf(p)===g&&p.on!==false);if(!m.length&&!pm.length)return '';
       return `<div class="cvr" data-g="${g}"><div class="h">${coverOf(g,m,pm)}<b>${FOLDERS[g]}</b><button class="btn" data-a="cv" data-g="${g}">اختيار الغلاف</button></div><div class="cvg" hidden></div></div>`;}).join('');
   }
@@ -1968,12 +1977,12 @@ $('#order-form').addEventListener('submit',e=>{
   }
   $('#btn-savemine').onclick=()=>save(false);$('#btn-savenew').onclick=()=>save(true);
   $('#pb-list').addEventListener('click',async e=>{
-    const b=e.target.closest('[data-a]');if(!b)return;const id=b.dataset.id,p=PUBALL.find(x=>x.id===id);if(!p)return;
+    const b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a==='more'){window.__PL=(window.__PL||20)+20;ui();return;}const id=b.dataset.id,p=PUBALL.find(x=>x.id===id);if(!p)return;
     try{
       if(b.dataset.a==='edit'){const raw=await fetchCfg(id);if(loadDesign(raw)){S.pubEdit=id;S.folder=null;showTab('design');try{syncTheme();paintColors();}catch(_){}lbl();toast('فُتح التصميم للتعديل. عدّلي ثم اضغطي «حفظ التعديل».');}}
       else if(b.dataset.a==='pub'||b.dataset.a==='ren'){ask(b.dataset.a==='pub'?'نشر للزبائن':'الاسم والمجلد',p.name,pgOf(p),b.dataset.a==='pub'?'نشر':'حفظ',async(n,f)=>{try{await db().collection('designs').doc(id).update({name:n,folder:f,on:true});msg('تم. يظهر للزبائن مباشرة في «'+FOLDERS[f]+'».');}catch(_){msg('تعذّر النشر. تأكدي من القواعد.',1);}});}
       else if(b.dataset.a==='unpub'){await db().collection('designs').doc(id).update({on:false});msg('أُلغي النشر.');}
-      else if(b.dataset.a==='del'){if(!confirm('حذف هذا التصميم نهائيًا من التطبيق؟'))return;await db().collection('designs').doc(id).delete();try{await db().collection('dcfg').doc(id).delete();}catch(_){}if(S.pubEdit===id)S.pubEdit=null;lbl();}
+      else if(b.dataset.a==='del'){await db().collection('designs').doc(id).update({del:true,on:false});if(S.pubEdit===id)S.pubEdit=null;lbl();msg('نُقل إلى المحذوفات.');}
     }catch(_){msg('تعذّر تنفيذ العملية. تأكدي من القواعد.',1);}
   });
   $('#fd-add').onclick=()=>{const n=(prompt('اسم المجلد الجديد')||'').trim();if(!n)return;saveCF(CF.concat([{id:Date.now().toString(36),name:n.slice(0,40)}])).then(()=>msg('تم إنشاء المجلد.')).catch(()=>msg('تعذّر الإنشاء. تأكدي من القواعد.',1));};
@@ -1988,6 +1997,42 @@ $('#order-form').addEventListener('submit',e=>{
     const t=e.target.closest('[data-pick]');if(!t)return;const g=t.closest('.cvr').dataset.g,v=t.dataset.pick;
     try{const n=Object.assign({},COV);if(v)n[g]=v;else delete n[g];await db().collection('config').doc('covers').set(n);msg('تم حفظ غلاف المجلد.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد.',1);}
   });
+})();
+
+
+/* ---- folder management + trash ---- */
+(function(){
+  const db=()=>window.__fdb,msg=(t,e)=>{try{toast(t,e);}catch(_){}};
+  let MGL=24;const _u=window.__pubUI;
+  async function writeHid(){await db().collection('config').doc('hidden').set({items:HID.items,folders:HID.folders});pubApply();}
+  const itemsOf=g=>({th:Object.keys(THEMES).filter(k=>HID.items.indexOf(k)<0&&(g==='clr'?THEMES[k].rc:grpOf(k)===g)),pb:PUBALL.filter(p=>pgOf(p)===g)});
+  function mgUI(){
+    const sel=$('#mg-f');if(!sel)return;const cur=sel.value||'mine';
+    sel.innerHTML=Object.keys(FOLDERS).map(g=>`<option value="${g}">${esc(FOLDERS[g])}${HID.folders.indexOf(g)>=0?' (مخفي)':''}</option>`).join('');sel.value=FOLDERS[cur]?cur:'mine';
+    const g=sel.value,hid=HID.folders.indexOf(g)>=0,it=itemsOf(g);
+    $('#mg-bar').innerHTML=`<button class="btn" data-m="fold" data-g="${g}">${hid?'إظهار المجلد':'إخفاء المجلد كله'}</button><span class="hint">${it.th.length+it.pb.length} عنصر</span>`;
+    const rows=it.pb.map(p=>`<div class="mgi"><img class="th-img" src="${p.thumb||''}" alt=""><span>${esc(p.name||'')}</span><button class="btn" data-m="del" data-k="p:${esc(p.id)}">حذف</button></div>`).concat(it.th.map(k=>`<div class="mgi">${thImg(k)}<span>${esc(THEMES[k].name)}</span><button class="btn" data-m="del" data-k="t:${k}">حذف</button></div>`));
+    $('#mg-list').innerHTML=rows.slice(0,MGL).join('')+(rows.length>MGL?`<button class="btn" data-m="more" style="grid-column:1/-1">عرض المزيد (${rows.length-MGL})</button>`:'');
+    const tr=[];
+    HID.folders.forEach(f=>tr.push(`<div class="trr"><b>📁 ${esc(FOLDERS[f]||f)} (مجلد مخفي)</b><button class="btn" data-m="unfold" data-g="${esc(f)}">إظهار</button></div>`));
+    HID.items.forEach(k=>{if(THEMES[k])tr.push(`<div class="trr">${thImg(k).replace('class="th-img"','class="th-img" style="width:56px"')}<b>${esc(THEMES[k].name)}</b><button class="btn" data-m="undel" data-k="${k}">إرجاع</button></div>`);});
+    PUBDEL.forEach(p=>tr.push(`<div class="trr"><img src="${p.thumb||''}" alt=""><b>${esc(p.name||'')}</b><button class="btn" data-m="pback" data-id="${esc(p.id)}">إرجاع</button><button class="btn" data-m="pkill" data-id="${esc(p.id)}">حذف نهائي</button></div>`));
+    $('#tr-list').innerHTML=tr.length?tr.join(''):'<p class="hint">لا توجد عناصر محذوفة.</p>';
+  }
+  window.__pubUI=function(){if(_u)_u();mgUI();};
+  $('#mg-f').onchange=()=>{MGL=24;mgUI();};
+  $('#mg-bar').addEventListener('click',async e=>{const b=e.target.closest('[data-m=fold]');if(!b)return;const g=b.dataset.g,i=HID.folders.indexOf(g);if(i<0)HID.folders.push(g);else HID.folders.splice(i,1);try{await writeHid();}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد.',1);}});
+  $('#mg-list').addEventListener('click',async e=>{const b=e.target.closest('[data-m]');if(!b)return;
+    if(b.dataset.m==='more'){MGL+=24;mgUI();return;}
+    if(b.dataset.m==='del'){const k=b.dataset.k;try{if(k.slice(0,2)==='p:'){await db().collection('designs').doc(k.slice(2)).update({del:true,on:false});}else{HID.items.push(k.slice(2));await writeHid();}msg('نُقل إلى المحذوفات.');}catch(_){msg('تعذّر الحذف. تأكدي من القواعد.',1);}}});
+  $('#tr-list').addEventListener('click',async e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m;
+    try{
+      if(m==='unfold'){HID.folders=HID.folders.filter(x=>x!==b.dataset.g);await writeHid();}
+      else if(m==='undel'){HID.items=HID.items.filter(x=>x!==b.dataset.k);await writeHid();}
+      else if(m==='pback'){await db().collection('designs').doc(b.dataset.id).update({del:false});}
+      else if(m==='pkill'){if(!confirm('حذف هذا التصميم نهائيًا؟ لا يمكن التراجع.'))return;await db().collection('designs').doc(b.dataset.id).delete();try{await db().collection('dcfg').doc(b.dataset.id).delete();}catch(_){}}
+    }catch(_){msg('تعذّرت العملية. تأكدي من القواعد.',1);}});
+  mgUI();
 })();
 
 /* open an order's design in the studio */
