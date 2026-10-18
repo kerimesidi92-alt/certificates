@@ -3,17 +3,6 @@
 <style>html,body{touch-action:manipulation}
 #seg-orient button,#seg-lang button,#seg-gender button{min-height:34px;padding:4px 8px;font-size:12.5px}
 #tab-design [data-tab=theme] .field{gap:4px}
-@media (max-width:860px){
-  .top{padding-bottom:4px!important;gap:6px}
-  .brand h1{font-size:18px!important}.brand h1::before{width:7px;height:7px;margin-inline-end:7px}
-  .brand p{display:none}
-  .top>a{padding:5px 10px!important;font-size:12px!important;border-radius:9px!important}
-  .studio{margin-top:6px!important}
-  .preview .pv-head>div:first-child{display:none}
-  .preview .pv-head{justify-content:flex-start;min-height:0}
-  .preview .pv-head #pv-toggle{min-height:28px!important;padding:2px 14px!important}
-  .preview .addbar.quick .btn,.preview .addbar .btn{min-height:30px!important;font-size:12px!important;padding-block:3px!important}
-}
 </style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
@@ -121,6 +110,7 @@ a.btn.primary{color:var(--accent-fg)}
 .t-title{font-family:var(--font-title);font-weight:700;color:var(--ink)}
 .t-name,.t-from{font-family:var(--font-ui);font-weight:700;color:var(--acc)}
 .t-role,.t-date{font-family:var(--font-ui);font-weight:600;color:var(--ink)}
+.c-img.fxd{pointer-events:none!important;cursor:default}
 .c-img{position:absolute;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .c-img .ph{position:absolute;inset:0;background-repeat:no-repeat;background-position:center;background-size:cover;box-sizing:border-box}
 .c-img.nob .ph{border:0!important;box-shadow:none!important}
@@ -1198,7 +1188,7 @@ const imgBS=im=>{const f=imgFit(im),z=(im.zm||100)/100;if(f!=='cover'||Math.abs(
 const imgBP=im=>(im.px==null?50:im.px)+'% '+(im.py==null?50:im.py)+'%';
 function panRange(im){const w=im.w,h=imgH(im),ar=im.ar||1,z=(im.zm||100)/100;if(imgFit(im)!=='cover')return [0,0];const s=Math.max(w,h/ar)*z;return [s-w,s*ar-h];}
 function imgsHTML(){
-  return S.images.map((im,i)=>`<div class="c-img ${im.shape}${im.bd?' nob':''}${i===S.sel?' sel':''}" data-i="${i}" style="left:${im.x}px;top:${im.y}px;width:${im.w}px;height:${imgH(im)}px;opacity:${im.op/100};z-index:${im.layer==='back'?1:(im.z!=null?10+im.z:6)}"><div class="ph" style="${im.bc?'border-color:'+im.bc+';':''}background-image:url(\'${im.src}\');background-size:${imgBS(im)};background-position:${imgBP(im)}"></div><i class="rh"></i><i class="rhx"></i><i class="rhy"></i></div>`).join('');
+  return S.images.map((im,i)=>`<div class="c-img ${im.shape}${im.bd?' nob':''}${im.fx?' fxd':''}${i===S.sel?' sel':''}" data-i="${i}" style="left:${im.x}px;top:${im.y}px;width:${im.w}px;height:${imgH(im)}px;opacity:${im.op/100};z-index:${im.layer==='back'?1:(im.z!=null?10+im.z:6)}"><div class="ph" style="${im.bc?'border-color:'+im.bc+';':''}background-image:url(\'${im.src}\');background-size:${imgBS(im)};background-position:${imgBP(im)}"></div><i class="rh"></i><i class="rhx"></i><i class="rhy"></i></div>`).join('');
 }
 function fitAll(){
   layer.querySelectorAll('.tb').forEach(b=>{
@@ -1625,14 +1615,14 @@ function loadPub(){
   try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{{const all=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));PUBDEL=all.filter(p=>p.del===true);PUBALL=all.filter(p=>p.del!==true);}pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
   try{db.collection('config').doc('folders').onSnapshot(d=>{CF=(d.exists&&d.data()&&d.data().list)||[];applyCF();pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('hidden').onSnapshot(d=>{const x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},()=>{});}catch(_){}
-  try{db.collection('config').doc('defaults').onSnapshot(d=>{TOV=(d.exists&&d.data()&&d.data().m)||{};if(!window.__ovInit&&Object.keys(TOV).length){window.__ovInit=1;if(!S.themeTouched&&!Object.values(S.edited).some(Boolean)){applyLayoutOv();applyDefaults();render();try{renderTools();}catch(_){}}}pubApply();},()=>{});}catch(_){}
+  try{db.collection('config').doc('defaults').onSnapshot(d=>{TOV={};if(!window.__ovInit&&Object.keys(TOV).length){window.__ovInit=1;if(!S.themeTouched&&!Object.values(S.edited).some(Boolean)){applyLayoutOv();applyDefaults();render();try{renderTools();}catch(_){}}}pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
 window.__loadPub=loadPub;
 async function fetchCfg(id){const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);const d=await db.collection('dcfg').doc(id).get();return JSON.parse(d.data().cfg);}
 async function applyPub(id){
   const p=PUB.find(x=>x.id===id);if(!p)return;let raw;try{raw=await fetchCfg(id);}catch(_){return;}
-  const f=S.folder;resetOrn();if(!loadDesign(raw))return;S.folder=f;$('#gender-box').hidden=S.occ==='thanks';try{syncTheme();paintColors();}catch(_){}render();
+  const f=S.folder;resetOrn();if(!loadDesign(raw))return;S.images.forEach(i=>{i.fx=1;});try{renderImgs();}catch(_){}S.folder=f;$('#gender-box').hidden=S.occ==='thanks';try{syncTheme();paintColors();}catch(_){}render();
 }
 const G_GEN=['mine','clr','thx','tech','gen','lux','med','stu','flo','rib'],G_SUBJ=['quran','civic','arabic','fr','eng','math','phys','nat','hist'];
 const orderG=a=>{const r=g=>{if(g.slice(0,2)==='u_')return .5;let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
@@ -1649,7 +1639,7 @@ function syncTheme(){
 async function loadBg(file){return new Promise(res=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{let m=1500,q=.85,out='';for(let n=0;n<7;n++){const r=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*r));c.height=Math.max(1,Math.round(im.height*r));c.getContext('2d').drawImage(im,0,0,c.width,c.height);try{out=c.toDataURL('image/jpeg',q);}catch(_){out='';break;}if(out.length<600000)break;m*=.8;q=Math.max(.5,q-.06);}URL.revokeObjectURL(u);res(out&&out.length<690000?{src:out}:null);};im.onerror=()=>{URL.revokeObjectURL(u);res(null);};im.src=u;});}
 $('#f-bg').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!f.type.startsWith('image/'))return;const r=await loadBg(f);if(!r)return;S.bg=r;S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();};
 $('#themes').onclick=e=>{const b=e.target.closest('.theme');if(!b)return;
-  if(b.dataset.p){applyPub(b.dataset.p);return;}if(b.dataset.k==='custom'){if(S.bg&&S.theme!=='custom'){resetOrn();S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();}else $('#f-bg').click();return;}if(b.dataset.f!==undefined){S.folder=b.dataset.f;syncTheme();return;}resetOrn();S.theme=b.dataset.k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();applyDefaults();render();};
+  if(b.dataset.p){applyPub(b.dataset.p);return;}if(b.dataset.k==='custom'){if(S.bg&&S.theme!=='custom'){dropFx();resetOrn();S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();}else $('#f-bg').click();return;}if(b.dataset.f!==undefined){S.folder=b.dataset.f;syncTheme();return;}dropFx();resetOrn();S.theme=b.dataset.k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();applyDefaults();render();};
 
 function paintColors(){
   const G=[['paper','لون الورق',PAPERS],['deep',(THEMES[S.theme]||{}).rc?'اللون الأساسي':'اللون الأساسي الثاني (الكحلي)',(THEMES[S.theme]||{}).rc?RCDEEPS:DEEPS],['accent','لون التمييز (الاسم)',ACCENTS],['ink','لون الكتابة',INKS]];
@@ -1678,7 +1668,7 @@ function syncControls(){
 function loadImage(file){return new Promise(res=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const m=900,r=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*r));c.height=Math.max(1,Math.round(im.height*r));c.getContext('2d').drawImage(im,0,0,c.width,c.height);const keep=/png|webp|gif/.test(file.type);let out='';try{out=c.toDataURL(keep?'image/png':'image/jpeg',0.88);if(keep&&out.length>400000){let tr=false;try{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=3;i<d.length;i+=16)if(d[i]<250){tr=true;break;}}catch(_){tr=true;}if(!tr)out=c.toDataURL('image/jpeg',0.88);}}catch(_){}URL.revokeObjectURL(u);res(out?{src:out,ar:c.height/c.width}:null);};im.onerror=()=>{URL.revokeObjectURL(u);res(null);};im.src=u;});}
 async function addFiles(files){for(const f of files){if(!f.type.startsWith('image/'))continue;const r=await loadImage(f);if(!r)continue;const n=S.images.length;S.images.push({src:r.src,ar:r.ar,x:Math.max(0,Math.min(W-190,W-290-34*n)),y:Math.min(H-190,90+34*n),w:190,h:190,shape:'round',layer:'front',op:100,z:nextZ()});S.sel=S.images.length-1;S.st=null;}renderImgs();render();setMv('img');S.sel=S.images.length-1;markSel();renderTools();}
 function renderImgs(){
-  $('#imgs').innerHTML=S.images.map((im,i)=>`<li data-i="${i}" class="${i===S.sel?'on':''}"><div class="thumb" style="background-image:url('${im.src}')"></div><div class="ctl"><b>صورة ${i+1}</b><span class="hint">اضغط لاختيارها ثم عدّلها من الشريط تحت المعاينة</span></div><button type="button" class="btn ghost" data-del="${i}">حذف</button></li>`).join('');
+  $('#imgs').innerHTML=S.images.map((im,i)=>im.fx?'':`<li data-i="${i}" class="${i===S.sel?'on':''}"><div class="thumb" style="background-image:url('${im.src}')"></div><div class="ctl"><b>صورة ${i+1}</b><span class="hint">اضغط لاختيارها ثم عدّلها من الشريط تحت المعاينة</span></div><button type="button" class="btn ghost" data-del="${i}">حذف</button></li>`).join('');
   $('#img-hint').textContent=S.images.length?'اضغط على الصورة في الشهادة لاختيارها: اسحبها لتحريكها، ومن النقاط الزرقاء غيّر العرض أو الارتفاع أو الحجم كله. على الهاتف يمكنك التكبير بإصبعين.':'أضف صورة، ثم حرّكها وغيّر حجمها بيدك على الشهادة.';
 }
 $('#btn-add').onclick=()=>$('#f-files').click();
@@ -1711,6 +1701,7 @@ setInterval(()=>{if(!gst&&!HIST.busy)histCommit();},450);
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='z'&&!/INPUT|TEXTAREA|SELECT/.test((e.target||{}).tagName||'')){e.preventDefault();histGo(-1);}else if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.shiftKey&&e.key==='z'))&&!/INPUT|TEXTAREA|SELECT/.test((e.target||{}).tagName||'')){e.preventDefault();histGo(1);}});
 $('#btn-undo').onclick=()=>histGo(-1);$('#btn-redo').onclick=()=>histGo(1);
 setTimeout(()=>{try{HIST.cur=histSnap();}catch(_){}histBtns();},1200);
+function dropFx(){if(S.images.some(i=>i.fx)){S.images=S.images.filter(i=>!i.fx);S.sel=-1;try{renderImgs();}catch(_){}}}
 function resetOrn(){S.divT='o1';S.div='e2';S.dc=null;S.dcv='a';S.dn=null;S.dnv='a';S.sg=null;S.sgv='a';S.sgd='s1';S.dsz={};S.off={};S.st=null;segSync('seg-dc','dcv');segSync('seg-dn','dnv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-div','div');}
 $('#btn-clear').onclick=()=>{S.theme='none';S.themeTouched=true;S.frame='none';S.paper='#ffffff';S.bg=null;S.divT='none';S.div='none';S.dn=0;S.dnv='0';S.dc=0;S.dcv='0';S.sg=0;S.sgv='0';S.images=[];S.xt=[];S.ln=[];S.sel=-1;S.st=null;S.dsz={};
       ['seg-divT','seg-div','seg-frame','seg-dn','seg-dc','seg-sg'].forEach((id,i)=>{try{segSync(id,['divT','div','frame','dnv','dcv','sgv'][i]);}catch(_){}});try{renderImgs();}catch(_){}try{syncTheme();paintColors();}catch(_){}['title','intro','name','role','body','from','date'].forEach(k=>{S[k]='';S.edited[k]=true;const el=$('#f-'+k);if(el)el.value='';});S.off={};S.fmt={};render();renderTools();};
