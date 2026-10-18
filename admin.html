@@ -529,6 +529,7 @@ body{background:var(--bg)}
   
   <section id="tab-mine" class="studio" hidden style="display:block">
     <div class="box" style="margin-bottom:14px"><h2>تصاميمي</h2><p class="hint">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="hint" id="pb-msg" role="status"></p></div>
+    <div class="box" style="margin-bottom:14px"><h2>مجلداتي</h2><p class="hint">أنشئي مجلدات بأسمائك (تظهر للزبائن بعد وضع تصميم منشور فيها). يمكنك أيضًا إنشاء مجلد جديد عند نشر أي تصميم.</p><div id="fd-list"></div><button type="button" class="btn" id="fd-add">＋ مجلد جديد</button></div>
     <div class="box"><h2>صورة غلاف كل مجلد</h2><div id="cv-list"></div></div>
   </section>
   <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="الصورة النهائية">
@@ -1654,7 +1655,8 @@ const RCDEEPS=[['#c0272d','أحمر'],['#7d1230','بوردو'],['#17803f','أخ�
 const PSUB=['thx','med','arabic','fr','eng','math','phys','hist'],PGRP=['clr','thx','tech','gen','lux','med','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
 
 /* ---- published designs (Firestore) + folder covers ---- */
-let PUB=[],PUBALL=[],COV={},__pubSub=0;
+let PUB=[],PUBALL=[],COV={},CF=[],__pubSub=0;
+function applyCF(){Object.keys(FOLDERS).forEach(k=>{if(k.slice(0,2)==='u_')delete FOLDERS[k];});CF.forEach(c=>{if(c&&c.id&&c.name)FOLDERS['u_'+c.id]=String(c.name).slice(0,40);});}
 const pgOf=p=>FOLDERS[p.folder]?p.folder:'mine';
 const pcard=p=>`<button type="button" class="theme" data-p="${esc(p.id)}" aria-pressed="false"><img class="th-img" src="${p.thumb||THBLANK}" alt="" loading="lazy">${esc(p.name||'تصميم')}</button>`;
 const thImg=k=>`<img class="th-img" data-th="${k}" src="${themeThumb(k)}" alt="" loading="lazy">`;
@@ -1664,6 +1666,7 @@ function pubApply(){PUB=PUBALL.filter(p=>p.on!==false&&p.thumb);try{syncTheme();
 function loadPub(){
   const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);if(!db||__pubSub)return;__pubSub=1;
   try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{PUBALL=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
+  try{db.collection('config').doc('folders').onSnapshot(d=>{CF=(d.exists&&d.data()&&d.data().list)||[];applyCF();pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
 window.__loadPub=loadPub;
@@ -1673,7 +1676,7 @@ async function applyPub(id){
   const f=S.folder;resetOrn();if(!loadDesign(raw))return;S.folder=f;$('#gender-box').hidden=S.occ==='thanks';try{syncTheme();paintColors();}catch(_){}render();
 }
 const G_GEN=['mine','clr','thx','tech','gen','lux','med','stu','flo','rib'],G_SUBJ=['quran','civic','arabic','fr','eng','math','phys','nat','hist'];
-const orderG=a=>{const r=g=>{let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
+const orderG=a=>{const r=g=>{if(g.slice(0,2)==='u_')return .5;let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
 function syncTheme(){
   $('#themes').classList.toggle('port',S.orient==='p');
   const ks=Object.keys(THEMES).filter(k=>(S.orient==='l'||!THEMES[k].svg)&&!(THEMES[k].lo&&S.orient==='p')&&!(THEMES[k].po&&S.orient==='l')&&!(S.orient==='p'&&(!PGRP.includes(grpOf(k))||(PSUB.includes(grpOf(k))&&THEMES[k].o!=='p')))&&!(THEMES[k].av&&!AV_OK)).sort((a,b)=>((THEMES[a].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(a)?0:1)-(((THEMES[b].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(b)?0:1)));
@@ -1927,17 +1930,20 @@ $('#order-form').addEventListener('submit',e=>{
 (function(){
   const db=()=>window.__fdb,msg=(t,e)=>{const m=$('#pb-msg');if(m){m.textContent=t;m.style.color=e?'#b3261e':'';}try{toast(t,e);}catch(_){}};
   const fopts=()=>Object.entries(FOLDERS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  async function newFolder(name){const id=Date.now().toString(36),list=CF.concat([{id,name}]);await db().collection('config').doc('folders').set({list});CF=list;applyCF();return 'u_'+id;}
+  async function saveCF(list){await db().collection('config').doc('folders').set({list});CF=list;applyCF();pubApply();}
   function ask(title,name,folder,ok,cb){
     const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.5);display:grid;place-items:center;padding:16px';
-    o.innerHTML=`<div style="background:#fff;border-radius:16px;padding:16px;width:min(100%,380px);display:grid;gap:10px" dir="rtl"><h2 style="margin:0;font-size:16px">${title}</h2><input type="text" id="ak-n" placeholder="اسم التصميم" style="font:inherit;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px"><select id="ak-f" style="font:inherit;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px">${fopts()}</select><button type="button" class="btn primary" id="ak-ok">${ok}</button><button type="button" class="btn" id="ak-no">إلغاء</button></div>`;
+    o.innerHTML=`<div style="background:#fff;border-radius:16px;padding:16px;width:min(100%,380px);display:grid;gap:10px" dir="rtl"><h2 style="margin:0;font-size:16px">${title}</h2><input type="text" id="ak-n" placeholder="اسم التصميم" style="font:inherit;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px"><select id="ak-f" style="font:inherit;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px">${fopts()}<option value="__new">＋ مجلد جديد…</option></select><input type="text" id="ak-nf" placeholder="اسم المجلد الجديد" hidden style="font:inherit;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px"><button type="button" class="btn primary" id="ak-ok">${ok}</button><button type="button" class="btn" id="ak-no">إلغاء</button></div>`;
     document.body.appendChild(o);o.querySelector('#ak-n').value=name||'';o.querySelector('#ak-f').value=folder||'mine';
-    o.querySelector('#ak-no').onclick=()=>o.remove();
-    o.querySelector('#ak-ok').onclick=()=>{const n=o.querySelector('#ak-n').value.trim();if(!n){o.querySelector('#ak-n').focus();return;}const f=o.querySelector('#ak-f').value;o.remove();cb(n,f);};
+    o.querySelector('#ak-no').onclick=()=>o.remove();o.querySelector('#ak-f').onchange=e=>{const i=o.querySelector('#ak-nf');i.hidden=e.target.value!=='__new';if(!i.hidden)i.focus();};
+    o.querySelector('#ak-ok').onclick=async()=>{const n=o.querySelector('#ak-n').value.trim();if(!n){o.querySelector('#ak-n').focus();return;}let f=o.querySelector('#ak-f').value;if(f==='__new'){const nf=o.querySelector('#ak-nf').value.trim();if(!nf){o.querySelector('#ak-nf').focus();return;}try{f=await newFolder(nf);}catch(_){msg('تعذّر إنشاء المجلد. تأكدي من القواعد.',1);return;}}o.remove();cb(n,f);};
   }
   function lbl(){const ed=S.pubEdit&&PUBALL.find(p=>p.id===S.pubEdit),b=$('#btn-savemine'),n=$('#btn-savenew');if(!b)return;b.textContent=ed?'💾︎ حفظ التعديل':'💾︎ حفظ في تصاميمي';n.hidden=!ed;}
   window.__pubLbl=lbl;
   function ui(){
     lbl();
+    $('#fd-list').innerHTML=CF.length?CF.map(c=>`<div class="row2" style="grid-template-columns:1fr auto auto;align-items:center;margin-bottom:6px"><b>${esc(c.name)}</b><button class="btn" data-f="ren" data-id="${esc(c.id)}" style="min-height:36px">تسمية</button><button class="btn" data-f="del" data-id="${esc(c.id)}" style="min-height:36px">حذف</button></div>`).join(''):'<p class="hint">لا توجد مجلدات خاصة بعد.</p>';
     $('#pb-list').innerHTML=PUBALL.length?PUBALL.map(p=>`<div class="pubit ${p.or==='p'?'p':''} ${p.on===false?'off':''}"><img src="${p.thumb||''}" alt=""><div class="pi"><b>${esc(p.name||'')}</b><span class="hint">${FOLDERS[pgOf(p)]} · ${p.on===false?'محفوظ (غير منشور)':'منشور للزبائن'}</span><div class="pb"><button class="btn" data-a="edit" data-id="${p.id}">تعديل</button>${p.on===false?`<button class="btn primary" data-a="pub" data-id="${p.id}">نشر للزبون</button>`:`<button class="btn" data-a="ren" data-id="${p.id}">الاسم/المجلد</button><button class="btn" data-a="unpub" data-id="${p.id}">إلغاء النشر</button>`}<button class="btn" data-a="del" data-id="${p.id}">حذف</button></div></div></div>`).join(''):'<p class="hint">لا توجد تصاميم بعد.</p>';
     $('#cv-list').innerHTML=Object.keys(FOLDERS).map(g=>{const m=Object.keys(THEMES).filter(k=>grpOf(k)===g||(g==='clr'&&THEMES[k].rc)),pm=PUBALL.filter(p=>pgOf(p)===g&&p.on!==false);if(!m.length&&!pm.length)return '';
       return `<div class="cvr" data-g="${g}"><div class="h">${coverOf(g,m,pm)}<b>${FOLDERS[g]}</b><button class="btn" data-a="cv" data-g="${g}">اختيار الغلاف</button></div><div class="cvg" hidden></div></div>`;}).join('');
@@ -1970,6 +1976,10 @@ $('#order-form').addEventListener('submit',e=>{
       else if(b.dataset.a==='del'){if(!confirm('حذف هذا التصميم نهائيًا من التطبيق؟'))return;await db().collection('designs').doc(id).delete();try{await db().collection('dcfg').doc(id).delete();}catch(_){}if(S.pubEdit===id)S.pubEdit=null;lbl();}
     }catch(_){msg('تعذّر تنفيذ العملية. تأكدي من القواعد.',1);}
   });
+  $('#fd-add').onclick=()=>{const n=(prompt('اسم المجلد الجديد')||'').trim();if(!n)return;saveCF(CF.concat([{id:Date.now().toString(36),name:n.slice(0,40)}])).then(()=>msg('تم إنشاء المجلد.')).catch(()=>msg('تعذّر الإنشاء. تأكدي من القواعد.',1));};
+  $('#fd-list').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;const c=CF.find(x=>x.id===b.dataset.id);if(!c)return;
+    if(b.dataset.f==='ren'){const n=(prompt('الاسم الجديد',c.name)||'').trim();if(!n)return;saveCF(CF.map(x=>x.id===c.id?{id:x.id,name:n.slice(0,40)}:x)).catch(()=>msg('تعذّر الحفظ.',1));}
+    else if(confirm('حذف المجلد «'+c.name+'»؟ التصاميم التي فيه ستنتقل إلى «تصاميم من عندنا».')){saveCF(CF.filter(x=>x.id!==c.id)).catch(()=>msg('تعذّر الحذف.',1));}});
   $('#cv-list').addEventListener('click',async e=>{
     const b=e.target.closest('[data-a=cv]');
     if(b){const row=b.closest('.cvr'),g=row.dataset.g,box=row.querySelector('.cvg');if(!box.hidden){box.hidden=true;return;}
