@@ -518,6 +518,7 @@ body{background:var(--bg)}
       <p class="hint mvhint" id="mv-hint"></p>
       <div class="addbar"><button type="button" class="btn" id="btn-undo" aria-label="تراجع" disabled>↶︎ تراجع</button><button type="button" class="btn" id="btn-redo" aria-label="إعادة" disabled>↷︎ إعادة</button><button type="button" class="btn" id="btn-addimg">＋ صورة</button><button type="button" class="btn" id="btn-addtext">＋ نص</button><button type="button" class="btn" id="btn-new">✦︎ تصميم جديد</button></div>
       <div class="addbar quick"><button type="button" class="btn" id="btn-reset">↺︎ استعادة الافتراضي</button><button type="button" class="btn" id="btn-clear">▢︎ ورقة فارغة</button></div>
+      <div class="addbar quick" style="grid-template-columns:1fr 1fr!important"><button type="button" class="btn primary" id="btn-savemine" style="color:#fff;border-style:solid">💾︎ حفظ في تصاميمي</button><button type="button" class="btn" id="btn-savenew" hidden>＋ حفظ كتصميم جديد</button></div>
       <div class="stage-wrap" id="stagewrap"><div id="stage"></div></div>
       <div class="tools" id="tools" hidden></div>
 
@@ -527,15 +528,7 @@ body{background:var(--bg)}
 
   
   <section id="tab-mine" class="studio" hidden style="display:block">
-    <div class="box" style="margin-bottom:14px">
-      <h2>نشر التصميم الحالي للزبائن</h2>
-      <p class="hint" id="mine-hint">صمّمي الشهادة في تبويب «التصميم» (بنصوصها وصورها وإعداداتها)، ثم ارجعي هنا وانشريها.</p>
-      <div class="row2"><input type="text" id="pb-name" placeholder="اسم التصميم"><select id="pb-folder"></select></div>
-      <button type="button" class="btn primary" id="pb-go">نشر للزبائن</button>
-      <button type="button" class="btn" id="pb-new" hidden>نشر كتصميم جديد</button>
-      <p class="hint" id="pb-msg" role="status"></p>
-    </div>
-    <div class="box" style="margin-bottom:14px"><h2>تصاميمي المنشورة</h2><div id="pb-list"></div></div>
+    <div class="box" style="margin-bottom:14px"><h2>تصاميمي</h2><p class="hint">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="hint" id="pb-msg" role="status"></p></div>
     <div class="box"><h2>صورة غلاف كل مجلد</h2><div id="cv-list"></div></div>
   </section>
   <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="الصورة النهائية">
@@ -1661,20 +1654,22 @@ const RCDEEPS=[['#c0272d','أحمر'],['#7d1230','بوردو'],['#17803f','أخ�
 const PSUB=['thx','med','arabic','fr','eng','math','phys','hist'],PGRP=['clr','thx','tech','gen','lux','med','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
 
 /* ---- published designs (Firestore) + folder covers ---- */
-let PUB=[],PUBALL=[],COV={};
+let PUB=[],PUBALL=[],COV={},__pubSub=0;
 const pgOf=p=>FOLDERS[p.folder]?p.folder:'mine';
 const pcard=p=>`<button type="button" class="theme" data-p="${esc(p.id)}" aria-pressed="false"><img class="th-img" src="${p.thumb||THBLANK}" alt="" loading="lazy">${esc(p.name||'تصميم')}</button>`;
 const thImg=k=>`<img class="th-img" data-th="${k}" src="${themeThumb(k)}" alt="" loading="lazy">`;
 const pImg=p=>`<img class="th-img" src="${(p&&p.thumb)||THBLANK}" alt="">`;
 function coverOf(g,m,pm){const c=COV[g];if(c&&c.slice(0,2)==='p:'){const p=pm.find(x=>x.id===c.slice(2));if(p)return pImg(p);}if(c&&m.includes(c))return thImg(c);return m.length?thImg(m[0]):pImg(pm[0]);}
-async function loadPub(){
-  const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);if(!db)return;
-  try{const col=db.collection('designs');const q=await(window.__ADM?col.get():col.where('on','==',true).get());PUBALL=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));PUB=PUBALL.filter(p=>p.on!==false&&p.thumb&&p.cfg);}catch(_){}
-  try{const c=await db.collection('config').doc('covers').get();COV=c.exists?(c.data()||{}):{};}catch(_){}
-  try{syncTheme();}catch(_){}try{if(window.__pubUI)window.__pubUI();}catch(_){}
+function pubApply(){PUB=PUBALL.filter(p=>p.on!==false&&p.thumb);try{syncTheme();}catch(_){}try{if(window.__pubUI)window.__pubUI();}catch(_){}}
+function loadPub(){
+  const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);if(!db||__pubSub)return;__pubSub=1;
+  try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{PUBALL=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
+  try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
-function applyPub(id){
-  const p=PUB.find(x=>x.id===id);if(!p)return;let raw;try{raw=JSON.parse(p.cfg);}catch(_){return;}
+window.__loadPub=loadPub;
+async function fetchCfg(id){const db=window.__fdb||(typeof fdb!=='undefined'?fdb:null);const d=await db.collection('dcfg').doc(id).get();return JSON.parse(d.data().cfg);}
+async function applyPub(id){
+  const p=PUB.find(x=>x.id===id);if(!p)return;let raw;try{raw=await fetchCfg(id);}catch(_){return;}
   const f=S.folder;resetOrn();if(!loadDesign(raw))return;S.folder=f;$('#gender-box').hidden=S.occ==='thanks';try{syncTheme();paintColors();}catch(_){}render();
 }
 const G_GEN=['mine','clr','thx','tech','gen','lux','med','stu','flo','rib'],G_SUBJ=['quran','civic','arabic','fr','eng','math','phys','nat','hist'];
@@ -1928,64 +1923,71 @@ $('#order-form').addEventListener('submit',e=>{
 });
 
 
-/* ---- my designs: publish / unpublish / covers ---- */
+/* ---- my designs: save / publish / unpublish / covers ---- */
 (function(){
-  const db=()=>window.__fdb,msg=(t,e)=>{const m=$('#pb-msg');m.textContent=t;m.style.color=e?'#b3261e':'';try{toast(t,e);}catch(_){}};
+  const db=()=>window.__fdb,msg=(t,e)=>{const m=$('#pb-msg');if(m){m.textContent=t;m.style.color=e?'#b3261e':'';}try{toast(t,e);}catch(_){}};
   const fopts=()=>Object.entries(FOLDERS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  function ask(title,name,folder,ok,cb){
+    const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.5);display:grid;place-items:center;padding:16px';
+    o.innerHTML=`<div style="background:#fff;border-radius:16px;padding:16px;width:min(100%,380px);display:grid;gap:10px" dir="rtl"><h2 style="margin:0;font-size:16px">${title}</h2><input type="text" id="ak-n" placeholder="اسم التصميم" style="font:inherit;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px"><select id="ak-f" style="font:inherit;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px">${fopts()}</select><button type="button" class="btn primary" id="ak-ok">${ok}</button><button type="button" class="btn" id="ak-no">إلغاء</button></div>`;
+    document.body.appendChild(o);o.querySelector('#ak-n').value=name||'';o.querySelector('#ak-f').value=folder||'mine';
+    o.querySelector('#ak-no').onclick=()=>o.remove();
+    o.querySelector('#ak-ok').onclick=()=>{const n=o.querySelector('#ak-n').value.trim();if(!n){o.querySelector('#ak-n').focus();return;}const f=o.querySelector('#ak-f').value;o.remove();cb(n,f);};
+  }
+  function lbl(){const ed=S.pubEdit&&PUBALL.find(p=>p.id===S.pubEdit),b=$('#btn-savemine'),n=$('#btn-savenew');if(!b)return;b.textContent=ed?'💾︎ حفظ التعديل':'💾︎ حفظ في تصاميمي';n.hidden=!ed;}
+  window.__pubLbl=lbl;
   function ui(){
-    $('#pb-folder').innerHTML=fopts();
-    const ed=S.pubEdit&&PUBALL.find(p=>p.id===S.pubEdit);
-    $('#pb-go').textContent=ed?'تحديث «'+ed.name+'» بالتصميم الحالي':'نشر للزبائن';$('#pb-new').hidden=!ed;
-    if(ed){$('#pb-name').value=ed.name||'';$('#pb-folder').value=pgOf(ed);}
-    $('#pb-list').innerHTML=PUBALL.length?PUBALL.map(p=>`<div class="pubit ${p.or==='p'?'p':''} ${p.on===false?'off':''}"><img src="${p.thumb||''}" alt=""><div class="pi"><b>${esc(p.name||'')}</b><span class="hint">${FOLDERS[pgOf(p)]} · ${p.on===false?'غير منشور':'منشور'}</span><div class="pb"><button class="btn" data-a="edit" data-id="${p.id}">تعديل</button><button class="btn" data-a="tog" data-id="${p.id}">${p.on===false?'نشر':'إلغاء النشر'}</button><select data-a="mv" data-id="${p.id}" style="width:auto;min-height:36px;padding:2px 6px">${fopts().replace('value="'+pgOf(p)+'"','value="'+pgOf(p)+'" selected')}</select><button class="btn" data-a="del" data-id="${p.id}">حذف</button></div></div></div>`).join(''):'<p class="hint">لا توجد تصاميم بعد.</p>';
-    const groups=Object.keys(FOLDERS);
-    $('#cv-list').innerHTML=groups.map(g=>{const m=Object.keys(THEMES).filter(k=>grpOf(k)===g||(g==='clr'&&THEMES[k].rc)),pm=PUBALL.filter(p=>pgOf(p)===g&&p.on!==false);if(!m.length&&!pm.length)return '';
+    lbl();
+    $('#pb-list').innerHTML=PUBALL.length?PUBALL.map(p=>`<div class="pubit ${p.or==='p'?'p':''} ${p.on===false?'off':''}"><img src="${p.thumb||''}" alt=""><div class="pi"><b>${esc(p.name||'')}</b><span class="hint">${FOLDERS[pgOf(p)]} · ${p.on===false?'محفوظ (غير منشور)':'منشور للزبائن'}</span><div class="pb"><button class="btn" data-a="edit" data-id="${p.id}">تعديل</button>${p.on===false?`<button class="btn primary" data-a="pub" data-id="${p.id}">نشر للزبون</button>`:`<button class="btn" data-a="ren" data-id="${p.id}">الاسم/المجلد</button><button class="btn" data-a="unpub" data-id="${p.id}">إلغاء النشر</button>`}<button class="btn" data-a="del" data-id="${p.id}">حذف</button></div></div></div>`).join(''):'<p class="hint">لا توجد تصاميم بعد.</p>';
+    $('#cv-list').innerHTML=Object.keys(FOLDERS).map(g=>{const m=Object.keys(THEMES).filter(k=>grpOf(k)===g||(g==='clr'&&THEMES[k].rc)),pm=PUBALL.filter(p=>pgOf(p)===g&&p.on!==false);if(!m.length&&!pm.length)return '';
       return `<div class="cvr" data-g="${g}"><div class="h">${coverOf(g,m,pm)}<b>${FOLDERS[g]}</b><button class="btn" data-a="cv" data-g="${g}">اختيار الغلاف</button></div><div class="cvg" hidden></div></div>`;}).join('');
   }
   window.__pubUI=ui;
-  async function publish(asNew){
+  async function save(asNew){
     if(!db()){msg('لم يتم الاتصال بـFirebase. سجّلي الدخول أولًا.',1);return;}
-    const name=($('#pb-name').value||'').trim();if(!name){msg('اكتبي اسم التصميم.',1);return;}
-    msg('جارٍ التجهيز…');
+    const tab=$('#tab-design');if(!tab||tab.hidden){msg('افتحي تبويب التصميم أولًا.',1);return;}
+    const b1=$('#btn-savemine'),b2=$('#btn-savenew');b1.disabled=b2.disabled=true;
     try{
-      S.sel=-1;S.st=null;await makeImage(true,false);const cv=window.lastCv;if(!cv)throw new Error('thumb');
-      const w=420,h=Math.round(w*cv.height/cv.width),c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(cv,0,0,w,h);const thumb=c.toDataURL('image/jpeg',.72);
+      S.sel=-1;S.st=null;await makeImage(true,false);const cv=window.lastCv;
+      if(!cv||!cv.width||!cv.height)throw new Error('thumb-empty');
+      const w=320,h=Math.round(w*cv.height/cv.width),c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(cv,0,0,w,h);const thumb=c.toDataURL('image/jpeg',.68);
       const cfg=JSON.stringify(designConfig(true));
-      if(cfg.length+thumb.length>940000){msg('التصميم كبير جدًا (الصور ثقيلة). قلّلي عدد الصور أو حجمها.',1);return;}
+      if(cfg.length>940000){msg('التصميم كبير جدًا (الصور ثقيلة). قلّلي عدد الصور أو حجمها.',1);return;}
       const ed=!asNew&&S.pubEdit&&PUBALL.find(p=>p.id===S.pubEdit);
-      const doc={name,folder:$('#pb-folder').value,or:S.orient,on:true,thumb,cfg,ord:ed?(ed.ord||Date.now()):Date.now()};
-      if(ed){await db().collection('designs').doc(ed.id).set(doc);}else{const r=await db().collection('designs').add(doc);S.pubEdit=r.id;}
-      await loadPub();msg('تم النشر. يظهر الآن للزبائن.');
-    }catch(e){try{console.warn('publish',e);}catch(_){}msg('تعذّر النشر: '+((e&&e.code)||'خطأ')+'. تأكدي من قواعد Firestore.',1);}
+      if(ed){await db().collection('dcfg').doc(ed.id).set({cfg});await db().collection('designs').doc(ed.id).set({thumb,or:S.orient},{merge:true});msg('تم حفظ التعديل'+(ed.on===false?' في تصاميمي.':' ويظهر للزبائن مباشرة.'));}
+      else{const n='تصميم '+(PUBALL.length+1),r=await db().collection('designs').add({name:n,folder:'mine',or:S.orient,on:false,thumb,ord:Date.now()});await db().collection('dcfg').doc(r.id).set({cfg});S.pubEdit=r.id;msg('تم الحفظ في «تصاميمي». للنشر افتحي تبويب تصاميمي واضغطي «نشر للزبون».');}
+      lbl();
+    }catch(e){try{console.warn('save',e);}catch(_){}msg('تعذّر الحفظ: '+((e&&(e.code||e.message))||'خطأ')+'. تأكدي من قواعد Firestore.',1);}
+    finally{b1.disabled=b2.disabled=false;}
   }
-  $('#pb-go').onclick=()=>publish(false);$('#pb-new').onclick=()=>publish(true);
+  $('#btn-savemine').onclick=()=>save(false);$('#btn-savenew').onclick=()=>save(true);
   $('#pb-list').addEventListener('click',async e=>{
-    const b=e.target.closest('[data-a]');if(!b||b.tagName==='SELECT')return;const id=b.dataset.id,p=PUBALL.find(x=>x.id===id);if(!p)return;
+    const b=e.target.closest('[data-a]');if(!b)return;const id=b.dataset.id,p=PUBALL.find(x=>x.id===id);if(!p)return;
     try{
-      if(b.dataset.a==='edit'){let raw;try{raw=JSON.parse(p.cfg);}catch(_){return;}if(loadDesign(raw)){S.pubEdit=id;S.folder=null;showTab('design');try{syncTheme();paintColors();}catch(_){}toast('فُتح التصميم للتعديل. عدّلي ثم اضغطي تحديث من تبويب تصاميمي.');}}
-      else if(b.dataset.a==='tog'){await db().collection('designs').doc(id).update({on:p.on===false});await loadPub();}
-      else if(b.dataset.a==='del'){if(!confirm('حذف هذا التصميم نهائيًا من التطبيق؟'))return;await db().collection('designs').doc(id).delete();if(S.pubEdit===id)S.pubEdit=null;await loadPub();}
+      if(b.dataset.a==='edit'){const raw=await fetchCfg(id);if(loadDesign(raw)){S.pubEdit=id;S.folder=null;showTab('design');try{syncTheme();paintColors();}catch(_){}lbl();toast('فُتح التصميم للتعديل. عدّلي ثم اضغطي «حفظ التعديل».');}}
+      else if(b.dataset.a==='pub'||b.dataset.a==='ren'){ask(b.dataset.a==='pub'?'نشر للزبائن':'الاسم والمجلد',p.name,pgOf(p),b.dataset.a==='pub'?'نشر':'حفظ',async(n,f)=>{try{await db().collection('designs').doc(id).update({name:n,folder:f,on:true});msg('تم. يظهر للزبائن مباشرة في «'+FOLDERS[f]+'».');}catch(_){msg('تعذّر النشر. تأكدي من القواعد.',1);}});}
+      else if(b.dataset.a==='unpub'){await db().collection('designs').doc(id).update({on:false});msg('أُلغي النشر.');}
+      else if(b.dataset.a==='del'){if(!confirm('حذف هذا التصميم نهائيًا من التطبيق؟'))return;await db().collection('designs').doc(id).delete();try{await db().collection('dcfg').doc(id).delete();}catch(_){}if(S.pubEdit===id)S.pubEdit=null;lbl();}
     }catch(_){msg('تعذّر تنفيذ العملية. تأكدي من القواعد.',1);}
   });
-  $('#pb-list').addEventListener('change',async e=>{const s=e.target.closest('select[data-a=mv]');if(!s)return;try{await db().collection('designs').doc(s.dataset.id).update({folder:s.value});await loadPub();}catch(_){msg('تعذّر النقل.',1);}});
   $('#cv-list').addEventListener('click',async e=>{
     const b=e.target.closest('[data-a=cv]');
     if(b){const row=b.closest('.cvr'),g=row.dataset.g,box=row.querySelector('.cvg');if(!box.hidden){box.hidden=true;return;}
       const m=Object.keys(THEMES).filter(k=>grpOf(k)===g||(g==='clr'&&THEMES[k].rc)),pm=PUBALL.filter(p=>pgOf(p)===g&&p.on!==false);
       box.innerHTML=`<button type="button" class="theme" data-pick="">تلقائي</button>`+m.map(k=>`<button type="button" class="theme" data-pick="${k}">${thImg(k)}</button>`).join('')+pm.map(p=>`<button type="button" class="theme" data-pick="p:${esc(p.id)}">${pImg(p)}</button>`).join('');box.hidden=false;return;}
     const t=e.target.closest('[data-pick]');if(!t)return;const g=t.closest('.cvr').dataset.g,v=t.dataset.pick;
-    try{const n=Object.assign({},COV);if(v)n[g]=v;else delete n[g];await db().collection('config').doc('covers').set(n);COV=n;syncTheme();ui();msg('تم حفظ غلاف المجلد.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد.',1);}
+    try{const n=Object.assign({},COV);if(v)n[g]=v;else delete n[g];await db().collection('config').doc('covers').set(n);msg('تم حفظ غلاف المجلد.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد.',1);}
   });
 })();
 
 /* open an order's design in the studio */
 function showTab(name){
   document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===name)));
-  $('#tab-orders').hidden=name!=='orders';$('#tab-design').hidden=name!=='design';$('#tab-mine').hidden=name!=='mine';if(name==='mine'&&window.__pubUI)window.__pubUI();
+  $('#tab-orders').hidden=name!=='orders';$('#tab-design').hidden=name!=='design';$('#tab-mine').hidden=name!=='mine';if((name==='mine'||name==='design')&&window.__pubUI)window.__pubUI();
   if(name==='design'){setScale();fitAll();}
 }
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showTab(t.dataset.tab));
-function openOrder(id){
+function openOrder(id){S.pubEdit=null;try{window.__pubLbl&&window.__pubLbl();}catch(_){}
   const o=byId(id);if(!o||!o.design)return;
   if(!loadDesign(o.design0||o.design))return;
   S.openOrder=o.id;$('#btn-new').hidden=true;$('#openbar-t').textContent='الطلب المفتوح: '+(o.client||'');$('#openbar').hidden=false;$('#openbar-msg').textContent=S.images.length?'تم تحميل التصميم مع صور الزبون.':'الصور لا تُحفظ في الطلب. أضيفيها قبل إنشاء الصورة النهائية.';
