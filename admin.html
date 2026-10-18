@@ -525,6 +525,7 @@ body{background:var(--bg)}
       <div class="addbar"><button type="button" class="btn" id="btn-undo" aria-label="تراجع" disabled>↶︎ تراجع</button><button type="button" class="btn" id="btn-redo" aria-label="إعادة" disabled>↷︎ إعادة</button><button type="button" class="btn" id="btn-addimg">＋ صورة</button><button type="button" class="btn" id="btn-addtext">＋ نص</button><button type="button" class="btn" id="btn-new">✦︎ تصميم جديد</button></div>
       <div class="addbar quick"><button type="button" class="btn" id="btn-reset">↺︎ استعادة الافتراضي</button><button type="button" class="btn" id="btn-clear">▢︎ ورقة فارغة</button></div>
       <div class="addbar quick" style="grid-template-columns:1fr 1fr!important"><button type="button" class="btn primary" id="btn-savemine" style="color:#fff;border-style:solid">💾︎ حفظ في تصاميمي</button><button type="button" class="btn" id="btn-savenew" hidden>＋ حفظ كتصميم جديد</button></div>
+      <div class="addbar quick" style="grid-template-columns:1fr 1fr!important"><button type="button" class="btn" id="btn-defsave" style="grid-column:1/-1">✎︎ حفظ النص والتنسيق كتلقائي لهذا الثيم</button><button type="button" class="btn" id="btn-defall">تطبيق على كل ثيمات المجلد</button><button type="button" class="btn" id="btn-defdel">↺︎ إرجاع الأصل</button></div>
       <div class="stage-wrap" id="stagewrap"><div id="stage"></div></div>
       <div class="tools" id="tools" hidden></div>
 
@@ -1047,6 +1048,7 @@ const MONTHS={ar:['يناير','فبراير','مارس','أبريل','مايو'
 const todayStr=l=>{const d=new Date();return l==='en'?MONTHS.en[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear():String(d.getDate()).padStart(2,'0')+' '+MONTHS[l][d.getMonth()]+' '+d.getFullYear();};
 
 /* ---------- state ---------- */
+var TOV={};
 const S={orient:'l',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
   images:[],off:{},ln:[],bg:null,mv:'txt',dnv:'a',fmt:{},xt:[],st:null,dn:null,fontL:'classic',frame:'full',sel:-1,edited:{title:false,intro:false,name:false,subj:false,role:false,body:false,from:false,date:false},openOrder:null};
 const S0=JSON.stringify(S);
@@ -1085,7 +1087,7 @@ function loadDesign(raw){
 const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromCharCode(c));return btoa(x);};
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0)));
 
-function defaults(){const X=OCC[S.occ][S.lang],s=S.subj.trim(),T0=THEMES[S.theme],sh=T0&&T0.short;let bd=X.body(s);if(sh)bd=bd.split('\n').slice(0,sh).join('\n');const r={title:X.titles[Math.min(S.titleIdx,X.titles.length-1)],intro:X.intro(S.gender),role:X.role(s,S.gender),body:bd,from:X.from,name:S.lang!=='ar'?'Mohamed Lemine Ould Ahmed':'محمد الأمين ولد أحمد',date:todayStr(S.lang)};const tx=T0&&T0.txt&&T0.txt[S.lang];if(tx)Object.assign(r,tx);return r;}
+function defaults(){const X=OCC[S.occ][S.lang],s=S.subj.trim(),T0=THEMES[S.theme],sh=T0&&T0.short;let bd=X.body(s);if(sh)bd=bd.split('\n').slice(0,sh).join('\n');const r={title:X.titles[Math.min(S.titleIdx,X.titles.length-1)],intro:X.intro(S.gender),role:X.role(s,S.gender),body:bd,from:X.from,name:S.lang!=='ar'?'Mohamed Lemine Ould Ahmed':'محمد الأمين ولد أحمد',date:todayStr(S.lang)};const tx=T0&&T0.txt&&T0.txt[S.lang];if(tx)Object.assign(r,tx);const ov9=TOV[S.theme+'|'+S.lang];if(ov9&&ov9.t)Object.assign(r,ov9.t);return r;}
 function applyDefaults(){const d=defaults();Object.keys(d).forEach(k=>{if(!S.edited[k]){S[k]=d[k];const el=$('#f-'+k);if(el)el.value=d[k];}});paintTitleChips();}
 const SUBJEN={'الرياضيات':'Mathematics','الفيزياء':'Physics','اللغة العربية':'Arabic','اللغة الفرنسية':'French','اللغة الإنجليزية':'English','العلوم الطبيعية':'Natural Sciences','التاريخ والجغرافيا':'History and Geography','التربية المدنية':'Civic Education','الجغرافيا':'Geography','الفيزياء والكيمياء':'Physics and Chemistry'};
 function subjMap(){const m={};Object.values(THEMES).forEach(T=>{if(T&&T.subj){const en=SUBJEN[T.subj]||'';[T.subj,T.subjFr,en].forEach(v=>{if(v)m[v.trim().toLowerCase()]={ar:T.subj,fr:T.subjFr,en:en};});}});return m;}
@@ -1639,7 +1641,7 @@ const pickHTML=(list,cap)=>list.map(v=>{const l=(DIVS.find(x=>x[0]===v)||[0,v])[
 $('#seg-div').innerHTML=pickHTML(LINES,36);$('#seg-divT').innerHTML=pickHTML(CROWNS,40+8);
 $('#seg-div').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.div=b.dataset.v;segSync('seg-div','div');render();};
 $('#seg-divT').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.divT=b.dataset.v;segSync('seg-divT','divT');render();};
-$('#btn-realign').onclick=()=>{S.off={};S.fmt={};S.dsz={};render();renderTools();};
+$('#btn-realign').onclick=()=>{S.off={};S.fmt={};S.dsz={};applyLayoutOv();render();renderTools();};
 function paintFontSeg(){const ar=S.lang==='ar',src=ar?FONTS:LFONTS,key=ar?'font':'fontL';$('#lbl-font').textContent=ar?'نمط الخط (للعربية)':'نمط الخط (للفرنسية والإنجليزية)';buildSeg('seg-font',Object.entries(src).map(([k,f])=>[k,f.n]),key,()=>{render();});[...$('#seg-font').children].forEach(b=>{b.style.fontFamily=src[b.dataset.v].t;});}
 paintFontSeg();
 buildSeg('seg-dn',[['a','تلقائي'],['0','0'],['1','1'],['2','2'],['3','3'],['4','4'],['5','5']],'dnv',()=>{const v=S.dnv;S.dn=v==='a'?null:+v;render();});
@@ -1664,6 +1666,12 @@ const PSUB=['thx','med','arabic','fr','eng','math','phys','hist'],PGRP=['clr','t
 
 /* ---- published designs (Firestore) + folder covers ---- */
 let PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
+const clone=x=>JSON.parse(JSON.stringify(x));
+function applyLayoutOv(){const ov=TOV[S.theme+'|'+S.lang];if(!ov||!ov.o)return false;const o=ov.o;
+  S.off=clone(o.off||{});S.fmt=clone(o.fmt||{});S.dsz=clone(o.dsz||{});S.xt=clone(o.xt||[]);S.ln=clone(o.ln||[]);
+  ['div','divT','sgd'].forEach(k=>{if(o[k]!=null)S[k]=o[k];});['dc','sg','dn'].forEach(k=>{if(o[k]!==undefined)S[k]=o[k];});
+  S.dnv=S.dn==null?'a':String(S.dn);S.dcv=S.dc==null?'a':String(S.dc);S.sgv=S.sg==null?'a':String(S.sg);try{syncControls();}catch(_){}return true;}
+
 function applyCF(){Object.keys(FOLDERS).forEach(k=>{if(k.slice(0,2)==='u_')delete FOLDERS[k];});CF.forEach(c=>{if(c&&c.id&&c.name)FOLDERS['u_'+c.id]=String(c.name).slice(0,40);});}
 const pgOf=p=>FOLDERS[p.folder]?p.folder:'mine';
 const pcard=p=>`<button type="button" class="theme" data-p="${esc(p.id)}" aria-pressed="false"><img class="th-img" src="${p.thumb||THBLANK}" alt="" loading="lazy">${esc(p.name||'تصميم')}</button>`;
@@ -1676,6 +1684,7 @@ function loadPub(){
   try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{{const all=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));PUBDEL=all.filter(p=>p.del===true);PUBALL=all.filter(p=>p.del!==true);}pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
   try{db.collection('config').doc('folders').onSnapshot(d=>{CF=(d.exists&&d.data()&&d.data().list)||[];applyCF();pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('hidden').onSnapshot(d=>{const x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},()=>{});}catch(_){}
+  try{db.collection('config').doc('defaults').onSnapshot(d=>{TOV=(d.exists&&d.data()&&d.data().m)||{};if(!window.__ovInit&&Object.keys(TOV).length){window.__ovInit=1;if(!S.themeTouched&&!Object.values(S.edited).some(Boolean)){applyLayoutOv();applyDefaults();render();try{renderTools();}catch(_){}}}pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
 window.__loadPub=loadPub;
@@ -1699,7 +1708,7 @@ function syncTheme(){
 async function loadBg(file){return new Promise(res=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{let m=1500,q=.85,out='';for(let n=0;n<7;n++){const r=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*r));c.height=Math.max(1,Math.round(im.height*r));c.getContext('2d').drawImage(im,0,0,c.width,c.height);try{out=c.toDataURL('image/jpeg',q);}catch(_){out='';break;}if(out.length<600000)break;m*=.8;q=Math.max(.5,q-.06);}URL.revokeObjectURL(u);res(out&&out.length<690000?{src:out}:null);};im.onerror=()=>{URL.revokeObjectURL(u);res(null);};im.src=u;});}
 $('#f-bg').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!f.type.startsWith('image/'))return;const r=await loadBg(f);if(!r)return;S.bg=r;S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();};
 $('#themes').onclick=e=>{const b=e.target.closest('.theme');if(!b)return;
-  if(b.dataset.p){applyPub(b.dataset.p);return;}if(b.dataset.k==='custom'){if(S.bg&&S.theme!=='custom'){resetOrn();S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();}else $('#f-bg').click();return;}if(b.dataset.f!==undefined){S.folder=b.dataset.f;syncTheme();return;}resetOrn();S.theme=b.dataset.k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}setSubjDefault();syncTheme();paintColors();applyDefaults();render();};
+  if(b.dataset.p){applyPub(b.dataset.p);return;}if(b.dataset.k==='custom'){if(S.bg&&S.theme!=='custom'){resetOrn();S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();}else $('#f-bg').click();return;}if(b.dataset.f!==undefined){S.folder=b.dataset.f;syncTheme();return;}resetOrn();S.theme=b.dataset.k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();applyDefaults();render();};
 
 function paintColors(){
   const G=[['paper','لون الورق',PAPERS],['deep',(THEMES[S.theme]||{}).rc?'اللون الأساسي':'اللون الأساسي الثاني (الكحلي)',(THEMES[S.theme]||{}).rc?RCDEEPS:DEEPS],['accent','لون التمييز (الاسم)',ACCENTS],['ink','لون الكتابة',INKS]];
@@ -1717,7 +1726,7 @@ $('#colors').addEventListener('change',e=>{if(e.target.closest('input[type=color
 [['title',true],['intro',true],['name',true],['subj',true],['role',true],['body',true],['from',true],['date',true]].forEach(([k,ed])=>{$('#f-'+k).addEventListener('input',e=>{S[k]=e.target.value;if(ed)S.edited[k]=true;if(k==='subj')applyDefaults();if(k==='title')paintTitleChips();render();});});
 $('#title-chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.titleIdx=+b.dataset.i;S.edited.title=false;applyDefaults();render();});
 $('#f-name').addEventListener('focus',e=>e.target.select());
-$('#btn-reset').onclick=()=>{resetOrn();S.fmt={};S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};applyDefaults();render();};
+$('#btn-reset').onclick=()=>{resetOrn();S.fmt={};S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};applyLayoutOv();applyDefaults();render();};
 function syncControls(){
   segSync('seg-orient','orient');segSync('seg-lang','lang');paintFontSeg();segSync('seg-dn','dnv');segSync('seg-dc','dcv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-frame','frame');segSync('seg-div','div');segSync('seg-occ','occ');segSync('seg-gender','gender');$('#gender-box').hidden=S.occ==='thanks';
   syncTheme();paintColors();paintTitleChips();
@@ -2033,6 +2042,25 @@ $('#order-form').addEventListener('submit',e=>{
       else if(m==='pkill'){if(!confirm('حذف هذا التصميم نهائيًا؟ لا يمكن التراجع.'))return;await db().collection('designs').doc(b.dataset.id).delete();try{await db().collection('dcfg').doc(b.dataset.id).delete();}catch(_){}}
     }catch(_){msg('تعذّرت العملية. تأكدي من القواعد.',1);}});
   mgUI();
+})();
+
+
+/* ---- default text + layout per theme ---- */
+(function(){
+  const db=()=>window.__fdb,msg=(t,e)=>{try{toast(t,e);}catch(_){}};
+  const FLD=['title','intro','role','body','from'],LN={ar:'العربية',fr:'الفرنسية',en:'الإنجليزية'};
+  const pkg=lay=>{const t={};FLD.forEach(k=>{t[k]=S[k];});const r={t};if(lay)r.o={off:clone(S.off||{}),fmt:clone(S.fmt||{}),dsz:clone(S.dsz||{}),xt:clone(S.xt||[]),ln:clone(S.ln||[]),div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dn:S.dn};return r;};
+  async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:TOV});try{pubApply();}catch(_){}}
+  $('#btn-defsave').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th){msg('اختاري ثيمًا من القائمة أولًا (ليس «بدون ثيم»).',1);return;}
+    TOV[th+'|'+S.lang]=pkg(true);try{await write();msg('حُفظ النص والتنسيق كتلقائي لـ«'+THEMES[th].name+'» ('+LN[S.lang]+'). يصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
+  $('#btn-defdel').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th)return;const k=th+'|'+S.lang;if(!TOV[k]){msg('لا يوجد نص تلقائي محفوظ لهذا الثيم بهذه اللغة.');return;}
+    delete TOV[k];try{await write();S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};S.off={};S.fmt={};S.dsz={};applyDefaults();render();renderTools();msg('رُجع النص الأصلي لهذا الثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
+  $('#btn-defall').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th){msg('اختاري ثيمًا من المجلد أولًا.',1);return;}
+    const g=grpOf(th),ks=Object.keys(THEMES).filter(k=>grpOf(k)===g);
+    if(!confirm('تطبيق النص التلقائي الحالي ('+LN[S.lang]+') على '+ks.length+' ثيم في مجلد «'+FOLDERS[g]+'»؟'))return;
+    const lay=confirm('هل تريدين تطبيق التنسيق أيضًا (أماكن الكتابة والأحجام والزخارف)؟\nموافق = النص والتنسيق، إلغاء = النص فقط. التنسيق قد لا يناسب كل الثيمات.');
+    const p=pkg(lay);ks.forEach(k=>{const key=k+'|'+S.lang,old=TOV[key]||{};TOV[key]={t:clone(p.t),o:lay?clone(p.o):old.o};if(!TOV[key].o)delete TOV[key].o;});
+    try{await write();msg('طُبّق على '+ks.length+' ثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
 })();
 
 /* open an order's design in the studio */
