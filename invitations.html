@@ -338,7 +338,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script><script src="invitations-images.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="ornaments-extra.js?v=3" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-new.js?v=3" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-more.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script><script src="invitations-images.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="ornaments-extra.js?v=3" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-new.js?v=3" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-more.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-up.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script>
 <script>
 (function(){
 var IM=(function(){var A="!#$%&'()*+,-./0123456789:;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~",T=new Int16Array(128).fill(-1),C={};for(var i=0;i<91;i++)T[A.charCodeAt(i)]=i;
@@ -706,6 +706,7 @@ window.__mergeMore=function(){var ch=0,w=window;
  if(w.XASSETS){Object.assign(ASSETS,w.XASSETS);ch|=w.__m1?0:1;w.__m1=1;}
  if(w.XASSETS2){Object.assign(ASSETS,w.XASSETS2);ch|=w.__m2?0:1;w.__m2=1;}
  if(w.XMORE){Object.keys(w.XMORE).forEach(function(k){ASSETS[k]=w.XMORE[k];});ch|=w.__m3?0:1;w.__m3=1;}
+ if(w.XUP){Object.keys(w.XUP).forEach(function(k){ASSETS[k]=w.XUP[k];});ch|=w.__m9?0:1;w.__m9=1;}
  if(w.XBG){Object.keys(w.XBG).forEach(function(k){try{BGIMG[k]=w.XBG[k];}catch(_e){}});ch|=w.__m4?0:1;w.__m4=1;}
  if(w.XBG2){Object.keys(w.XBG2).forEach(function(k){try{BGIMG[k]=w.XBG2[k];}catch(_e){}});ch|=w.__m5?0:1;w.__m5=1;}
  if(w.XPV){Object.assign(PREVIMG,w.XPV);ch|=w.__m6?0:1;w.__m6=1;}
@@ -1858,7 +1859,7 @@ function pvBox(){var b=document.createElement('div');b.className='cardbox';b.inn
 var HQC=0;
 function loadHQ(){return new Promise(function(res){if(window.HQ&&window.HQ.__x)return res(true);function ld(u,ok,bad){var sc=document.createElement('script');sc.src=u;sc.onload=ok;sc.onerror=bad;document.head.appendChild(sc);}
   function fin(){try{if(window.HQX){Object.assign(HQ.a,HQX.a);Object.assign(HQ.bg,HQX.bg);}HQ.__x=1;}catch(_e){}res(!!window.HQ);}
-  function nx(){ld('invitations-hq2.js?v=1',function(){ld('invitations-hq3.js?v=1',fin,fin);},fin);}
+  function nx(){ld('invitations-hq2.js?v=1',function(){ld('invitations-hq3.js?v=1',function(){ld('invitations-hq4.js?v=1',function(){ld('invitations-hq5.js?v=1',function(){ld('invitations-hq6.js?v=1',fin,fin);},fin);},fin);},fin);},fin);}
   if(window.HQ)return nx();ld('invitations-hq.js?v=1',function(){if(!window.HQ)return res(false);nx();},function(){res(false);});});}
 function hqUp(){if(HQC)return;HQC=1;loadHQ().then(function(ok){if(!ok||!window.HQ){HQC=0;return;}
   Object.keys(HQ.a).forEach(function(k){if(ASSETS[k])ASSETS[k]={w:ASSETS[k].w,h:ASSETS[k].h,d:HQ.a[k].d};});
