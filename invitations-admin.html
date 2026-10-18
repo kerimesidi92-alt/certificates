@@ -349,6 +349,12 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 .cvr{display:grid;gap:6px;border-top:1px solid var(--line,#eee);padding-top:8px}.cvr .h{display:flex;align-items:center;gap:10px}.cvr .h img{width:56px;height:56px;object-fit:contain;border:1px solid #ddd;border-radius:6px;background:#fff}.cvr .h b{flex:1}
 .cvg{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}.cvg button{border:1.5px solid var(--line,#ddd);border-radius:10px;background:#fff;padding:4px;font:inherit;font-size:11px;cursor:pointer}.cvg img{width:100%;height:70px;object-fit:contain}
 #sv-bar{display:flex;gap:8px;padding:8px 12px;flex-wrap:wrap}
+
+.mgg{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.mgi{border:1px solid var(--line,#e3dccd);border-radius:10px;padding:6px;display:grid;gap:4px;font-size:12px;text-align:center;justify-items:center;min-width:0}
+.mgi img{width:100%;height:78px;object-fit:contain;background:#fff;border-radius:6px}
+.mgi .abtn{min-height:32px;font-size:12px;padding:2px 6px}
+.trr{display:flex;align-items:center;gap:8px;border-top:1px solid #eee;padding:6px 0}.trr img{width:48px;height:56px;object-fit:contain;border:1px solid #ddd;border-radius:6px;background:#fff}.trr b{flex:1;font-size:13px}.trr .cardbox{width:48px}
 </style><style>html,body{touch-action:manipulation}</style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 <style>#card,#card *,#lbcardbox .card,#lbcardbox .card *{touch-action:none}</style><style>@media (max-width:860px){body #tools{max-height:40vh}body:has(#tools:not([hidden])) .stage{height:25vh!important}}body:has(#tools:not([hidden])) .acts2{display:none}body.fs .stagewrap{padding:58px 8px 8px}body.fs .stage{height:calc(100vh - 66px)!important;height:calc(100dvh - 66px)!important;align-items:start}body.fs:has(#tools:not([hidden])) .stage{height:calc(100dvh - 66px - 40dvh)!important}body.fs #tools{max-height:40vh;max-height:40dvh}body.fs .fsx{top:10px;left:10px}</style><style>#adm-bar{max-width:1120px;margin:0 auto 12px;display:grid;gap:8px;background:var(--surface);border:1.5px solid var(--hl);border-radius:16px;padding:12px}
@@ -388,6 +394,8 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 <section id="a-mine" hidden>
  <div class="box"><h2>تصاميمي</h2><p class="note">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="note" id="pb-msg" role="status"></p></div>
  <div class="box"><h2>مجلداتي</h2><p class="note">أنشئي مجلدات بأسمائك. تظهر للزبائن حين يوجد فيها تصميم منشور. ويمكنك أيضًا إنشاء مجلد جديد عند النشر.</p><div id="fd-list"></div><button type="button" class="abtn" id="fd-add">＋ مجلد جديد</button></div>
+ <div class="box"><h2>إدارة المجلدات</h2><p class="note">اختاري مجلدًا لترين محتواه. «حذف» ينقل العنصر إلى المحذوفات (يمكن إرجاعه)، و«إخفاء المجلد» يخفيه كله عن الزبائن.</p><select id="mg-f"></select><div id="mg-bar" style="display:flex;gap:8px;flex-wrap:wrap"></div><div id="mg-list" class="mgg"></div></div>
+ <div class="box"><h2>المحذوفات</h2><div id="tr-list"></div></div>
  <div class="box"><h2>صورة غلاف كل مجلد</h2><div id="cv-list"></div></div>
 </section>
 <section id="a-design" hidden>
@@ -1415,7 +1423,7 @@ function mgOp(kind,v){
 var CALW='بارك الله لكما',CALF=['Aref Ruqaa','Aref Ruqaa Ink','Katibeh','Reem Kufi','Mirza','Rakkas','Lalezar','El Messiri','Lateef','Amiri','Scheherazade New','Noto Nastaliq Urdu','Ruwudu','Jomhuria','Vibes','Blaka','Blaka Ink','Marhey','Lemonada','Amiri Quran','Gulzar','Kufam'],TGRP='all',FGRP='all',OGRP='all';
 
 /* ---- published designs (Firestore) ---- */
-var PUB=[],PUBALL=[],COV={},CF=[],__pubSub=0;
+var PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
 var GTN=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']];
 function fldName(g,ar){if(g==='allt')return ar?'الكل':'Tous';if(g==='mine')return ar?'تصاميم من عندنا':'Nos créations';
  if(g.slice(0,2)==='u_'){var c=CF.filter(function(x){return 'u_'+x.id===g})[0];return c?c.name:(ar?'تصاميم من عندنا':'Nos créations');}
@@ -1427,8 +1435,9 @@ function pubApply(){PUB=PUBALL.filter(function(q){return q.on!==false&&q.thumb})
  try{var a=document.activeElement;if(S&&S.tab==='theme'&&!(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName||'')))buildCtl();}catch(_){}
  try{if(window.__pubUI)window.__pubUI();}catch(_){}}
 function loadPub(){var db=window.__fdb;if(!db||__pubSub)return;__pubSub=1;
- try{var col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(function(q){PUBALL=q.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return (b.ord||0)-(a.ord||0)});pubApply();},function(){__pubSub=0;});}catch(_){__pubSub=0;}
+ try{var col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(function(q){var all=q.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return (b.ord||0)-(a.ord||0)});PUBDEL=all.filter(function(p){return p.del===true});PUBALL=all.filter(function(p){return p.del!==true});pubApply();},function(){__pubSub=0;});}catch(_){__pubSub=0;}
  try{db.collection('config').doc('folders').onSnapshot(function(d){CF=(d.exists&&d.data()&&d.data().list)||[];pubApply();},function(){});}catch(_){}
+ try{db.collection('config').doc('hidden').onSnapshot(function(d){var x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},function(){});}catch(_){}
  try{db.collection('config').doc('covers').onSnapshot(function(d){COV=d.exists?(d.data()||{}):{};pubApply();},function(){});}catch(_){}}
 window.__loadPub=loadPub;
 async function fetchCfg(id){var d=await window.__fdb.collection('dcfg').doc(id).get();return JSON.parse(d.data().cfg);}
@@ -1453,11 +1462,11 @@ function gallery(){
   window.__TGMAP=TG;var inGrp=function(p,gid){return gid==='allt'?true:gid.indexOf('sh:')===0?p.shape===gid.slice(3):(TG[p.id]||'oth')===gid;};
   var cardT=function(m){return '<div class="cardbox th" data-t="'+m.id+'"><div class="card"></div></div>';};
   var pimg=function(q){return '<img src="'+q.thumb+'" alt="" style="width:100%;height:78px;object-fit:contain">';};
-  var list=TPL.slice(1);
+  var list=TPL.slice(1).filter(function(p){return HID.items.indexOf(p.id)<0});
   var fids=['allt','mine'].concat(CF.map(function(c){return 'u_'+c.id})).concat(Object.keys(SH).map(function(q){return 'sh:'+q})).concat(GT.map(function(g){return g[0]}));
   if(TGRP==='all'){
     h+='<div class="lib" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px">';
-    fids.forEach(function(gid){var tl=list.filter(function(p){return inGrp(p,gid)}),pl=PUB.filter(function(q){return gid==='allt'||pubFld(q)===gid});
+    fids.forEach(function(gid){if(HID.folders.indexOf(gid)>=0)return;var tl=list.filter(function(p){return inGrp(p,gid)}),pl=PUB.filter(function(q){return gid==='allt'||pubFld(q)===gid});
       var isSh=gid.indexOf('sh:')===0;if(!tl.length&&!pl.length&&!isSh&&gid!=='allt')return;
       var c=COV[gid],cv=null;
       if(c&&c.slice(0,2)==='p:'){var q0=pl.filter(function(x){return x.id===c.slice(2)})[0];if(q0)cv=pimg(q0);}
@@ -2112,7 +2121,7 @@ var PUBEDIT=null;
  window.__pubLbl=lbl;
  function ui(){lbl();
   $('#fd-list').innerHTML=CF.length?CF.map(function(c){return '<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;margin-bottom:6px"><b>'+esc(c.name)+'</b><button class="abtn" data-f="ren" data-id="'+esc(c.id)+'">تسمية</button><button class="abtn" data-f="del" data-id="'+esc(c.id)+'">حذف</button></div>';}).join(''):'<p class="note">لا توجد مجلدات خاصة بعد.</p>';
-  $('#pb-list').innerHTML=PUBALL.length?PUBALL.map(function(p){var off=p.on===false;return '<div class="pubit'+(off?' off':'')+'"><img src="'+(p.thumb||'')+'" alt=""><div class="pi"><b>'+esc(p.name||'')+'</b><span class="note">'+esc(fldName(pubFld(p),true))+' · '+(off?'محفوظ (غير منشور)':'منشور للزبائن')+'</span><div class="pb"><button class="abtn" data-a="edit" data-id="'+p.id+'">تعديل</button>'+(off?'<button class="abtn pri" data-a="pub" data-id="'+p.id+'">نشر للزبون</button>':'<button class="abtn" data-a="ren" data-id="'+p.id+'">الاسم/المجلد</button><button class="abtn" data-a="unpub" data-id="'+p.id+'">إلغاء النشر</button>')+'<button class="abtn" data-a="del" data-id="'+p.id+'">حذف</button></div></div></div>';}).join(''):'<p class="note">لا توجد تصاميم بعد.</p>';
+  $('#pb-list').innerHTML=PUBALL.length?PUBALL.slice(0,window.__PL||20).map(function(p){var off=p.on===false;return '<div class="pubit'+(off?' off':'')+'"><img src="'+(p.thumb||'')+'" alt=""><div class="pi"><b>'+esc(p.name||'')+'</b><span class="note">'+esc(fldName(pubFld(p),true))+' · '+(off?'محفوظ (غير منشور)':'منشور للزبائن')+'</span><div class="pb"><button class="abtn" data-a="edit" data-id="'+p.id+'">تعديل</button>'+(off?'<button class="abtn pri" data-a="pub" data-id="'+p.id+'">نشر للزبون</button>':'<button class="abtn" data-a="ren" data-id="'+p.id+'">الاسم/المجلد</button><button class="abtn" data-a="unpub" data-id="'+p.id+'">إلغاء النشر</button>')+'<button class="abtn" data-a="del" data-id="'+p.id+'">حذف</button></div></div></div>';}).join('')+(PUBALL.length>(window.__PL||20)?'<button class="abtn" data-a="more" style="width:100%">عرض المزيد ('+(PUBALL.length-(window.__PL||20))+')</button>':''):'<p class="note">لا توجد تصاميم بعد.</p>';
   var fids=['allt','mine'].concat(CF.map(function(c){return 'u_'+c.id})).concat(Object.keys(SH).map(function(q){return 'sh:'+q})).concat(GTN.map(function(g){return g[0]}));
   var TG=window.__TG||{};
   $('#cv-list').innerHTML=fids.map(function(g){var pm=PUBALL.filter(function(p){return p.on!==false&&(g==='allt'||pubFld(p)===g)});var tl=coverTpls(g);if(!tl.length&&!pm.length)return '';
@@ -2122,6 +2131,7 @@ var PUBEDIT=null;
   try{thDraw();}catch(_){}}
  window.__pubUI=ui;
  function coverTpls(g){var list=TPL.slice(1);if(g==='allt')return list;if(g==='mine'||g.slice(0,2)==='u_')return [];if(g.indexOf('sh:')===0)return list.filter(function(p){return p.shape===g.slice(3)});return list.filter(function(p){return (window.__TGMAP&&window.__TGMAP[p.id]||'oth')===g;});}
+ window.__coverTpls=coverTpls;
  async function thumbDesign(){var box=null;
   for(var at=0;at<3;at++){
    try{if(!window.htmlToImage)throw 0;if(S.sel){S.sel=null;buildBar();render();}
@@ -2146,12 +2156,12 @@ var PUBEDIT=null;
   finally{b1.disabled=b2.disabled=false;}}
  $('#btn-savemine').onclick=function(){save(false);};$('#btn-savenew').onclick=function(){save(true);};
  function editDesign(cfg,id){curOrder=null;$('#adm-bar').hidden=true;S=adopt(cfg,'p'+id+'_');S.tab='theme';hist=[];hpos=-1;commit();[].forEach.call(document.querySelectorAll('#lang button'),function(x){x.setAttribute('aria-pressed',x.dataset.l===S.lang?'true':'false')});PUBEDIT=id;showTab('design');lbl();}
- $('#pb-list').addEventListener('click',async function(e){var b=e.target.closest('[data-a]');if(!b)return;var id=b.dataset.id,p=PUBALL.filter(function(x){return x.id===id})[0];if(!p)return;
+ $('#pb-list').addEventListener('click',async function(e){var b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a==='more'){window.__PL=(window.__PL||20)+20;ui();return;}var id=b.dataset.id,p=PUBALL.filter(function(x){return x.id===id})[0];if(!p)return;
   try{
    if(b.dataset.a==='edit'){var cfg=await fetchCfg(id);editDesign(cfg,id);toast('فُتح التصميم للتعديل. عدّلي ثم اضغطي «حفظ التعديل».');}
    else if(b.dataset.a==='pub'||b.dataset.a==='ren'){ask(b.dataset.a==='pub'?'نشر للزبائن':'الاسم والمجلد',p.name,pubFld(p),b.dataset.a==='pub'?'نشر':'حفظ',async function(n,fl){try{await db().collection('designs').doc(id).update({name:n,folder:fl,on:true});msg('تم. يظهر للزبائن مباشرة في «'+fldName(fl,true)+'».');}catch(_){msg('تعذّر النشر. تأكدي من القواعد.',1);}});}
    else if(b.dataset.a==='unpub'){await db().collection('designs').doc(id).update({on:false});msg('أُلغي النشر.');}
-   else if(b.dataset.a==='del'){if(!confirm('حذف هذا التصميم نهائيًا من التطبيق؟'))return;await db().collection('designs').doc(id).delete();try{await db().collection('dcfg').doc(id).delete();}catch(_){}if(PUBEDIT===id)PUBEDIT=null;lbl();}
+   else if(b.dataset.a==='del'){await db().collection('designs').doc(id).update({del:true,on:false});if(PUBEDIT===id)PUBEDIT=null;lbl();msg('نُقل إلى المحذوفات.');}
   }catch(_){msg('تعذّر تنفيذ العملية. تأكدي من القواعد.',1);}});
  $('#fd-add').onclick=function(){var n=(prompt('اسم المجلد الجديد')||'').trim();if(!n)return;saveCF(CF.concat([{id:Date.now().toString(36),name:n.slice(0,40)}])).then(function(){msg('تم إنشاء المجلد.');}).catch(function(){msg('تعذّر الإنشاء. تأكدي من القواعد.',1);});};
  $('#fd-list').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(!b)return;var c=CF.filter(function(x){return x.id===b.dataset.id})[0];if(!c)return;
@@ -2163,6 +2173,43 @@ var PUBEDIT=null;
    box.innerHTML='<button type="button" data-pick="">تلقائي</button>'+tl.map(function(p){return '<button type="button" data-pick="'+p.id+'"><div class="cardbox th" data-t="'+p.id+'"><div class="card"></div></div></button>';}).join('')+pm.map(function(p){return '<button type="button" data-pick="p:'+esc(p.id)+'"><img src="'+p.thumb+'" alt=""></button>';}).join('');box.hidden=false;try{thDraw();}catch(_){}return;}
   var t=e.target.closest('[data-pick]');if(!t)return;var g2=t.closest('.cvr').dataset.g,v=t.dataset.pick;
   try{var n=Object.assign({},COV);if(v)n[g2]=v;else delete n[g2];await db().collection('config').doc('covers').set(n);msg('تم حفظ غلاف المجلد.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد.',1);}});
+})();
+
+
+/* ---- folder management + trash (admin) ---- */
+(function(){
+ var db=function(){return window.__fdb;},msg=function(t,e){try{toast(t,e);}catch(_){}};
+ var MGL=24,_u=window.__pubUI;
+ async function writeHid(){await db().collection('config').doc('hidden').set({items:HID.items,folders:HID.folders});pubApply();}
+ function tn(id){var p=TPL.filter(function(x){return x.id===id})[0];return p?(p.n&&p.n.ar)||id:id;}
+ function mgUI(){var sel=$('#mg-f');if(!sel)return;var cur=sel.value||'mine';
+  var fids=['allt','mine'].concat(CF.map(function(c){return 'u_'+c.id})).concat(Object.keys(SH).map(function(q){return 'sh:'+q})).concat(GTN.map(function(g){return g[0]}));
+  sel.innerHTML=fids.map(function(g){return '<option value="'+g+'">'+esc(fldName(g,true))+(HID.folders.indexOf(g)>=0?' (مخفي)':'')+'</option>';}).join('');sel.value=fids.indexOf(cur)>=0?cur:'mine';
+  var g=sel.value,hid=HID.folders.indexOf(g)>=0;
+  var tl=window.__coverTpls(g).filter(function(p){return HID.items.indexOf(p.id)<0}),pl=PUBALL.filter(function(p){return g==='allt'||pubFld(p)===g});
+  $('#mg-bar').innerHTML='<button class="abtn" data-m="fold" data-g="'+g+'">'+(hid?'إظهار المجلد':'إخفاء المجلد كله')+'</button><span class="note">'+(tl.length+pl.length)+' عنصر</span>';
+  var rows=pl.map(function(p){return '<div class="mgi"><img src="'+(p.thumb||'')+'" alt=""><span>'+esc(p.name||'')+'</span><button class="abtn" data-m="del" data-k="p:'+esc(p.id)+'">حذف</button></div>';}).concat(tl.map(function(p){return '<div class="mgi"><div style="width:72px"><div class="cardbox th" data-t="'+p.id+'"><div class="card"></div></div></div><span>'+esc(tn(p.id))+'</span><button class="abtn" data-m="del" data-k="t:'+p.id+'">حذف</button></div>';}));
+  $('#mg-list').innerHTML=rows.slice(0,MGL).join('')+(rows.length>MGL?'<button class="abtn" data-m="more" style="grid-column:1/-1">عرض المزيد ('+(rows.length-MGL)+')</button>':'');
+  var tr=[];
+  HID.folders.forEach(function(f){tr.push('<div class="trr"><b>📁 '+esc(fldName(f,true))+' (مجلد مخفي)</b><button class="abtn" data-m="unfold" data-g="'+esc(f)+'">إظهار</button></div>');});
+  HID.items.forEach(function(k){if(TPL.some(function(x){return x.id===k}))tr.push('<div class="trr"><div class="cardbox th" data-t="'+k+'"><div class="card"></div></div><b>'+esc(tn(k))+'</b><button class="abtn" data-m="undel" data-k="'+k+'">إرجاع</button></div>');});
+  PUBDEL.forEach(function(p){tr.push('<div class="trr"><img src="'+(p.thumb||'')+'" alt=""><b>'+esc(p.name||'')+'</b><button class="abtn" data-m="pback" data-id="'+esc(p.id)+'">إرجاع</button><button class="abtn" data-m="pkill" data-id="'+esc(p.id)+'">حذف نهائي</button></div>');});
+  $('#tr-list').innerHTML=tr.length?tr.join(''):'<p class="note">لا توجد عناصر محذوفة.</p>';
+  try{thDraw();}catch(_){}}
+ window.__pubUI=function(){if(_u)_u();mgUI();};
+ $('#mg-f').onchange=function(){MGL=24;mgUI();};
+ $('#mg-bar').addEventListener('click',async function(e){var b=e.target.closest('[data-m=fold]');if(!b)return;var g=b.dataset.g,i=HID.folders.indexOf(g);if(i<0)HID.folders.push(g);else HID.folders.splice(i,1);try{await writeHid();}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد.',1);}});
+ $('#mg-list').addEventListener('click',async function(e){var b=e.target.closest('[data-m]');if(!b)return;
+  if(b.dataset.m==='more'){MGL+=24;mgUI();return;}
+  if(b.dataset.m==='del'){var k=b.dataset.k;try{if(k.slice(0,2)==='p:'){await db().collection('designs').doc(k.slice(2)).update({del:true,on:false});}else{HID.items.push(k.slice(2));await writeHid();}msg('نُقل إلى المحذوفات.');}catch(_){msg('تعذّر الحذف. تأكدي من القواعد.',1);}}});
+ $('#tr-list').addEventListener('click',async function(e){var b=e.target.closest('[data-m]');if(!b)return;var m=b.dataset.m;
+  try{
+   if(m==='unfold'){HID.folders=HID.folders.filter(function(x){return x!==b.dataset.g;});await writeHid();}
+   else if(m==='undel'){HID.items=HID.items.filter(function(x){return x!==b.dataset.k;});await writeHid();}
+   else if(m==='pback'){await db().collection('designs').doc(b.dataset.id).update({del:false});}
+   else if(m==='pkill'){if(!confirm('حذف هذا التصميم نهائيًا؟ لا يمكن التراجع.'))return;await db().collection('designs').doc(b.dataset.id).delete();try{await db().collection('dcfg').doc(b.dataset.id).delete();}catch(_){}}
+  }catch(_){msg('تعذّرت العملية. تأكدي من القواعد.',1);}});
+ mgUI();
 })();
 
 /* the engine's own order tab is not needed here */
