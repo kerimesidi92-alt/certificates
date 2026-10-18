@@ -141,7 +141,7 @@ body.fs .fsx{display:block;position:fixed;top:24vh;left:10px;z-index:500;backgro
 .fold img{width:100%;height:78px;object-fit:contain}
 .fold small{color:var(--muted);font-weight:400}
 .gh{margin:16px 0 8px;font-size:14px;font-weight:700;color:var(--hl)}
-.ln{white-space:pre-line}.el[data-e="dt"]{white-space:nowrap}.fold2{width:100%;display:flex;justify-content:space-between;align-items:center;margin:8px 0 6px;padding:12px 14px;border:1.5px solid var(--line);background:var(--surface2);color:var(--fg);border-radius:12px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}.fold2[aria-expanded=true]{border-color:var(--hl)}.fold2 i{font-style:normal;color:var(--muted)}
+.ln{white-space:pre-line}.el[data-e="dt"]{white-space:nowrap}.el.oxt .or,.el[data-e="or"] .or{padding:4.5cqw 0}.fold2{width:100%;display:flex;justify-content:space-between;align-items:center;margin:8px 0 6px;padding:12px 14px;border:1.5px solid var(--line);background:var(--surface2);color:var(--fg);border-radius:12px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}.fold2[aria-expanded=true]{border-color:var(--hl)}.fold2 i{font-style:normal;color:var(--muted)}
 .step textarea,.panel textarea{font:inherit;font-size:14px;background:var(--surface2);color:var(--fg);border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-height:120px;resize:vertical;box-sizing:border-box;line-height:1.5}
 .tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
 .tp{font:inherit;font-size:12px;background:var(--surface2);color:var(--fg);border:1.5px solid var(--line);border-radius:14px;padding:10px 6px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -1165,6 +1165,12 @@ function xornCtl(x){var ar=S.lang==='ar',h='';
   if(olenOn(x.orn))h+=rg(ar?'طول الخط':'Longueur du trait','data-xolen',4,80,x.olen!=null?x.olen:(ORNLN[x.orn]?ORNLN[x.orn][0]:14));
   if(/^gap/.test(x.orn||'')){h+='<label class="rr" style="display:grid;gap:6px;margin:8px 0"><span>'+(ar?'كلمة بين الخطين (اختياري)':'Mot entre les traits')+'</span><input type="text" id="xotx" class="txin" value="'+esc(x.otx||'')+'"></label>';h+=rg(ar?'المسافة بين الخطين':'Espace','data-xogap',2,60,x.ogap!=null?x.ogap:14);}
   return h;}
+function elmOpen(){var t=T(),ar=S.lang==='ar',h='<div class="lbbox"><div style="max-height:'+Math.max(200,vvB()-150)+'px;overflow:auto;background:var(--surface);padding:12px;border-radius:14px;width:min(92vw,420px);display:grid;gap:8px"><b style="font-size:15px">'+(ar?'إدارة العناصر':'Éléments')+'</b>';
+  function row(sel,lab,del){return '<div style="display:flex;gap:6px;align-items:center"><button class="btn" data-msel="'+sel+'" style="flex:1;text-align:start'+(S.sel===sel?';border-color:var(--hl)':'')+'">'+lab+'</button>'+(del?'<button class="btn x" data-mdel="'+sel+'" style="flex:0 0 40px;padding:6px 0" aria-label="'+t.del+'">&#10005;&#xFE0E;</button>':'')+'</div>';}
+  ['ev','n1','or','n2','dt','ln'].forEach(function(id){h+=row(id,t.el[id],false);});
+  S.txts.forEach(function(m){h+=row('t:'+m.id,esc(m.orn?(ar?'زخرفة':'Ornement'):m.text),true);});
+  S.imgs.forEach(function(m,i){h+=row('i:'+m.id,imgThumb(m)+imgLab(m,i,t),true);});
+  lbShow(h+'</div><div class="lbbar"><button data-lbclose>'+t.closeL+'</button></div></div>');}
 function selObj(){
   var s=S.sel;if(!s)return null;
   if(s.indexOf('i:')===0){var m=S.imgs.filter(function(x){return 'i:'+x.id===s})[0];return m?{k:'img',o:m}:null;}
@@ -1555,7 +1561,7 @@ function build(){
   document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';document.documentElement.lang=S.lang;
   $('#t-title').textContent=t.title;$('#t-note').textContent=t.note;$('#pv-t').textContent=t.pvT;$('#pv-s').textContent=t.pvS;
   $('#tabbar').innerHTML=TABS.map(function(k){return '<button role="tab" data-tab="'+k+'" aria-selected="'+(S.tab===k)+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg><span>'+t.tabs[k]+'</span></button>';}).join('');
-  $('#acts').innerHTML='<button class="btn" id="h-undo" data-h="-1">'+t.undo+'</button><button class="btn" id="h-redo" data-h="1">'+t.redo+'</button><button class="btn" id="addimg">'+t.addImgB+'</button><button class="btn" id="addtxt">'+t.addTxtB+'</button><button class="btn dash" id="prevcard" style="grid-column:1/-1">'+t.prevCard+'</button><input id="imgf" type="file" accept="image/*" hidden>';
+  $('#acts').innerHTML='<button class="btn" id="h-undo" data-h="-1">'+t.undo+'</button><button class="btn" id="h-redo" data-h="1">'+t.redo+'</button><button class="btn" id="addimg">'+t.addImgB+'</button><button class="btn" id="addtxt">'+t.addTxtB+'</button><button class="btn dash" id="prevcard" style="grid-column:1/-1">'+t.prevCard+'</button>'+(innerWidth<1000?'<button class="btn dash" id="elmgr" style="grid-column:1/-1">'+(S.lang==='ar'?'إدارة العناصر (اختيار / حذف)':'Gérer les éléments')+'</button>':'')+'<input id="imgf" type="file" accept="image/*" hidden>';
   $('#acts2').innerHTML='<button class="btn dash" id="blankp">'+t.blankPaper+'</button><button class="btn dash" id="notext" aria-pressed="'+S.noText+'">'+(S.noText?t.showTxt:t.noTxt)+'</button><button class="btn dash" id="resetdef">'+t.resetDef+'</button>';
   $('#zoom').innerHTML=btn('',false,'data-z="real"',t.real)+btn('',false,'data-z="big"',t.big);
   [].forEach.call($('#zoom').children,function(b){b.setAttribute('aria-pressed',b.dataset.z===S.zoom?'true':'false')});
@@ -1620,6 +1626,9 @@ document.addEventListener('click',function(e){
   el=e.target.closest('[data-asset]');if(el){addAsset(el.dataset.asset);return;}
   el=e.target.closest('[data-btxtdel]');if(el){S.txts=S.txts.filter(function(x){return String(x.id)!==el.dataset.btxtdel});S.sel=null;commit();build();return;}
   el=e.target.closest('[data-sel]');if(el){var sv=el.dataset.sel;S.sel=sv;if(innerWidth>=1000)S.tab=sv==='or'?'orn':(sv.indexOf('i:')===0?'img':'text');build();return;}
+  el=e.target.closest('#elmgr');if(el){elmOpen();return;}
+  el=e.target.closest('[data-msel]');if(el){S.sel=el.dataset.msel;lbClose();buildBar();render();return;}
+  el=e.target.closest('[data-mdel]');if(el){var dk=el.dataset.mdel;if(dk.indexOf('t:')===0)S.txts=S.txts.filter(function(x){return 't:'+x.id!==dk});else S.imgs=S.imgs.filter(function(x){return 'i:'+x.id!==dk});if(S.sel===dk)S.sel=null;commit();build();render();elmOpen();return;}
   el=e.target.closest('[data-tf]');if(el){var k0=el.dataset.tf;TXTF=TXTF===k0?null:k0;buildCtl();var nb=document.querySelector('[data-tf="'+k0+'"]');if(nb&&nb.scrollIntoView)nb.scrollIntoView({block:'nearest'});return;}
   el=e.target.closest('[data-addorn]');if(el){var ido=uid++,qq=el.dataset.addorn;S.txts.push({id:ido,text:'',orn:qq,f:{},sz:1,col:null,x:50,y:50,rot:0});S.sel='t:'+ido;commit();build();render();return;}
   el=e.target.closest('[data-fn]');if(el){['ev','n1','n2','ln'].forEach(function(k){S.E[k].f[S.lang]=el.dataset.fn});commit();buildCtl();render();return;}
@@ -1998,7 +2007,7 @@ $('#m-wm').onclick=function(){makeImage(true);};
 $('#m-close').onclick=function(){modal.hidden=true;};
 modal.addEventListener('click',function(e){if(e.target===modal)modal.hidden=true;});
 $('#m-print').onclick=function(){if(!lastBlob)return;var z=dimsOf(S),land=z[0]>=z[1],rd=new FileReader();rd.onload=function(){var url=rd.result;
- var html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@page{size:A4 '+(land?'landscape':'portrait')+';margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:100%;height:auto;max-height:100vh;object-fit:contain;margin:0 auto}@media screen{body{background:#ddd}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="hint">اضغطي على الصورة أو على زر الطباعة في المتصفح</div><img id="i" src="'+url+'" onclick="print()"><script>document.getElementById("i").onload=function(){setTimeout(function(){try{print()}catch(e){}},400)}<\/script></body></html>';
+ var html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@page{size:A4 '+(land?'landscape':'portrait')+';margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:'+z[0]+'cm;height:auto;max-width:100%;max-height:100vh;object-fit:contain;margin:0 auto}@media screen{body{background:#ddd}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="hint">اضغطي على الصورة أو على زر الطباعة في المتصفح</div><img id="i" src="'+url+'" onclick="print()"><script>document.getElementById("i").onload=function(){setTimeout(function(){try{print()}catch(e){}},400)}<\/script></body></html>';
  var w=null;try{w=window.open('','_blank');}catch(_){}
  if(w){try{w.document.open();w.document.write(html);w.document.close();return;}catch(_){}}
  var fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);var d=fr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(function(){fr.remove();},60000);};rd.readAsDataURL(lastBlob);};
