@@ -338,7 +338,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script><script src="invitations-images.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="ornaments-extra.js?v=3" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-new.js?v=3" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-more.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-up.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script><script src="invitations-images.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="ornaments-extra.js?v=3" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-new.js?v=4" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-more.js?v=1" async onload="window.__mergeMore&&window.__mergeMore()"></script><script src="invitations-up.js?v=2" async onload="window.__mergeMore&&window.__mergeMore()"></script>
 <script>
 (function(){
 var IM=(function(){var A="!#$%&'()*+,-./0123456789:;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~",T=new Int16Array(128).fill(-1),C={};for(var i=0;i<91;i++)T[A.charCodeAt(i)]=i;
@@ -713,7 +713,7 @@ window.__mergeMore=function(){var ch=0,w=window;
  if(w.__M&&!w.__m7){w.__m7=1;ch=1;}
  if(ch&&typeof S!=='undefined'&&S&&typeof build==='function'){clearTimeout(w.__mt);w.__mt=setTimeout(function(){try{(S.imgs||[]).forEach(function(I){var k=I.key||'';if(k.indexOf('a:')===0&&!IMGSRC[k]){var aa=ASSETS[k.slice(2)];if(aa)IMGSRC[k]=aa.d;}});build();}catch(_e){}},60);}};
 window.__mergeMore();
-var RCAT=['14','16','18','20','22','23'];
+var RCAT=['14','16','18','20','22','23'];var LIBX=['19','25'];
 var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',55,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',80,''],['20','الفواصل (للتلوين)','Séparateurs',70,''],['22','خواتم وقلوب (للتلوين)','Alliances',50,''],['23','ما لا نهاية (للتلوين)','Infini',60,''],['24','إكاليل ودوائر','Couronnes',60,''],['25','إطارات ذهبية وزوايا','Cadres dorés',70,''],['26','زوايا وظلال وأخرى','Coins et ombres',60,''],['27','باقات وزوايا أزهار','Bouquets et angles',60,''],['28','أشرطة وأغصان أزهار (فواصل)','Guirlandes de fleurs',60,''],['29','أكاليل وأقواس أزهار','Couronnes et arches',60,''],['30','حدائق وأسوار','Jardins et balustrades',60,''],['32','ثريات','Lustres',60,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','19','20','22','23','24','25','26'];
 function catOf(nm){var p=nm.slice(0,2);return p==='08'?'13':p;}
 
@@ -1425,6 +1425,7 @@ function __buildCtl(){
     fxg(ar_?'إطارات ذهبية وخطوط (جديدة)':'Cadres dorés et lignes (nouveau)',["19_fr_x_f01", "19_fr_x_f04", "19_fr_x_f02", "19_fr_x_f06", "19_fr_x_f07", "19_fr_x_f08", "19_fr_x_f09", "19_fr_x_f10", "19_fr_x_f11", "19_fr_x_f12", "19_fr_x_f13", "19_fr_x_f14", "19_fr_x_f17"]);
     fxg(ar_?'أقواس وعروسان ومواليد':'Arches, couples, naissance',["19_fr_x_f15", "19_fr_x_f16", "19_fr_x_f18", "19_fr_x_f19", "19_fr_x_f20", "19_fr_x_f05", "19_fr_x_f03"]);
     fxg(ar_?'إطارات زهور وأوراق (جديدة)':'Cadres fleuris (nouveau)',["19_fr_x_r48", "19_fr_x_r49", "19_fr_x_r50", "19_fr_x_r51", "19_fr_x_r53", "19_fr_x_r54", "19_fr_x_r58", "19_fr_x_s10_09", "19_fr_x_s10_10", "19_fr_x_s10_11", "19_fr_x_s10_12", "19_fr_x_s10_13", "19_fr_x_s10_14", "19_fr_x_s10_15", "19_fr_x_s10_16", "19_fr_x_s10_17", "19_fr_x_s10_18", "19_fr_x_s10_19", "19_fr_x_s10_20", "19_fr_x_s10_21", "19_fr_x_s10_22", "19_fr_x_s10_23", "19_fr_x_s10_24", "19_fr_x_s10_25", "19_fr_x_s10_26", "19_fr_x_s10_27", "19_fr_x_s10_28", "19_fr_x_s10_29", "19_fr_x_s10_30", "19_fr_x_s10_31", "19_fr_x_s10_32"]);
+    fxg(ar_?'إطارات جديدة (من صوركِ)':'Nouveaux cadres',["19_u029", "19_u038", "19_u140", "29_u053"]);
     var gn='';["19_fr_n01","19_fr_n02","19_fr_n03","19_fr_n04","19_fr_n05","19_fr_n06","19_fr_n07","19_fr_n08","19_fr_n09","19_fr_n10","19_fr_n11","19_fr_n12","19_fr_n13","19_fr_n14","19_fr_nh1"].forEach(function(q){if(ASSETS[q])gn+=ft('f:'+q,ASSETS[q].d);});
     grp(ar_?'إطارات الورد الأحمر والكريمي (15)':'Cadres roses rouges (15)',gn);
     grp(ar_?'إطارات زوايا للأعراس (10)':'Cadres d\'angle mariage (10)',kt);
@@ -1438,13 +1439,13 @@ function __buildCtl(){
   if(k==='lib'){
     var lh='<h2>'+t.sLib+'</h2><div class="msg">'+t.libHint+'</div>';
     if(LIBCAT==='all'){lh+='<div class="lib" style="grid-template-columns:repeat(2,minmax(0,1fr))">';
-      LIBC.forEach(function(c){if(HIDC.indexOf(c[0])>-1)return;var nms=Object.keys(ASSETS).filter(function(nm){return catOf(nm)===c[0]});if(!nms.length)return;
+      LIBC.forEach(function(c){if(HIDC.indexOf(c[0])>-1&&LIBX.indexOf(c[0])<0)return;var nms=Object.keys(ASSETS).filter(function(nm){return catOf(nm)===c[0]});if(!nms.length)return;
         lh+='<button class="fold" data-libcat="'+c[0]+'"><img src="'+ASSETS[nms[0]].d+'" alt="" draggable="false"><span>'+c[S.lang==='ar'?1:2]+'</span><small>'+nms.length+'</small></button>';});
       lh+='</div>';
     }else{
       var cc=LIBC.filter(function(c){return c[0]===LIBCAT})[0];
       lh+='<div class="row"><button class="opt" data-libcat="all">←︎ '+(S.lang==='ar'?'كل المجلدات':'Tous les dossiers')+'</button></div><h3 class="gh">'+(cc?cc[S.lang==='ar'?1:2]:'')+'</h3><div class="lib">';
-      Object.keys(ASSETS).forEach(function(nm){if(HIDC.indexOf(catOf(nm))<0&&catOf(nm)===LIBCAT)lh+='<div class="lt"><button data-asset="'+nm+'"><img src="'+ASSETS[nm].d+'" alt="" draggable="false"></button><button class="zm" data-zoom="'+nm+'" aria-label="'+t.prev+'"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"><circle cx="10.500" cy="10.500" r="6"/><path d="M15 15l5.500 5.500M10.500 8v5M8 10.500h5"/></svg></button></div>';});
+      Object.keys(ASSETS).forEach(function(nm){if((HIDC.indexOf(catOf(nm))<0||LIBX.indexOf(catOf(nm))>-1)&&catOf(nm)===LIBCAT)lh+='<div class="lt"><button data-asset="'+nm+'"><img src="'+ASSETS[nm].d+'" alt="" draggable="false"></button><button class="zm" data-zoom="'+nm+'" aria-label="'+t.prev+'"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"><circle cx="10.500" cy="10.500" r="6"/><path d="M15 15l5.500 5.500M10.500 8v5M8 10.500h5"/></svg></button></div>';});
     }
     if(LIBCAT!=='all'&&lh.indexOf('class="lt"')<0)lh+='<div class="msg">'+(S.lang==='ar'?'هذا القسم فارغ حالياً، ستُضاف إليه صور واضحة قريباً.':'Cette section est vide pour le moment.')+'</div>';
     h+='<div class="panel">'+lh+'</div></div>';
@@ -1859,7 +1860,7 @@ function pvBox(){var b=document.createElement('div');b.className='cardbox';b.inn
 var HQC=0;
 function loadHQ(){return new Promise(function(res){if(window.HQ&&window.HQ.__x)return res(true);function ld(u,ok,bad){var sc=document.createElement('script');sc.src=u;sc.onload=ok;sc.onerror=bad;document.head.appendChild(sc);}
   function fin(){try{if(window.HQX){Object.assign(HQ.a,HQX.a);Object.assign(HQ.bg,HQX.bg);}HQ.__x=1;}catch(_e){}res(!!window.HQ);}
-  function nx(){ld('invitations-hq2.js?v=1',function(){ld('invitations-hq3.js?v=1',function(){ld('invitations-hq4.js?v=1',function(){ld('invitations-hq5.js?v=1',function(){ld('invitations-hq6.js?v=1',fin,fin);},fin);},fin);},fin);},fin);}
+  function nx(){ld('invitations-hq2.js?v=1',function(){ld('invitations-hq3.js?v=1',function(){ld('invitations-hq4.js?v=1',function(){ld('invitations-hq5.js?v=1',function(){ld('invitations-hq6.js?v=1',function(){ld('invitations-hq7.js?v=1',fin,fin);},fin);},fin);},fin);},fin);},fin);}
   if(window.HQ)return nx();ld('invitations-hq.js?v=1',function(){if(!window.HQ)return res(false);nx();},function(){res(false);});});}
 function hqUp(){if(HQC)return;HQC=1;loadHQ().then(function(ok){if(!ok||!window.HQ){HQC=0;return;}
   Object.keys(HQ.a).forEach(function(k){if(ASSETS[k])ASSETS[k]={w:ASSETS[k].w,h:ASSETS[k].h,d:HQ.a[k].d};});
