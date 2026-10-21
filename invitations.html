@@ -548,13 +548,12 @@ var TPL=[
 ];
 
 /* ---- watercolor flower image: background removed, flower colour changeable ---- */
-var FLIMG={get f1(){return IM(0)}};
-var FLIMG2={get f2(){return IM(1)},get f3(){return IM(2)}};for(var fk in FLIMG2)FLIMG[fk]=FLIMG2[fk];
+var FLIMG={get f1(){return IM(0)},get f2(){return IM(1)},get f3(){return IM(2)}};
 var FLINFO={f1:{B:[255,251,240],h:[165,265]},f2:{B:[254,254,250],h:[165,270]},f3:{B:[254,254,254],h:[225,325],noab:1,g:2}};
 var FLDATA={},FLCACHE={},FLLOAD={};
 function flPrep(id){
   if(FLDATA[id])return FLDATA[id];
-  var im=FLLOAD[id];if(!im){im=FLLOAD[id]=new Image();im.onload=function(){render();try{thDraw();}catch(e){}};im.src=FLIMG[id];return null;}
+  var im=FLLOAD[id];if(!im){var _fu=FLIMG[id];if(!_fu)return null;im=FLLOAD[id]=new Image();im.onload=function(){render();try{thDraw();}catch(e){}};im.src=_fu;return null;}
   if(!im.complete||!im.naturalWidth)return null;
   var w=im.naturalWidth,h=im.naturalHeight,c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.drawImage(im,0,0);
   var d=x.getImageData(0,0,w,h).data,n=w*h,rgb=new Uint8ClampedArray(n*3),al=new Uint8ClampedArray(n),B=FLINFO[id].B,i;
@@ -1096,6 +1095,8 @@ function frameHtml(st,H){
 function isPhoto(m){return !m.fx&&/(^|_)k\d+$/.test(m.key||'')&&!m.ms;}
 function imgLab(m,i,t){var ar=S.lang==='ar';if(m.ms)return ar?'شعار الأحرف':'Monogramme';var nm=(m.key||'').slice(0,2)==='a:'?m.key.slice(2):(m.vf&&/^cal:/.test(m.vf)?m.vf.slice(4):'');if(nm){var c=LIBC.filter(function(x){return x[0]===catOf(nm)})[0];return c?c[ar?1:2]:(ar?'زخرفة':'Ornement');}if(m.vf)return ar?'زخرفة':'Ornement';return t.imgN+' '+(i+1);}
 function imgThumb(m){var u=IMGSRC[m.key];return u&&isPhoto(m)?'<img src="'+u+'" alt="" draggable="false" style="width:38px;height:38px;object-fit:cover;border-radius:8px;vertical-align:middle;margin-inline-end:8px">':'';}
+var HQBG={};var HQKEYS=','+'a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,'+(function(){var s=[];for(var i=1;i<=30;i++)s.push('x'+(i<10?'0':'')+i);return s.join(',')})()+',';
+function __hqBg(k){if(!k||HQBG[k]||HQKEYS.indexOf(','+k+',')<0)return;HQBG[k]=1;try{fetch('hq/b_'+k+'.webp?v=1').then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){var fr=new FileReader();fr.onload=function(){try{Object.defineProperty(BGIMG,k,{value:fr.result,writable:true,configurable:true});}catch(_){}try{render();}catch(_){}try{thDraw();}catch(_){}};fr.readAsDataURL(b);}).catch(function(){HQBG[k]=0;});}catch(e){HQBG[k]=0;}}
 function drawCard(box,st,wpx,thumb){
   USEBU=!thumb;
   var sh=st.shape,z=dimsOf(st),H=100*z[1]/z[0],ink=inkOf(st),t=UI[st.lang],card=box.firstChild;
@@ -1104,7 +1105,7 @@ function drawCard(box,st,wpx,thumb){
   card.style.background=st.bg;card.style.color=ink;card.dir=st.lang==='ar'?'rtl':'ltr';
   var sc=(sh==='circle'||sh==='oval')?.8:1;if(st.arts.indexOf('wreath')>-1)sc=Math.min(sc,.78);
   var h='',I;if(st.tpl==='mine'&&st.bgKey&&IMGSRC[st.bgKey])h+='<img src="'+U(IMGSRC[st.bgKey])+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none" draggable="false">';
-  var tp=TPL.filter(function(x){return x.id===st.tpl})[0];
+  var tp=TPL.filter(function(x){return x.id===st.tpl})[0];if(!thumb&&tp&&tp.bimg)__hqBg(tp.bimg);
   if(thumb&&tp&&tp.pimg&&PREVIMG[tp.pimg]){card.innerHTML='<img src="'+PREVIMG[tp.pimg]+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0" draggable="false">';return;}
   var _bs=(thumb&&window.XTB&&!st.paper&&tp&&tp.bimg&&window.XTB[tp.bimg])||(tp&&tp.bimg&&BGIMG[tp.bimg]);if(_bs)h+='<img src="'+((st.paper&&paperUrl(_bs,st.paper))||U(_bs))+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:'+(tp.ar&&Math.abs(H/100/tp.ar-1)<.1?'fill':'cover')+';z-index:0;pointer-events:none'+(bhF(st.bh))+'" draggable="false">';
   if(tp&&tp.fimg){var fu=flowerUrl(tp.fimg,st.fl);if(fu)h+='<img src="'+U(fu)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left top;z-index:0;pointer-events:none" draggable="false">';}
@@ -1621,6 +1622,7 @@ function setPressed(el){
 function dropFx(){S.imgs=(S.imgs||[]).filter(function(i){return !i.fx});if(S.fxFrm&&S.frm&&JSON.stringify(S.frm)===S.fxFrm)S.frm=null;S.fxFrm=null;if(S.sel&&String(S.sel).indexOf('i:')===0&&!S.imgs.some(function(i){return 'i:'+i.id===S.sel}))S.sel=null;}
 function applyTpl(id){
   dropFx();var p=TPL.filter(function(x){return x.id===id})[0];
+  try{if(p&&p.shape&&p.bimg&&p.ar&&SH[p.shape]){var _d=dimsOf(S);if(Math.abs(_d[1]/_d[0]/p.ar-1)>=.1){S.shape=p.shape;S.size=p.size;S.custom=p.cm?p.cm.slice():null;}}}catch(_e){}
   var prevT=S.tpl;S.tpl=id;S.arts=p.arts.slice();S.frame=p.frame;S.fl='';S.bh='0';S.paper='';S.E=newE();
   if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}else{if(p.d.fn){S.E.n1.f.fr=p.d.fn;S.E.n2.f.fr=p.d.fn;}if(p.d.fe){S.E.ev.f.fr=p.d.fe;S.E.dt.f.fr=p.d.fe;}}S.orn=p.d.orn;S.olen=null;S.dst=p.d.dst;}
   if(p.shape){S.bg=p.bg;S.ac=p.ac;S.ink=p.ink||null;}S.noText=false;
@@ -1933,7 +1935,7 @@ function hqUp(){if(HQC)return;HQC=1;loadHQ().then(function(ok){if(!ok||!window.H
   Object.keys(HQ.bg).forEach(function(k){try{Object.defineProperty(BGIMG,k,{value:HQ.bg[k],writable:true,configurable:true});}catch(_){}});
   (S.imgs||[]).forEach(function(I){var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm])IMGSRC[k]=ASSETS[nm].d;}});
   try{render();}catch(_){}}).catch(function(){HQC=0;});}
-window.addEventListener('load',function(){setTimeout(function(){var c=navigator.connection;if(c&&(c.saveData||/(^|-)2g$/.test(c.effectiveType||'')))return;hqUp();},2500);});
+window.addEventListener('load',function(){setTimeout(function(){var c=navigator.connection;if(c&&(c.saveData||/(^|-)2g$/.test(c.effectiveType||'')))return;if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform)))return;hqUp();},2500);});
 async function makePreview(){var box=null;try{if(!window.htmlToImage)return '';if(document.fonts&&document.fonts.ready)await document.fonts.ready;
  await paperReady(S);box=pvBox();await preloadBox(box);var fec=await fontEmbedCSS(box),opt={pixelRatio:1.4,cacheBust:false,fontEmbedCSS:fec,style:{position:'static',left:'0',top:'0',margin:'0'}};
  try{await htmlToImage.toBlob(box,{pixelRatio:1,cacheBust:false,fontEmbedCSS:fec,style:opt.style});}catch(_){}
