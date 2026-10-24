@@ -162,7 +162,7 @@ body.fs .fsx{display:block;position:fixed;top:24vh;left:10px;z-index:500;backgro
 /* certificate-app layout: header, controls column, preview column, fixed bottom tab bar */
 .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .top h1{margin:0;font-size:30px;font-weight:700}
-.top h1::after{content:"\25C6\FE0E";color:#a8741a;font-size:14px;margin-inline-start:10px}
+.top h1::before{content:"\25C6\FE0E";color:#a8741a;font-size:14px;margin-inline-end:10px}
 .top hr{display:none}
 .lang{flex-shrink:0}.clrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 2px}.clrow .note{margin:0;font-size:12px}
 .studio{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:20px;align-items:start;padding-bottom:84px}
@@ -311,7 +311,7 @@ body.fs .stage{height:calc(100vh - 66px)!important;height:calc(100dvh - 66px)!im
 body.fs:has(#tools:not([hidden])) .stage{height:calc(100dvh - 66px - 40dvh)!important}
 body.fs #tools{max-height:40vh;max-height:40dvh}
 body.fs .fsx{top:10px;left:10px;top:max(10px,env(safe-area-inset-top))}
-</style><style>body:has(#tools:not([hidden])) .acts2{display:none}@media (max-width:860px){.wrap{padding-top:6px}.top{flex-wrap:wrap;gap:6px 8px}.top>div:first-child{flex:1 1 auto;min-width:0}.top h1{font-size:19px}.top h1::after{margin-inline-start:6px;font-size:10px}#t-note{display:none}.top>a{padding:6px 10px!important;font-size:12px!important;border-radius:10px!important}.lang button{padding:6px 10px;font-size:12px}.pv-head{display:none}.preview{gap:6px;top:4px}.acts{gap:6px}.acts .btn{padding:6px 4px;font-size:13px;min-height:0}.acts2{gap:5px}.acts2 .btn{padding:4px 4px!important;font-size:12px!important;min-height:0!important}.pv{padding-block:4px}}</style><style>#card,#card *,#lbcardbox .card,#lbcardbox .card *{touch-action:none}</style></head><body>
+</style><style>body:has(#tools:not([hidden])) .acts2{display:none}@media (max-width:860px){.wrap{padding-top:6px}.top{flex-wrap:wrap;gap:6px 8px}.top>div:first-child{flex:1 1 auto;min-width:0}.top h1{font-size:19px}.top h1::before{margin-inline-end:6px;font-size:10px}#t-note{display:none}.top>a{padding:6px 10px!important;font-size:12px!important;border-radius:10px!important}.lang button{padding:6px 10px;font-size:12px}.pv-head{display:none}.preview{gap:6px;top:4px}.acts{gap:6px}.acts .btn{padding:6px 4px;font-size:13px;min-height:0}.acts2{gap:5px}.acts2 .btn{padding:4px 4px!important;font-size:12px!important;min-height:0!important}.pv{padding-block:4px}}</style><style>#card,#card *,#lbcardbox .card,#lbcardbox .card *{touch-action:none}</style></head><body>
 
 <div class="wrap">
 <header class="top">

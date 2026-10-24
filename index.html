@@ -1663,7 +1663,8 @@ function onOccChange(){
   setSubjDefault();syncTheme();paintColors();applyDefaults();render();
 }
 function fixDateLang(){var d=String(S.date||''),m=d,hit=false;['ar','fr','en'].forEach(function(l){MONTHS[l].forEach(function(n,i){if(l!==S.lang&&m.toLowerCase().indexOf(n.toLowerCase())>=0&&n!==MONTHS[S.lang][i]){m=m.replace(new RegExp(n,'i'),MONTHS[S.lang][i]);hit=true;}});});if(hit&&m!==d){S.date=m;var el=$('#f-date');if(el)el.value=m;}}
-function onLangChange(){setSubjDefault();applyDefaults();fixDateLang();paintFontSeg();render();renderTools();}
+function freeStale(){const keys=['title','intro','name','role','body','from','date'],sv=S.lang,svi=S.titleIdx,pool={};keys.forEach(k=>pool[k]=new Set());try{['ar','fr','en'].forEach(l=>{S.lang=l;if(!OCC[S.occ]||!OCC[S.occ][l])return;const X=OCC[S.occ][l];for(let i=0;i<X.titles.length;i++){S.titleIdx=i;const d=defaults();keys.forEach(k=>pool[k].add(String(d[k]).trim()));}});}catch(_){}S.lang=sv;S.titleIdx=svi;keys.forEach(k=>{if(S.edited[k]&&pool[k].has(String(S[k]).trim()))S.edited[k]=false;});}
+function onLangChange(){freeStale();setSubjDefault();applyDefaults();fixDateLang();paintFontSeg();render();renderTools();}
 buildSeg('seg-lang',[['ar','العربية'],['fr','Français'],['en','English']],'lang',onLangChange);
 buildSeg('seg-orient',[['l','أفقي (بالعرض)'],['p','عمودي (بالطول)']],'orient',onOrientChange);
 buildSeg('seg-occ',Object.entries(OCC).map(([k,o])=>[k,o.label]),'occ',onOccChange);

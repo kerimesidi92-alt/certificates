@@ -1739,7 +1739,8 @@ function onOccChange(){
   S.titleIdx=0;S.off={};S.folder=null;if(!S.themeTouched)S.edited.subj=false;
   setSubjDefault();syncTheme();paintColors();resetTxtEd();applyDefaults();render();
 }
-function onLangChange(){setSubjDefault();resetTxtEd();applyDefaults();paintFontSeg();render();renderTools();}
+function freeStale(){const keys=['title','intro','name','role','body','from','date'],sv=S.lang,svi=S.titleIdx,pool={};keys.forEach(k=>pool[k]=new Set());try{['ar','fr','en'].forEach(l=>{S.lang=l;if(!OCC[S.occ]||!OCC[S.occ][l])return;const X=OCC[S.occ][l];for(let i=0;i<X.titles.length;i++){S.titleIdx=i;const d=defaults();keys.forEach(k=>pool[k].add(String(d[k]).trim()));}});}catch(_){}S.lang=sv;S.titleIdx=svi;keys.forEach(k=>{if(S.edited[k]&&pool[k].has(String(S[k]).trim()))S.edited[k]=false;});}
+function onLangChange(){freeStale();setSubjDefault();resetTxtEd();applyDefaults();paintFontSeg();render();renderTools();}
 buildSeg('seg-lang',[['ar','العربية'],['fr','Français'],['en','English']],'lang',onLangChange);
 buildSeg('seg-orient',[['l','أفقي (بالعرض)'],['p','عمودي (بالطول)']],'orient',onOrientChange);
 buildSeg('seg-occ',Object.entries(OCC).map(([k,o])=>[k,o.label]),'occ',onOccChange);
