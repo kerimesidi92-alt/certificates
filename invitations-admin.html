@@ -2284,11 +2284,12 @@ function planSheet(cw,ch,sk){var s=SHEETS[sk]||SHEETS.A4,orv=($('#m-or')||{}).va
  tries=mgv==='z'?[[0,cg?.2:0]]:mgv==='t'?[[.3,cg?.3:.15]]:[[.8,cg?.45:.3],[.5,cg?.3:.15],[.3,cg?.25:.1]],best=null;
  for(var t=0;t<tries.length;t++){var m=tries[t][0],g=tries[t][1];
   sheets.forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,c=Math.floor((sz[0]-2*m+g+1e-6)/(a+g)),r=Math.floor((sz[1]-2*m+g+1e-6)/(b+g));if(c>0&&r>0&&(!best||c*r>best.n))best={n:c*r,c:c,r:r,rot:rot,SW:sz[0],SH:sz[1],a:a,b:b,m:m,g:g,sc:1};});});}
+ if(!best&&mgv!=='z'){sheets.forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,sc=Math.min(sz[0]/a,sz[1]/b);if(sc>=.97&&sc<=1.03&&(!best||Math.abs(1-sc)<Math.abs(1-best.sc)))best={n:1,c:1,r:1,rot:rot,SW:sz[0],SH:sz[1],a:a*sc,b:b*sc,m:0,g:0,sc:sc,full:1};});});}
  if(!best){var m2=.5;sheets.forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,sc=Math.min((sz[0]-2*m2)/a,(sz[1]-2*m2)/b);if(sc>=.6&&(!best||sc>best.sc))best={n:1,c:1,r:1,rot:rot,SW:sz[0],SH:sz[1],a:a*sc,b:b*sc,m:m2,g:0,sc:sc};});});}
  return best;}
 function sheetUI(wm){var sh=$('#m-sheet'),pl=$('#m-plan');if(wm){sh.hidden=true;pl.hidden=true;return;}
  var o=curOrder&&byId(curOrder);$('#m-qty').value=Math.max(1,(o&&+o.qty)||1);sh.hidden=false;pl.hidden=false;planUI();}
-function planNote(P){var n='';if(P.sc<1)n+=' · صُغّر الكرت إلى '+Math.round(P.sc*100)+'٪ ليناسب الورقة';else if(P.m===0)n+=' · بلا هوامش: تحتاج طابعة تطبع حتى حافة الورقة';else if(P.m<.8)n+=' · هوامش '+P.m+' سم (صغيرة)';return n;}
+function planNote(P){var n='';if(P.full)n+=' · الكرت بحجم الورقة كاملًا بلا هوامش (اختاري الهوامش = بدون في نافذة الطباعة)';else if(P.sc<1)n+=' · صُغّر الكرت إلى '+Math.round(P.sc*100)+'٪ ليناسب الورقة';else if(P.m===0)n+=' · بلا هوامش: تحتاج طابعة تطبع حتى حافة الورقة';else if(P.m<.8)n+=' · هوامش '+P.m+' سم (صغيرة)';return n;}
 function planUI(){var z=dimsOf(S),q=Math.max(1,parseInt($('#m-qty').value)||1),P=planSheet(z[0],z[1],$('#m-sz').value),pl=$('#m-plan');
  if(!P){pl.textContent='مقاس الكرت ('+z[0]+'×'+z[1]+' سم) أكبر بكثير من الورقة. اختاري A3.';return;}
  var pg=Math.ceil(q/P.n);pl.textContent='مقاس الكرت '+z[0]+'×'+z[1]+' سم · '+P.n+' في الورقة'+(P.rot?' (الكرت مُدوَّر)':'')+' · الورقة '+$('#m-sz').value+(P.SW>P.SH?' أفقية':' عمودية')+' · '+pg+' ورقة'+(pg>PRCAP?' (تُطبع أول '+PRCAP+' ورقة في المرة الواحدة)':'')+planNote(P)+'.';}
