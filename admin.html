@@ -548,7 +548,7 @@ body{background:var(--bg)}
       <div class="addbar"><button type="button" class="btn" id="btn-undo" aria-label="تراجع" disabled>↶︎ تراجع</button><button type="button" class="btn" id="btn-redo" aria-label="إعادة" disabled>↷︎ إعادة</button><button type="button" class="btn" id="btn-addimg">＋ صورة</button><button type="button" class="btn" id="btn-addtext">＋ نص</button><button type="button" class="btn" id="btn-new">✦︎ تصميم جديد</button></div>
       <div class="addbar quick"><button type="button" class="btn" id="btn-reset">↺︎ استعادة الافتراضي</button><button type="button" class="btn" id="btn-clear">▢︎ ورقة فارغة</button></div>
       <div class="addbar quick" style="grid-template-columns:1fr 1fr!important"><button type="button" class="btn primary" id="btn-savemine" style="color:#fff;border-style:solid">💾︎ حفظ في تصاميمي</button><button type="button" class="btn" id="btn-savenew" hidden>＋ حفظ كتصميم جديد</button></div>
-      <div class="addbar quick"><button type="button" class="btn" id="btn-defsave" hidden>✎︎ حفظ كتابة هذا الثيم كتلقائية</button><button type="button" class="btn" id="btn-defdel" hidden>↺︎ استعادة الأصلية</button><button type="button" id="btn-defall" hidden style="display:none"></button></div><button type="button" id="def-pill" hidden>✎︎ حفظ كتابة هذا الثيم كتلقائية</button>
+      <div class="addbar quick"><button type="button" class="btn" id="btn-defsave" hidden>✎︎ حفظ كتابة هذا الثيم كتلقائية</button><button type="button" class="btn" id="btn-defdel" hidden>↺︎ استعادة الأصلية</button><button type="button" id="btn-defall" hidden style="display:none"></button></div>
       <div class="stage-wrap" id="stagewrap"><div id="stage"></div></div>
       <div class="tools" id="tools" hidden></div>
 
@@ -2088,9 +2088,8 @@ $('#order-form').addEventListener('submit',e=>{
   const pkg=lay=>{const t={};FLD.forEach(k=>{t[k]=S[k];});const r={t};if(lay)r.o={off:clone(S.off||{}),fmt:clone(S.fmt||{}),dsz:clone(S.dsz||{}),xt:clone(S.xt||[]),ln:clone(S.ln||[]),div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dn:S.dn};return r;};
   async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:TOV});try{pubApply();}catch(_){}}
   let base=null,baseK=null;const keyNow=()=>JSON.stringify(pkg(true));
-  function defUI(){try{const th=THEMES[S.theme]?S.theme:null,has=th&&TOV[th+'|'+S.lang],dirty=!!(th&&base!=null&&keyNow()!==base),des=!$('#tab-design').hidden;$('#btn-defsave').hidden=!th;$('#btn-defdel').hidden=!has;$('#btn-defsave').classList.toggle('primary',dirty);$('#def-pill').hidden=!(dirty&&des);}catch(_){}}
+  function defUI(){try{const th=THEMES[S.theme]?S.theme:null,has=th&&TOV[th+'|'+S.lang],dirty=!!(th&&base!=null&&keyNow()!==base),des=!$('#tab-design').hidden;$('#btn-defsave').hidden=!th;$('#btn-defdel').hidden=!has;$('#btn-defsave').classList.toggle('primary',dirty);}catch(_){}}
   window.__defUI=defUI;const _rd=render;render=function(){const r=_rd.apply(this,arguments);try{const th=THEMES[S.theme]?S.theme:null,bk=th?th+'|'+S.lang:null;if(bk!==baseK){baseK=bk;base=bk?keyNow():null;}defUI();}catch(_){}return r;};
-  $('#def-pill').onclick=()=>$('#btn-defsave').click();
   $('#btn-defsave').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th){msg('اختاري ثيمًا من القائمة أولًا (ليس «بدون ثيم»).',1);return;}
     TOV[th+'|'+S.lang]=pkg(true);try{await write();base=keyNow();baseK=th+'|'+S.lang;defUI();msg('حُفظت الكتابة والتنسيق كتلقائية لـ«'+THEMES[th].name+'» ('+LN[S.lang]+'). تصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
   $('#btn-defdel').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th)return;const k=th+'|'+S.lang;if(!TOV[k]){msg('لا يوجد نص تلقائي محفوظ لهذا الثيم بهذه اللغة.');return;}
