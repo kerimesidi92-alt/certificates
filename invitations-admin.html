@@ -2344,7 +2344,7 @@ var PUBEDIT=null;
    if(ed){await db().collection('dcfg').doc(ed.id).set({cfg:cfg});await db().collection('designs').doc(ed.id).set({thumb:thumb},{merge:true});msg('تم حفظ التعديل'+(ed.on===false?' في تصاميمي.':' ويظهر للزبائن مباشرة.'));}
    else{var r=await db().collection('designs').add({name:'تصميم '+(PUBALL.length+1),folder:(SH[S.shape]?'sh:'+S.shape:'mine'),on:false,thumb:thumb,ord:Date.now()});await db().collection('dcfg').doc(r.id).set({cfg:cfg});PUBEDIT=r.id;msg('تم الحفظ في «تصاميمي». للنشر افتحي تبويب تصاميمي واضغطي «نشر للزبون».');}
    lbl();
-  }catch(e){try{console.warn('save',e);}catch(_){}msg('تعذّر الحفظ: '+((e&&(e.code||e.message))||'خطأ')+'. تأكدي من قواعد Firestore.',1);}
+  }catch(e){try{console.warn('save',e);}catch(_){}msg('تعذّر الحفظ: '+((e&&e.code)||'')+' '+String((e&&e.message)||'خطأ').slice(0,140)+'. (أرسلي لي هذه الرسالة كما هي)',1);}
   finally{b1.disabled=b2.disabled=false;}}
  $('#btn-savemine').onclick=function(){save(false);};$('#btn-savenew').onclick=function(){save(true);};
  function editDesign(cfg,id){curOrder=null;$('#adm-bar').hidden=true;S=adopt(cfg,'p'+id+'_');S.tab='theme';hist=[];hpos=-1;commit();[].forEach.call(document.querySelectorAll('#lang button'),function(x){x.setAttribute('aria-pressed',x.dataset.l===S.lang?'true':'false')});PUBEDIT=id;showTab('design');lbl();}

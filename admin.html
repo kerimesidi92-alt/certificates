@@ -2017,7 +2017,7 @@ $('#order-form').addEventListener('submit',e=>{
       if(ed){await db().collection('dcfg').doc(ed.id).set({cfg});await db().collection('designs').doc(ed.id).set({thumb,or:S.orient},{merge:true});msg('تم حفظ التعديل'+(ed.on===false?' في تصاميمي.':' ويظهر للزبائن مباشرة.'));}
       else{const n='تصميم '+(PUBALL.length+1),r=await db().collection('designs').add({name:n,folder:'mine',or:S.orient,on:false,thumb,ord:Date.now()});await db().collection('dcfg').doc(r.id).set({cfg});S.pubEdit=r.id;msg('تم الحفظ في «تصاميمي». للنشر افتحي تبويب تصاميمي واضغطي «نشر للزبون».');}
       lbl();
-    }catch(e){try{console.warn('save',e);}catch(_){}msg('تعذّر الحفظ: '+((e&&(e.code||e.message))||'خطأ')+'. تأكدي من قواعد Firestore.',1);}
+    }catch(e){try{console.warn('save',e);}catch(_){}msg('تعذّر الحفظ: '+((e&&e.code)||'')+' '+String((e&&e.message)||'خطأ').slice(0,140)+'. (أرسلي لي هذه الرسالة كما هي)',1);}
     finally{b1.disabled=b2.disabled=false;}
   }
   $('#btn-savemine').onclick=()=>save(false);$('#btn-savenew').onclick=()=>save(true);
