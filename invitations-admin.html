@@ -1529,12 +1529,13 @@ var CALW='بارك الله لكما',CALF=['Aref Ruqaa','Aref Ruqaa Ink','Katib
 /* ---- published designs (Firestore) ---- */
 var PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
 function TOVM(){return window.__TOV||{};}
+function okS(v){v=String(v==null?'':v);var a=/[\u0600-\u06FF]/.test(v),l=/[A-Za-z\u00C0-\u00FF]/.test(v);return S.lang==='ar'?(a||!l):!a;}
 function jclone(x){return JSON.parse(JSON.stringify(x));}
 function applyOvTpl(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov)return;var t=ov.t||{},o=ov.o;
- if(t.evText!=null)S.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f])S[f]=t[f];});
+ if(t.evText!=null&&okS(t.evText))S.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f]&&okS(t[f]))S[f]=t[f];});
  if(o){if(o.E)S.E=jclone(o.E);if(o.orn!=null){S.orn=o.orn;S.olen=o.olen==null?null:o.olen;}if(o.dst!=null)S.dst=o.dst;
   if(o.txts)S.txts=jclone(o.txts).map(function(x){x.id=uid++;return x;});}if(o&&o.imgs){o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;I.dflt=1;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k))IMGSRC[k]='';(S.imgs=S.imgs||[]).push(I);});}}
-function applyOvTexts(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov||!ov.t)return;var t=ov.t;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f])S[f]=t[f];});if(t.evText!=null&&!S.ed.ev)S.evText=t.evText;}
+function applyOvTexts(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov||!ov.t)return;var t=ov.t;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f]&&okS(t[f]))S[f]=t[f];});if(t.evText!=null&&!S.ed.ev&&okS(t.evText))S.evText=t.evText;}
 
 var GTN=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']];
 function fldName(g,ar){if(g==='allt')return ar?'الكل':'Tous';if(g==='mine')return ar?'تصاميم من عندنا':'Nos créations';
@@ -1734,7 +1735,7 @@ function thDraw(){
   [].forEach.call(document.querySelectorAll('.th'),function(el){
     var p=TPL.filter(function(x){return x.id===el.dataset.t})[0],st=fresh(S.lang);
     st.shape=p.shape;st.size=p.size;st.custom=p.cm?p.cm.slice():null;st.arts=p.arts;st.frame=p.frame;st.bg=p.bg;st.ac=p.ac;st.event=p.ev;st.evText=UI[S.lang].events[p.ev];st.tpl=p.id;if(p.ink)st.ink=p.ink;st.live=1;
-    try{var ov=TOVM()[p.id+'|'+S.lang];if(ov){var t=ov.t||{};if(t.evText!=null)st.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null)st[f]=t[f];});var o=ov.o;if(o){if(o.E)st.E=jclone(o.E);if(o.orn!=null){st.orn=o.orn;st.olen=o.olen==null?null:o.olen;}if(o.dst!=null)st.dst=o.dst;if(o.txts)st.txts=jclone(o.txts);if(o.imgs)o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm]&&!IMGSRC[k])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k)&&IMGSRC[k]==null)IMGSRC[k]='';st.imgs.push(I);});}}}catch(_e){}
+    try{var ov=TOVM()[p.id+'|'+S.lang];if(ov){var t=ov.t||{};if(t.evText!=null&&okS(t.evText))st.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&okS(t[f]))st[f]=t[f];});var o=ov.o;if(o){if(o.E)st.E=jclone(o.E);if(o.orn!=null){st.orn=o.orn;st.olen=o.olen==null?null:o.olen;}if(o.dst!=null)st.dst=o.dst;if(o.txts)st.txts=jclone(o.txts);if(o.imgs)o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm]&&!IMGSRC[k])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k)&&IMGSRC[k]==null)IMGSRC[k]='';st.imgs.push(I);});}}}catch(_e){}
     var z=dimsOf(st);drawCard(el,st,Math.min(96,110*z[0]/z[1]),true);
   });
 }
@@ -2339,7 +2340,7 @@ var PUBEDIT=null;
  var db=function(){return window.__fdb;},msg=function(t,e){try{toast(t,e);}catch(_){}},LN={ar:'العربية',fr:'الفرنسية'};
  function tn(id){var p=TPL.filter(function(x){return x.id===id})[0];return p?(p.n&&p.n.ar)||id:id;}
  function realTpl(){return TPL.slice(1).some(function(p){return p.id===S.tpl})?S.tpl:null;}
- function pkg(lay){var r={t:{evText:S.evText,n1:S.n1,n2:S.n2,line:S.line}};if(lay)r.o={E:jclone(S.E),orn:S.orn,olen:S.olen==null?null:S.olen,dst:S.dst,txts:jclone(S.txts||[]),imgs:(S.imgs||[]).filter(function(i){return /^[av]:/.test(i.key||'')}).map(function(i){var c=jclone(i);delete c.dflt;return c;})};return r;}
+ function pkg(lay){var r={t:{evText:S.evText,n1:S.n1,n2:S.n2,line:S.line}};['evText','n1','n2','line'].forEach(function(k){if(!okS(r.t[k]))delete r.t[k];});if(lay)r.o={E:jclone(S.E),orn:S.orn,olen:S.olen==null?null:S.olen,dst:S.dst,txts:jclone(S.txts||[]),imgs:(S.imgs||[]).filter(function(i){return /^[av]:/.test(i.key||'')}).map(function(i){var c=jclone(i);delete c.dflt;return c;})};return r;}
  async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:window.__TOV});try{pubApply();}catch(_){}try{thDraw();}catch(_){}}
  var base=null,baseK=null;function keyNow(){return JSON.stringify(pkg(true));}
  function defUI(){try{var id=realTpl(),has=id&&(window.__TOV||{})[id+'|'+S.lang],dirty=!!(id&&base!=null&&keyNow()!==base),des=!$('#a-design').hidden;$('#btn-defsave').hidden=!id;$('#btn-defdel').hidden=!has;$('#btn-defsave').classList.toggle('pri',dirty);}catch(_e){}}
