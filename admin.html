@@ -653,7 +653,7 @@ body{background:var(--bg)}
     <div class="m-panel">
       <div class="row" style="justify-content:space-between">
         <strong id="m-title">الصورة النهائية</strong>
-        <button type="button" class="btn" id="m-wm">حفظ بعلامة مائية</button><a class="btn primary" id="m-dl" hidden download="certificate.png" style="text-decoration:none">تنزيل الصورة</a><button type="button" class="btn primary" id="m-print" hidden>طباعة</button>
+        <button type="button" class="btn" id="m-wm">حفظ بعلامة مائية</button><a class="btn primary" id="m-dl" hidden download="certificate.png" style="text-decoration:none">تنزيل الصورة</a><button type="button" class="btn primary" id="m-print" hidden>طباعة</button><label id="m-cp" style="display:inline-flex;gap:6px;align-items:center;font-size:13px">النسخ <input type="number" id="m-copies" min="1" max="500" value="1" style="width:64px;min-height:36px"></label>
         <button type="button" class="btn" id="m-close">إغلاق</button>
       </div>
       <p class="hint" id="m-msg">جارٍ تجهيز الصورة…</p>
@@ -1951,14 +1951,14 @@ async function makeImage(keep,wm){
   }catch(err){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
 }
 
-$('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,url=cv.toDataURL('image/png');
-  const html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@page{size:A4 '+(land?'landscape':'portrait')+';margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:100%;height:auto;max-height:100vh;object-fit:contain;margin:0 auto}@media screen{body{background:#ddd}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="hint">اضغطي على الصورة أو على زر الطباعة في المتصفح (Ctrl+P)</div><img id="i" src="'+url+'" onclick="print()"><script>document.getElementById("i").onload=function(){setTimeout(function(){try{print()}catch(e){}},400)}<\/script></body></html>';
+function printPages(urls,land){const html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@page{size:A4 '+(land?'landscape':'portrait')+';margin:0}html,body{margin:0;padding:0;background:#fff}.pg{width:100%;height:100vh;display:flex;align-items:center;justify-content:center;page-break-after:always;break-after:page;overflow:hidden}.pg:last-child{page-break-after:auto;break-after:auto}img{display:block;width:100%;height:auto;max-height:100vh;object-fit:contain}@media screen{body{background:#ddd}.pg{height:auto;margin:8px 0}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="hint">'+urls.length+' صفحة. إن لم تظهر نافذة الطباعة اضغطي Ctrl+P.</div>'+urls.map(u=>'<div class="pg"><img src="'+u+'"></div>').join('')+'<script>Promise.all([].map.call(document.images,function(i){return i.complete?1:new Promise(function(r){i.onload=i.onerror=r;});})).then(function(){setTimeout(function(){try{print()}catch(e){}},600)})<\/script></body></html>';
   let w=null;try{w=window.open('','_blank');}catch(_){}
   if(w){try{w.document.open();w.document.write(html);w.document.close();return;}catch(_){}}
   const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);
-  const d=fr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(()=>fr.remove(),60000);};
+  const d=fr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(()=>fr.remove(),120000);}
+$('#m-print').onclick=async()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,bl=await new Promise(r=>cv.toBlob(r,'image/png')),n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1)),u=URL.createObjectURL(bl);printPages(new Array(n).fill(u),land);};
 $('#m-wm').onclick=()=>{makeImage(false,true);};
-$('#btn-export').onclick=()=>{modal.hidden=false;makeImage();};
+$('#btn-export').onclick=()=>{const o=S.openOrder&&byId(S.openOrder);$('#m-copies').value=Math.max(1,Math.min(500,(o&&+o.qty)||1));modal.hidden=false;makeImage();};
 
 /* export all names as one ZIP */
 const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
@@ -1975,13 +1975,13 @@ function makeZip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
 function nmApply(n,g){const old=defaults();['title','intro','role','body','from'].forEach(k=>{if(S[k]===old[k])S.edited[k]=false;});
   if(g&&S.gender!==g){S.gender=g;try{syncControls();}catch(_){}}S.name=n;S.edited=Object.assign({},S.edited,{name:true});applyDefaults();render();}
 async function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
-  const names=[...sel.options].map(o=>o.value).filter(Boolean),gs=[...sel.options].filter(o=>o.value).map(o=>o.dataset.g||'');if(!names.length)return;const keep=S.name,keepG=S.gender,t0=btn.textContent;btn.disabled=true;const files=[];let gal=document.getElementById('m-gal');if(!gal){gal=document.createElement('div');gal.id='m-gal';gal.style.cssText='display:flex;flex-direction:column;gap:18px;margin-top:10px';$('#m-img').after(gal);}gal.innerHTML='';
+  const names=[...sel.options].map(o=>o.value).filter(Boolean),gs=[...sel.options].filter(o=>o.value).map(o=>o.dataset.g||'');if(!names.length)return;const keep=S.name,keepG=S.gender,t0=btn.textContent;btn.disabled=true;const files=[],purls=[];let pland=false;$('#m-copies').value=1;let gal=document.getElementById('m-gal');if(!gal){gal=document.createElement('div');gal.id='m-gal';gal.style.cssText='display:flex;flex-direction:column;gap:18px;margin-top:10px';$('#m-img').after(gal);}gal.innerHTML='';
   try{modal.hidden=false;
     for(let i=0;i<names.length;i++){btn.textContent='جارٍ التصدير '+(i+1)+'/'+names.length;nmApply(names[i],gs[i]);window.lastCv=null;await makeImage(true);
       const cv=window.lastCv;if(!cv)throw new Error('x');const bl=await new Promise(r=>cv.toBlob(r,'image/png'));
       files.push({name:String(i+1).padStart(2,'0')+'-'+names[i].replace(/[\\/:*?"<>|]/g,'').slice(0,40)+'.png',data:new Uint8Array(await bl.arrayBuffer())});
-      const fg=document.createElement('figure');fg.style.cssText='margin:0;text-align:center;font-size:14px';const im=document.createElement('img');im.src=URL.createObjectURL(bl);im.alt=names[i];im.style.cssText='width:100%;border:1px solid #ccc;border-radius:6px';const cp=document.createElement('figcaption');cp.textContent=(i+1)+'. '+names[i];fg.append(im,cp);gal.append(fg);}
-    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=URL.createObjectURL(makeZip(files));a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';gal.prepend(a);$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}{const dl=$('#m-dl');if(dl)dl.hidden=true;}
+      purls.push(URL.createObjectURL(bl));pland=cv.width>=cv.height;const fg=document.createElement('figure');fg.style.cssText='margin:0;text-align:center;font-size:14px';const im=document.createElement('img');im.src=URL.createObjectURL(bl);im.alt=names[i];im.style.cssText='width:100%;border:1px solid #ccc;border-radius:6px';const cp=document.createElement('figcaption');cp.textContent=(i+1)+'. '+names[i];fg.append(im,cp);gal.append(fg);}
+    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=URL.createObjectURL(makeZip(files));a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';gal.prepend(a);{const pb2=document.createElement('button');pb2.type='button';pb2.className='btn primary';pb2.textContent='طباعة كل الأسماء ('+purls.length+' صفحة)';pb2.onclick=()=>{const cp=Math.max(1,Math.min(50,parseInt($('#m-copies').value)||1)),list=[];purls.forEach(u=>{for(let k=0;k<cp;k++)list.push(u);});printPages(list,pland);};gal.prepend(pb2);}$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}{const dl=$('#m-dl');if(dl)dl.hidden=true;}
     $('#m-title').textContent='الأسماء ('+files.length+')';$('#m-msg').textContent='كل الشهادات أدناه بحجمها الكامل. اضغطي كليك يمين على أي صورة ←︎ حفظ الصورة، أو نزّلي الكل بزر «تنزيل ZIP».';
   }catch(_){$('#m-msg').textContent='تعذّر تصدير كل الأسماء. جرّبي اسمًا اسمًا.';}
   nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;}
