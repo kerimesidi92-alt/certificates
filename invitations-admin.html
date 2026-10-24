@@ -2278,7 +2278,8 @@ $('#m-print').onclick=function(){if(!lastBlob)return;var z=dimsOf(S),land=z[0]>=
 
 /* ---- طباعة الكمية: عدة كروت على ورقة A4/A3 مع علامات قص ---- */
 var SHEETS={A4:[21,29.7],A3:[29.7,42]},PRCAP=300;
-function planSheet(cw,ch,sk){var s=SHEETS[sk]||SHEETS.A4,m=.8,g=.3,best=null;
+function NEEDCUT(){return ['circle','oval','arch','house'].indexOf(S.shape)>=0;}
+function planSheet(cw,ch,sk){var s=SHEETS[sk]||SHEETS.A4,m=.8,g=NEEDCUT()?.45:.3,best=null;
  [[s[0],s[1]],[s[1],s[0]]].forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,c=Math.floor((sz[0]-2*m+g)/(a+g)),r=Math.floor((sz[1]-2*m+g)/(b+g));if(c>0&&r>0&&(!best||c*r>best.n))best={n:c*r,c:c,r:r,rot:rot,SW:sz[0],SH:sz[1],a:a,b:b,m:m,g:g};});});
  return best;}
 function sheetUI(wm){var sh=$('#m-sheet'),pl=$('#m-plan');if(wm){sh.hidden=true;pl.hidden=true;return;}
@@ -2291,15 +2292,18 @@ function rotBlobUrl(bl){return new Promise(function(res,rej){var u=URL.createObj
 async function printQty(){if(!lastBlob)return;var z=dimsOf(S),q=Math.max(1,parseInt($('#m-qty').value)||1),P=planSheet(z[0],z[1],$('#m-sz').value);
  if(!P){toast('الكرت أكبر من الورقة. اختاري A3.');return;}
  var url=lastUrl;if(P.rot){try{url=await rotBlobUrl(lastBlob);}catch(_e){P=planSheet(z[0],z[1],$('#m-sz').value);url=lastUrl;}}
+ var cut=NEEDCUT(),BL=.08,PADC=BL+.1,cuts='';
+ if(cut){var Hh=100*z[1]/z[0],bu=BL*100/z[0],pu=PADC*100/z[0];cuts='<svg width="0" height="0" style="position:absolute"><defs><symbol id="cs" viewBox="'+(-pu)+' '+(-pu)+' '+(100+2*pu)+' '+(Hh+2*pu)+'" overflow="visible">'+outline(S.shape,Hh,-bu,'fill="none" stroke="#000" stroke-width=".7" vector-effect="non-scaling-stroke"')+'</symbol></defs></svg>';}
  var tot=Math.min(q,PRCAP*P.n),pages=Math.ceil(tot/P.n),gw=P.c*P.a+(P.c-1)*P.g,gh=P.r*P.b+(P.r-1)*P.g,ox=(P.SW-gw)/2,oy=(P.SH-gh)/2,L=.5,O=.12,T=.03,out='';
  function ln(x,y,w,h){return '<i class="k" style="left:'+x.toFixed(3)+'cm;top:'+y.toFixed(3)+'cm;width:'+w+'cm;height:'+h+'cm"></i>';}
  for(var p=0;p<pages;p++){var cnt=Math.min(P.n,tot-p*P.n),rows=Math.ceil(cnt/P.c),cols=rows>1?P.c:cnt,h='<div class="pg">';
-  for(var k=0;k<cnt;k++){var c=k%P.c,r=Math.floor(k/P.c);h+='<img class="t" src="'+url+'" style="left:'+(ox+c*(P.a+P.g)).toFixed(3)+'cm;top:'+(oy+r*(P.b+P.g)).toFixed(3)+'cm;width:'+P.a+'cm;height:'+P.b+'cm">';}
+  for(var k=0;k<cnt;k++){var c=k%P.c,r=Math.floor(k/P.c),tx=ox+c*(P.a+P.g),ty=oy+r*(P.b+P.g);h+='<img class="t" src="'+url+'" style="left:'+tx.toFixed(3)+'cm;top:'+ty.toFixed(3)+'cm;width:'+P.a+'cm;height:'+P.b+'cm">';
+   if(cut){var sw=z[0]+2*PADC,sh2=z[1]+2*PADC,cx=tx+P.a/2,cy=ty+P.b/2;h+='<svg class="cl" style="left:'+(cx-sw/2).toFixed(3)+'cm;top:'+(cy-sh2/2).toFixed(3)+'cm;width:'+sw.toFixed(3)+'cm;height:'+sh2.toFixed(3)+'cm'+(P.rot?';transform:rotate(90deg)':'')+'"><use href="#cs"/></svg>';}}
   var uh=rows*P.b+(rows-1)*P.g,uw=cols*P.a+(cols-1)*P.g;
   for(var c2=0;c2<cols;c2++){var x0=ox+c2*(P.a+P.g),x1=x0+P.a;[x0,x1].forEach(function(x){h+=ln(x-T/2,oy-O-L,T,L)+ln(x-T/2,oy+uh+O,T,L);});}
   for(var r2=0;r2<rows;r2++){var y0=oy+r2*(P.b+P.g),y1=y0+P.b;[y0,y1].forEach(function(y){h+=ln(ox-O-L,y-T/2,L,T)+ln(ox+uw+O,y-T/2,L,T);});}
   out+=h+'</div>';}
- var html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@page{size:'+P.SW+'cm '+P.SH+'cm;margin:0}html,body{margin:0;padding:0;background:#fff}.pg{position:relative;width:'+P.SW+'cm;height:'+P.SH+'cm;overflow:hidden;page-break-after:always;break-after:page}.pg:last-child{page-break-after:auto;break-after:auto}.t{position:absolute;display:block}.k{position:absolute;background:#000;display:block}@media screen{body{background:#ddd}.pg{background:#fff;margin:10px auto;box-shadow:0 0 6px rgba(0,0,0,.3)}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="hint">'+pages+' ورقة ('+tot+' كرت). إن لم تظهر نافذة الطباعة اضغطي Ctrl+P. اختاري «الحجم الفعلي / 100%» وليس «ملاءمة الصفحة».</div>'+out+'<script>Promise.all([].map.call(document.images,function(i){return i.complete?1:new Promise(function(r){i.onload=i.onerror=r;});})).then(function(){setTimeout(function(){try{print()}catch(e){}},600)})<\/script></body></html>';
+ var html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@page{size:'+P.SW+'cm '+P.SH+'cm;margin:0}html,body{margin:0;padding:0;background:#fff;width:'+P.SW+'cm}.pg{position:relative;width:'+P.SW+'cm;height:'+(P.SH-.05)+'cm;overflow:hidden;page-break-after:always;break-after:page}.pg:last-child{page-break-after:auto;break-after:auto}.t{position:absolute;display:block}.cl{position:absolute;display:block;overflow:visible}.k{position:absolute;background:#000;display:block}@media screen{body{background:#ddd}.pg{background:#fff;margin:10px auto;box-shadow:0 0 6px rgba(0,0,0,.3)}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="hint">'+pages+' ورقة ('+tot+' كرت). إن لم تظهر نافذة الطباعة اضغطي Ctrl+P. اختاري: الهوامش = بدون، والمقياس = 100% (وليس «ملاءمة الصفحة»).'+(cut?' قصّي على الخط الأسود الرفيع حول كل كرت.':'')+'</div>'+cuts+out+'<script>Promise.all([].map.call(document.images,function(i){return i.complete?1:new Promise(function(r){i.onload=i.onerror=r;});})).then(function(){setTimeout(function(){try{print()}catch(e){}},600)})<\/script></body></html>';
  var w=null;try{w=window.open('','_blank');}catch(_){}
  if(w){try{w.document.open();w.document.write(html);w.document.close();return;}catch(_){}}
  var fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);var d=fr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(function(){fr.remove();},120000);}
