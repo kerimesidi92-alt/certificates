@@ -239,6 +239,7 @@ body:has(#tools:not([hidden])) #tabbar{display:none}
   .wrap{max-width:1560px}
   .studio{direction:ltr;grid-template-columns:86px 340px minmax(0,1fr) 320px;gap:14px;padding-bottom:10px;align-items:start}
   .studio>*{direction:rtl}
+  html[dir=ltr] .studio>*{direction:ltr}
   #tabbar{position:sticky;top:8px;inset:auto;transform:none;left:auto;max-width:none;grid-auto-flow:row;grid-auto-columns:auto;grid-column:1;grid-row:1;border:1px solid var(--line);border-radius:18px;padding:6px;gap:4px;align-self:start}
   #tabbar button{border:0;border-radius:14px;padding:12px 2px 9px;font-size:12px}
   #tabbar button[aria-selected=true]{background:color-mix(in srgb,var(--hl) 16%,var(--surface));color:var(--fg)}
