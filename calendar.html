@@ -33,12 +33,28 @@ input[type=text],input[type=date],select{font:inherit;font-size:16px;padding:9px
 .fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
 .fb{font:inherit;font-size:22px;line-height:1.5;padding:8px 6px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:clip}
 .fb[aria-pressed=true]{border-color:var(--acc);background:#fbf4e2}
+
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{display:flex;flex-direction:column;height:100vh;height:100dvh;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;accent-color:#a9852f}
+.top,.pv,.add{position:static!important;flex:none}
+.ctl{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;align-content:start;max-width:none!important;margin:0!important;width:100%;padding-inline:max(14px,calc((100% - 692px)/2))!important}
+input[type=text],input[type=date],input[type=number],textarea{-webkit-user-select:text;user-select:text}
+button,select,input,.x{color:var(--ink);-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,#a9852f 50%),linear-gradient(135deg,#a9852f 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-inline-end:30px}
+input[type=range]{-webkit-appearance:auto;appearance:auto;accent-color:#a9852f}
+input[type=checkbox]{-webkit-appearance:auto;appearance:auto;accent-color:#a9852f}
+input[type=color]{-webkit-appearance:auto;appearance:auto}
+button:focus,input:focus,select:focus{outline:none}
+input[type=text]:focus,input[type=date]:focus,select:focus{border-color:var(--acc)}
+::selection{background:transparent}
+.pvbox{border:0!important}
 </style></head><body>
 <div class="top"><b>التقويمات</b><button class="x" id="close" type="button">إغلاق</button></div>
 <div class="pv"><div class="pvbox" id="pvbox"><canvas id="cv"></canvas></div></div>
 <div class="ctl" id="ctl"></div>
 <div class="add"><button id="add" type="button">إضافة إلى البطاقة</button></div>
 
+<script src="kpick.js"></script>
 <script>
 (function(){
 /* ===== خلفية مشتركة: لون عادي / ألوان لامعة / أي لون لامع ===== */
