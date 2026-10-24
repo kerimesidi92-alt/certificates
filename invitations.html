@@ -1405,7 +1405,7 @@ var CALW='بارك الله لكما',CALF=['Aref Ruqaa','Aref Ruqaa Ink','Katib
 /* ---- published designs (Firestore) ---- */
 var PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
 function TOVM(){return window.__TOV||{};}
-function okS(v){v=String(v==null?'':v);var a=/[\u0600-\u06FF]/.test(v),l=/[A-Za-z\u00C0-\u00FF]/.test(v);return S.lang==='ar'?(a||!l):!a;}
+function okS(v){return true;}
 function jclone(x){return JSON.parse(JSON.stringify(x));}
 function applyOvTpl(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov)return;var t=ov.t||{},o=ov.o;
  if(t.evText!=null&&okS(t.evText))S.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f]&&okS(t[f]))S[f]=t[f];});
