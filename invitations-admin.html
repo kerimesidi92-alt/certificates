@@ -1580,7 +1580,7 @@ function adoptPub(d,tag){var st=JSON.parse(JSON.stringify(d.st));(st.imgs||[]).f
  var mx=d.uid||0;(st.imgs||[]).concat(st.txts||[]).forEach(function(x){if(+x.id>mx)mx=+x.id;});if(mx>=uid)uid=mx+1;
  st.sel=null;return st;}
 async function applyPubInv(id){var cfg;try{cfg=await fetchCfg(id);}catch(_){return;}
- var st=adoptPub(cfg,'p'+id+'_');var _k={shape:S.shape,size:S.size,custom:S.custom,szSet:S.szSet,zoom:S.zoom};S=st;S.shape=_k.shape;S.size=_k.size;S.custom=_k.custom;S.szSet=_k.szSet;S.zoom=_k.zoom;S.tab='theme';hist=[];hpos=-1;commit();
+ var st=adoptPub(cfg,'p'+id+'_');var _k={shape:S.shape,size:S.size,custom:S.custom,szSet:S.szSet,zoom:S.zoom};S=st;S.ed={};S.evAuto=0;S.shape=_k.shape;S.size=_k.size;S.custom=_k.custom;S.szSet=_k.szSet;S.zoom=_k.zoom;S.tab='theme';hist=[];hpos=-1;commit();
  [].forEach.call(document.querySelectorAll('#lang button'),function(x){x.setAttribute('aria-pressed',x.dataset.l===S.lang?'true':'false')});
  build();render();}
 function gallery(){
@@ -1748,8 +1748,8 @@ var TABS=['theme','lib','frm','text','img','color','orn'],MVOF={lib:'stk',text:'
 function thDraw(){
   [].forEach.call(document.querySelectorAll('.th'),function(el){
     var p=TPL.filter(function(x){return x.id===el.dataset.t})[0],st=fresh(S.lang);
-    st.shape=p.shape;st.size=p.size;st.custom=p.cm?p.cm.slice():null;st.arts=p.arts;st.frame=p.frame;st.bg=p.bg;st.ac=p.ac;st.event=p.ev;st.evText=UI[S.lang].events[p.ev];st.tpl=p.id;if(p.ink)st.ink=p.ink;st.live=1;
-    try{var ov=TOVM()[p.id+'|'+S.lang];if(ov){var t=ov.t||{};if(t.evText!=null&&okS(t.evText))st.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&okS(t[f]))st[f]=t[f];});var o=ov.o;if(o){if(o.E)st.E=jclone(o.E);if(o.orn!=null){st.orn=o.orn;st.olen=o.olen==null?null:o.olen;}if(o.dst!=null)st.dst=o.dst;if(o.txts)st.txts=jclone(o.txts);if(o.imgs)o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm]&&!IMGSRC[k])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k)&&IMGSRC[k]==null)IMGSRC[k]='';st.imgs.push(I);});}}}catch(_e){}
+    st.shape=p.shape;st.size=p.size;st.custom=p.cm?p.cm.slice():null;st.arts=p.arts;st.frame=p.frame;st.bg=p.bg;st.ac=p.ac;st.event=p.ev;st.evText=UI[S.lang].events[p.ev];st.tpl=p.id;if(p.ink)st.ink=p.ink;
+    try{var ov=TOVM()[p.id+'|'+S.lang];if(ov){st.live=1;var t=ov.t||{};if(t.evText!=null&&okS(t.evText))st.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&okS(t[f]))st[f]=t[f];});var o=ov.o;if(o){if(o.E)st.E=jclone(o.E);if(o.orn!=null){st.orn=o.orn;st.olen=o.olen==null?null:o.olen;}if(o.dst!=null)st.dst=o.dst;if(o.txts)st.txts=jclone(o.txts);if(o.imgs)o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm]&&!IMGSRC[k])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k)&&IMGSRC[k]==null)IMGSRC[k]='';st.imgs.push(I);});}}}catch(_e){}
     var z=dimsOf(st);drawCard(el,st,Math.min(96,110*z[0]/z[1]),true);
   });
 }
@@ -1773,7 +1773,8 @@ function dropFx(){S.imgs=(S.imgs||[]).filter(function(i){return !i.fx});if(S.fxF
 function applyTpl(id){
   dropFx();var p=TPL.filter(function(x){return x.id===id})[0];
   S.imgs=(S.imgs||[]).filter(function(x){return !x.dflt});var prevT=S.tpl;S.tpl=id;S.arts=p.arts.slice();S.frame=p.frame;S.fl='';S.bh='0';S.paper='';S.E=newE();
-  if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}else{if(p.d.fn){S.E.n1.f.fr=p.d.fn;S.E.n2.f.fr=p.d.fn;}if(p.d.fe){S.E.ev.f.fr=p.d.fe;S.E.dt.f.fr=p.d.fe;}}S.orn=p.d.orn;S.olen=null;S.dst=p.d.dst;}
+  if(S.evAuto){S.ed.ev=0;S.evAuto=0;}['n1','n2','line'].forEach(function(f){if(!S.ed[f])S[f]=DEF[S.lang][f];});if(!S.ed.ev&&!p.d)S.evText=UI[S.lang].events[S.event];
+  if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;S.evAuto=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}else{if(p.d.fn){S.E.n1.f.fr=p.d.fn;S.E.n2.f.fr=p.d.fn;}if(p.d.fe){S.E.ev.f.fr=p.d.fe;S.E.dt.f.fr=p.d.fe;}}S.orn=p.d.orn;S.olen=null;S.dst=p.d.dst;}
   if(p.shape){S.bg=p.bg;S.ac=p.ac;S.ink=p.ink||null;}S.noText=false;
   if(p.dx!=null)['ev','n1','or','n2','dt','ln'].forEach(function(k){S.E[k].dx=p.dx;});
   applyOvTpl();
