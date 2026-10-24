@@ -2137,7 +2137,7 @@ async function fontEmbedCSS(box){try{var used=fontsUsed(box),css=await googleCSS
   if(!(u in FEC)){try{FEC[u]=await fToData(u)}catch(e){FEC[u]=null}}
   if(FEC[u])out+=b.replace(m[0],'url('+FEC[u]+')')+'\n';}
  return out||undefined}catch(e){return undefined}}
-function mkBox(wm,id){var b=document.createElement('div');b.className='cardbox';b.id=id||'xbox';if(wm)b.classList.add('wmx');b.innerHTML='<div class="card"></div>';b.style.cssText='position:fixed;left:-99999px;top:0;filter:none;';document.body.appendChild(b);var st=JSON.parse(JSON.stringify(S));st.sel=null;drawCard(b,st,600,true);try{var lv=document.getElementById('card');if(lv&&lv.getBoundingClientRect().width>50){[].forEach.call(b.querySelectorAll('.el[data-e]'),function(x){var de=x.getAttribute('data-e'),le=lv.querySelector('.el[data-e="'+de+'"]');if(!le)return;var li=le.querySelector('.ev,.nm,.ln'),xi=x.querySelector('.ev,.nm,.ln');if(!li&&de.indexOf('t:')===0&&!le.classList.contains('oxt')){li=le.firstElementChild;xi=x.firstElementChild;}
+function mkBox(wm,id){var b=document.createElement('div');b.className='cardbox';b.id=id||'xbox';if(wm)b.classList.add('wmx');b.innerHTML='<div class="card"></div>';b.style.cssText='position:fixed;left:-99999px;top:0;filter:none;';document.body.appendChild(b);var st=JSON.parse(JSON.stringify(S));st.sel=null;drawCard(b,st,600,false);try{var lv=document.getElementById('card');if(lv&&lv.getBoundingClientRect().width>50){[].forEach.call(b.querySelectorAll('.el[data-e]'),function(x){var de=x.getAttribute('data-e'),le=lv.querySelector('.el[data-e="'+de+'"]');if(!le)return;var li=le.querySelector('.ev,.nm,.ln'),xi=x.querySelector('.ev,.nm,.ln');if(!li&&de.indexOf('t:')===0&&!le.classList.contains('oxt')){li=le.firstElementChild;xi=x.firstElementChild;}
   if(!li||!xi||li.children.length||!li.firstChild||li.firstChild.nodeType!==3)return;var tn=li.firstChild,s=tn.data,r=document.createRange(),lines=[],cur='',lt=null,hh=1;
   for(var i=0;i<s.length;i++){var ch=s.charAt(i);if(ch==='\n'){lines.push(cur);cur='';lt=null;continue;}r.setStart(tn,i);r.setEnd(tn,i+1);var rc=r.getClientRects();if(!rc.length||!rc[0].width){cur+=ch;continue;}var tp=rc[0].top;hh=rc[0].height||hh;if(lt!==null&&Math.abs(tp-lt)>hh*.6){lines.push(cur);cur='';}lt=tp;cur+=ch;}
   lines.push(cur);xi.style.whiteSpace='pre';xi.textContent=lines.map(function(q){return q.replace(/^ +| +$/g,'');}).join('\n');});}}catch(_e){}return b;}
@@ -2160,7 +2160,7 @@ function thumbDiff(a,b){if(!a||!b)return 0;var s=0;for(var i=0;i<a.length;i+=4)s
 var MKBUSY=false;
 async function makeImage(wm){
  if(MKBUSY)return;MKBUSY=true;
- try{for(var w0=0;w0<80&&!window.XMORE;w0++)await new Promise(function(r){setTimeout(r,250);});rehydrate();if(window.__fp&&window.__fp.length)await Promise.all(window.__fp);}catch(_e){}
+ try{for(var w0=0;w0<80&&!window.XMORE&&!window.XFL&&!window.__fl;w0++)await new Promise(function(r){setTimeout(r,250);});rehydrate();if(window.__fp&&window.__fp.length)await Promise.all(window.__fp);}catch(_e){}
  $('#m-img').hidden=true;$('#m-print').hidden=true;$('#m-dl').hidden=true;$('#m-msg').textContent='جارٍ تجهيز الصورة…';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
  var ok=false,lastErr=null;
  for(var at=0;at<3&&!ok;at++){
@@ -2174,7 +2174,7 @@ async function makeImage(wm){
    var fec=await fontEmbedCSS(box);
    var opt={pixelRatio:ratio,cacheBust:false,fontEmbedCSS:fec,style:{position:'static',left:'0',top:'0',margin:'0'}};
    var warm=null;
-   for(var wi=0;wi<2;wi++){try{warm=await htmlToImage.toBlob(box,{pixelRatio:1,cacheBust:false,fontEmbedCSS:fec,style:opt.style});}catch(_){}await new Promise(function(r){setTimeout(r,wi?250:600);});await preloadBox(box);}
+   try{warm=await htmlToImage.toBlob(box,{pixelRatio:.5,cacheBust:false,fontEmbedCSS:fec,style:opt.style});}catch(_){}await new Promise(function(r){setTimeout(r,150);});
    var blob=await htmlToImage.toBlob(box,opt);
    if(!blob||blob.size<3000)throw new Error('empty');
    if(warm&&warm.size>3000){var d=thumbDiff(await thumbOf(blob),await thumbOf(warm));if(d>12&&at<2)throw new Error('blank');}
