@@ -372,6 +372,7 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 .trr{display:flex;align-items:center;gap:8px;border-top:1px solid #eee;padding:6px 0}.trr img{width:48px;height:56px;object-fit:contain;border:1px solid #ddd;border-radius:6px;background:#fff}.trr b{flex:1;font-size:13px}.trr .cardbox{width:48px}
 
 .panel input[type=time],.panel input[type=date],.step input[type=time],.step input[type=date]{height:44px;-webkit-appearance:none;appearance:none;text-align:start;line-height:normal;min-height:44px}
+.xl{display:inline-block;margin-top:5px;font-size:13px;font-weight:700;color:var(--accent,#16264a);text-decoration:none;border:1px solid var(--line,#e3dccd);border-radius:999px;padding:2px 12px;background:var(--surface,#fff)}
 </style><style>html,body{touch-action:manipulation}</style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 <style>#card,#card *,#lbcardbox .card,#lbcardbox .card *{touch-action:none}</style><style>@media (max-width:860px){body #tools{max-height:40vh}body:has(#tools:not([hidden])) .stage{height:25vh!important}}body:has(#tools:not([hidden])) .acts2{display:none}body.fs .stagewrap{padding:58px 8px 8px}body.fs .stage{height:calc(100vh - 66px)!important;height:calc(100dvh - 66px)!important;align-items:start}body.fs:has(#tools:not([hidden])) .stage{height:calc(100dvh - 66px - 40dvh)!important}body.fs #tools{max-height:40vh;max-height:40dvh}body.fs .fsx{top:10px;left:10px}</style><style>#adm-bar{max-width:1120px;margin:0 auto 12px;display:grid;gap:8px;background:var(--surface);border:1.5px solid var(--hl);border-radius:16px;padding:12px}
@@ -390,7 +391,7 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
  <img id="m-img" alt="البطاقة" hidden>
 </div></div>
 
-<div class="atop"><div class="abrand"><b>إدارة بطاقات الدعوات</b><small>الطلبات والتصميم · للإدارة فقط</small></div>
+<div class="atop"><div class="abrand"><b>إدارة بطاقات الدعوات</b><small>الطلبات والتصميم · للإدارة فقط</small><a class="xl" href="admin.html">إدارة الشهادات ←</a></div>
 <nav class="atabs" role="tablist"><button type="button" role="tab" data-atab="orders" aria-selected="true" id="t-orders">الطلبات<span id="ocount"></span></button><button type="button" role="tab" data-atab="design" aria-selected="false">التصميم</button><button type="button" role="tab" data-atab="mine" aria-selected="false" id="t-mine">تصاميمي</button><button type="button" id="btn-logout">خروج</button></nav></div>
 <section id="a-orders">
  <div style="display:grid;gap:16px">
