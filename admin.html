@@ -295,6 +295,15 @@ body{background:var(--bg)}
 }
 
 .addbar{display:grid;grid-template-columns:1fr;gap:6px}
+#tab-mine{padding-bottom:92px}#tab-mine .mbox{display:none}#tab-mine[data-sub="pb"] .mbox[data-s="pb"],#tab-mine[data-sub="fd"] .mbox[data-s="fd"],#tab-mine[data-sub="mg"] .mbox[data-s="mg"],#tab-mine[data-sub="cv"] .mbox[data-s="cv"],#tab-mine[data-sub="tr"] .mbox[data-s="tr"],#tab-mine[data-sub="th"] .mbox[data-s="th"]{display:block}
+#mn-nav{position:fixed;bottom:0;left:0;right:0;z-index:45;display:flex;background:var(--surface);border-top:1px solid var(--line);padding:4px 2px calc(6px + env(safe-area-inset-bottom))}
+#mn-nav button{flex:1;border:0;background:none;font:inherit;font-size:10.5px;color:var(--muted);line-height:1.25;padding:5px 1px 4px;min-height:54px;cursor:pointer}#mn-nav button i{display:block;font-style:normal;font-size:19px;margin-bottom:1px}
+#mn-nav button[aria-selected="true"]{color:var(--accent);font-weight:700;box-shadow:inset 0 2px 0 var(--hl)}
+.btn[hidden]{display:none!important}#def-pill{position:fixed;left:12px;bottom:90px;z-index:60;background:var(--hl);color:#fff;border:0;border-radius:24px;padding:11px 18px;font:inherit;font-weight:700;font-size:14px;box-shadow:0 4px 18px rgba(0,0,0,.3)}#def-pill[hidden]{display:none}
+.thg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.thT{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:6px;font:inherit;font-size:11.5px;color:var(--fg);cursor:pointer}.thT img,.thT .ph{width:100%;height:84px;object-fit:contain;border-radius:8px;display:block;background:var(--surface2)}.thT b{display:block;font-weight:600;margin-top:4px}.thT .tg{position:absolute;top:4px;right:4px;background:var(--hl);color:#fff;border-radius:8px;font-size:9.5px;padding:1px 6px;z-index:1}
+.thf{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.thf button{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:20px;padding:5px 12px;cursor:pointer}.thf button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+#th-sheet{position:fixed;inset:0;z-index:80;background:rgba(10,14,28,.55);display:flex;align-items:flex-end}#th-sheet[hidden]{display:none}#th-sheet>div{background:var(--surface);width:100%;border-radius:20px 20px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px}#th-sheet h3{margin:0 0 4px;font-size:16px}
+
 .addbar .btn{min-height:40px;font-size:13.5px}
 .tools{margin-top:10px;background:var(--surface,#fff);color:var(--fg,#111);border:1px solid var(--hl,#d6b46c);border-radius:14px;padding:10px 12px;display:grid;gap:8px;box-shadow:0 10px 26px -16px rgba(12,18,34,.6)}
 .tools .tl-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -539,7 +548,7 @@ body{background:var(--bg)}
       <div class="addbar"><button type="button" class="btn" id="btn-undo" aria-label="تراجع" disabled>↶︎ تراجع</button><button type="button" class="btn" id="btn-redo" aria-label="إعادة" disabled>↷︎ إعادة</button><button type="button" class="btn" id="btn-addimg">＋ صورة</button><button type="button" class="btn" id="btn-addtext">＋ نص</button><button type="button" class="btn" id="btn-new">✦︎ تصميم جديد</button></div>
       <div class="addbar quick"><button type="button" class="btn" id="btn-reset">↺︎ استعادة الافتراضي</button><button type="button" class="btn" id="btn-clear">▢︎ ورقة فارغة</button></div>
       <div class="addbar quick" style="grid-template-columns:1fr 1fr!important"><button type="button" class="btn primary" id="btn-savemine" style="color:#fff;border-style:solid">💾︎ حفظ في تصاميمي</button><button type="button" class="btn" id="btn-savenew" hidden>＋ حفظ كتصميم جديد</button></div>
-      <div class="addbar quick" hidden style="display:none"><button type="button" class="btn" id="btn-defsave" style="grid-column:1/-1">✎︎ حفظ النص والتنسيق كتلقائي لهذا الثيم</button><button type="button" class="btn" id="btn-defall">تطبيق على كل ثيمات المجلد</button><button type="button" class="btn" id="btn-defdel">↺︎ إرجاع الأصل</button></div>
+      <div class="addbar quick"><button type="button" class="btn" id="btn-defsave" hidden>✎︎ حفظ كتابة هذا الثيم كتلقائية</button><button type="button" class="btn" id="btn-defdel" hidden>↺︎ استعادة الأصلية</button><button type="button" id="btn-defall" hidden style="display:none"></button></div><button type="button" id="def-pill" hidden>✎︎ حفظ كتابة هذا الثيم كتلقائية</button>
       <div class="stage-wrap" id="stagewrap"><div id="stage"></div></div>
       <div class="tools" id="tools" hidden></div>
 
@@ -548,12 +557,14 @@ body{background:var(--bg)}
 
 
   
-  <section id="tab-mine" class="studio" hidden style="display:block">
-    <div class="box" style="margin-bottom:14px"><h2>تصاميمي</h2><p class="hint">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="hint" id="pb-msg" role="status"></p></div>
-    <div class="box" style="margin-bottom:14px"><h2>مجلداتي</h2><p class="hint">أنشئي مجلدات بأسمائك (تظهر للزبائن بعد وضع تصميم منشور فيها). يمكنك أيضًا إنشاء مجلد جديد عند نشر أي تصميم.</p><div id="fd-list"></div><button type="button" class="btn" id="fd-add">＋ مجلد جديد</button></div>
-    <div class="box" style="margin-bottom:14px"><h2>إدارة المجلدات</h2><p class="hint">اختاري مجلدًا لترين محتواه. «حذف» ينقل العنصر إلى المحذوفات (يمكن إرجاعه)، و«إخفاء المجلد» يخفيه كله عن الزبائن.</p><select id="mg-f"></select><div id="mg-bar" style="display:flex;gap:8px;flex-wrap:wrap"></div><div id="mg-list" class="mgg"></div></div>
-    <div class="box" style="margin-bottom:14px"><h2>المحذوفات</h2><div id="tr-list"></div></div>
-    <div class="box"><h2>صورة غلاف كل مجلد</h2><div id="cv-list"></div></div>
+  <section id="tab-mine" class="studio" data-sub="pb" hidden style="display:block">
+    <div class="box mbox" data-s="pb" style="margin-bottom:14px"><h2>تصاميمي</h2><p class="hint">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="hint" id="pb-msg" role="status"></p></div>
+    <div class="box mbox" data-s="fd" style="margin-bottom:14px"><h2>مجلداتي</h2><p class="hint">أنشئي مجلدات بأسمائك (تظهر للزبائن بعد وضع تصميم منشور فيها). يمكنك أيضًا إنشاء مجلد جديد عند نشر أي تصميم.</p><div id="fd-list"></div><button type="button" class="btn" id="fd-add">＋ مجلد جديد</button></div>
+    <div class="box mbox" data-s="mg" style="margin-bottom:14px"><h2>إدارة المجلدات</h2><p class="hint">اختاري مجلدًا لترين محتواه. «حذف» ينقل العنصر إلى المحذوفات (يمكن إرجاعه)، و«إخفاء المجلد» يخفيه كله عن الزبائن.</p><select id="mg-f"></select><div id="mg-bar" style="display:flex;gap:8px;flex-wrap:wrap"></div><div id="mg-list" class="mgg"></div></div>
+    <div class="box mbox" data-s="tr" style="margin-bottom:14px"><h2>المحذوفات</h2><div id="tr-list"></div></div>
+    <div class="box mbox" data-s="cv"><h2>أغلفة المجلدات</h2><div id="cv-list"></div></div>
+    <div class="box mbox" data-s="th"><h2>الثيمات والكتابة التلقائية</h2><p class="hint">اختاري ثيماً وافتحيه للتعديل كأي تصميم. ثم اضغطي «حفظ كتابة هذا الثيم كتلقائية»: ما تحفظينه يظهر للزبون تلقائياً عند اختياره لهذا الثيم.</p><div id="th-body"></div></div>
+    <nav id="mn-nav" role="tablist"><button type="button" role="tab" data-ms="pb"><i>&#9733;&#xFE0E;</i>تصاميمي</button><button type="button" role="tab" data-ms="fd"><i>&#9636;&#xFE0E;</i>مجلداتي</button><button type="button" role="tab" data-ms="mg"><i>&#9881;&#xFE0E;</i>إدارة المجلدات</button><button type="button" role="tab" data-ms="cv"><i>&#9635;&#xFE0E;</i>أغلفة المجلدات</button><button type="button" role="tab" data-ms="tr"><i>&#9003;&#xFE0E;</i>المحذوفات</button><button type="button" role="tab" data-ms="th"><i>&#9998;&#xFE0E;</i>الثيمات والكتابة</button></nav>
   </section>
   <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="الصورة النهائية">
     <div class="m-panel">
@@ -1701,7 +1712,7 @@ function loadPub(){
   try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{{const all=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));PUBDEL=all.filter(p=>p.del===true);PUBALL=all.filter(p=>p.del!==true);}pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
   try{db.collection('config').doc('folders').onSnapshot(d=>{CF=(d.exists&&d.data()&&d.data().list)||[];applyCF();pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('hidden').onSnapshot(d=>{const x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},()=>{});}catch(_){}
-  try{db.collection('config').doc('defaults').onSnapshot(d=>{TOV={};if(!window.__ovInit&&Object.keys(TOV).length){window.__ovInit=1;if(!S.themeTouched&&!Object.values(S.edited).some(Boolean)){applyLayoutOv();applyDefaults();render();try{renderTools();}catch(_){}}}pubApply();},()=>{});}catch(_){}
+  try{db.collection('config').doc('defaults').onSnapshot(d=>{TOV=(d.exists&&d.data()&&d.data().m)||{};if(!window.__ovInit&&Object.keys(TOV).length){window.__ovInit=1;if(!S.themeTouched&&!Object.values(S.edited).some(Boolean)){applyLayoutOv();applyDefaults();render();try{renderTools();}catch(_){}}}pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
 window.__loadPub=loadPub;
@@ -2076,16 +2087,46 @@ $('#order-form').addEventListener('submit',e=>{
   const FLD=['title','intro','role','body','from'],LN={ar:'العربية',fr:'الفرنسية',en:'الإنجليزية'};
   const pkg=lay=>{const t={};FLD.forEach(k=>{t[k]=S[k];});const r={t};if(lay)r.o={off:clone(S.off||{}),fmt:clone(S.fmt||{}),dsz:clone(S.dsz||{}),xt:clone(S.xt||[]),ln:clone(S.ln||[]),div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dn:S.dn};return r;};
   async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:TOV});try{pubApply();}catch(_){}}
+  let base=null,baseK=null;const keyNow=()=>JSON.stringify(pkg(true));
+  function defUI(){try{const th=THEMES[S.theme]?S.theme:null,has=th&&TOV[th+'|'+S.lang],dirty=!!(th&&base!=null&&keyNow()!==base),des=!$('#tab-design').hidden;$('#btn-defsave').hidden=!th;$('#btn-defdel').hidden=!has;$('#btn-defsave').classList.toggle('primary',dirty);$('#def-pill').hidden=!(dirty&&des);}catch(_){}}
+  window.__defUI=defUI;const _rd=render;render=function(){const r=_rd.apply(this,arguments);try{const th=THEMES[S.theme]?S.theme:null,bk=th?th+'|'+S.lang:null;if(bk!==baseK){baseK=bk;base=bk?keyNow():null;}defUI();}catch(_){}return r;};
+  $('#def-pill').onclick=()=>$('#btn-defsave').click();
   $('#btn-defsave').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th){msg('اختاري ثيمًا من القائمة أولًا (ليس «بدون ثيم»).',1);return;}
-    TOV[th+'|'+S.lang]=pkg(true);try{await write();msg('حُفظ النص والتنسيق كتلقائي لـ«'+THEMES[th].name+'» ('+LN[S.lang]+'). يصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
+    TOV[th+'|'+S.lang]=pkg(true);try{await write();base=keyNow();baseK=th+'|'+S.lang;defUI();msg('حُفظت الكتابة والتنسيق كتلقائية لـ«'+THEMES[th].name+'» ('+LN[S.lang]+'). تصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
   $('#btn-defdel').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th)return;const k=th+'|'+S.lang;if(!TOV[k]){msg('لا يوجد نص تلقائي محفوظ لهذا الثيم بهذه اللغة.');return;}
-    delete TOV[k];try{await write();S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};S.off={};S.fmt={};S.dsz={};applyDefaults();render();renderTools();msg('رُجع النص الأصلي لهذا الثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
+    delete TOV[k];try{await write();S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};S.off={};S.fmt={};S.dsz={};applyDefaults();baseK=null;render();renderTools();msg('رُجعت الكتابة الأصلية لهذا الثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
   $('#btn-defall').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th){msg('اختاري ثيمًا من المجلد أولًا.',1);return;}
     const g=grpOf(th),ks=Object.keys(THEMES).filter(k=>grpOf(k)===g);
     if(!confirm('تطبيق النص التلقائي الحالي ('+LN[S.lang]+') على '+ks.length+' ثيم في مجلد «'+FOLDERS[g]+'»؟'))return;
     const lay=confirm('هل تريدين تطبيق التنسيق أيضًا (أماكن الكتابة والأحجام والزخارف)؟\nموافق = النص والتنسيق، إلغاء = النص فقط. التنسيق قد لا يناسب كل الثيمات.');
     const p=pkg(lay);ks.forEach(k=>{const key=k+'|'+S.lang,old=TOV[key]||{};TOV[key]={t:clone(p.t),o:lay?clone(p.o):old.o};if(!TOV[key].o)delete TOV[key].o;});
     try{await write();msg('طُبّق على '+ks.length+' ثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
+})();
+
+
+/* ---- six sub-tabs of "تصاميمي" + themes & default-writing tab (certificates admin) ---- */
+(function(){
+  const db=()=>window.__fdb,msg=(t,e)=>{try{toast(t,e);}catch(_){}},K='kerima_ms_c',root=$('#tab-mine');let cur='pb',THL='ar',THO='l',THG='allt';
+  try{const sv=localStorage.getItem(K);if(sv&&root.querySelector('[data-ms="'+sv+'"]'))cur=sv;}catch(_){}
+  const sheet=document.createElement('div');sheet.id='th-sheet';sheet.hidden=true;document.body.appendChild(sheet);
+  const LN={ar:'العربية',fr:'Français',en:'English'};
+  function set(s){cur=s;root.dataset.sub=s;root.querySelectorAll('#mn-nav [data-ms]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.ms===s)));try{localStorage.setItem(K,s);}catch(_){}if(s==='th')thUI();try{window.scrollTo(0,0);}catch(_){}}
+  const okList=()=>Object.keys(THEMES).filter(k=>window.__okOr&&window.__okOr(k,THO));
+  function thUI(){const b=$('#th-body');if(!b)return;const ks=okList(),gs=[...new Set(ks.map(k=>THEMES[k].rc?'clr':grpOf(k)))];
+    let h='<div class="thf">'+Object.keys(LN).map(l=>`<button type="button" data-thl="${l}" aria-pressed="${THL===l}">${LN[l]}</button>`).join('')+'</div><div class="thf">'+[['l','أفقي'],['p','عمودي']].map(o=>`<button type="button" data-tho="${o[0]}" aria-pressed="${THO===o[0]}">${o[1]}</button>`).join('')+'</div><div class="thf"><button type="button" data-thg="allt" aria-pressed="${THG===\'allt\'}">الكل</button>'+gs.map(g=>`<button type="button" data-thg="${g}" aria-pressed="${THG===g}">${FOLDERS[g]||g}</button>`).join('')+'</div><div class="thg">';
+    ks.filter(k=>THG==='allt'||(THG==='clr'?THEMES[k].rc:grpOf(k)===THG)).forEach(k=>{const has=TOV[k+'|'+THL];h+=`<button type="button" class="thT" data-th="${k}">${has?'<span class="tg">✎︎ كتابتي</span>':''}<img src="${themeThumb(k)}" alt="" loading="lazy" decoding="async"><b>${THEMES[k].name}</b></button>`;});
+    b.innerHTML=h.replace("${THG==='allt'}",THG==='allt')+'</div>';}
+  function openSheet(k){const has=TOV[k+'|'+THL];sheet.innerHTML=`<div><h3>${THEMES[k].name} · ${LN[THL]}</h3><button type="button" class="btn primary" data-sh="go">فتح للتعديل (كأي تصميم)</button>${has?'<button type="button" class="btn" data-sh="rst">↺︎ استعادة الأصلية</button>':'<p class="hint" style="margin:0">لا توجد كتابة خاصة بك لهذا الثيم بعد.</p>'}<button type="button" class="btn" data-sh="x">إلغاء</button></div>`;sheet.dataset.k=k;sheet.hidden=false;}
+  function selTheme(k){dropFx();resetOrn();S.theme=k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();applyDefaults();render();}
+  sheet.addEventListener('click',async e=>{const b=e.target.closest('[data-sh]'),k=sheet.dataset.k;if(e.target===sheet){sheet.hidden=true;return;}if(!b)return;const a=b.dataset.sh;sheet.hidden=true;if(a==='x')return;
+    if(a==='go'){const dt=document.querySelector('.tab[data-tab="design"]');if(dt)dt.click();
+      const lb=document.querySelector('#seg-lang button[data-v="'+THL+'"]');if(S.lang!==THL&&lb)lb.click();
+      const ob=document.querySelector('#seg-orient button[data-v="'+THO+'"]');if(S.orient!==THO&&ob)ob.click();
+      selTheme(k);try{window.scrollTo(0,0);}catch(_){}msg('فُتح الثيم. عدّلي ثم اضغطي «حفظ كتابة هذا الثيم كتلقائية».');}
+    else if(a==='rst'){try{delete TOV[k+'|'+THL];await db().collection('config').doc('defaults').set({m:TOV});pubApply();thUI();msg('رُجعت الكتابة الأصلية لهذا الثيم.');}catch(_){msg('تعذّر الحفظ. تأكدي من تسجيل الدخول.',1);}}});
+  root.addEventListener('click',e=>{let t=e.target.closest('[data-ms]');if(t){set(t.dataset.ms);return;}t=e.target.closest('[data-thl]');if(t){THL=t.dataset.thl;thUI();return;}t=e.target.closest('[data-tho]');if(t){THO=t.dataset.tho;THG='allt';thUI();return;}t=e.target.closest('[data-thg]');if(t){THG=t.dataset.thg;thUI();return;}t=e.target.closest('[data-th]');if(t)openSheet(t.dataset.th);});
+  const _p=window.__pubUI;window.__pubUI=function(){if(_p)_p();try{if(cur==='th'&&!root.hidden)thUI();}catch(_){}try{if(window.__defUI)window.__defUI();}catch(_){}};
+  set(cur);
 })();
 
 /* open an order's design in the studio */

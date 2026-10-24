@@ -351,6 +351,15 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 .cvr{display:grid;gap:6px;border-top:1px solid var(--line,#eee);padding-top:8px}.cvr .h{display:flex;align-items:center;gap:10px}.cvr .h img{width:56px;height:56px;object-fit:contain;border:1px solid #ddd;border-radius:6px;background:#fff}.cvr .h b{flex:1}
 .cvg{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}.cvg button{border:1.5px solid var(--line,#ddd);border-radius:10px;background:#fff;padding:4px;font:inherit;font-size:11px;cursor:pointer}.cvg img{width:100%;height:70px;object-fit:contain}
 #sv-bar{display:flex;gap:8px;padding:8px 12px;flex-wrap:wrap}
+#a-mine{padding-bottom:92px}#a-mine .mbox{display:none}#a-mine[data-sub="pb"] .mbox[data-s="pb"],#a-mine[data-sub="fd"] .mbox[data-s="fd"],#a-mine[data-sub="mg"] .mbox[data-s="mg"],#a-mine[data-sub="cv"] .mbox[data-s="cv"],#a-mine[data-sub="tr"] .mbox[data-s="tr"],#a-mine[data-sub="th"] .mbox[data-s="th"]{display:block}
+#mn-nav{position:fixed;bottom:0;left:0;right:0;z-index:45;display:flex;background:var(--surface);border-top:1px solid var(--line);padding:4px 2px calc(6px + env(safe-area-inset-bottom))}
+#mn-nav button{flex:1;border:0;background:none;font:inherit;font-size:10.5px;color:var(--muted);line-height:1.25;padding:5px 1px 4px;min-height:54px;cursor:pointer}#mn-nav button i{display:block;font-style:normal;font-size:19px;margin-bottom:1px}
+#mn-nav button[aria-selected="true"]{color:var(--accent);font-weight:700;box-shadow:inset 0 2px 0 var(--hl)}
+.abtn[hidden]{display:none!important}#def-pill{position:fixed;left:12px;bottom:90px;z-index:60;background:var(--hl);color:#fff;border:0;border-radius:24px;padding:11px 18px;font:inherit;font-weight:700;font-size:14px;box-shadow:0 4px 18px rgba(0,0,0,.3)}#def-pill[hidden]{display:none}
+.thg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.thT{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:6px;font:inherit;font-size:11.5px;color:var(--fg);cursor:pointer}.thT img,.thT .ph{width:100%;height:96px;object-fit:cover;border-radius:8px;display:block;background:var(--surface2,#efe9dc)}.thT b{display:block;font-weight:600;margin-top:4px}.thT .tg{position:absolute;top:4px;right:4px;background:var(--hl);color:#fff;border-radius:8px;font-size:9.5px;padding:1px 6px}
+.thf{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.thf button{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:20px;padding:5px 12px;cursor:pointer}.thf button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+#th-sheet{position:fixed;inset:0;z-index:80;background:rgba(10,14,28,.55);display:flex;align-items:flex-end}#th-sheet[hidden]{display:none}#th-sheet>div{background:var(--surface);width:100%;border-radius:20px 20px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px}#th-sheet h3{margin:0 0 4px;font-size:16px}
+
 
 .mgg{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
 .mgi{border:1px solid var(--line,#e3dccd);border-radius:10px;padding:6px;display:grid;gap:4px;font-size:12px;text-align:center;justify-items:center;min-width:0}
@@ -393,12 +402,14 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
   <div id="viewbar"><button type="button" class="abtn" data-aview="act">الطلبات</button><button type="button" class="abtn" data-aview="arch">المحفوظات <span id="acount"></span></button></div>
   <div id="sum"></div><p class="note" id="store-note" role="status"></p><ul id="olist"></ul></div>
 </section>
-<section id="a-mine" hidden>
- <div class="box"><h2>تصاميمي</h2><p class="note">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="note" id="pb-msg" role="status"></p></div>
- <div class="box"><h2>مجلداتي</h2><p class="note">أنشئي مجلدات بأسمائك. تظهر للزبائن حين يوجد فيها تصميم منشور. ويمكنك أيضًا إنشاء مجلد جديد عند النشر.</p><div id="fd-list"></div><button type="button" class="abtn" id="fd-add">＋ مجلد جديد</button></div>
- <div class="box"><h2>إدارة المجلدات</h2><p class="note">اختاري مجلدًا لترين محتواه. «حذف» ينقل العنصر إلى المحذوفات (يمكن إرجاعه)، و«إخفاء المجلد» يخفيه كله عن الزبائن.</p><select id="mg-f"></select><div id="mg-bar" style="display:flex;gap:8px;flex-wrap:wrap"></div><div id="mg-list" class="mgg"></div></div>
- <div class="box"><h2>المحذوفات</h2><div id="tr-list"></div></div>
- <div class="box"><h2>صورة غلاف كل مجلد</h2><div id="cv-list"></div></div>
+<section id="a-mine" data-sub="pb" hidden>
+ <div class="box mbox" data-s="pb"><h2>تصاميمي</h2><p class="note">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="note" id="pb-msg" role="status"></p></div>
+ <div class="box mbox" data-s="fd"><h2>مجلداتي</h2><p class="note">أنشئي مجلدات بأسمائك. تظهر للزبائن حين يوجد فيها تصميم منشور. ويمكنك أيضًا إنشاء مجلد جديد عند النشر.</p><div id="fd-list"></div><button type="button" class="abtn" id="fd-add">＋ مجلد جديد</button></div>
+ <div class="box mbox" data-s="mg"><h2>إدارة المجلدات</h2><p class="note">اختاري مجلدًا لترين محتواه. «حذف» ينقل العنصر إلى المحذوفات (يمكن إرجاعه)، و«إخفاء المجلد» يخفيه كله عن الزبائن.</p><select id="mg-f"></select><div id="mg-bar" style="display:flex;gap:8px;flex-wrap:wrap"></div><div id="mg-list" class="mgg"></div></div>
+ <div class="box mbox" data-s="tr"><h2>المحذوفات</h2><div id="tr-list"></div></div>
+ <div class="box mbox" data-s="cv"><h2>أغلفة المجلدات</h2><div id="cv-list"></div></div>
+<div class="box mbox" data-s="th"><h2>الثيمات والكتابة التلقائية</h2><p class="note">اختاري ثيماً وافتحيه للتعديل كأي تصميم. ثم اضغطي «حفظ كتابة هذا الثيم كتلقائية»: ما تحفظينه يظهر للزبون تلقائياً عند اختياره لهذا الثيم.</p><div id="th-body"></div></div>
+ <nav id="mn-nav" role="tablist"><button type="button" role="tab" data-ms="pb"><i>&#9733;&#xFE0E;</i>تصاميمي</button><button type="button" role="tab" data-ms="fd"><i>&#9636;&#xFE0E;</i>مجلداتي</button><button type="button" role="tab" data-ms="mg"><i>&#9881;&#xFE0E;</i>إدارة المجلدات</button><button type="button" role="tab" data-ms="cv"><i>&#9635;&#xFE0E;</i>أغلفة المجلدات</button><button type="button" role="tab" data-ms="tr"><i>&#9003;&#xFE0E;</i>المحذوفات</button><button type="button" role="tab" data-ms="th"><i>&#9998;&#xFE0E;</i>الثيمات والكتابة</button></nav>
 </section>
 <section id="a-design" hidden>
  <div id="adm-bar" hidden>
@@ -409,7 +420,8 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 
 
 <div id="sv-bar"><button type="button" class="abtn pri" id="btn-savemine">💾︎ حفظ في تصاميمي</button><button type="button" class="abtn" id="btn-savenew" hidden>＋ حفظ كتصميم جديد</button>
- <span hidden style="display:none"><button type="button" class="abtn" id="btn-defsave" style="flex-basis:100%">✎︎ حفظ النص والتنسيق كتلقائي لهذا الثيم</button><button type="button" class="abtn" id="btn-defall">تطبيق على كل ثيمات المجلد</button><button type="button" class="abtn" id="btn-defdel">↺︎ إرجاع الأصل</button></span></div>
+ <button type="button" class="abtn" id="btn-defsave" hidden>✎︎ حفظ كتابة هذا الثيم كتلقائية</button><button type="button" class="abtn" id="btn-defdel" hidden>↺︎ استعادة الأصلية</button><button type="button" id="btn-defall" hidden style="display:none"></button></div>
+<button type="button" id="def-pill" hidden>✎︎ حفظ كتابة هذا الثيم كتلقائية</button>
 <div class="wrap">
 <header class="top">
   <div><h1 id="t-title"></h1><p class="note" id="t-note"></p></div>
@@ -1521,7 +1533,7 @@ function jclone(x){return JSON.parse(JSON.stringify(x));}
 function applyOvTpl(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov)return;var t=ov.t||{},o=ov.o;
  if(t.evText!=null)S.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f])S[f]=t[f];});
  if(o){if(o.E)S.E=jclone(o.E);if(o.orn!=null){S.orn=o.orn;S.olen=o.olen==null?null:o.olen;}if(o.dst!=null)S.dst=o.dst;
-  if(o.txts)S.txts=jclone(o.txts).map(function(x){x.id=uid++;return x;});}}
+  if(o.txts)S.txts=jclone(o.txts).map(function(x){x.id=uid++;return x;});}if(o&&o.imgs){o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;I.dflt=1;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k))IMGSRC[k]='';(S.imgs=S.imgs||[]).push(I);});}}
 function applyOvTexts(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov||!ov.t)return;var t=ov.t;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f])S[f]=t[f];});if(t.evText!=null&&!S.ed.ev)S.evText=t.evText;}
 
 var GTN=[['flw','بزهور','Avec fleurs'],['col','قابلة للتلوين','Colorables'],['dark','داكنة','Sombres'],['oth','أخرى','Autres']];
@@ -1538,7 +1550,7 @@ function loadPub(){var db=window.__fdb;if(!db||__pubSub)return;__pubSub=1;
  try{var col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(function(q){var all=q.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return (b.ord||0)-(a.ord||0)});PUBDEL=all.filter(function(p){return p.del===true});PUBALL=all.filter(function(p){return p.del!==true});pubApply();},function(){__pubSub=0;});}catch(_){__pubSub=0;}
  try{db.collection('config').doc('folders').onSnapshot(function(d){CF=(d.exists&&d.data()&&d.data().list)||[];pubApply();},function(){});}catch(_){}
  try{db.collection('config').doc('hidden').onSnapshot(function(d){var x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},function(){});}catch(_){}
- try{db.collection('config').doc('defaults').onSnapshot(function(d){window.__TOV={};pubApply();},function(){});}catch(_){}
+ try{db.collection('config').doc('defaults').onSnapshot(function(d){var first=!window.__ovInit;window.__TOV=(d.exists&&d.data()&&d.data().m)||{};pubApply();try{if(first&&Object.keys(window.__TOV).length&&typeof hist!=='undefined'&&hist.length<=1&&S&&S.tpl&&S.tpl!=='blank'&&S.tpl!=='mine'){window.__ovInit=1;applyOvTpl();commit();build();render();}}catch(_e){}window.__ovInit=1;},function(){});}catch(_){}
  try{db.collection('config').doc('covers').onSnapshot(function(d){COV=d.exists?(d.data()||{}):{};pubApply();},function(){});}catch(_){}}
 window.__loadPub=loadPub;
 async function fetchCfg(id){var d=await window.__fdb.collection('dcfg').doc(id).get();return JSON.parse(d.data().cfg);}
@@ -1744,7 +1756,7 @@ function setPressed(el){
 function dropFx(){S.imgs=(S.imgs||[]).filter(function(i){return !i.fx});if(S.fxFrm&&S.frm&&JSON.stringify(S.frm)===S.fxFrm)S.frm=null;S.fxFrm=null;if(S.sel&&String(S.sel).indexOf('i:')===0&&!S.imgs.some(function(i){return 'i:'+i.id===S.sel}))S.sel=null;}
 function applyTpl(id){
   dropFx();var p=TPL.filter(function(x){return x.id===id})[0];
-  var prevT=S.tpl;S.tpl=id;S.arts=p.arts.slice();S.frame=p.frame;S.fl='';S.bh='0';S.paper='';S.E=newE();
+  S.imgs=(S.imgs||[]).filter(function(x){return !x.dflt});var prevT=S.tpl;S.tpl=id;S.arts=p.arts.slice();S.frame=p.frame;S.fl='';S.bh='0';S.paper='';S.E=newE();
   if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}else{if(p.d.fn){S.E.n1.f.fr=p.d.fn;S.E.n2.f.fr=p.d.fn;}if(p.d.fe){S.E.ev.f.fr=p.d.fe;S.E.dt.f.fr=p.d.fe;}}S.orn=p.d.orn;S.olen=null;S.dst=p.d.dst;}
   if(p.shape){S.bg=p.bg;S.ac=p.ac;S.ink=p.ink||null;}S.noText=false;
   if(p.dx!=null)['ev','n1','or','n2','dt','ln'].forEach(function(k){S.E[k].dx=p.dx;});
@@ -2326,19 +2338,50 @@ var PUBEDIT=null;
  var db=function(){return window.__fdb;},msg=function(t,e){try{toast(t,e);}catch(_){}},LN={ar:'العربية',fr:'الفرنسية'};
  function tn(id){var p=TPL.filter(function(x){return x.id===id})[0];return p?(p.n&&p.n.ar)||id:id;}
  function realTpl(){return TPL.slice(1).some(function(p){return p.id===S.tpl})?S.tpl:null;}
- function pkg(lay){var r={t:{evText:S.evText,n1:S.n1,n2:S.n2,line:S.line}};if(lay)r.o={E:jclone(S.E),orn:S.orn,olen:S.olen==null?null:S.olen,dst:S.dst,txts:jclone(S.txts||[])};return r;}
+ function pkg(lay){var r={t:{evText:S.evText,n1:S.n1,n2:S.n2,line:S.line}};if(lay)r.o={E:jclone(S.E),orn:S.orn,olen:S.olen==null?null:S.olen,dst:S.dst,txts:jclone(S.txts||[]),imgs:(S.imgs||[]).filter(function(i){return /^[av]:/.test(i.key||'')}).map(function(i){var c=jclone(i);delete c.dflt;return c;})};return r;}
  async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:window.__TOV});try{pubApply();}catch(_){}}
+ var base=null,baseK=null;function keyNow(){return JSON.stringify(pkg(true));}
+ function defUI(){try{var id=realTpl(),has=id&&(window.__TOV||{})[id+'|'+S.lang],dirty=!!(id&&base!=null&&keyNow()!==base),des=!$('#a-design').hidden;$('#btn-defsave').hidden=!id;$('#btn-defdel').hidden=!has;$('#btn-defsave').classList.toggle('pri',dirty);$('#def-pill').hidden=!(dirty&&des);}catch(_e){}}
+ window.__defUI=defUI;var _cm=commit;commit=function(){var r=_cm.apply(this,arguments);try{var id=realTpl(),bk=id?id+'|'+S.lang:null;if(bk!==baseK){baseK=bk;base=bk?keyNow():null;}defUI();}catch(_e){}return r;};
+ $('#def-pill').onclick=function(){$('#btn-defsave').click();};
  function grp(){var p=TPL.filter(function(x){return x.id===S.tpl})[0];if(TGRP&&TGRP!=='all'&&TGRP!=='allt'&&TGRP!=='mine'&&TGRP.slice(0,2)!=='u_')return TGRP;return 'sh:'+(p?p.shape:'rect');}
  function tplsOf(g){var l=TPL.slice(1);if(g.indexOf('sh:')===0)return l.filter(function(p){return p.shape===g.slice(3)});return l.filter(function(p){return ((window.__TGMAP||{})[p.id]||'oth')===g;});}
  $('#btn-defsave').onclick=async function(){var id=realTpl();if(!id){msg('اختاري ثيمًا من القائمة أولًا.',1);return;}window.__TOV=window.__TOV||{};
-  window.__TOV[id+'|'+S.lang]=pkg(true);try{await write();msg('حُفظ النص والتنسيق كتلقائي لـ«'+tn(id)+'» ('+LN[S.lang]+'). يصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
+  window.__TOV[id+'|'+S.lang]=pkg(true);try{await write();base=keyNow();baseK=id+'|'+S.lang;defUI();msg('حُفظت الكتابة والتنسيق كتلقائية لـ«'+tn(id)+'» ('+LN[S.lang]+'). تصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
  $('#btn-defdel').onclick=async function(){var id=realTpl();if(!id)return;var k=id+'|'+S.lang;if(!(window.__TOV||{})[k]){msg('لا يوجد نص تلقائي محفوظ لهذا الثيم بهذه اللغة.');return;}
-  delete window.__TOV[k];try{await write();S.ed={};applyTpl(id);S.n1=DEF[S.lang].n1;S.n2=DEF[S.lang].n2;S.line=DEF[S.lang].line;commit();build();render();msg('رُجع النص الأصلي لهذا الثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
+  delete window.__TOV[k];try{await write();S.ed={};applyTpl(id);S.n1=DEF[S.lang].n1;S.n2=DEF[S.lang].n2;S.line=DEF[S.lang].line;baseK=null;commit();build();render();msg('رُجعت الكتابة الأصلية لهذا الثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
  $('#btn-defall').onclick=async function(){var id=realTpl();if(!id){msg('اختاري ثيمًا من المجلد أولًا.',1);return;}
   var g=grp(),ks=tplsOf(g);if(!confirm('تطبيق النص التلقائي الحالي ('+LN[S.lang]+') على '+ks.length+' ثيم في «'+fldName(g,true)+'»؟'))return;
   var lay=confirm('هل تريدين تطبيق التنسيق أيضًا (أماكن الكتابة والأحجام والزخارف)؟\nموافق = النص والتنسيق، إلغاء = النص فقط. التنسيق قد لا يناسب كل الثيمات.');
   var p=pkg(lay);window.__TOV=window.__TOV||{};ks.forEach(function(q){var key=q.id+'|'+S.lang,old=window.__TOV[key]||{};var n={t:jclone(p.t)};var o=lay?jclone(p.o):old.o;if(o)n.o=o;window.__TOV[key]=n;});
   try{await write();msg('طُبّق على '+ks.length+' ثيم.');}catch(_){msg('تعذّر الحفظ.',1);}};
+})();
+
+
+/* ---- six sub-tabs of "تصاميمي" + themes & default-writing tab (admin) ---- */
+(function(){
+ var db=function(){return window.__fdb;},msg=function(t,e){try{toast(t,e);}catch(_){}},K='kerima_ms',root=$('#a-mine'),cur='pb',THL='ar',THG='allt';
+ try{var sv=localStorage.getItem(K);if(sv&&root.querySelector('[data-ms="'+sv+'"]'))cur=sv;}catch(_e){}
+ var sheet=document.createElement('div');sheet.id='th-sheet';sheet.hidden=true;document.body.appendChild(sheet);
+ function tn(p){return (p.n&&p.n.ar)||p.id;}
+ function set(s){cur=s;root.dataset.sub=s;[].forEach.call(root.querySelectorAll('#mn-nav [data-ms]'),function(b){b.setAttribute('aria-selected',String(b.dataset.ms===s))});try{localStorage.setItem(K,s);}catch(_e){}if(s==='th')thUI();try{window.scrollTo(0,0);}catch(_e){}}
+ function groups(){var g=['allt'];Object.keys(SH).forEach(function(q){g.push('sh:'+q);});GTN.forEach(function(x){g.push(x[0]);});return g;}
+ function tplsOf(g){var l=TPL.slice(1);if(g==='allt')return l;if(g.indexOf('sh:')===0)return l.filter(function(p){return p.shape===g.slice(3)});return l.filter(function(p){return ((window.__TGMAP||{})[p.id]||'oth')===g;});}
+ function thUI(){var b=$('#th-body');if(!b)return;var ov=window.__TOV||{},h='<div class="thf" role="group">';
+  [['ar','العربية'],['fr','Français']].forEach(function(x){h+='<button type="button" data-thl="'+x[0]+'" aria-pressed="'+(THL===x[0])+'">'+x[1]+'</button>';});
+  h+='</div><div class="thf">';groups().forEach(function(g){h+='<button type="button" data-thg="'+g+'" aria-pressed="'+(THG===g)+'">'+fldName(g,true)+'</button>';});
+  h+='</div><div class="thg">';
+  tplsOf(THG).forEach(function(p){var im=p.bimg&&window.XTB&&window.XTB[p.bimg],has=ov[p.id+'|'+THL];
+   h+='<button type="button" class="thT" data-th="'+p.id+'">'+(has?'<span class="tg">✎︎ كتابتي</span>':'')+(im?'<img src="'+im+'" alt="" loading="lazy" decoding="async">':'<div class="ph"></div>')+'<b>'+tn(p)+'</b></button>';});
+  b.innerHTML=h+'</div>';}
+ function openSheet(id){var p=TPL.filter(function(x){return x.id===id})[0];if(!p)return;var has=(window.__TOV||{})[id+'|'+THL];
+  sheet.innerHTML='<div><h3>'+tn(p)+' · '+(THL==='ar'?'العربية':'Français')+'</h3><button type="button" class="abtn pri" data-sh="go">فتح للتعديل (كأي تصميم)</button>'+(has?'<button type="button" class="abtn" data-sh="rst">↺︎ استعادة الأصلية</button>':'<p class="note" style="margin:0">لا توجد كتابة خاصة بك لهذا الثيم بعد.</p>')+'<button type="button" class="abtn" data-sh="x">إلغاء</button></div>';sheet.dataset.id=id;sheet.hidden=false;}
+ sheet.addEventListener('click',async function(e){var b=e.target.closest('[data-sh]'),id=sheet.dataset.id;if(e.target===sheet){sheet.hidden=true;return;}if(!b)return;var a=b.dataset.sh;sheet.hidden=true;if(a==='x')return;
+  if(a==='go'){var dt=document.querySelector('[data-atab="design"]');if(dt)dt.click();var lb=document.querySelector('#lang button[data-l="'+THL+'"]');if(S.lang!==THL&&lb)lb.click();S.tab='theme';applyTpl(id);commit();build();render();try{window.scrollTo(0,0);}catch(_e){}msg('فُتح الثيم. عدّلي ثم اضغطي «حفظ كتابة هذا الثيم كتلقائية».');}
+  else if(a==='rst'){try{var k=id+'|'+THL;window.__TOV=window.__TOV||{};delete window.__TOV[k];await db().collection('config').doc('defaults').set({m:window.__TOV});pubApply();thUI();msg('رُجعت الكتابة الأصلية لهذا الثيم.');}catch(_e){msg('تعذّر الحفظ. تأكدي من تسجيل الدخول.',1);}}});
+ root.addEventListener('click',function(e){var t=e.target.closest('[data-ms]');if(t){set(t.dataset.ms);return;}t=e.target.closest('[data-thl]');if(t){THL=t.dataset.thl;thUI();return;}t=e.target.closest('[data-thg]');if(t){THG=t.dataset.thg;thUI();return;}t=e.target.closest('[data-th]');if(t){openSheet(t.dataset.th);}});
+ var _p=window.__pubUI;window.__pubUI=function(){if(_p)_p();try{if(cur==='th'&&!root.hidden)thUI();}catch(_e){}try{if(window.__defUI)window.__defUI();}catch(_e){}};
+ set(cur);
 })();
 
 /* the engine's own order tab is not needed here */

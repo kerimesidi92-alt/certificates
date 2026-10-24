@@ -1642,7 +1642,7 @@ function loadPub(){
   try{const col=db.collection('designs');(window.__ADM?col:col.where('on','==',true)).onSnapshot(q=>{{const all=q.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>(b.ord||0)-(a.ord||0));PUBDEL=all.filter(p=>p.del===true);PUBALL=all.filter(p=>p.del!==true);}pubApply();},()=>{__pubSub=0;});}catch(_){__pubSub=0;}
   try{db.collection('config').doc('folders').onSnapshot(d=>{CF=(d.exists&&d.data()&&d.data().list)||[];applyCF();pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('hidden').onSnapshot(d=>{const x=(d.exists&&d.data())||{};HID={items:x.items||[],folders:x.folders||[]};pubApply();},()=>{});}catch(_){}
-  try{db.collection('config').doc('defaults').onSnapshot(d=>{TOV={};if(!window.__ovInit&&Object.keys(TOV).length){window.__ovInit=1;if(!S.themeTouched&&!Object.values(S.edited).some(Boolean)){applyLayoutOv();applyDefaults();render();try{renderTools();}catch(_){}}}pubApply();},()=>{});}catch(_){}
+  try{db.collection('config').doc('defaults').onSnapshot(d=>{TOV=(d.exists&&d.data()&&d.data().m)||{};if(!window.__ovInit&&Object.keys(TOV).length){window.__ovInit=1;if(!S.themeTouched&&!Object.values(S.edited).some(Boolean)){applyLayoutOv();applyDefaults();render();try{renderTools();}catch(_){}}}pubApply();},()=>{});}catch(_){}
   try{db.collection('config').doc('covers').onSnapshot(d=>{COV=d.exists?(d.data()||{}):{};pubApply();},()=>{});}catch(_){}
 }
 window.__loadPub=loadPub;
