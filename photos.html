@@ -130,8 +130,8 @@ var TPL={
  tree:{n:'شجرة العائلة',W:1055,H:990,pk:1,def:{bgm:0,gap:1},slots:function(){return TREESL.map(function(o){return{x:o.x,y:o.y,w:o.w,h:o.h,k:'p',d:o.d}})}},
  fetus:{n:'جنين من صور',W:900,H:1000,mosaic:1,shape:fetusP,seed:11},
  /* إطارات جاهزة (من مراجع الإطارات) */
- cal6:{n:'٦ صور وتقويم',W:1200,H:850,def:{bgm:1,bgc:'#111111',gap:1},slots:function(){return[R(0,0,255,330),R(265,0,255,330),R(0,340,180,240),R(190,340,330,240),R(0,590,255,260),R(265,590,255,260)]}},
- heartcal:{n:'قلب وتقويم',W:1200,H:850,mosaic:1,span:1080,def:{bgm:1,bgc:'#111111',gap:1},shape:function(W,H){return heartP(680,626,20,110)},seed:4},
+ cal6:{n:'٦ صور وتقويم',W:1200,H:850,hole:{x:530,y:0,w:670},def:{bgm:1,bgc:'#111111',gap:1},slots:function(){return[R(0,0,255,330),R(265,0,255,330),R(0,340,180,240),R(190,340,330,240),R(0,590,255,260),R(265,590,255,260)]}},
+ heartcal:{n:'قلب وتقويم',W:1200,H:850,mosaic:1,span:1080,hole:{x:720,y:0,w:480},def:{bgm:1,bgc:'#111111',gap:1},shape:function(W,H){return heartP(680,626,20,110)},seed:4},
  blk:{n:'إطار أبيض أسود',W:720,H:960,def:{bgm:1,bgc:'#000000',bd:2,bdc:'#ffffff',gap:0},slots:function(){return[R(318,52,196,334),R(535,52,148,158),R(535,230,148,158),R(535,405,148,158),R(42,342,146,222),R(42,582,146,158),R(204,584,198,330),R(42,758,146,158),R(416,758,266,158)]}},
  cir:{n:'دوائر متتالية',W:907,H:1212,def:{bgm:1,bgc:'#000000',bd:2,bdc:'#ffffff',gap:0},slots:function(){var d=312;return[C(563,197,d),C(714,343,d),C(714,611,d),C(613,806,d),C(398,872,d),C(174,874,d)]}},
  two:{n:'صورتان',W:900,H:1100,def:{bgm:1,bgc:'#111111',bd:1,bdc:'#ffffff',gap:0},slots:function(){return[R(470,40,380,380),R(420,450,400,440)]}},
@@ -204,6 +204,9 @@ function render(c,scale,exp){var T=TPL[S.tpl],p=pad();LW=T.W+2*p;LH=TH()+2*p;c.w
   if(BDS[S.bd]){x.lineWidth=BDS[S.bd]*2;x.strokeStyle=S.bdc;x.stroke(P)}
   x.restore();if(ER){x.globalCompositeOperation='destination-out';x.lineWidth=GAPS[S.gap];x.lineJoin='round';x.stroke(P);x.globalCompositeOperation='source-over';x=MAINX;x.save();x.setTransform(1,0,0,1,0,0);x.drawImage(oc,0,0);x.restore()}});
  if(sh&&!NC)x.restore();
+ if(T.hole){var hl=T.hole,G2=IGv()/2,hx=hl.x+G2,hy=G2,hw=hl.w-2*G2,hh=TH()-2*G2;
+  if(CALIMG){var ciw=CALIMG.naturalWidth||CALIMG.width,cih=CALIMG.naturalHeight||CALIMG.height,cs=Math.min(hw/ciw,hh/cih)*((S.calz||100)/100),cw2=ciw*cs,ch2=cih*cs;x.drawImage(CALIMG,hx+(hw-cw2)/2,hy+(hh-ch2)*((S.caly==null?50:S.caly)/100),cw2,ch2)}
+  else if(!exp){x.save();x.setLineDash([14,10]);x.lineWidth=4;x.strokeStyle='#b9a574';x.strokeRect(hx+8,hy+8,hw-16,hh-16);x.fillStyle='#b9a574';x.font='bold 56px Cairo,sans-serif';x.textAlign='center';x.fillText('التقويم',hx+hw/2,hy+hh/2+18);x.restore()}}
  if(!exp&&!FORCEF){
   if(OV){if(OV.to>=0&&SLOTS[OV.to]){x.save();x.lineWidth=12;x.strokeStyle='#2f8f5b';x.stroke(pathOf(SLOTS[OV.to]));x.restore()}
    if(OV.gx!=null&&photos[OV.from]){var g=photos[OV.from],r=70;x.save();x.globalAlpha=.85;x.beginPath();x.arc(OV.gx-p,OV.gy-p,r,0,TAU);x.clip();var d=dims(g.im),k=Math.max(2*r/d[0],2*r/d[1]);x.drawImage(g.im,OV.gx-p-d[0]*k/2,OV.gy-p-d[1]*k/2,d[0]*k,d[1]*k);x.restore();x.beginPath();x.arc(OV.gx-p,OV.gy-p,r,0,TAU);x.lineWidth=6;x.strokeStyle='#fff';x.stroke();x.lineWidth=2;x.strokeStyle='#2f8f5b';x.stroke()}}}
@@ -217,7 +220,11 @@ function hit(e){var r=cv.getBoundingClientRect(),p=pad(),lx=(e.clientX-r.left)/r
   if(s.k==='c'){var a=(lx-s.x-s.w/2)/(s.w/2),b=(ly-s.y-s.h/2)/(s.h/2);if(a*a+b*b>1)continue}if(s.k==='p'&&!(window.__hc||(window.__hc=document.createElement('canvas').getContext('2d'))).isPointInPath(pathOf(s),lx,ly))continue;return i}return -1}
 function lpos(e){var r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*LW,y:(e.clientY-r.top)/r.height*LH}}
 /* ---------- الصور ---------- */
-var pending=-1,WARN='';
+var pending=-1,WARN='',CALIMG=null,CALPNG=null,CALST=null;
+function rg2(id,lab,mn,mx,v){return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#7a746a">'+lab+'<input type="range" id="'+id+'" min="'+mn+'" max="'+mx+'" value="'+v+'" style="flex:1"></label>'}
+function calOpen(){if($('#calov'))return;var d=document.createElement('div');d.id='calov';d.style.cssText='position:fixed;inset:0;z-index:50;background:#fff';d.innerHTML='<iframe src="calendar.html" style="width:100%;height:100%;border:0" title="calendar"></iframe>';document.body.appendChild(d)}
+function calClose(){var d=$('#calov');if(d)d.remove()}
+function calSet(png,st){CALPNG=png;CALST=st||null;if(!png){CALIMG=null;return Promise.resolve()}return new Promise(function(ok){var im=new Image();im.onload=function(){CALIMG=im;ok()};im.onerror=function(){CALIMG=null;ok()};im.src=png})}
 function readImg(file){return new Promise(function(ok,no){var u=URL.createObjectURL(file),im=new Image();im.onload=function(){var k=Math.min(1,1400/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);var src=c.toDataURL('image/jpeg',.88),i2=new Image();i2.onload=function(){ok({src:src,im:i2,z:1,ox:0,oy:0})};i2.src=src};im.onerror=no;im.src=u})}
 function fromSrc(o){return new Promise(function(ok){var im=new Image();im.onload=function(){ok({src:o.src,im:im,z:o.z||1,ox:o.ox||0,oy:o.oy||0})};im.onerror=function(){ok(null)};im.src=o.src})}
 $('#file').addEventListener('change',function(){var fs=[].slice.call(this.files||[]);this.value='';if(!fs.length)return;WARN='';
@@ -277,6 +284,7 @@ function ui(){var T=TPL[S.tpl],sel=SEL>=0&&photos[SEL];
  if(T.mosaic)h+='<div class="g"><h3>عدد الصور</h3><div class="row">'+['قليل','متوسط','كثير'].map(function(n,i){return '<button class="opt" data-dens="'+(i+1)+'" aria-pressed="'+(S.dens===i+1)+'" type="button">'+n+'</button>'}).join('')+'<button class="opt" data-a="shuf" type="button">تغيير التوزيع</button></div></div>';
  var Tn=TPL[S.tpl],fl=canFlow(Tn),rt=S.tgt?S.tgt:0;
  h+='<div class="g"><h3>شكل القالب (الطول والعرض)</h3><div class="row"><button class="opt" data-tg="none" aria-pressed="'+(!S.tgt)+'" type="button">الشكل الأصلي</button>'+(PAPER?'<button class="opt" data-tg="paper" aria-pressed="'+(!!S.tgt&&Math.abs(S.tgt-PAPER)<.01)+'" type="button">بحجم الورقة كلها</button>':'')+(CURAR?'<button class="opt" data-tg="cur" aria-pressed="'+(!!S.tgt&&Math.abs(S.tgt-CURAR)<.01&&!(PAPER&&Math.abs(S.tgt-PAPER)<.01))+'" type="button">بحجم ما مدّدته على البطاقة</button>':'')+'</div>'+(fl?'<p class="note">تتوزع الصور من جديد لتملأ الشكل بلا تشويه.</p>':'<p class="note">هذا القالب له شكل ثابت (قلب أو شجرة...). اختاري قالباً من الإطارات الجاهزة أو الشبكات ليتمدد.</p>')+'</div>';
+ if(Tn.hole){h+='<div class="g"><h3>التقويم داخل القالب</h3><div class="row"><button class="opt pri" data-a="calo" type="button">'+(CALPNG?'تعديل التقويم':'+ إضافة تقويم')+'</button>'+(CALPNG?'<button class="opt dng" data-a="cald" type="button">حذف التقويم</button>':'')+'</div>'+(CALPNG?rg2('calz','حجم التقويم',40,130,S.calz||100)+rg2('caly','مكان التقويم (فوق ← تحت)',0,100,S.caly==null?50:S.caly):'<p class="note">صمّمي تقويماً وسيدخل في المكان الفارغ بحجمه المناسب، ويتمدد مع القالب.</p>')+'</div>'}
  h+='<div class="g"><h3>المسافة بين الصور</h3><div class="row">'+['بدون','صغيرة','متوسطة','كبيرة'].map(function(n,i){return '<button class="opt" data-gap="'+i+'" aria-pressed="'+(S.gap===i)+'" type="button">'+n+'</button>'}).join('')+'</div></div>';
  h+='<div class="g"><h3>زوايا الصور</h3><div class="row">'+['حادة','مدورة قليلًا','مدورة'].map(function(n,i){return '<button class="opt" data-rad="'+i+'" aria-pressed="'+(S.rad===i)+'" type="button">'+n+'</button>'}).join('')+'</div></div>';
  h+='<div class="g"><h3>إطار حول كل صورة</h3><div class="row">'+['بدون','رفيع','متوسط','سميك'].map(function(n,i){return '<button class="opt" data-bd="'+i+'" aria-pressed="'+(S.bd===i)+'" type="button">'+n+'</button>'}).join('')+'<input type="color" id="bdc" value="'+S.bdc+'" aria-label="لون الإطار"></div></div>';
@@ -290,6 +298,8 @@ document.addEventListener('click',function(e){var br=bgHandle(e,S);if(br){if(br=
  if(t.dataset.a==='fk'){FAKEON=!FAKEON;ui();draw();return}
  if(t.dataset.a==='shuf'){S.seed++;relayout();ui();draw();return}
  if(t.dataset.tpl){WARN='';S.tpl=t.dataset.tpl;applyDef();relayout();ui();draw();return}
+ if(t.dataset.a==='calo'){calOpen();return}
+ if(t.dataset.a==='cald'){calSet(null).then(function(){ui();draw()});return}
  if(t.dataset.tg){S.tgt=t.dataset.tg==='paper'?PAPER:t.dataset.tg==='cur'?CURAR:null;relayout();ui();draw();return}
  if(t.dataset.dens){S.dens=+t.dataset.dens;relayout();ui();draw();return}
  if(t.dataset.gap){S.gap=+t.dataset.gap;ui();draw();return}
@@ -297,6 +307,8 @@ document.addEventListener('click',function(e){var br=bgHandle(e,S);if(br){if(br=
  if(t.dataset.bd){S.bd=+t.dataset.bd;ui();draw();return}
 });
 document.addEventListener('input',function(e){var t=e.target;var br=bgHandle(e,S);if(br){if(br==='ui')ui();draw();return}
+ if(t.id==='calz'){S.calz=+t.value;draw();return}
+ if(t.id==='caly'){S.caly=+t.value;draw();return}
  if(t.id==='zoom'&&photos[SEL]){photos[SEL].z=+t.value/100;clampP(photos[SEL],SLOTS[SEL]);draw()}
 
  else if(t.id==='bdc'){S.bdc=t.value;if(!S.bd)S.bd=2;draw()}});
@@ -304,13 +316,15 @@ document.addEventListener('change',function(e){var br=bgHandle(e,S);if(br==='ui'
 window.addEventListener('resize',draw);
 $('#close').onclick=function(){parent.postMessage({kind:'kerima-col-close'},'*')};
 $('#add').onclick=function(){var b=$('#add');b.disabled=true;var c=document.createElement('canvas'),T=TPL[S.tpl],sc=1500/(T.W+2*pad()),selS=SEL;SEL=-1;var r=render(c,sc,true);SEL=selS;
- var ph=photos.slice(0,SLOTS.length).map(function(p){return p?{src:p.src,z:p.z,ox:p.ox,oy:p.oy}:null});
+ var ph=photos.slice(0,SLOTS.length).map(function(p){return p?{src:p.src,z:p.z,ox:p.ox,oy:p.oy}:null});while(ph.length<SLOTS.length)ph.push(null);if(CALPNG)ph.push({__cal:CALPNG,__cs:CALST});
  parent.postMessage({kind:'kerima-col',png:c.toDataURL('image/png'),w:r.w,h:r.h,state:JSON.parse(JSON.stringify(S)),photos:ph},'*');b.disabled=false};
-window.addEventListener('message',function(e){var m=e.data||{};
+window.addEventListener('message',function(e){var m=e.data||{};var cf=document.querySelector('#calov iframe');
+ if(cf&&e.source===cf.contentWindow){if(m.kind==='kerima-cal-ready'){cf.contentWindow.postMessage({kind:'kerima-cal-init',bg:PVBG,edit:!!CALPNG,state:CALST},'*')}else if(m.kind==='kerima-cal'&&m.png){calSet(m.png,m.state).then(function(){calClose();ui();draw()})}else if(m.kind==='kerima-cal-close')calClose();return}
  if(m.kind==='kerima-col-paper'){PAPER=m.paper||null;ui();return}
  if(m.kind==='kerima-col-init'){if(m.bg)PVBG=m.bg;EDIT=!!m.edit;PAPER=m.paper||null;CURAR=m.cur||null;if(m.state)for(var k in m.state)S[k]=m.state[k];if(!TPL[S.tpl])S.tpl='cal6';if(EDIT&&CURAR){var Tq=TPL[S.tpl],pq=pad(),orat=(Tq.H*KY()+2*pq)/(Tq.W+2*pq);if(Math.abs(CURAR/orat-1)>.03)S.tgt=CURAR}relayout();
   $('#add').textContent=EDIT?'تحديث القالب':'إضافة إلى البطاقة';
-  Promise.all((m.photos||[]).map(function(o){return o?fromSrc(o):null})).then(function(ps){photos=ps;ui();draw()});}});
+  var arr=(m.photos||[]).slice(),cq=null;for(var qi=arr.length-1;qi>=0;qi--)if(arr[qi]&&arr[qi].__cal){cq=arr[qi];arr.splice(qi,1)}
+  Promise.all(arr.map(function(o){return o?fromSrc(o):null})).then(function(ps){photos=ps;return cq?calSet(cq.__cal,cq.__cs):0}).then(function(){ui();draw()});}});
 applyDef();relayout();ui();draw();
 try{if(parent&&parent!==window)parent.postMessage({kind:'kerima-col-ready'},'*')}catch(_){}
 })();
