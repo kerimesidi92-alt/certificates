@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#16264a">
 <title>صمّم كرتك</title>
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preload" as="image" href="landing/img/hero-cert.webp"><link rel="preload" as="image" href="landing/img/hero-inv.webp"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@500;700&family=Aref+Ruqaa:wght@700&display=swap">
 <style>
 :root{--navy:#16264a;--navy2:#0b1630;--gold:#d6b46c;--gold2:#b8924a;--gold3:#f3dfa6;--cream:#f7f3ea;--ink:#1d2433;--mut:#6b7488;--line:#e6dfcf;--rose:#c4566e}
@@ -198,7 +198,7 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 
 .stage .mk.hcm,#hC{background:#fffdf6}
 #hC{aspect-ratio:1280/906}#hI{aspect-ratio:861/1155}
-#hC .bg,#hI .bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hC .bg,#hI .bg{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
 #hC .tx{left:33%;right:7%;color:#16264a}
 #hC .hc1{top:17cqw;font-size:6.6cqw;color:#a47a2a;font-weight:700}
 #hC .hc2{top:29cqw;font-size:2.8cqw;font-family:'Tajawal'}
@@ -261,9 +261,9 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 <div class="note" id="note" data-i="nt">الأسعار في هذه المعاينة أمثلة فقط، وسنضع أسعارك الحقيقية قبل النشر.</div></section>
 
 </div>
+<div class="wrap"><section><h3 class="t rv" data-i="wy">لماذا نحن؟</h3><p class="sub"></p><div class="why rv" id="why"></div></section></div>
 <section class="band"><div class="wrap"><h3 class="t rv w" data-i="ftt">كل ميزات التطبيق</h3><p class="sub rv w" data-i="fts">كل ما تحتاجينه لتصميم شهادتك أو دعوتك بنفسك.</p><div class="feat rv" id="feat"></div>
 <div class="shpanel rv"><h4 data-i="sht">أشكال الدعوات</h4><p data-i="shs">اختر شكل كرتك.</p><div class="shp" id="shp"></div></div></div></section>
-<div class="wrap"><section><h3 class="t rv" data-i="wy">لماذا نحن؟</h3><p class="sub"></p><div class="why rv" id="why"></div></section></div>
 
 
 <div class="cta"><h3 class="t" style="color:var(--gold)" data-i="ct">جاهز لتصميمك؟</h3>
@@ -272,8 +272,8 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 <span class="num" id="num">+222 33 86 33 82</span></div>
 
 <script>
-var HERO={c:"landing/img/hero-cert.jpg",i:"landing/img/hero-inv.jpg"};
-var TH={"i_a1": "landing/img/i_a1.jpg", "i_a3": "landing/img/i_a3.jpg", "i_a5": "landing/img/i_a5.jpg", "i_a7": "landing/img/i_a7.jpg", "i_a9": "landing/img/i_a9.jpg", "i_t02": "landing/img/i_t02.jpg", "i_t11": "landing/img/i_t11.jpg", "i_t12": "landing/img/i_t12.jpg", "i_t13": "landing/img/i_t13.jpg", "i_t15": "landing/img/i_t15.jpg", "i_t17": "landing/img/i_t17.jpg", "i_x02": "landing/img/i_x02.jpg", "i_x07": "landing/img/i_x07.jpg", "i_x09": "landing/img/i_x09.jpg", "c_ge1": "landing/img/c_ge1.jpg", "c_gf1": "landing/img/c_gf1.jpg", "c_gm1": "landing/img/c_gm1.jpg", "c_gh3": "landing/img/c_gh3.jpg", "c_gn1": "landing/img/c_gn1.jpg", "c_gp1": "landing/img/c_gp1.jpg", "c_gs1": "landing/img/c_gs1.jpg", "c_gf8": "landing/img/c_gf8.jpg", "c_gm4": "landing/img/c_gm4.jpg", "c_ge8": "landing/img/c_ge8.jpg"};
+var HERO={c:"landing/img/hero-cert.webp",i:"landing/img/hero-inv.webp"};
+var TH={"i_a1": "landing/img/i_a1.webp", "i_a3": "landing/img/i_a3.webp", "i_a5": "landing/img/i_a5.webp", "i_a7": "landing/img/i_a7.webp", "i_a9": "landing/img/i_a9.webp", "i_t02": "landing/img/i_t02.webp", "i_t11": "landing/img/i_t11.webp", "i_t12": "landing/img/i_t12.webp", "i_t13": "landing/img/i_t13.webp", "i_t15": "landing/img/i_t15.webp", "i_t17": "landing/img/i_t17.webp", "i_x02": "landing/img/i_x02.webp", "i_x07": "landing/img/i_x07.webp", "i_x09": "landing/img/i_x09.webp", "c_ge1": "landing/img/c_ge1.webp", "c_gf1": "landing/img/c_gf1.webp", "c_gm1": "landing/img/c_gm1.webp", "c_gh3": "landing/img/c_gh3.webp", "c_gn1": "landing/img/c_gn1.webp", "c_gp1": "landing/img/c_gp1.webp", "c_gs1": "landing/img/c_gs1.webp", "c_gf8": "landing/img/c_gf8.webp", "c_gm4": "landing/img/c_gm4.webp", "c_ge8": "landing/img/c_ge8.webp"};
 var ORD=["c_ge1", "i_a1", "c_gf1", "i_a3", "c_gm1", "i_a5", "c_gh3", "i_a7", "c_gn1", "i_a9", "c_gp1", "i_t02", "c_gs1", "i_t11", "c_gf8", "i_t12", "c_gm4", "i_t13", "c_ge8", "i_t15", "i_t17", "i_x02", "i_x07", "i_x09"];
 var D={
 ar:{cont:"متابعة من حيث توقفتِ:",brand:"صمّم كرتك",bd:"كل ما تحتاجه في تطبيق واحد",h1a:"صمّم",h1b:"شهادتك ودعوتك",h1c:"في دقائق",hp:"اختر التصميم أو ارفع تصميمك من هاتفك، عدّل كل شيء، وشاهد النتيجة فورًا. ونحن نطبعه ونسلّمه.",c1:"الشهادات",c1d:"شكر وتقدير، تخرّج، تفوّق",c2:"الدعوات",c2d:"أعراس ومناسبات",go:"ابدأ التصميم",go2:"ابدأ التصميم",
@@ -330,9 +330,13 @@ function bindDrag(){document.querySelectorAll(".ph.drag").forEach(function(p){va
  p.onpointerdown=function(e){if(!photo)return;go=true;sx=e.clientX;sy=e.clientY;p.setPointerCapture(e.pointerId)};
  p.onpointermove=function(e){if(!go)return;var w=p.getBoundingClientRect().width;ox+=(e.clientX-sx)/w*100;oy+=(e.clientY-sy)/w*100;var m=(zoom-1)*50;ox=Math.max(-m,Math.min(m,ox));oy=Math.max(-m,Math.min(m,oy));sx=e.clientX;sy=e.clientY;applyPhoto()};
  p.onpointerup=p.onpointercancel=function(){go=false}})}
-function heroC(){var t=D[lang].t.cert;return'<img class="bg" alt="" src="'+HERO.c+'"><div class="tx hc1">'+t[0]+'</div><div class="tx hc2">'+t[1]+'</div><div class="tx hc3">'+t[2]+'</div><div class="hln"></div><div class="tx hc4">'+t[3]+'</div>'}
-function heroI(){var t=D[lang].t.inv;return'<img class="bg" alt="" src="'+HERO.i+'"><div class="tx hi1">'+t[0]+'</div><div class="tx hi2">'+t[1]+'</div><div class="tx hi3">'+t[2]+'</div><div class="tx hi4">'+t[3]+'</div>'}
-function drawMocks(){if(!hC.dataset.img)hC.innerHTML=heroC();if(!hI.dataset.img)hI.innerHTML=heroI();applyPhoto();bindDrag()}
+function hcfg(k){var h=CFG&&CFG.hero&&CFG.hero[k];return h||null}
+function htx(k,def){var h=hcfg(k),t=def;if(h){var a=lang=="fr"&&h.tf&&h.tf.some(function(x){return x})?h.tf:h.t;if(a&&a.length)t=a}return t}
+function hst(k){var h=hcfg(k);return h&&h.col?' style="color:'+esc(h.col)+'"':""}
+function heroC(){var h=hcfg("c"),t=htx("c",D[lang].t.cert),src=(h&&h.img)||HERO.c,st=hst("c"),sh=!(h&&h.show===false);return'<img class="bg" alt="" decoding="async" fetchpriority="high" src="'+esc(src)+'">'+(sh?'<div class="tx hc1"'+st+'>'+esc(t[0])+'</div><div class="tx hc2"'+st+'>'+esc(t[1])+'</div><div class="tx hc3"'+st+'>'+esc(t[2])+'</div><div class="hln"></div><div class="tx hc4"'+st+'>'+esc(t[3])+'</div>':"")}
+function heroI(){var h=hcfg("i"),t=htx("i",D[lang].t.inv),src=(h&&h.img)||HERO.i,st=hst("i"),sh=!(h&&h.show===false);return'<img class="bg" alt="" decoding="async" fetchpriority="high" src="'+esc(src)+'">'+(sh?'<div class="tx hi1"'+st+'>'+esc(t[0])+'</div><div class="tx hi2"'+st+'>'+esc(t[1])+'</div><div class="tx hi3"'+st+'>'+esc(t[2])+'</div><div class="tx hi4"'+st+'>'+esc(t[3])+'</div>':"")}
+var SIG={};function once(k,sig,fn){if(SIG[k]===sig)return;SIG[k]=sig;fn()}
+function drawMocks(){var hg=JSON.stringify(CFG&&CFG.hero||0);once("hc",lang+hg,function(){hC.innerHTML=heroC()});once("hi",lang+hg,function(){hI.innerHTML=heroI()})}
 function render(){var d=D[lang];document.documentElement.lang=lang;document.documentElement.dir=lang=="ar"?"rtl":"ltr";
 document.querySelectorAll("[data-i]").forEach(function(e){if(typeof d[e.dataset.i]=="string")e.textContent=d[e.dataset.i]});
 var hh=tab=="frm"?d.hdf:d.hd;var h='<div class="row h">'+hh.map(function(x){return"<div>"+x+"</div>"}).join("")+"</div>";
@@ -341,8 +345,8 @@ tbl.innerHTML=h;
 feat.innerHTML=d.ft.map(function(x,i){return'<div class="f g'+(i%6)+'"><i>'+(i+1)+'</i><em class="tg t'+x[2]+'">'+d.tg[x[2]]+'</em><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
 shp.innerHTML=d.sh.map(function(n,i){var k=['x07','x02','t12','t15','t11','a3','t02'][i];var c=['rc','ld','sq','ci','ov','ar','hs','cu'][i];return'<div class="sw"><div class="sh '+c+'" style="animation-delay:'+(i*.25)+'s">'+(k?'<span style="background-image:url('+TH['i_'+k]+')"></span>':'<span class="q">?</span>')+'</div><b>'+n+'</b></div>'}).join("");
 why.innerHTML=d.why.map(function(x,i){return'<div class="f"><i>'+(i+1)+'</i><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
-dstrip.innerHTML=stripList().map(function(u){return'<img alt="" loading="lazy" src="'+esc(u)+'">'}).join("");
-var cs=d.chips.concat(d.chips,d.chips,d.chips).map(function(c){return"<span>"+c+"</span>"}).join("");chips.innerHTML=cs;
+var sl=stripList();once("strip",sl.join("|"),function(){dstrip.innerHTML=sl.map(function(u){return'<img alt="" decoding="async" src="'+esc(u)+'">'}).join("")});
+var cs=d.chips.concat(d.chips,d.chips,d.chips).map(function(c){return"<span>"+c+"</span>"}).join("");once("chips",lang,function(){chips.innerHTML=cs});
 var ph=(CFG&&CFG.phone)||"+222 33 86 33 82",dg=String(ph).replace(/\D/g,"");num.textContent=ph;wal.href="https://wa.me/"+dg;note.hidden=!!(CFG&&!CFG.note&&CFG.saved);if(CFG&&CFG.note)note.textContent=lang=="fr"&&CFG.notef?CFG.notef:CFG.note;
 var last=null;try{last=localStorage.getItem("kk_last")}catch(e){}
 if(last=="certificates.html"||last=="invitations.html"){cont.hidden=false;cont.href=last;cont.innerHTML=esc(d.cont)+" <b>"+(last=="certificates.html"?d.c1:d.c2)+"</b> &#8592;"}else cont.hidden=true;
