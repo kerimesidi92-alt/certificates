@@ -1114,6 +1114,7 @@ const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromChar
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0)));
 
 function defaults(){const X=OCC[S.occ][S.lang],s=S.subj.trim(),T0=THEMES[S.theme],sh=T0&&T0.short;let bd=X.body(s);if(sh)bd=bd.split('\n').slice(0,sh).join('\n');const r={title:X.titles[Math.min(S.titleIdx,X.titles.length-1)],intro:X.intro(S.gender),role:X.role(s,S.gender),body:bd,from:X.from,name:S.lang!=='ar'?'Mohamed Lemine Ould Ahmed':'محمد الأمين ولد أحمد',date:todayStr(S.lang)};const tx=T0&&T0.txt&&T0.txt[S.lang];if(tx)Object.assign(r,tx);const ov9=TOV[S.theme+'|'+S.lang];if(ov9&&ov9.t)Object.assign(r,ov9.t);return r;}
+function resetTxtEd(){['title','intro','role','body','from','date'].forEach(function(k){S.edited[k]=false;});}
 function applyDefaults(){const d=defaults();Object.keys(d).forEach(k=>{if(!S.edited[k]){S[k]=d[k];const el=$('#f-'+k);if(el)el.value=d[k];}});paintTitleChips();}
 const SUBJEN={'الرياضيات':'Mathematics','الفيزياء':'Physics','اللغة العربية':'Arabic','اللغة الفرنسية':'French','اللغة الإنجليزية':'English','العلوم الطبيعية':'Natural Sciences','التاريخ والجغرافيا':'History and Geography','التربية المدنية':'Civic Education','الجغرافيا':'Geography','الفيزياء والكيمياء':'Physics and Chemistry'};
 function subjMap(){const m={};Object.values(THEMES).forEach(T=>{if(T&&T.subj){const en=SUBJEN[T.subj]||'';[T.subj,T.subjFr,en].forEach(v=>{if(v)m[v.trim().toLowerCase()]={ar:T.subj,fr:T.subjFr,en:en};});}});return m;}
@@ -1659,9 +1660,9 @@ function onOccChange(){
   const def=S.occ==='teacher'?'gm1':'none',cur=THEMES[S.theme];
   if(!S.themeTouched||(cur&&!cur.occ.includes(S.occ)))S.theme=def;
   S.titleIdx=0;S.off={};S.folder=null;if(!S.themeTouched)S.edited.subj=false;
-  setSubjDefault();syncTheme();paintColors();applyDefaults();render();
+  setSubjDefault();syncTheme();paintColors();resetTxtEd();applyDefaults();render();
 }
-function onLangChange(){setSubjDefault();applyDefaults();paintFontSeg();render();renderTools();}
+function onLangChange(){setSubjDefault();resetTxtEd();applyDefaults();paintFontSeg();render();renderTools();}
 buildSeg('seg-lang',[['ar','العربية'],['fr','Français'],['en','English']],'lang',onLangChange);
 buildSeg('seg-orient',[['l','أفقي (بالعرض)'],['p','عمودي (بالطول)']],'orient',onOrientChange);
 buildSeg('seg-occ',Object.entries(OCC).map(([k,o])=>[k,o.label]),'occ',onOccChange);
@@ -1737,7 +1738,7 @@ function __syncTheme(){
 async function loadBg(file){return new Promise(res=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{let m=1500,q=.85,out='';for(let n=0;n<7;n++){const r=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*r));c.height=Math.max(1,Math.round(im.height*r));c.getContext('2d').drawImage(im,0,0,c.width,c.height);try{out=c.toDataURL('image/jpeg',q);}catch(_){out='';break;}if(out.length<600000)break;m*=.8;q=Math.max(.5,q-.06);}URL.revokeObjectURL(u);res(out&&out.length<690000?{src:out}:null);};im.onerror=()=>{URL.revokeObjectURL(u);res(null);};im.src=u;});}
 $('#f-bg').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!f.type.startsWith('image/'))return;const r=await loadBg(f);if(!r)return;S.bg=r;S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();};
 $('#themes').onclick=e=>{const b=e.target.closest('.theme');if(!b)return;
-  if(b.dataset.p){applyPub(b.dataset.p);return;}if(b.dataset.k==='custom'){if(S.bg&&S.theme!=='custom'){dropFx();resetOrn();S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();}else $('#f-bg').click();return;}if(b.dataset.f!==undefined){S.folder=b.dataset.f;syncTheme();return;}dropFx();resetOrn();S.theme=b.dataset.k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();applyDefaults();render();};
+  if(b.dataset.p){applyPub(b.dataset.p);return;}if(b.dataset.k==='custom'){if(S.bg&&S.theme!=='custom'){dropFx();resetOrn();S.theme='custom';S.themeTouched=true;syncTheme();paintColors();applyDefaults();render();}else $('#f-bg').click();return;}if(b.dataset.f!==undefined){S.folder=b.dataset.f;syncTheme();return;}dropFx();resetOrn();S.theme=b.dataset.k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();resetTxtEd();applyDefaults();render();};
 
 function paintColors(){
   const G=[['paper','لون الورق',PAPERS],['deep',(THEMES[S.theme]||{}).rc?'اللون الأساسي':'اللون الأساسي الثاني (الكحلي)',(THEMES[S.theme]||{}).rc?RCDEEPS:DEEPS],['accent','لون التمييز (الاسم)',ACCENTS],['ink','لون الكتابة',INKS]];
@@ -2085,11 +2086,11 @@ $('#order-form').addEventListener('submit',e=>{
 (function(){
   const db=()=>window.__fdb,msg=(t,e)=>{try{toast(t,e);}catch(_){}};
   const FLD=['title','intro','role','body','from'],LN={ar:'العربية',fr:'الفرنسية',en:'الإنجليزية'};
-  const pkg=lay=>{const t={};FLD.forEach(k=>{t[k]=S[k];});const r={t};if(lay)r.o={off:clone(S.off||{}),fmt:clone(S.fmt||{}),dsz:clone(S.dsz||{}),xt:clone(S.xt||[]),ln:clone(S.ln||[]),div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dn:S.dn};return r;};
+  const pkg=lay=>{const t={};FLD.forEach(k=>{t[k]=S[k];});if(S.edited&&S.edited.date&&S.date)t.date=S.date;const r={t};if(lay)r.o={off:clone(S.off||{}),fmt:clone(S.fmt||{}),dsz:clone(S.dsz||{}),xt:clone(S.xt||[]),ln:clone(S.ln||[]),div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dn:S.dn};return r;};
   async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:TOV});try{pubApply();}catch(_){}}
-  let base=null,baseK=null;const keyNow=()=>JSON.stringify(pkg(true));
+  let base=null,baseK=null,usr=0;['input','pointerdown','keydown','change'].forEach(function(e){document.addEventListener(e,function(ev){if(ev.target&&ev.target.closest&&ev.target.closest('#cert,#tools,#f-title,#f-intro,#f-role,#f-body,#f-from,#f-date,#f-name'))usr=1;},true);});const keyNow=()=>JSON.stringify(pkg(true));
   function defUI(){try{const th=THEMES[S.theme]?S.theme:null,has=th&&TOV[th+'|'+S.lang],dirty=!!(th&&base!=null&&keyNow()!==base),des=!$('#tab-design').hidden;$('#btn-defsave').hidden=!th;$('#btn-defdel').hidden=!has;$('#btn-defsave').classList.toggle('primary',dirty);}catch(_){}}
-  window.__defUI=defUI;const _rd=render;render=function(){const r=_rd.apply(this,arguments);try{const th=THEMES[S.theme]?S.theme:null,bk=th?th+'|'+S.lang:null;if(bk!==baseK){baseK=bk;base=bk?keyNow():null;}defUI();}catch(_){}return r;};
+  window.__defUI=defUI;const _rd=render;render=function(){const r=_rd.apply(this,arguments);try{const th=THEMES[S.theme]?S.theme:null,bk=th?th+'|'+S.lang:null;if(bk!==baseK){baseK=bk;base=bk?keyNow():null;usr=0;[500,1500,3500].forEach(function(ms){setTimeout(function(){if(!usr&&baseK===bk){base=keyNow();defUI();}},ms);});}defUI();}catch(_){}return r;};
   $('#btn-defsave').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th){msg('اختاري ثيمًا من القائمة أولًا (ليس «بدون ثيم»).',1);return;}
     TOV[th+'|'+S.lang]=pkg(true);try{await write();base=keyNow();baseK=th+'|'+S.lang;defUI();msg('حُفظت الكتابة والتنسيق كتلقائية لـ«'+THEMES[th].name+'» ('+LN[S.lang]+'). تصل للزبائن مباشرة.');}catch(_){msg('تعذّر الحفظ. تأكدي من القواعد وتسجيل الدخول.',1);}};
   $('#btn-defdel').onclick=async()=>{const th=THEMES[S.theme]?S.theme:null;if(!th)return;const k=th+'|'+S.lang;if(!TOV[k]){msg('لا يوجد نص تلقائي محفوظ لهذا الثيم بهذه اللغة.');return;}
@@ -2116,7 +2117,7 @@ $('#order-form').addEventListener('submit',e=>{
     ks.filter(k=>THG==='allt'||(THG==='clr'?THEMES[k].rc:grpOf(k)===THG)).forEach(k=>{const has=TOV[k+'|'+THL];h+=`<button type="button" class="thT" data-th="${k}">${has?'<span class="tg">✎︎ كتابتي</span>':''}<img src="${themeThumb(k)}" alt="" loading="lazy" decoding="async"><b>${THEMES[k].name}</b></button>`;});
     b.innerHTML=h.replace("${THG==='allt'}",THG==='allt')+'</div>';}
   function openSheet(k){const has=TOV[k+'|'+THL];sheet.innerHTML=`<div><h3>${THEMES[k].name} · ${LN[THL]}</h3><button type="button" class="btn primary" data-sh="go">فتح للتعديل (كأي تصميم)</button>${has?'<button type="button" class="btn" data-sh="rst">↺︎ استعادة الأصلية</button>':'<p class="hint" style="margin:0">لا توجد كتابة خاصة بك لهذا الثيم بعد.</p>'}<button type="button" class="btn" data-sh="x">إلغاء</button></div>`;sheet.dataset.k=k;sheet.hidden=false;}
-  function selTheme(k){dropFx();resetOrn();S.theme=k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();applyDefaults();render();}
+  function selTheme(k){dropFx();resetOrn();S.theme=k;S.folder=S.theme==='none'?(S.folder===null?'':S.folder):(S.folder==='clr'&&THEMES[S.theme]&&THEMES[S.theme].rc?'clr':grpOf(S.theme));S.themeTouched=true;{const T9=THEMES[S.theme];if(T9&&T9.occ&&!T9.occ.includes(S.occ)){S.occ=T9.occ.includes('teacher')?'teacher':T9.occ[0];S.titleIdx=0;S.off={};$('#gender-box').hidden=S.occ==='thanks';}}applyLayoutOv();setSubjDefault();syncTheme();paintColors();resetTxtEd();applyDefaults();render();}
   sheet.addEventListener('click',async e=>{const b=e.target.closest('[data-sh]'),k=sheet.dataset.k;if(e.target===sheet){sheet.hidden=true;return;}if(!b)return;const a=b.dataset.sh;sheet.hidden=true;if(a==='x')return;
     if(a==='go'){const dt=document.querySelector('.tab[data-tab="design"]');if(dt)dt.click();
       const lb=document.querySelector('#seg-lang button[data-v="'+THL+'"]');if(S.lang!==THL&&lb)lb.click();
