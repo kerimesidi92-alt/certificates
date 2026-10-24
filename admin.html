@@ -215,7 +215,7 @@ input.pin[type=number]{width:96px;min-height:34px;padding:4px 8px}
 .empty{color:var(--muted);text-align:center;padding:18px;border:1.5px dashed var(--line);border-radius:12px}
 .steps{margin:0;padding-inline-start:20px;color:var(--muted);font-size:13px;display:grid;gap:2px}
 
-.modal{position:fixed;inset:0;background:rgba(10,6,16,.72);display:grid;place-items:center;padding:16px;z-index:50}
+#login[hidden]{display:none!important}.modal{position:fixed;inset:0;background:rgba(10,6,16,.72);display:grid;place-items:center;padding:16px;z-index:50}
 .m-panel{background:var(--surface);border-radius:16px;padding:14px;max-width:min(980px,100%);max-height:100%;overflow:auto;display:grid;gap:10px}
 .m-panel img{width:100%;height:auto;display:block;border-radius:4px}
 
@@ -569,7 +569,7 @@ body{background:var(--bg)}
   </div>
 </div>
 
-<div class="modal" id="login" style="background:var(--bg)" role="dialog" aria-label="تسجيل الدخول">
+<div class="modal" id="login" style="background:var(--bg)" role="dialog" aria-label="تسجيل الدخول" hidden>
   <form class="m-panel" id="login-form" style="width:min(380px,100%)">
     <strong style="font-size:18px">دخول الإدارة</strong>
     <div class="field"><label class="lbl" for="l-mail">البريد الإلكتروني</label><input type="email" id="l-mail" dir="ltr" autocomplete="username" required></div>
@@ -1894,10 +1894,11 @@ const store={
 };
 async function initStore(){
   const FBC=APP.firebase||{};
-  if(!FBC.apiKey||FBC.apiKey.indexOf('PASTE')>=0||!window.firebase){const er=$('#l-err');er.textContent='لم يتم إعداد Firebase بعد: عبّئي الإعدادات في أعلى الملف.';er.hidden=false;return;}
+  if(!FBC.apiKey||FBC.apiKey.indexOf('PASTE')>=0||!window.firebase){const er=$('#l-err');er.textContent='لم يتم إعداد Firebase بعد: عبّئي الإعدادات في أعلى الملف.';er.hidden=false;$('#login').hidden=false;return;}
   firebase.initializeApp(FBC);const auth=firebase.auth(),fdb=firebase.firestore();window.__fdb=fdb;window.__ADM=1;let unsub=null;
+  setTimeout(()=>{if(!window.__authSeen)$('#login').hidden=false;},6000);
   auth.onAuthStateChanged(u=>{
-    if(unsub){unsub();unsub=null;}
+    window.__authSeen=1;if(unsub){unsub();unsub=null;}
     if(u){
       $('#login').hidden=true;col=fdb.collection('orders');storeMode='db';setTimeout(loadPub,200);
       unsub=col.orderBy('createdAt','desc').onSnapshot(snap=>{noteOverride='';orders=snap.docs.map(d=>Object.assign({id:d.id},d.data()));renderOrders();},()=>{noteOverride='لا توجد صلاحية لقراءة الطلبات. تأكدي من قواعد Firestore وبريد المديرة.';renderOrders();});
