@@ -24,6 +24,13 @@
 .mgi .th-img{width:100%;aspect-ratio:1280/906;object-fit:cover;border-radius:6px;background:#fff;border:1px solid #ddd}
 .mgi button{min-height:32px;font-size:12px;padding:2px 6px}
 .trr{display:flex;align-items:center;gap:8px;border-top:1px solid #eee;padding:6px 0}.trr img{width:56px;aspect-ratio:1280/906;object-fit:cover;border-radius:6px;border:1px solid #ddd;background:#fff}.trr b{flex:1;font-size:13px}
+
+.libpath{grid-column:1/-1;font-size:12.5px;color:var(--muted)}
+#lib-box .themes{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+#lib-box .th-img{aspect-ratio:1!important;object-fit:contain!important;background:#fff}
+#lib-box .libi .th-img{background:repeating-conic-gradient(#ebe6da 0 25%,#f7f4ec 0 50%) 0 0/14px 14px}
+#lib-box .libi:active{transform:scale(.97)}
+#lib-toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#16264a;color:#fff;padding:9px 16px;border-radius:99px;font-weight:700;font-size:13px;z-index:650;box-shadow:0 4px 14px rgba(0,0,0,.3);pointer-events:none}
 </style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
@@ -517,6 +524,12 @@ body{background:var(--bg)}
         <div class="field" id="frame-box"><span class="lbl">إطار الورقة (بدون ثيم)</span><div class="seg" id="seg-frame" role="group" aria-label="إطار الورقة"></div></div>
       </div>
 
+<div class="step" data-tab="lib" hidden>
+        <h2>المكتبة</h2>
+        <p class="hint">اختر مجلدًا ثم اضغط على أي صورة لإضافتها إلى الشهادة. بعد الإضافة حرّكها بإصبعك وغيّر حجمها من النقاط على الصورة. يمكنك إضافة أي عدد منها.</p>
+        <div class="themes" id="lib-box"></div>
+      </div>
+
 <div class="step" data-tab="img" hidden>
         <h2><span class="no">5</span>الصور</h2>
         <div class="drop" id="drop">
@@ -599,6 +612,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="cert-library.js?v=1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="images.js?v=1"></script>
 <script>
@@ -886,6 +900,18 @@ const THEMES={
   gw3:{nodiv:1,occ:['teacher','student','thanks'],name:"وسام 3",subj:'',subjFr:'',img:IMGS.gw3,p0:[248, 243, 232],n0:[10, 30, 64],short:4,z:{tfs:68,title:[670,150,500,70],intro:[670,236,500,56],name:[670,306,500,60],role:[670,382,500,36],body:[670,436,500,150],'from':[710,690,420,32],date:[710,726,420,28],il:1.3}},
   gw4:{nodiv:1,occ:['teacher','student','thanks'],name:"وسام 4",subj:'',subjFr:'',img:IMGS.gw4,p0:[249, 244, 233],n0:[10, 30, 64],short:4,z:{tfs:68,title:[670,150,500,70],intro:[670,236,500,56],name:[670,306,500,60],role:[670,382,500,36],body:[670,436,500,150],'from':[710,690,420,32],date:[710,726,420,28],il:1.3}},
   gq1:{nodiv:1,occ:['teacher','student','thanks'],name:"القرآن الكريم 1",subj:'',subjFr:'',img:IMGS.gq1,p0:[244, 235, 224],n0:[110, 84, 34],short:4,z:{tfs:64,title:[404,165,480,70],intro:[404,251,480,56],name:[404,321,480,60],role:[404,397,480,36],body:[404,451,480,150],'from':[444,722,400,32],date:[444,758,400,28],il:1.3}},
+  gst10:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 10",subj:'',subjFr:'',img:'cert/themes/gst10.jpg',th:'cert/themes/t/gst10.jpg',p0:[237,234,229],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:56,title:[193,322,520,70],intro:[193,407,520,56],name:[193,478,520,60],role:[193,553,520,36],body:[173,604,560,137],'from':[253,756,400,32],date:[253,803,400,28],il:1.25}},
+  gst11:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 11",subj:'',subjFr:'',img:'cert/themes/gst11.jpg',th:'cert/themes/t/gst11.jpg',p0:[233,230,225],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:56,title:[218,250,470,70],intro:[218,365,470,56],name:[218,466,470,60],role:[218,571,470,36],body:[173,652,560,205],'from':[233,902,440,32],date:[233,979,440,28],il:1.25}},
+  gst12:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 12",subj:'',subjFr:'',img:'cert/themes/gst12.jpg',th:'cert/themes/t/gst12.jpg',p0:[233,230,225],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:56,title:[228,292,450,70],intro:[228,399,450,56],name:[228,492,450,60],role:[228,589,450,36],body:[193,662,520,187],'from':[243,886,420,32],date:[243,955,420,28],il:1.25}},
+  gst13:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 13",subj:'',subjFr:'',img:'cert/themes/gst13.jpg',th:'cert/themes/t/gst13.jpg',p0:[236,235,231],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:56,title:[213,240,480,70],intro:[213,358,480,56],name:[213,462,480,60],role:[213,570,480,36],body:[163,654,580,210],'from':[223,912,460,32],date:[223,992,460,28],il:1.25}},
+  gst14:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 14",subj:'',subjFr:'',img:'cert/themes/gst14.jpg',th:'cert/themes/t/gst14.jpg',p0:[239,238,235],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:56,title:[153,218,600,70],intro:[153,328,600,56],name:[153,424,600,60],role:[153,524,600,36],body:[143,600,620,193],'from':[233,833,440,32],date:[233,905,440,28],il:1.25}},
+  gst15:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 15",subj:'',subjFr:'',img:'cert/themes/gst15.jpg',th:'cert/themes/t/gst15.jpg',p0:[228,229,229],n0:[10,30,64],short:4,z:{tfs:56,title:[193,474,520,70],intro:[193,576,520,56],name:[193,664,520,60],role:[193,756,520,36],body:[183,824,540,177],'from':[223,1033,460,32],date:[223,1097,460,28],il:1.25}},
+  gst16:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 16",subj:'',subjFr:'',img:'cert/themes/gst16.jpg',th:'cert/themes/t/gst16.jpg',p0:[239,238,234],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:56,title:[153,314,600,70],intro:[153,412,600,56],name:[153,496,600,60],role:[153,584,600,36],body:[143,648,620,167],'from':[233,843,440,32],date:[233,903,440,28],il:1.25}},
+  gst17:{nodiv:1,o:'p',po:1,occ:['student','thanks'],name:"تخرج وتفوق 17",subj:'',subjFr:'',img:'cert/themes/gst17.jpg',th:'cert/themes/t/gst17.jpg',p0:[232,232,230],n0:[10,30,64],short:4,z:{tfs:56,title:[218,272,470,70],intro:[218,383,470,56],name:[218,480,470,60],role:[218,581,470,36],body:[173,658,560,196],'from':[233,895,440,32],date:[233,968,440,28],il:1.25}},
+  gst18:{nodiv:1,lo:1,occ:['student','thanks'],name:"تخرج وتفوق 18",subj:'',subjFr:'',img:'cert/themes/gst18.jpg',th:'cert/themes/t/gst18.jpg',p0:[237,234,229],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:64,title:[330,264,620,70],intro:[330,346,620,56],name:[330,414,620,60],role:[330,486,620,36],body:[290,534,700,130],'from':[380,676,520,32],date:[380,720,520,28],il:1.25}},
+  gst19:{nodiv:1,lo:1,occ:['student','thanks'],name:"تخرج وتفوق 19",subj:'',subjFr:'',img:'cert/themes/gst19.jpg',th:'cert/themes/t/gst19.jpg',p0:[237,234,229],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:64,title:[320,150,640,70],intro:[320,248,640,56],name:[320,332,640,60],role:[320,420,640,36],body:[280,484,720,167],'from':[380,679,520,32],date:[380,739,520,28],il:1.25}},
+  gst20:{nodiv:1,lo:1,occ:['student','thanks'],name:"تخرج وتفوق 20",subj:'',subjFr:'',img:'cert/themes/gst20.jpg',th:'cert/themes/t/gst20.jpg',p0:[235,234,232],n0:[10,30,64],short:4,z:{tfs:64,title:[330,262,620,70],intro:[330,344,620,56],name:[330,412,620,60],role:[330,484,620,36],body:[290,532,700,132],'from':[380,676,520,32],date:[380,720,520,28],il:1.25}},
+  gst21:{nodiv:1,lo:1,occ:['student','thanks'],name:"تخرج وتفوق 21",subj:'',subjFr:'',img:'cert/themes/gst21.jpg',th:'cert/themes/t/gst21.jpg',p0:[236,235,232],n0:[71,6,16],dI:'#4a0f1c',short:4,z:{tfs:64,title:[320,262,640,70],intro:[320,342,640,56],name:[320,408,640,60],role:[320,478,640,36],body:[320,524,640,127],'from':[380,661,520,32],date:[380,703,520,28],il:1.25}},
   gst1:{nodiv:1,occ:['student','thanks'],name:"تخرج وتفوق 1",subj:'',subjFr:'',img:IMGS.gst1,p0:[254, 250, 244],n0:[10, 30, 64],short:4,z:{tfs:70,title:[284,172,680,70],intro:[284,258,680,56],name:[284,328,680,60],role:[284,404,680,36],body:[284,458,680,150],'from':[324,726,600,32],date:[324,762,600,28],il:1.3}},
   gk3:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"ذهبي — إطار مزخرف",subj:'',subjFr:'',get img(){return IMGS.gk3},p0:[249,246,237],n0:[60,45,20],short:4,nd:1,z:{tfs:76,title:[150,225,606,80],intro:[170,325,566,60],name:[170,405,566,76],role:[170,495,566,38],body:[130,555,646,300],'from':[150,905,606,36],date:[250,955,406,30],il:1.35}},
   gk4:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"ذهبي — إطار مزدوج",subj:'',subjFr:'',get img(){return IMGS.gk4},p0:[250,246,236],n0:[60,45,20],short:4,nd:1,z:{tfs:76,title:[150,225,606,80],intro:[170,325,566,60],name:[170,405,566,76],role:[170,495,566,38],body:[130,555,646,300],'from':[150,905,606,36],date:[250,955,406,30],il:1.35}},
@@ -1086,11 +1112,14 @@ let scale=1;
 const dflt=k=>{const T=THEMES[S.theme];if(!T)return PLAIN[k];if(T.svg)return k==='paper'?T.pp:k==='deep'?T.dd:k==='accent'?T.aa:TDEF.ink;if(T.dI&&k==='ink')return T.dI;if(T.dA&&k==='accent')return T.dA;return k==='paper'?h2(T.p0):k==='deep'?h2(T.n0.map(c=>Math.min(255,Math.round(c*1.6+14)))):TDEF[k];};
 const eff=k=>S[k]||dflt(k);
 const cut=(v,n)=>String(v==null?'':v).slice(0,n);
-const designConfig=imgs=>{const d={v:3,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
+const designConfig=imgs=>{const d={v:3,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
 const num=(v,a,b,d)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):d;};
+const LIBRE=/^cert\/lib\/[a-z0-9_-]+\/[a-z0-9_.-]+\.webp$/;
+const capI=a=>{let u=0;return a.filter(i=>i.lib||++u<=4).slice(0,24);};
 function cleanImg(im){
-  if(!im||typeof im.src!=='string'||im.src.length>4000000||!/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(im.src))return null;
-  return {src:im.src,ar:num(im.ar,0.05,20,1),x:Math.round(num(im.x,-2000,2000,100)),y:Math.round(num(im.y,-2000,2000,100)),w:Math.round(num(im.w,40,1500,190)),shape:['round','square','free'].includes(im.shape)?im.shape:'round',layer:im.layer==='back'?'back':'front',z:im.z==null?undefined:Math.round(num(im.z,0,9999,0)),op:Math.round(num(im.op,10,100,100)),h:Math.round(num(im.h,30,1400,im.shape==='free'?num(im.w,40,1500,190)*num(im.ar,0.05,20,1):num(im.w,40,1500,190))),fit:['cover','fill','contain'].includes(im.fit)?im.fit:undefined,px:Math.round(num(im.px,0,100,50)),py:Math.round(num(im.py,0,100,50)),zm:Math.round(num(im.zm,30,400,100)),bd:im.bd?1:undefined,bc:/^#[0-9a-fA-F]{6}$/.test(im.bc||'')?im.bc:undefined};
+  const lb=!!im&&typeof im.src==='string'&&LIBRE.test(im.src);
+  if(!im||typeof im.src!=='string'||(!lb&&(im.src.length>4000000||!/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(im.src))))return null;
+  return {src:im.src,lib:lb?1:undefined,ar:num(im.ar,0.05,20,1),x:Math.round(num(im.x,-2000,2000,100)),y:Math.round(num(im.y,-2000,2000,100)),w:Math.round(num(im.w,40,1500,190)),shape:['round','square','free'].includes(im.shape)?im.shape:'round',layer:im.layer==='back'?'back':'front',z:im.z==null?undefined:Math.round(num(im.z,0,9999,0)),op:Math.round(num(im.op,10,100,100)),h:Math.round(num(im.h,30,1400,im.shape==='free'?num(im.w,40,1500,190)*num(im.ar,0.05,20,1):num(im.w,40,1500,190))),fit:['cover','fill','contain'].includes(im.fit)?im.fit:undefined,px:Math.round(num(im.px,0,100,50)),py:Math.round(num(im.py,0,100,50)),zm:Math.round(num(im.zm,30,400,100)),bd:im.bd?1:undefined,bc:/^#[0-9a-fA-F]{6}$/.test(im.bc||'')?im.bc:undefined};
 }
 const OFFK=['title','intro','name','role','body','from','date','dvh','dvt','dvb','dvr','dvf','dvm','dvq','dvp','dvs','dvu'];
 function cleanDsz(o){const r={};if(o&&typeof o==='object')['dvh','dvt','dvb','dvr','dvf','dvm','dvq','dvp','dvs','dvu'].forEach(k=>{const v=o[k];if(Array.isArray(v)&&v.length>=2){const d=k==='dvh'?[1,1,0,1,0]:[1,1,0,0,0],a=num(v[0],0.3,4,1),b=num(v[1],0.4,4,1),rt=Math.round(num(v[2],-180,180,d[2])),fy=v[3]==null?d[3]:(+v[3]?1:0),fx=v[4]==null?d[4]:(+v[4]?1:0);if(Math.abs(a-1)>.01||Math.abs(b-1)>.01||rt!==d[2]||fy!==d[3]||fx!==d[4])r[k]=[Math.round(a*100)/100,Math.round(b*100)/100,rt,fy,fx];}});return r;}
@@ -1103,7 +1132,7 @@ function cleanDesign(d){
   if(!d||typeof d!=='object'||!OCC[d.occ])return null;
   const lang=d.lang==='fr'?'fr':d.lang==='en'?'en':'ar',X=OCC[d.occ][lang];
   return {v:3,or:d.or==='p'?'p':'l',lang,occ:d.occ,gender:d.gender==='f'?'f':'m',font:FONTS[d.font]?d.font:'ruqaa',div:DIVS.some(x=>x[0]===d.div)?d.div:'o1',divT:DIVS.some(x=>x[0]===d.divT)?d.divT:'o1',dc:(d.dc==null)?null:Math.round(num(d.dc,0,3,1)),sg:(d.sg==null)?null:Math.round(num(d.sg,0,2,2)),sgd:DIVS.some(x=>x[0]===d.sgd)?d.sgd:'s1',dsz:cleanDsz(d.dsz),off:cleanOff(d.off),fontL:LFONTS[d.fontL]?d.fontL:'classic',dn:(d.dn==null)?null:Math.round(num(d.dn,0,5,1)),frame:['full','simple','none'].includes(d.frame)?d.frame:'full',fmt:cleanFmt(d.fmt),xt:cleanXt(d.xt),ln:cleanLn(d.ln),bg:cleanBg(d.bg),theme:(d.theme==='none'||THEMES[d.theme]||(d.theme==='custom'&&cleanBg(d.bg)))?d.theme:'none',paper:hex(d.paper),deep:hex(d.deep),accent:hex(d.accent),ink:hex(d.ink),
-    title:cut(d.title,80)||X.titles[0],intro:cut(d.intro,400),name:cut(d.name,120),subj:cut(d.subj,60),role:cut(d.role,160),body:cut(d.body,1500),from:cut(d.from,160),date:cut(d.date,40),images:Array.isArray(d.images)?d.images.slice(0,4).map(cleanImg).filter(Boolean):[]};
+    title:cut(d.title,80)||X.titles[0],intro:cut(d.intro,400),name:cut(d.name,120),subj:cut(d.subj,60),role:cut(d.role,160),body:cut(d.body,1500),from:cut(d.from,160),date:cut(d.date,40),images:Array.isArray(d.images)?capI(d.images.slice(0,40).map(cleanImg).filter(Boolean)):[]};
 }
 function loadDesign(raw){
   const d=cleanDesign(raw);if(!d)return false;
@@ -1683,7 +1712,7 @@ buildSeg('seg-frame',[['full','كامل'],['simple','بسيط'],['none','بدو�
 buildSeg('seg-gender',[['m','للأستاذ / للتلميذ'],['f','للأستاذة / للتلميذة']],'gender',()=>{applyDefaults();render();});
 
 const thumbCache={};
-function themeThumb(k){const T=THEMES[k];if(T.img){if(isMis(T))return adaptThumb(k)||T.img;return T.img;}return thumbCache[k]||(thumbCache[k]='data:image/svg+xml;utf8,'+encodeURIComponent(ART[k](T.pp,T.dd,T.aa)));}
+function themeThumb(k){const T=THEMES[k];if(T.img){if(isMis(T))return adaptThumb(k)||T.img;return T.th||T.img;}return thumbCache[k]||(thumbCache[k]='data:image/svg+xml;utf8,'+encodeURIComponent(ART[k](T.pp,T.dd,T.aa)));}
 const FOLDERS={mine:'تصاميم من عندنا',clr:'ألوان قابلة للتغيير',thx:'شكر وتقدير',tech:'أزرق وتقنية',lux:'ذهبي وفاخر وألوان',fr:'اللغة الفرنسية',civic:'التربية المدنية',stu:'الطلاب والتخرج',flo:'الزهور',rib:'الأوسمة والشرائط',quran:'القرآن الكريم',hist:'التاريخ والجغرافيا',math:'الرياضيات',arabic:'اللغة العربية',phys:'الفيزياء',eng:'اللغة الإنجليزية',nat:'العلوم الطبيعية',gen:'عام',med:'الأطباء والصحة'};
 const NB0={"eng":[1,1],"gc10":[1,0],"gc12":[1,0],"gc2":[1,0],"gc7":[1,0],"gd1":[1,0],"gd2":[0,0],"gd4":[1,0],"ge1":[1,0],"ge10":[1,0],"ge2":[1,0],"ge4":[1,0],"ge5":[1,0],"ge7":[1,0],"ge8":[1,0],"gf1":[1,1],"gf10":[1,0],"gf2":[1,0],"gf3":[1,1],"gf4":[1,0],"gf5":[1,0],"gf6":[1,1],"gf7":[1,1],"gf8":[1,1],"gf9":[1,0],"gg1":[1,0],"gg10":[1,0],"gg11":[1,0],"gg12":[1,0],"gg13":[1,0],"gg14":[1,0],"gg15":[1,0],"gg16":[1,0],"gg17":[1,0],"gg18":[1,0],"gg19":[1,0],"gg2":[1,0],"gg20":[1,0],"gg21":[1,0],"gg22":[1,0],"gg23":[1,0],"gg3":[1,0],"gg4":[1,0],"gg5":[1,0],"gg6":[1,0],"gg8":[1,0],"gg9":[1,0],"gh1":[1,0],"gh2":[1,0],"gh3":[1,0],"gh4":[1,0],"gp1":[1,0],"gp3":[1,0],"gp4":[1,0],"gp5":[1,0],"gp6":[1,0],"gp7":[1,0],"gp8":[1,0],"gq1":[1,0],"gq2":[1,0],"gq3":[1,0],"gq4":[1,0],"gq5":[1,0],"gr1":[1,1],"gr10":[1,1],"gr11":[1,1],"gr12":[1,1],"gr13":[1,0],"gr14":[1,1],"gr2":[1,1],"gr3":[1,1],"gr4":[1,1],"gr5":[1,1],"gr6":[1,1],"gr7":[1,1],"gr8":[1,0],"gr9":[1,0],"gs1":[1,0],"gs10":[1,0],"gs11":[1,1],"gs12":[1,0],"gs13":[1,0],"gs14":[1,0],"gs15":[1,0],"gs16":[1,0],"gs17":[1,0],"gs18":[1,0],"gs19":[1,0],"gs2":[1,0],"gs20":[1,0],"gs3":[1,0],"gs4":[1,0],"gs5":[1,0],"gs6":[1,0],"gs7":[1,0],"gs8":[1,0],"gs9":[1,0],"gst1":[1,0],"gst2":[1,0],"gst3":[1,0],"gst4":[1,0],"gst5":[1,0],"gst6":[0,0],"gst7":[0,0],"gst8":[1,0],"gst9":[1,0],"gw1":[1,0],"gw2":[1,0],"gw3":[1,0],"gw4":[1,0],"gz1":[1,0],"gz2":[1,0],"math":[1,1],"nat":[1,1],"phys":[1,1]};
 const PZC={"eng":[454,240],"gc10":[412,288],"gc11":[460,242],"gc12":[474,240],"gc2":[479,246],"gc4":[507,296],"gc7":[432,240],"gc8":[458,240],"ge1":[424,262],"ge10":[450,299],"ge2":[415,292],"ge3":[420,249],"ge4":[433,252],"ge5":[416,298],"ge6":[419,298],"ge7":[434,240],"ge8":[446,271],"ge9":[488,405],"gf10":[482,369],"gf2":[436,341],"gf3":[446,240],"gf4":[498,307],"gf5":[450,329],"gf6":[466,240],"gf7":[453,276],"gf8":[472,263],"gf9":[496,301],"gh1":[452,274],"gh2":[462,261],"gh3":[526,355],"gh4":[454,282],"gm1":[524,393],"gm2":[522,345],"gm3":[516,325],"gm4":[495,350],"gm5":[550,429],"gm6":[476,275],"gm7":[464,289],"gm8":[464,263],"gn1":[524,433],"gn2":[532,526],"gp1":[512,328],"gp2":[490,346],"gp3":[497,274],"gp4":[494,386],"gp5":[484,351],"gp6":[489,358],"gp7":[498,351],"gp8":[466,382],"gq1":[459,298],"gq2":[464,269],"gq3":[516,369],"gq4":[465,314],"gq5":[502,347],"gq6":[508,381],"gr1":[533,332],"gr10":[492,276],"gr11":[508,353],"gr12":[536,384],"gr13":[512,367],"gr14":[437,366],"gr2":[520,340],"gr3":[546,315],"gr4":[497,264],"gr5":[472,275],"gr6":[448,260],"gr7":[484,334],"gr8":[520,356],"gr9":[441,324]};Object.keys(PZC).forEach(k=>{if(THEMES[k])THEMES[k].pz=PZC[k];});
@@ -1691,7 +1720,7 @@ const grpOf=k=>/^gx\d/.test(k)?'thx':/^gk\d/.test(k)?'lux':k==='pv8'?'tech':/^pv
 const RCK=["gx1", "gx3", "gx4", "gx5", "gx6", "gb1", "gb1p", "gb2", "gb2p", "gb4", "gb4p", "gb9", "pv8", "gd2", "gd4", "gd5", "gd6", "gd7", "gk2", "gk2p", "pv6", "pv7", "pv9", "gst3", "gg8", "gg8p", "gg10", "gg10p", "gg11", "gg11p", "gg12", "gg12p", "gg15", "gg15p", "gg17", "gg17p", "gg18", "gg18p", "gg19", "gg19p", "gg20", "gg20p", "gg21", "gg21p", "gg22", "gg22p", "gg23", "gg23p"],RCF=["gb1", "gb1p", "gb2", "gb2p"];for(const k of RCK)if(THEMES[k])THEMES[k].rc=1;for(const k of RCF)if(THEMES[k])THEMES[k].rc=2;
 const inG=(k,g)=>g==='clr'?!!(THEMES[k]&&THEMES[k].rc):grpOf(k)===g;
 const RCDEEPS=[['#c0272d','أحمر'],['#7d1230','بوردو'],['#17803f','أخضر'],['#118b88','تركوازي'],['#7a3fb5','بنفسجي'],['#d9407f','وردي'],['#e8741a','برتقالي'],['#1f5fd1','أزرق'],['#17171c','أسود']];
-const PSUB=['thx','med','arabic','fr','eng','math','phys','hist'],PGRP=['clr','thx','tech','gen','lux','med','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
+const PSUB=['thx','med','arabic','fr','eng','math','phys','hist','stu'],PGRP=['clr','thx','tech','gen','lux','med','stu','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
 
 /* ---- published designs (Firestore) + folder covers ---- */
 let PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
@@ -1869,18 +1898,46 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.hidden=true;})
 
 
 
+
+/* ---------- library tab (images stored as files in cert/lib/*) ---------- */
+(function(){
+const box=document.getElementById('lib-box');if(!box||!window.CERT_LIB)return;
+const L=window.CERT_LIB;let cur=null;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function paint(){
+  if(!cur){box.innerHTML=L.map(f=>'<button type="button" class="theme folder" data-f="'+f.id+'"><img class="th-img" src="cert/lib/'+f.id+'/t/'+f.items[0].f+'" alt="" loading="lazy"><span class="fn">'+esc(f.n)+'</span><span class="fc">'+f.items.length+'</span></button>').join('');return;}
+  const f=L.find(x=>x.id===cur);if(!f){cur=null;paint();return;}
+  box.innerHTML='<button type="button" class="theme back" data-back="1">→ رجوع إلى المجلدات</button><span class="libpath">'+esc(f.n)+'</span>'+f.items.map((it,i)=>'<button type="button" class="theme libi" data-i="'+i+'" aria-label="'+esc(f.n)+' '+(i+1)+'"><img class="th-img" src="cert/lib/'+f.id+'/t/'+it.f+'" alt="" loading="lazy"></button>').join('');
+}
+let tt=0;function toast(m){let t=document.getElementById('lib-toast');if(!t){t=document.createElement('div');t.id='lib-toast';document.body.appendChild(t);}t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>{t.hidden=true;},1600);}
+function add(f,it){
+  if(S.images.filter(i=>i.lib).length>=24){toast('وصلت إلى الحد الأقصى من صور المكتبة');return;}
+  const n=S.images.filter(i=>i.lib).length,ar=it.h/it.w,w=Math.round(Math.max(110,Math.min(W*.5,ar>1.4?W*.26:ar<.5?W*.5:W*.32))),h=Math.round(w*ar),o=(n%6)*22;
+  S.images.push({src:'cert/lib/'+f.id+'/'+it.f,lib:1,ar:ar,x:Math.max(0,Math.min(W-w,Math.round((W-w)/2)+o)),y:Math.max(0,Math.min(H-h,Math.round((H-h)/2)+o)),w:w,h:h,shape:'free',fit:'fill',layer:'front',op:100,z:nextZ()});
+  S.sel=S.images.length-1;S.st=null;renderImgs();render();setMv('img');S.sel=S.images.length-1;markSel();
+  toast('أُضيفت إلى الشهادة — حرّكها وكبّرها كما تشاء');
+}
+box.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.back){cur=null;paint();return;}
+  if(b.dataset.f){cur=b.dataset.f;paint();try{box.scrollIntoView({block:'nearest'});}catch(_){}return;}
+  if(b.dataset.i!=null){const f=L.find(x=>x.id===cur);if(f&&f.items[+b.dataset.i])add(f,f.items[+b.dataset.i]);}
+});
+paint();
+})();
+
 /* p19: bottom tab bar */
 (function(){const sec=document.getElementById('tab-design');if(!sec)return;
 const ICON={theme:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
-text:'<path d="M5 6.5V5h14v1.5M12 5v14M9 19h6"/>',color:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/>',
+text:'<path d="M5 6.5V5h14v1.5M12 5v14M9 19h6"/>',lib:'<rect x="3.5" y="6" width="17" height="13" rx="2"/><path d="M3.5 9.5h17M8.5 6V4.5h7V6"/>',color:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/>',
 orn:'<path d="M12 4c2 3 5 3.5 7 3-1 3-3 4.5-7 5-4-.5-6-2-7-5 2 .5 5 0 7-3zM12 12.5V20M8.5 20h7"/>',send:'<path d="M4 12l16-8-6 16-2.5-6.5z"/>',img:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/>'};
-const NAMES={theme:'الثيم',text:'النص',img:'الصور',color:'الألوان',orn:'الزخارف',send:'الطلب'};
-const ORD=['theme','text','img','color','orn','send'];
+const NAMES={theme:'الثيم',lib:'المكتبة',text:'النص',img:'الصور',color:'الألوان',orn:'الزخارف',send:'الطلب'};
+const ORD=['theme','lib','text','img','color','orn','send'];
 const have=ORD.filter(k=>sec.querySelector('[data-tab="'+k+'"]'));
 const bar=document.createElement('nav');bar.id='tabbar';bar.setAttribute('role','tablist');bar.setAttribute('aria-label','أقسام التصميم');
 have.forEach(k=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.dataset.t=k;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg><span>'+NAMES[k]+'</span>';b.onclick=()=>show(k,true);bar.appendChild(b);});
 sec.appendChild(bar);
-function show(k,go){try{setMv({text:'txt',orn:'orn',img:'img'}[k]||'lock');}catch(_){}sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
+function show(k,go){try{setMv({text:'txt',orn:'orn',img:'img',lib:'img'}[k]||'lock');}catch(_){}sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
   if(go&&window.innerWidth<=860){const c=sec.querySelector('.controls'),pv=sec.querySelector('.preview');if(c&&pv){const y=c.getBoundingClientRect().top+scrollY-pv.offsetHeight-6;try{window.scrollTo({top:Math.max(0,y),behavior:'smooth'});}catch(e){window.scrollTo(0,Math.max(0,y));}}}}
 show('theme');
 })();
