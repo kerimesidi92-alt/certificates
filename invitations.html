@@ -1668,8 +1668,8 @@ function applyTpl(id){
 }
 function addBg(file){
   var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
-    var c=document.createElement('canvas'),k=Math.min(1,1500/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
-    c.getContext('2d').drawImage(im,0,0,c.width,c.height);var key='k'+(uid++);IMGSRC[key]=c.toDataURL('image/jpeg',.86);
+    var c=document.createElement('canvas'),k=Math.min(1,2400/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);var key='k'+(uid++);IMGSRC[key]=c.toDataURL('image/jpeg',.9);
     S.bgKey=key;S.tpl='mine';S.arts=[];S.frame='none';commit();build();};im.src=r.result;};r.readAsDataURL(file);
 }
 function addImage(file){
@@ -1677,7 +1677,7 @@ function addImage(file){
   im.onerror=fail;
   im.onload=function(){
     try{
-      var mx=Math.max(im.naturalWidth,im.naturalHeight),k=Math.min(1,1100/mx),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*k));c.height=Math.max(1,Math.round(im.naturalHeight*k));
+      var mx=Math.max(im.naturalWidth,im.naturalHeight),k=Math.min(1,1800/mx),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*k));c.height=Math.max(1,Math.round(im.naturalHeight*k));
       c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(url);
       var key='k'+(uid++),png=/png|gif|webp/.test(file.type);IMGSRC[key]=c.toDataURL(png?'image/png':'image/jpeg',.85);
       var id=uid++,w0=Math.min(40,100);S.imgs.push({id:id,key:key,ar:+(c.height/c.width).toFixed(4),x:50,y:50,w:w0,h:w0,fit:'cover',shape:'round',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false});
@@ -1928,6 +1928,10 @@ function shrinkImg(src,max,q){return new Promise(function(res){var im=new Image(
 function toFS(v){if(v===null)return {nullValue:null};if(Array.isArray(v))return {arrayValue:v.length?{values:v.map(toFS)}:{}};
  switch(typeof v){case 'string':return {stringValue:v};case 'boolean':return {booleanValue:v};case 'number':return Number.isInteger(v)?{integerValue:String(v)}:{doubleValue:v};
  case 'object':{var f={};for(var k in v){if(v[k]!==undefined)f[k]=toFS(v[k]);}return {mapValue:{fields:f}};}}return {nullValue:null};}
+function fsNewId(){var c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',r='';for(var i=0;i<20;i++)r+=c.charAt(Math.floor(Math.random()*c.length));return r;}
+async function fsCreate(docId,obj){var ac=new AbortController(),tm=setTimeout(function(){ac.abort();},60000);
+ try{var r=await fetch('https://firestore.googleapis.com/v1/projects/'+FBC.projectId+'/databases/(default)/documents/orders?documentId='+encodeURIComponent(docId)+'&key='+encodeURIComponent(FBC.apiKey),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:toFS(obj).mapValue.fields}),signal:ac.signal});
+  if(!r.ok)throw new Error('http'+r.status);return true;}finally{clearTimeout(tm);}}
 async function sendOrderDoc(order){var err=null;
  try{var ac=new AbortController(),tm=setTimeout(function(){ac.abort();},40000);
   var r=await fetch('https://firestore.googleapis.com/v1/projects/'+FBC.projectId+'/databases/(default)/documents/orders?key='+encodeURIComponent(FBC.apiKey),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:toFS(order).mapValue.fields}),signal:ac.signal});clearTimeout(tm);
@@ -1993,13 +1997,29 @@ async function submitOrder(){
   omodal('<h3>'+o.sending+'</h3><p>'+o.prep+'</p>');
   var order=null,cut=function(v,n){return String(v==null?'':v).slice(0,n);};
   var qn=Math.max(1,Math.min(10000,parseInt(S.qty)||1));
-  var pv=await makePreview();
-  for(var p of [[900,.7,900],[640,.6,640],[420,.5,480]]){
-   var design=await packDesign(p[0],p[1],p[2]);
-   order={client:cut(nm,120),phone:cut(ph,40),email:cut(ORD.email.trim(),120),item:cut(itemText(),160),qty:qn,price:0,status:'new',notes:cut(ORD.notes.trim(),1800),design:design,preview:pv,createdAt:Date.now(),source:'app'};
-   if(JSON.stringify(order).length<900000)break;order=null;}
-  if(!order)throw new Error('big');
-  var id=await sendOrderDoc(order);
+  var pv=await makePreview(),parts=null,oid=null;
+  var mkOrder=function(design){return {client:cut(nm,120),phone:cut(ph,40),email:cut(ORD.email.trim(),120),item:cut(itemText(),160),qty:qn,price:0,status:'new',notes:cut(ORD.notes.trim(),1800),design:design,preview:pv,createdAt:Date.now(),source:'app'};};
+  try{
+   for(var p of [[1800,.85,2400],[1400,.8,1800],[1000,.72,1200]]){
+    var design=await packDesign(p[0],p[1],p[2]);var src=design.src||{},ks=Object.keys(src),tot=0;ks.forEach(function(k){tot+=src[k].length;});
+    if(!ks.length)break;if(tot>3200000)continue;
+    oid=fsNewId();design.src={};design.parts={};var pl=[];
+    ks.forEach(function(k,ki){var sv=src[k],n=Math.ceil(sv.length/600000);design.parts[k]=n;for(var q=0;q<n;q++)pl.push({id:oid+'_'+ki+'_'+q,f:{part:true,of:oid,k:k,i:q,n:n,d:sv.slice(q*600000,(q+1)*600000)}});});
+    var o2=mkOrder(design);if(JSON.stringify(o2).length>900000)continue;
+    order=o2;parts=pl;break;}
+  }catch(_e){order=null;parts=null;}
+  if(order&&parts){
+   try{for(var pi=0;pi<parts.length;pi+=3){await Promise.all(parts.slice(pi,pi+3).map(function(x){return fsCreate(x.id,x.f);}));}
+    await fsCreate(oid,order);var idDone=oid;}catch(_e){order=null;parts=null;idDone=null;}
+  }
+  if(!order){
+   for(var p of [[900,.7,900],[640,.6,640],[420,.5,480]]){
+    var design=await packDesign(p[0],p[1],p[2]);
+    order=mkOrder(design);
+    if(JSON.stringify(order).length<900000)break;order=null;}
+   if(!order)throw new Error('big');
+  }
+  var id=(parts&&typeof idDone==='string'&&idDone)?idDone:await sendOrderDoc(order);
   var tx=o.w.n+'\n'+o.w.c+(UL==='fr'?' : ':': ')+order.client+'\n'+o.w.p+(UL==='fr'?' : ':': ')+order.phone+'\n'+o.w.i+(UL==='fr'?' : ':': ')+order.item+'\n'+o.w.q+(UL==='fr'?' : ':': ')+order.qty+(order.notes?'\n'+o.w.nt+(UL==='fr'?' : ':': ')+order.notes:'')+'\n'+o.w.id+(UL==='fr'?' : ':': ')+id;
   if(WA){var link='https://wa.me/'+WA+'?text='+encodeURIComponent(tx);
    omodal('<h3>'+o.ok+'</h3><p>'+o.waGo+'</p><a class="wa" href="'+link+'">'+o.waBtn+'</a><button class="cl" data-lbclose>'+o.close+'</button>');

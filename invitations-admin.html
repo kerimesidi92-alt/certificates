@@ -1787,8 +1787,8 @@ function applyTpl(id){
 }
 function addBg(file){
   var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
-    var c=document.createElement('canvas'),k=Math.min(1,1500/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
-    c.getContext('2d').drawImage(im,0,0,c.width,c.height);var key='k'+(uid++);IMGSRC[key]=c.toDataURL('image/jpeg',.86);
+    var c=document.createElement('canvas'),k=Math.min(1,2400/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);var key='k'+(uid++);IMGSRC[key]=c.toDataURL('image/jpeg',.9);
     S.bgKey=key;S.tpl='mine';S.arts=[];S.frame='none';commit();build();};im.src=r.result;};r.readAsDataURL(file);
 }
 function addImage(file){
@@ -1796,7 +1796,7 @@ function addImage(file){
   im.onerror=fail;
   im.onload=function(){
     try{
-      var mx=Math.max(im.naturalWidth,im.naturalHeight),k=Math.min(1,1100/mx),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*k));c.height=Math.max(1,Math.round(im.naturalHeight*k));
+      var mx=Math.max(im.naturalWidth,im.naturalHeight),k=Math.min(1,1800/mx),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*k));c.height=Math.max(1,Math.round(im.naturalHeight*k));
       c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(url);
       var key='k'+(uid++),png=/png|gif|webp/.test(file.type);IMGSRC[key]=c.toDataURL(png?'image/png':'image/jpeg',.85);
       var id=uid++,w0=Math.min(40,100);S.imgs.push({id:id,key:key,ar:+(c.height/c.width).toFixed(4),x:50,y:50,w:w0,h:w0,fit:'cover',shape:'round',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false});
@@ -2035,7 +2035,7 @@ function guard(p){return Promise.resolve(p).catch(function(e){noteOverride='تع
 var store={
  add:function(o){if(col)return guard(col.add(o));o.id='l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);orders.unshift(o);saveLocal();renderOrders();return Promise.resolve();},
  update:function(id,patch){if(col)return guard(col.doc(id).update(patch));var o=orders.find(function(x){return x.id===id});if(o){Object.assign(o,patch);saveLocal();renderOrders();}return Promise.resolve();},
- remove:function(id){if(col)return guard(col.doc(id).delete());orders=orders.filter(function(x){return x.id!==id});saveLocal();renderOrders();return Promise.resolve();}
+ remove:function(id){if(col)return guard(col.doc(id).delete().then(function(){return col.where('of','==',id).get().then(function(q){return Promise.all(q.docs.map(function(d){return d.ref.delete();}));}).catch(function(){});}));orders=orders.filter(function(x){return x.id!==id});saveLocal();renderOrders();return Promise.resolve();}
 };
 function initStore(){
  if(!FBC.apiKey||FBC.apiKey.indexOf('PASTE')>=0||!window.firebase){var er=$('#l-err');er.textContent='لم يتم إعداد Firebase بعد: ضعي إعدادات المشروع في أعلى الملف.';er.hidden=false;loadLocal();return;}
@@ -2124,8 +2124,12 @@ function showTab(name){
 document.addEventListener('click',function(e){var t=e.target.closest('[data-atab]');if(t){if(t.dataset.atab==='design'&&curOrder){var cu=document.querySelector('[data-atab][aria-selected=true]');if(cu&&cu.dataset.atab!=='design'){var lg0=S.lang;curOrder=null;S=fresh(lg0);S.tab='theme';hist=[];hpos=-1;commit();$('#adm-bar').hidden=true;build();render();toast('هذا تصميمك أنت. لفتح تصميم طلب: الطلبات ← فتح التصميم');if(window.__ownRestore)window.__ownRestore();}}showTab(t.dataset.atab);e.stopPropagation();}},true);
 function loadInto(d,id){if(!d||!d.st)return false;S=adopt(d,'o'+id+'_');if(!S.tab)S.tab='theme';S.tab='theme';hist=[];hpos=-1;commit();
  [].forEach.call(document.querySelectorAll('#lang button'),function(x){x.setAttribute('aria-pressed',x.dataset.l===S.lang?'true':'false')});return true;}
-function openOrder(id){PUBEDIT=null;try{window.__pubLbl&&window.__pubLbl();}catch(_){}var o=byId(id);if(!o||!o.design)return;if(!loadInto(o.design,id))return;curOrder=id;
- $('#adm-info').textContent='الطلب المفتوح: '+(o.client||'')+' · '+(o.item||'');var ni=Object.keys((o.design&&o.design.src)||{}).length;$('#adm-msg').textContent=ni?'تم تحميل التصميم مع صور الزبون ('+ni+').':'تم تحميل التصميم (هذا الطلب بلا صور مرفوعة).';$('#adm-bar').hidden=false;showTab('design');}
+async function fullDesign(o){var d=o.design;if(!d||!d.parts||!col)return d;if(o.__full)return o.__full;
+ try{var q=await col.where('of','==',o.id).get(),m={};q.docs.forEach(function(x){var v=x.data();(m[v.k]=m[v.k]||[])[v.i]=v.d;});
+  var src={},miss=0;Object.keys(d.parts).forEach(function(k){var a=m[k]||[],n=d.parts[k],ok=a.length===n;for(var i=0;i<n&&ok;i++)if(typeof a[i]!=='string')ok=false;if(ok)src[k]=a.join('');else miss++;});
+  var full=Object.assign({},d,{src:src});if(miss)toast('بعض صور هذا الطلب لم تصل كاملة ('+miss+').',1);o.__full=full;return full;}catch(e){toast('تعذّر تحميل صور الطلب. حاولي مرة أخرى.',1);return d;}}
+async function openOrder(id){PUBEDIT=null;try{window.__pubLbl&&window.__pubLbl();}catch(_){}var o=byId(id);if(!o||!o.design)return;var dd=await fullDesign(o);if(!loadInto(dd,id))return;curOrder=id;
+ $('#adm-info').textContent='الطلب المفتوح: '+(o.client||'')+' · '+(o.item||'');var ni=Object.keys(dd.src||{}).length;$('#adm-msg').textContent=ni?'تم تحميل التصميم مع صور الزبون ('+ni+').':'تم تحميل التصميم (هذا الطلب بلا صور مرفوعة).';$('#adm-bar').hidden=false;showTab('design');}
 function shrinkSrc(u,mx,q){return new Promise(function(res){var im=new Image();im.onload=function(){var k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));var x=c.getContext('2d');x.fillStyle='#fff';if(/^data:image\/jpe?g/.test(u))x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);try{res(c.toDataURL(/^data:image\/jpe?g/.test(u)?'image/jpeg':'image/png',q));}catch(_){res(u);}};im.onerror=function(){res(u);};im.src=u;});}
 async function packFit(base){var d=pack(true),lim=950000-(base||0);
  for(var p of [[1600,.82],[1000,.72],[700,.62],[480,.5]]){
@@ -2140,7 +2144,7 @@ $('#btn-save-order').onclick=async function(){if(!curOrder)return;var id=curOrde
   var msg='تم حفظ تعديلك'+(n?' مع '+n+' صورة':'')+'. تصميم الزبون الأصلي لم يتغيّر.';$('#adm-msg').textContent=msg;toast(msg);
  }catch(e){toast('تعذّر الحفظ ('+((e&&(e.code||e.message))||'خطأ')+')',1);}
  b.disabled=false;};
-$('#btn-orig').onclick=function(){var o=curOrder&&byId(curOrder);if(o&&o.design&&loadInto(o.design,curOrder)){build();render();toast('تم فتح تصميم الزبون الأصلي');}};
+$('#btn-orig').onclick=function(){var o=curOrder&&byId(curOrder);if(o&&o.design&&loadInto(o.__full||o.design,curOrder)){build();render();toast('تم فتح تصميم الزبون الأصلي');}};
 $('#btn-mine').onclick=function(){var o=curOrder&&byId(curOrder);if(!o||!o.design2){toast('لا توجد تعديلات محفوظة لهذا الطلب بعد.',1);return;}if(loadInto(o.design2,curOrder)){build();render();toast('تم فتح تعديلك المحفوظ');}};
 /* final image (same flow as the certificates admin) */
 document.body.classList.add('nowm');
