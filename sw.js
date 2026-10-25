@@ -1,4 +1,4 @@
-const V='kerima-v12';
+const V='kerima-v13';
 async function addAll(c,list,conc){let i=0;async function w(){while(i<list.length){const u=list[i++];try{if(await c.match(u))continue;const r=await fetch(u);if(r&&r.ok)await c.put(u,r);}catch(_){}}}await Promise.all(Array.from({length:conc||6},w));}
 async function ext(c,list){for(const u of list){try{if(await c.match(u))continue;const r=await fetch(u);if(!r||!r.ok)continue;const cl=r.clone();await c.put(u,r);if(/fonts\.googleapis/.test(u)){const t=await cl.text();for(const m of t.matchAll(/url\((https:[^)]+)\)/g)){try{if(!(await c.match(m[1]))){const f=await fetch(m[1]);if(f&&f.ok)await c.put(m[1],f);}}catch(_){}}}}catch(_){}}}
 const XH=/^(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|www\.gstatic\.com)$/;
