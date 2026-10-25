@@ -199,7 +199,15 @@ function dims(im){return[im.naturalWidth||im.width,im.naturalHeight||im.height]}
 function clampP(p,s){var d=dims(p.im),iw=d[0],ih=d[1],s0=Math.max(s.w/iw,s.h/ih),sc=s0*p.z,mx=Math.max(0,(iw*sc-s.w)/2/s.w),my=Math.max(0,(ih*sc-s.h)/2/s.h);
  p.ox=Math.max(-mx,Math.min(mx,p.ox));p.oy=Math.max(-my,Math.min(my,p.oy))}
 function drawPh(x,p,s){var d=dims(p.im),iw=d[0],ih=d[1],s0=Math.max(s.w/iw,s.h/ih),sc=s0*p.z;clampP(p,s);
- var w=iw*sc,h=ih*sc;x.drawImage(p.im,s.x+s.w/2-w/2+p.ox*s.w,s.y+s.h/2-h/2+p.oy*s.h,w,h)}
+ var w=iw*sc,h=ih*sc;x.drawImage(p.im,s.x+s.w/2-w/2+p.ox*s.w,s.y+s.h/2-h/2+p.oy*s.h,w,h);
+ if(p.fd&&p.fd.s){var n=p.fd.n||.35,col=(S.bgm&&S.bgt==='p'&&S.bgc)?S.bgc:'#ffffff',rgb=col,g;
+  function fade(x0,y0,x1,y1,ex,ey,ew,eh){g=x.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,rgb);g.addColorStop(1,'rgba(255,255,255,0)');x.save();x.fillStyle=g;x.fillRect(ex,ey,ew,eh);x.restore()}
+  function side(k){var L=s.x,T=s.y,W=s.w,H=s.h,q;
+   if(k==='b'){q=H*n;fade(0,T+H,0,T+H-q,L-1,T+H-q-1,W+2,q+2)}
+   if(k==='t'){q=H*n;fade(0,T,0,T+q,L-1,T-1,W+2,q+2)}
+   if(k==='l'){q=W*n;fade(L,0,L+q,0,L-1,T-1,q+2,H+2)}
+   if(k==='r'){q=W*n;fade(L+W,0,L+W-q,0,L+W-q-1,T-1,q+2,H+2)}}
+  (p.fd.s==='a'?['b','t','l','r']:[p.fd.s]).forEach(side)}}
 /* صور تجريبية */
 var FK=[];
 function fake(i){i=i%8;if(FK[i])return FK[i];var W=360,Hh=450,c=document.createElement('canvas');c.width=W;c.height=Hh;var x=c.getContext('2d'),rn=rng(i*53+7);
@@ -293,6 +301,7 @@ function ui(){var T=TPL[S.tpl],sel=SEL>=0&&photos[SEL];
  var cntN=0;for(var q=0;q<SLOTS.length;q++)if(photos[q])cntN++;
  h+='<p class="note" style="font-weight:700;color:'+(cntN>=SLOTS.length?'#2f6f4f':'#7a746a')+'">هذا القالب يتّسع لـ '+SLOTS.length+' صور · الصور المضافة: '+cntN+(cntN>=SLOTS.length?' (مكتمل)':' (ناقص '+(SLOTS.length-cntN)+')')+'</p>'+(WARN?'<p class="note" style="color:#b03a2e;font-weight:700">'+WARN+'</p>':'');
  if(sel)h+='<div class="row"><label style="display:flex;gap:8px;align-items:center;flex:1;min-width:220px">تكبير<input class="rg" id="zoom" type="range" min="100" max="500" value="'+Math.round(photos[SEL].z*100)+'">&nbsp;</label><button class="opt" data-a="chg" type="button">تغيير الصورة</button><button class="opt dng" data-a="del" type="button">حذف الصورة</button></div>';
+ if(sel){var fd=photos[SEL].fd||{s:'',n:.35};h+='<div class="row" style="align-items:center"><span style="font-weight:700">تلاشٍ أبيض:</span>'+[['','بدون'],['b','أسفل'],['t','أعلى'],['r','يمين'],['l','يسار'],['a','كل الأطراف']].map(function(q){return '<button class="opt" data-fd="'+q[0]+'" aria-pressed="'+((fd.s||'')===q[0])+'" type="button">'+q[1]+'</button>'}).join('')+'</div>'+(fd.s?'<div class="row"><label style="display:flex;gap:8px;align-items:center;flex:1;min-width:220px">قوة التلاشي<input class="rg" id="fdn" type="range" min="10" max="70" value="'+Math.round((fd.n||.35)*100)+'"></label></div>':'');}
  h+='<p class="note">'+(MODE==='move'?'اسحب الصورة من مكانها وأفلتها فوق مكان آخر لتبديل المكانين.':'اضغط على أي مكان لاختيار صورة. اسحب الصورة لتحريكها داخل مكانها، واستخدم إصبعين للتكبير. اضغط مطولًا ثم اسحب لنقلها إلى مكان آخر.')+'</p></div>';
  GROUPS.forEach(function(g){h+='<div class="g"><h3>'+g[0]+'</h3><div class="tp">'+g[1].map(function(id){return '<button class="tb" data-tpl="'+id+'" aria-pressed="'+(S.tpl===id)+'" type="button"><canvas data-t="'+id+'" style="width:80px;height:80px"></canvas>'+TPL[id].n+'</button>'}).join('')+'</div></div>'});
  if(T.mosaic)h+='<div class="g"><h3>عدد الصور</h3><div class="row">'+['قليل','متوسط','كثير'].map(function(n,i){return '<button class="opt" data-dens="'+(i+1)+'" aria-pressed="'+(S.dens===i+1)+'" type="button">'+n+'</button>'}).join('')+'<button class="opt" data-a="shuf" type="button">تغيير التوزيع</button></div></div>';
@@ -307,6 +316,7 @@ function ui(){var T=TPL[S.tpl],sel=SEL>=0&&photos[SEL];
 document.addEventListener('click',function(e){var br=bgHandle(e,S);if(br){if(br==='ui')ui();draw();return}var t=e.target.closest('button');if(!t||t.id==='close'||t.id==='add')return;
  if(t.id==='bulk'){pick(-1,true);return}
  if(t.dataset.mode){MODE=t.dataset.mode;ui();return}
+ if(t.dataset.fd!==undefined&&photos[SEL]){var ph0=photos[SEL];ph0.fd={s:t.dataset.fd,n:(ph0.fd&&ph0.fd.n)||.35};ui();draw();return}
  if(t.dataset.a==='chg'){pick(SEL,false);return}
  if(t.dataset.a==='del'){photos[SEL]=null;ui();draw();return}
  if(t.dataset.a==='fk'){FAKEON=!FAKEON;ui();draw();return}
@@ -323,6 +333,7 @@ document.addEventListener('click',function(e){var br=bgHandle(e,S);if(br){if(br=
 document.addEventListener('input',function(e){var t=e.target;var br=bgHandle(e,S);if(br){if(br==='ui')ui();draw();return}
  if(t.id==='calz'){S.calz=+t.value;draw();return}
  if(t.id==='caly'){S.caly=+t.value;draw();return}
+ if(t.id==='fdn'&&photos[SEL]&&photos[SEL].fd){photos[SEL].fd.n=+t.value/100;draw()}
  if(t.id==='zoom'&&photos[SEL]){photos[SEL].z=+t.value/100;clampP(photos[SEL],SLOTS[SEL]);draw()}
 
  else if(t.id==='bdc'){S.bdc=t.value;if(!S.bd)S.bd=2;draw()}});
