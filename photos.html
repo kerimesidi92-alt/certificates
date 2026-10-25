@@ -402,4 +402,4 @@ try{if(parent&&parent!==window)parent.postMessage({kind:'kerima-col-ready'},'*')
 })();
 
 if(document.fonts&&document.fonts.load){['96px "Great Vibes"','96px "Aref Ruqaa"','34px Cairo','100px "Cormorant Garamond"'].forEach(function(f){document.fonts.load(f,'سعيد Ab').then(function(){try{draw();thumbs()}catch(e){}})})}
-</script></body></html>
+</script><script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(function(){});</script></body></html>
