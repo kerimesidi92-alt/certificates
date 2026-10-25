@@ -1,11 +1,11 @@
-const V='kerima-v13';
+const V='kerima-v14';
 async function addAll(c,list,conc){let i=0;async function w(){while(i<list.length){const u=list[i++];try{if(await c.match(u))continue;const r=await fetch(u);if(r&&r.ok)await c.put(u,r);}catch(_){}}}await Promise.all(Array.from({length:conc||6},w));}
 async function ext(c,list){for(const u of list){try{if(await c.match(u))continue;const r=await fetch(u);if(!r||!r.ok)continue;const cl=r.clone();await c.put(u,r);if(/fonts\.googleapis/.test(u)){const t=await cl.text();for(const m of t.matchAll(/url\((https:[^)]+)\)/g)){try{if(!(await c.match(m[1]))){const f=await fetch(m[1]);if(f&&f.ok)await c.put(m[1],f);}}catch(_){}}}}catch(_){}}}
 const XH=/^(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|www\.gstatic\.com)$/;
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil((async()=>{try{const L=await (await fetch('offline.json',{cache:'no-cache'})).json();const c=await caches.open(V);await addAll(c,L.core,4);self._L=L;}catch(_){}})());});
 self.addEventListener('activate',e=>{e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==V)await caches.delete(k);await self.clients.claim();
- try{const L=await (await fetch('offline.json')).json();const c=await caches.open(V);await addAll(c,L.thumbs,6);await addAll(c,L.frames,4);await ext(c,L.ext);await addAll(c,L.full,4);}catch(_){}})());});
+ await new Promise(r=>setTimeout(r,20000));try{const L=await (await fetch('offline.json')).json();const c=await caches.open(V);await addAll(c,L.thumbs,2);await addAll(c,L.frames,2);await ext(c,L.ext);await addAll(c,L.full,2);}catch(_){}})());});
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin){if(XH.test(u.hostname))e.respondWith(caches.open(V).then(c=>c.match(r).then(h=>h||fetch(r).then(res=>{if(res&&(res.ok||res.type==='opaque'))c.put(r,res.clone());return res;}))));return;}if(/admin\.html/.test(u.pathname))return;
  const page=r.mode==='navigate'||/\.html$/.test(u.pathname)||/\/$/.test(u.pathname);
  if(page){e.respondWith(fetch(r,{cache:'no-cache'}).then(res=>{if(res&&res.ok){const k=res.clone();caches.open(V).then(c=>c.put(r,k));}return res;}).catch(()=>caches.match(r,{ignoreSearch:true}).then(h=>h||caches.match('index.html'))));return;}
- e.respondWith(caches.open(V).then(c=>c.match(r).then(hit=>{if(hit&&/[?&]v=/.test(u.search))return hit;const net=fetch(r).then(res=>{if(res&&res.ok)c.put(r,res.clone());return res;}).catch(()=>hit);return hit||net;})));});
+ e.respondWith(caches.open(V).then(c=>c.match(r).then(hit=>{if(hit&&/[?&]v=/.test(u.search))return hit;const go=()=>fetch(r).then(res=>{if(res&&res.ok)c.put(r,res.clone());return res;});const net=go().catch(()=>hit||new Promise(z=>setTimeout(z,500)).then(go)).catch(()=>hit||Response.error());return hit||net;})));});

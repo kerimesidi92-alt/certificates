@@ -346,7 +346,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
-<script src="invitations-folders.js?v=5"></script>
+<script src="invitations-folders.js?v=6"></script>
 <script>(function(){var sx=0,sy=0,mv=0,tm=0;var d=document;
 d.addEventListener('touchstart',function(e){var t=e.touches[0];if(!t)return;sx=t.clientX;sy=t.clientY;mv=0;clearTimeout(tm);},{capture:true,passive:true});
 d.addEventListener('touchmove',function(e){var t=e.touches[0];if(t&&(Math.abs(t.clientX-sx)>8||Math.abs(t.clientY-sy)>8))mv=1;},{capture:true,passive:true});
@@ -743,20 +743,8 @@ ASSETS['17_o_corner']={w:599,h:599,d:''};
 ASSETS['17_o_divider']={w:700,h:522,d:''};
 ASSETS['17_o_label']={w:352,h:239,d:''};
 ASSETS['11_ring_pave2']={w:546,h:528,d:''};
-ASSETS['19_fr_f_floral']={w:435,h:650,d:''};
-ASSETS['19_fr_sh3_02']={w:290,h:366,d:''};
-ASSETS['19_fr_sh3_05']={w:252,h:281,d:''};
 ASSETS['19_fr_sh3_06']={w:276,h:338,d:''};
-ASSETS['19_fr_sh4_08']={w:355,h:508,d:''};
-ASSETS['19_fr_sh4_09']={w:347,h:444,d:''};
-ASSETS['19_fr_sh5_11']={w:259,h:357,d:''};
 ASSETS['19_fr_sh5_12']={w:256,h:360,d:''};
-ASSETS['19_fr_sh5_13']={w:260,h:347,d:''};
-ASSETS['19_fr_sh5_14']={w:238,h:327,d:''};
-ASSETS['19_fr_sh5_17']={w:228,h:375,d:''};
-ASSETS['19_fr_sh5_18']={w:230,h:343,d:''};
-ASSETS['19_fr_sh5_19']={w:250,h:347,d:''};
-ASSETS['19_fr_sh5_20']={w:236,h:325,d:''};
 ASSETS['11_ring_b2']={w:760,h:434,d:''};
 ASSETS['11_ring_bag2']={w:760,h:406,d:''};
 ASSETS['11_ring_g2']={w:644,h:760,d:''};
@@ -797,7 +785,7 @@ window.__mergeMore=function(){var ch=0,w=window;
  if(ch&&typeof S!=='undefined'&&S&&typeof build==='function'){clearTimeout(w.__mt);w.__mt=setTimeout(function(){try{(S.imgs||[]).forEach(function(I){var k=I.key||'';if(k.indexOf('a:')===0&&!IMGSRC[k]){var aa=ASSETS[k.slice(2)];if(aa)IMGSRC[k]=aa.d;}});build();}catch(_e){}},60);}};
 window.__mergeMore();
 var RCAT=['14','16','18','20','22','23'];var LIBX=['19','25'];
-var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',76,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',80,''],['20','الفواصل (للتلوين)','Séparateurs',70,''],['22','خواتم وقلوب (للتلوين)','Alliances',50,''],['23','ما لا نهاية (للتلوين)','Infini',60,''],['24','إكاليل ودوائر','Couronnes',60,''],['25','إطارات ذهبية وزوايا','Cadres dorés',70,''],['26','زوايا وظلال وأخرى','Coins et ombres',60,''],['27','باقات وزوايا أزهار','Bouquets et angles',60,''],['28','أشرطة وأغصان أزهار (فواصل)','Guirlandes de fleurs',60,''],['29','أكاليل وأقواس أزهار','Couronnes et arches',60,''],['30','حدائق وأسوار','Jardins et balustrades',60,''],['32','ثريات','Lustres',60,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','19','20','22','23','24','25','26'];
+var LIBC=[['14','خط عربي (أدعية وآيات)','Calligraphie arabe',82,''],['01','أزهار كبيرة (زوايا)','Grands bouquets',76,'c'],['02','زهور مفردة','Fleurs seules',24,''],['03','أغصان','Branches',60,''],['04','أوراق','Feuilles',22,''],['05','أغصان ذهبية','Branches dorées',18,''],['07','فواصل','Séparateurs',62,''],['09','زخارف','Ornements',70,''],['10','شخصيات (عروسان)','Couples',40,''],['11','خواتم وقلوب','Alliances',34,''],['12','زخارف','Ornements',40,''],['13','إطارات زهور (تكبير وتصغير)','Cadres fleuris',80,''],['15','حرف &','Esperluette',40,''],['16','رسومات وظلال (للتلوين)','Dessins à colorier',36,''],['17','زخارف إسلامية وهندسية','Ornements orientaux',60,''],['18','أيقونات (موقع، تاريخ، وقت)','Icônes',16,''],['19','إطارات ذهبية فاخرة','Cadres dorés',102,''],['20','الفواصل (للتلوين)','Séparateurs',70,''],['22','خواتم وقلوب (للتلوين)','Alliances',50,''],['23','ما لا نهاية (للتلوين)','Infini',60,''],['24','إكاليل ودوائر','Couronnes',60,''],['25','إطارات ذهبية وزوايا','Cadres dorés',70,''],['26','زوايا وظلال وأخرى','Coins et ombres',60,''],['27','باقات وزوايا أزهار','Bouquets et angles',60,''],['28','أشرطة وأغصان أزهار (فواصل)','Guirlandes de fleurs',60,''],['29','أكاليل وأقواس أزهار','Couronnes et arches',60,''],['30','حدائق وأسوار','Jardins et balustrades',60,''],['32','ثريات','Lustres',60,'']],LIBCAT='all',HIDC=['09','11','12','14','15','16','17','18','20','22','23','24','25','26'];
 function catOf(nm){var p=nm.slice(0,2);if(window.XFLCATS&&window.XFLCATS.indexOf(p)>-1&&nm.indexOf(p+'_new_')!==0)return 'zz';return p==='08'?'13':p;}
 
 var LBM=0;
@@ -2122,4 +2110,4 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 })();
 </script>
 <style>@media (max-width:860px){.pv-head{display:flex!important;justify-content:flex-end;min-height:0;margin-bottom:6px}.pv-head>div:first-child{display:none}#pv-toggle{display:inline-block;min-height:36px;min-width:52px;padding:0 14px;font-size:17px}}</style>
-</body></html>
+<script>document.addEventListener('error',function(e){var im=e.target;if(im&&im.tagName==='IMG'&&!im.__r&&im.src&&im.src.indexOf('data:')!==0){im.__r=1;var u=im.src;setTimeout(function(){im.src=u},900);}},true);</script></body></html>
