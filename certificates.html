@@ -46,7 +46,7 @@ html.fmopen,html.fmopen body{overscroll-behavior:none}
 .c-img:focus,.c-img *:focus{outline:none}
 input[type=range],input[type=checkbox],input[type=radio],progress{accent-color:var(--hl,#a98534)}
 .c-img .rh2::before{content:"";position:absolute;inset:-14px}
-</style>
+.c-img .ph{-webkit-backface-visibility:hidden;backface-visibility:hidden;transform:translateZ(0)}</style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
 <script>try{localStorage.setItem("kk_last","certificates.html")}catch(_){}</script><title>صمّم شهادتك</title>
@@ -575,7 +575,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="cert-library.js?v=4"></script>
+<script src="cert-library.js?v=5"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="images.js?v=1"></script>
 <script>
@@ -885,6 +885,9 @@ const THEMES={
   gst24:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"تخرج وتفوق 24",subj:'',subjFr:'',img:'cert/themes/gst24.jpg',th:'cert/themes/t/gst24.jpg',p0:[236, 230, 222],n0:[92, 52, 16],dI:'#5c3410',short:4,z:{tfs:56,title:[193,250,520,70],intro:[193,350,520,56],name:[193,440,520,60],role:[193,530,520,36],body:[173,610,560,200],'from':[253,860,400,32],date:[253,930,400,28],il:1.25}},
   gst25:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"تخرج وتفوق 25",subj:'',subjFr:'',img:'cert/themes/gst25.jpg',th:'cert/themes/t/gst25.jpg',p0:[240, 238, 234],n0:[60, 60, 60],dI:'#3c3c3c',short:4,z:{tfs:56,title:[153,240,600,70],intro:[153,350,600,56],name:[153,450,600,60],role:[153,550,600,36],body:[133,640,640,210],'from':[233,900,440,32],date:[233,970,440,28],il:1.25}},
   gst26:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"تخرج وتفوق 26",subj:'',subjFr:'',img:'cert/themes/gst26.jpg',th:'cert/themes/t/gst26.jpg',p0:[244, 236, 226],n0:[92, 52, 16],dI:'#5c3410',short:4,z:{tfs:56,title:[163,220,580,70],intro:[163,325,580,56],name:[163,420,580,60],role:[163,520,580,36],body:[143,610,620,210],'from':[233,880,440,32],date:[233,960,440,28],il:1.25}},
+  gq12:{nodiv:1,lo:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 12",subj:'',subjFr:'',img:'cert/themes/gq12.jpg',th:'cert/themes/t/gq12.jpg',p0:[253, 247, 235],n0:[28, 42, 78],dI:'#1c2a4e',short:4,z:{tfs:56,title:[370,215,720,64],intro:[370,288,720,50],name:[370,350,720,56],role:[370,412,720,34],body:[470,455,640,120],'from':[530,585,400,30],date:[530,625,400,26],il:1.25}},
+  gq13:{nodiv:1,o:'p',po:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 13",subj:'',subjFr:'',img:'cert/themes/gq13.jpg',th:'cert/themes/t/gq13.jpg',p0:[255, 255, 255],n0:[92, 58, 16],dI:'#5c3a10',short:4,z:{tfs:56,title:[153,430,600,70],intro:[153,525,600,56],name:[153,610,600,60],role:[153,700,600,36],body:[133,790,640,210],'from':[233,1060,440,32],date:[233,1140,440,28],il:1.25}},
+  gq14:{nodiv:1,o:'p',po:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 14",subj:'',subjFr:'',img:'cert/themes/gq14.jpg',th:'cert/themes/t/gq14.jpg',p0:[255, 255, 255],n0:[23, 86, 106],dI:'#17566a',short:4,z:{tfs:56,title:[320,200,560,70],intro:[320,300,560,56],name:[320,390,560,60],role:[320,480,560,36],body:[310,570,580,210],'from':[380,860,440,32],date:[380,940,440,28],il:1.25}},
   gst1:{nodiv:1,occ:['student','thanks'],name:"تخرج وتفوق 1",subj:'',subjFr:'',get img(){return IMGS.gst1},p0:[254, 250, 244],n0:[10, 30, 64],short:4,z:{tfs:70,title:[284,172,680,70],intro:[284,258,680,56],name:[284,328,680,60],role:[284,404,680,36],body:[284,458,680,150],'from':[324,726,600,32],date:[324,762,600,28],il:1.3}},
   gk3:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"ذهبي — إطار مزخرف",subj:'',subjFr:'',get img(){return IMGS.gk3},p0:[249,246,237],n0:[60,45,20],short:4,nd:1,z:{tfs:76,title:[150,225,606,80],intro:[170,325,566,60],name:[170,405,566,76],role:[170,495,566,38],body:[130,555,646,300],'from':[150,905,606,36],date:[250,955,406,30],il:1.35}},
   gk4:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"ذهبي — إطار مزدوج",subj:'',subjFr:'',get img(){return IMGS.gk4},p0:[250,246,236],n0:[60,45,20],short:4,nd:1,z:{tfs:76,title:[150,225,606,80],intro:[170,325,566,60],name:[170,405,566,76],role:[170,495,566,38],body:[130,555,646,300],'from':[150,905,606,36],date:[250,955,406,30],il:1.35}},
@@ -1729,7 +1732,7 @@ const grpOf=k=>/^gx\d/.test(k)?'thx':/^gk\d/.test(k)?'lux':k==='pv8'?'tech':/^pv
 const RCK=["gx1", "gx3", "gx4", "gx5", "gx6", "gb1", "gb1p", "gb2", "gb2p", "gb4", "gb4p", "gb9", "pv8", "gd2", "gd4", "gd5", "gd6", "gd7", "gk2", "gk2p", "pv6", "pv7", "pv9", "gst3", "gg8", "gg8p", "gg10", "gg10p", "gg11", "gg11p", "gg12", "gg12p", "gg15", "gg15p", "gg17", "gg17p", "gg18", "gg18p", "gg19", "gg19p", "gg20", "gg20p", "gg21", "gg21p", "gg22", "gg22p", "gg23", "gg23p"],RCF=["gb1", "gb1p", "gb2", "gb2p"];for(const k of RCK)if(THEMES[k])THEMES[k].rc=1;for(const k of RCF)if(THEMES[k])THEMES[k].rc=2;
 const inG=(k,g)=>g==='clr'?!!(THEMES[k]&&THEMES[k].rc):grpOf(k)===g;
 const RCDEEPS=[['#c0272d','أحمر'],['#7d1230','بوردو'],['#17803f','أخضر'],['#118b88','تركوازي'],['#7a3fb5','بنفسجي'],['#d9407f','وردي'],['#e8741a','برتقالي'],['#1f5fd1','أزرق'],['#17171c','أسود']];
-const PSUB=['thx','med','arabic','fr','eng','math','phys','hist','stu'],PGRP=['clr','thx','tech','gen','lux','med','stu','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
+const PSUB=['quran','thx','med','arabic','fr','eng','math','phys','hist','stu'],PGRP=['quran','clr','thx','tech','gen','lux','med','stu','arabic','fr','eng','math','phys','hist'];let AV_OK=true;try{const _a=new Image();_a.onerror=()=>{AV_OK=false;try{syncTheme()}catch(_){}};_a.src='data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAKQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAEAAAABAAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAMW1kYXQSAAoJGAz/2iAhoNCAMhoUx4eGZQIIIJ5QAAAAOtxBfmCk2q99eeub0g==';}catch(_){}
 
 /* ---- published designs (Firestore) + folder covers ---- */
 let PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0;
