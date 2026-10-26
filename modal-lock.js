@@ -22,7 +22,7 @@ function overlayOf(el){
     var s=cs(n);
     if(s.position==='fixed'){
       var r=n.getBoundingClientRect();
-      if(r.width>=innerWidth*.9&&r.height>=innerHeight*.9)return n;
+      if(r.width>=innerWidth*.9&&(r.height>=innerHeight*.9||r.bottom>=innerHeight-2||r.top<=2))return n;
     }
   }
   return null;

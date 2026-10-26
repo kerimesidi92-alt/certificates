@@ -6,7 +6,7 @@ def walk(d):
             if f.startswith('.'):continue
             out.append(os.path.join(r,f).replace(os.sep,'/'))
     return sorted(out)
-core=['./','index.html','certificates.html','invitations.html','photos.html','calendar.html','monogram.html','manifest.webmanifest','icon.svg','bgui.js','kpick.js','modal-lock.js?v=1','cert-library.js?v=5','invitations-folders.js?v=11','landing-index.js?v=3','images.js?v=1']
+core=['./','index.html','certificates.html','invitations.html','photos.html','calendar.html','monogram.html','manifest.webmanifest','icon.svg','bgui.js','kpick.js','modal-lock.js?v=2','cert-library.js?v=6','invitations-folders.js?v=12','landing-index.js?v=3','images.js?v=1']
 thumbs=[p for p in walk('cert/lib') if '/t/' in p]+walk('cert/themes/t')+walk('cert/th')+[p for p in walk('themes') if '/t/' in p]+[p for p in walk('lib') if '/t/' in p]+walk('landing')
 full=[p for p in walk('cert/lib') if '/t/' not in p]+[p for p in walk('cert/themes') if '/t/' not in p]+[p for p in walk('themes') if '/t/' not in p]
 q=lambda l:[urllib.parse.quote(x,safe="/?=.:") for x in l]
