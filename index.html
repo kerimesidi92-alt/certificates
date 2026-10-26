@@ -223,6 +223,14 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 .cont{display:flex;align-items:center;justify-content:center;gap:10px;max-width:700px;margin:22px auto 0;padding:11px 16px;border-radius:14px;background:rgba(214,180,108,.16);border:1px solid rgba(214,180,108,.6);color:var(--gold3);font-weight:800;font-size:16px}
 .cont[hidden]{display:none}
 .cont b{color:#fff}
+/* perf: keep only cheap transform animations; stop everything on tap */
+.hero{animation:none!important}
+.blob{animation:none!important;filter:blur(40px)}
+.brand,.hero h1 em{animation:none!important}
+.card:before,.card .go,.wa,.shine:after{animation:none!important}
+.spark{animation-duration:6s}
+body.nav *{animation:none!important;transition:none!important}
+.card,.chips,.dstrip{touch-action:manipulation}
 </style></head>
 <body>
 <header class="top"><div class="wrap"><div class="brand" data-i="brand">صمّم كرتك</div>
@@ -356,8 +364,8 @@ if(last=="certificates.html"||last=="invitations.html"){cont.hidden=false;cont.h
 bAr.className=lang=="ar"?"on":"";bFr.className=lang=="fr"?"on":"";tCert.className=tab=="cert"?"on":"";tInv.className=tab=="inv"?"on":"";tFrm.className=tab=="frm"?"on":"";drawMocks()}
 bAr.onclick=function(){lang="ar";render()};bFr.onclick=function(){lang="fr";render()};
 tCert.onclick=function(){tab="cert";render()};tInv.onclick=function(){tab="inv";render()};tFrm.onclick=function(){tab="frm";render()};
-var sp="";for(var i=0;i<22;i++){var s=2+Math.random()*4;sp+='<i class="spark" style="width:'+s+'px;height:'+s+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*4+'s;animation-duration:'+(3+Math.random()*3)+'s"></i>'}
-for(var j=0;j<18;j++){var z=3+Math.random()*5;sp+='<i class="rise" style="width:'+z+'px;height:'+z+'px;left:'+Math.random()*100+'%;animation-duration:'+(6+Math.random()*8)+'s;animation-delay:'+Math.random()*8+'s"></i>'}
+var sp="";for(var i=0;i<8;i++){var s=2+Math.random()*4;sp+='<i class="spark" style="width:'+s+'px;height:'+s+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*4+'s;animation-duration:'+(3+Math.random()*3)+'s"></i>'}
+for(var j=0;j<6;j++){var z=3+Math.random()*5;sp+='<i class="rise" style="width:'+z+'px;height:'+z+'px;left:'+Math.random()*100+'%;animation-duration:'+(6+Math.random()*8)+'s;animation-delay:'+Math.random()*8+'s"></i>'}
 sparks.innerHTML=sp;
 hero.addEventListener("pointermove",function(e){var r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;stage.style.transform="rotateY("+(x*14)+"deg) rotateX("+(-y*10)+"deg)"});
 hero.addEventListener("pointerleave",function(){stage.style.transform=""});
@@ -367,4 +375,4 @@ render();
 fetch("https://firestore.googleapis.com/v1/projects/"+FB.p+"/databases/(default)/documents/config/landing?key="+FB.k).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.fields||!j.fields.json)return;var c=JSON.parse(j.fields.json.stringValue);CFG=c;try{localStorage.setItem("kk_lcfg",JSON.stringify(c))}catch(e){}render()}).catch(function(){});
 if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)navigator.serviceWorker.register("sw.js").catch(function(){});
 </script>
-</body></html>
+<script>(function(){function stop(){document.body.classList.add('nav')}document.addEventListener('click',function(e){var a=e.target.closest('a.card,#cont');if(!a)return;var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(11,22,48,.78);display:grid;place-items:center;color:#f3dfa6;font:700 20px Cairo,sans-serif';o.textContent='…';document.body.appendChild(o);setTimeout(function(){o.remove()},8000)},true);document.addEventListener('pointerdown',function(e){if(e.target.closest('a,.card,button'))stop()},{passive:true});window.addEventListener('pageshow',function(){document.body.classList.remove('nav')})})();</script></body></html>
