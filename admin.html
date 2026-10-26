@@ -104,6 +104,8 @@ html.fmopen,html.fmopen body{overscroll-behavior:none}
 .c-img.sel{outline:2px dashed var(--hl,#16264a)!important;outline-offset:2px!important;box-shadow:none!important}
 .c-img,.c-img *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .c-img:focus,.c-img *:focus{outline:none}
+input[type=range],input[type=checkbox],input[type=radio],progress{accent-color:var(--hl,#a98534)}
+.c-img .rh2::before{content:"";position:absolute;inset:-14px}
 </style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
@@ -1613,7 +1615,10 @@ stage.addEventListener('pointerdown',e=>{
     pick('txt',st);const nn=selEl()||node;
     ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});try{stage.setPointerCapture(e.pointerId);}catch(_){}
     gst={mode:'txt',st,el:nn,sx:e.clientX,sy:e.clientY,p0:posOf(st).slice(),b0:elRect(nn)};nn.classList.add('drag');e.preventDefault();return;}
-  const el=t.closest('.c-img');
+  let el=t.closest('.c-img');
+  if(!el){const cur=S.sel>=0?layer.querySelector('.c-img.sel'):null,SL=26;let best=null,bd=1e9;
+    [cur,...layer.querySelectorAll('.c-img:not(.fxd)')].forEach(c=>{if(!c)return;const r=c.getBoundingClientRect(),dx=Math.max(r.left-e.clientX,0,e.clientX-r.right),dy=Math.max(r.top-e.clientY,0,e.clientY-r.bottom),d=Math.hypot(dx,dy);if(d<=SL&&d<bd-.5){bd=d;best=c;}});
+    el=best;}
   if(!el){pick('none');return;}
   const i=+el.dataset.i,im=S.images[i];if(!im)return;
   pick('img',i);
