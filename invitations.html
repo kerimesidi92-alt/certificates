@@ -347,7 +347,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
-<script src="invitations-folders.js?v=13"></script>
+<script src="invitations-folders.js?v=14"></script>
 <script>(function(){var sx=0,sy=0,mv=0,tm=0;var d=document;
 d.addEventListener('touchstart',function(e){var t=e.touches[0];if(!t)return;sx=t.clientX;sy=t.clientY;mv=0;clearTimeout(tm);},{capture:true,passive:true});
 d.addEventListener('touchmove',function(e){var t=e.touches[0];if(t&&(Math.abs(t.clientX-sx)>8||Math.abs(t.clientY-sy)>8))mv=1;},{capture:true,passive:true});
@@ -877,7 +877,7 @@ function addAsset(nm){
   var z=dimsOf(S),H0=100*z[1]/z[0],w0=(/^2[0-6]/.test(nm)&&a.h>a.w?Math.max(8,Math.min(c[3],60*a.w/a.h)):c[3]),ar=+(a.h/a.w).toFixed(4),h0=Math.round(w0*ar*10)/10,x=50,y=50;
   if(c[4]==='c'){x=w0*.5-2;y=(h0/2-2)/H0*100;}
   var id=uid++,o={id:id,orc:HIDC.indexOf(catOf(nm))>=0?1:0,key:key,ar:ar,x:x,y:y,w:w0,h:h0,fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0};
-  if(a.yr)o.yr={t:'2027',cx:a.yr.cx,cy:a.yr.cy,fs:a.yr.fs,lh:a.yr.lh||1.3,v:a.yr.v?1:undefined,c:'#a9852f'};
+  if(a.yr)o.yr={t:String((function(d){return d.getMonth()>=6?d.getFullYear()+1:d.getFullYear()})(new Date())),cx:a.yr.cx,cy:a.yr.cy,fs:a.yr.fs,lh:a.yr.lh||1.3,v:a.yr.v?1:undefined,c:'#a9852f'};
   if(nm.slice(0,2)==='09'){var kk9=nm.slice(0,8)==='09_kcor_';o.vf=kk9?'kc'+nm.slice(8):nm.slice(10);o.key='v:'+o.vf;if(!kk9)o.auto='fill';IMGSRC[o.key]='';}else if(RCAT.indexOf(nm.slice(0,2))>=0){o.vf='cal:'+nm;o.vc='#a9852f';o.key='v:'+nm;IMGSRC[o.key]='';}else if(nm.slice(0,2)==='08'){o.auto='fit';}
   if(o.auto)applyAuto(o,S);S.imgs.push(o);
   S.sel='i:'+id;commit();build();
@@ -885,7 +885,7 @@ function addAsset(nm){
 var IMGSRC={},uid=1,S,hist=[],hpos=-1;
 function newE(){var e={};['ev','n1','or','n2','dt','ln'].forEach(function(k){e[k]={f:{},sz:1,col:null,dx:0,dy:0}});return e;}
 function fresh(lang){return {lang:lang||'ar',mode:'tpl',tpl:'blank',shape:'rect',size:2,custom:null,bg:'#fbf8f1',ac:'#b8923f',ink:null,arts:[],frame:'thin',event:'wedding',evText:UI[lang||'ar'].events.wedding,
- time:'20:00',n1:DEF[lang||'ar'].n1,n2:DEF[lang||'ar'].n2,line:DEF[lang||'ar'].line,date:'2026-12-26',orn:'amp',dst:'big',qty:100,zoom:(window.innerWidth<=860?'big':'real'),E:newE(),txts:[],imgs:[],frm:null,fin:0,fcol:null,sel:null,ed:{},tab:'theme',mv:'lock',noText:false,bgKey:null,fl:'',bh:'0',dgt:'w'};}
+ time:'20:00',n1:DEF[lang||'ar'].n1,n2:DEF[lang||'ar'].n2,line:DEF[lang||'ar'].line,date:(function(d){d.setDate(d.getDate()+30);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})(new Date()),orn:'amp',dst:'big',qty:100,zoom:(window.innerWidth<=860?'big':'real'),E:newE(),txts:[],imgs:[],frm:null,fin:0,fcol:null,sel:null,ed:{},tab:'theme',mv:'lock',noText:false,bgKey:null,fl:'',bh:'0',dgt:'w'};}
 S=fresh('ar');
 var $=function(q){return document.querySelector(q)};
 var UL=(function(){try{var v=localStorage.getItem('kerima_ul');return v==='fr'?'fr':'ar';}catch(e){return 'ar';}})();

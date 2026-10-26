@@ -2088,7 +2088,7 @@ async function add(f,it){
   const src='cert/lib/'+f.id+'/'+it.f;try{const pi=new Image();pi.src=src;await pi.decode();}catch(_){}
   const n=S.images.filter(i=>i.lib).length,ar=it.h/it.w,w=Math.round((it.dw||f.dw)?Math.max(40,W*(it.dw||f.dw)):Math.max(110,Math.min(W*.5,ar>1.4?W*.26:ar<.5?W*.5:W*.32))),h=Math.round(w*ar),o=(n%6)*22;
   S.images.push({src:src,lib:1,ar:ar,x:Math.max(0,Math.min(W-w,Math.round((W-w)/2)+o)),y:Math.max(0,Math.min(H-h,Math.round((H-h)/2)+o)),w:w,h:h,shape:'free',fit:'fill',layer:'front',op:100,z:nextZ()});
-  if(it.yr){const y=it.yr,im=S.images[S.images.length-1];im.yr={t:'2027',cx:y.cx,cy:y.cy,fs:y.fs,lh:y.lh||1.3,c:'#000000',v:y.t==='{V}'?1:undefined};try{LFN('Abril Fatface');}catch(_){}}
+  if(it.yr){const y=it.yr,im=S.images[S.images.length-1];im.yr={t:String((function(d){return d.getMonth()>=6?d.getFullYear()+1:d.getFullYear()})(new Date())),cx:y.cx,cy:y.cy,fs:y.fs,lh:y.lh||1.3,c:'#000000',v:y.t==='{V}'?1:undefined};try{LFN('Abril Fatface');}catch(_){}}
   S.sel=S.images.length-1;S.st=null;renderImgs();render();setMv('img');S.sel=S.images.length-1;markSel();
 }
 box.addEventListener('click',e=>{
