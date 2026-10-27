@@ -1892,7 +1892,7 @@ async function applyPub(id){
 }
 const G_GEN=['mine','stu','clr','thx','tech','gen','lux','med','flo','rib'],G_SUBJ=['fr','eng','math','phys','nat','hist','quran','civic','arabic'];
 const orderG=a=>{const r=g=>{if(g.slice(0,2)==='u_')return .5;let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
-function syncTheme(){const __y=window.scrollY;try{__syncTheme();}finally{if(Math.abs(window.scrollY-__y)>2)window.scrollTo(0,__y);}}
+function syncTheme(){const __y=window.scrollY;try{const __tb=document.getElementById('themes');if(__tb&&__tb.dataset.fk!==String(S.folder)+'|'+S.orient){__tb.textContent='';__tb.dataset.fk=String(S.folder)+'|'+S.orient;}__syncTheme();}finally{if(Math.abs(window.scrollY-__y)>2)window.scrollTo(0,__y);}}
 function __syncTheme(){
   $('#themes').classList.toggle('port',S.orient==='p');
   const ks=Object.keys(THEMES).filter(k=>HID.items.indexOf(k)<0&&(S.orient==='l'||!THEMES[k].svg)&&!(THEMES[k].lo&&S.orient==='p')&&!(THEMES[k].po&&S.orient==='l')&&!(S.orient==='p'&&(!PGRP.includes(grpOf(k))||(PSUB.includes(grpOf(k))&&THEMES[k].o!=='p')))&&!(THEMES[k].av&&!AV_OK)).sort((a,b)=>((THEMES[a].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(a)?0:1)-(((THEMES[b].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(b)?0:1)));
@@ -2080,6 +2080,7 @@ const box=document.getElementById('lib-box');if(!box||!window.CERT_LIB)return;
 const L=window.CERT_LIB;let cur=null;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function paint(){
+  if(box.dataset.v!==String(cur)){box.textContent='';box.dataset.v=String(cur);}
   if(!cur){box.innerHTML=L.map(f=>'<button type="button" class="theme folder" data-f="'+f.id+'"><img class="th-img" loading="lazy" decoding="async" src="cert/lib/'+f.id+'/t/'+f.items[0].f+'" alt=""><span class="fn">'+esc(f.n)+'</span><span class="fc">'+f.items.length+'</span></button>').join('');return;}
   const f=L.find(x=>x.id===cur);if(!f){cur=null;paint();return;}
   box.innerHTML='<button type="button" class="theme back" data-back="1">→ رجوع إلى المجلدات</button><span class="libpath">'+esc(f.n)+'</span>'+f.items.map((it,i)=>'<button type="button" class="theme libi" data-i="'+i+'" aria-label="'+esc(f.n)+' '+(i+1)+'"><img class="th-img" loading="lazy" decoding="async" src="cert/lib/'+f.id+'/t/'+it.f+'" alt=""></button>').join('');

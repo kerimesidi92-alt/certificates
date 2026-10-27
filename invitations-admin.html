@@ -1800,7 +1800,7 @@ function __buildCtl(){
       h+=panel(c2?c2[ar2?1:2]:'',back+cw+'<div class="msg">'+t.libHint+'</div>'+oa+'</div>');}
   }
   if(k==='send')h+=panel(t.sOrder,'<div class="order"><label class="f" style="max-width:130px">'+t.qty+'<input id="qty" type="number" min="1" value="'+S.qty+'"></label><button class="go">'+t.go+'</button></div><div class="msg">'+t.gonote+'</div>');
-  kSet($('#ctl'),h,(S.tab==='theme'||S.tab==='lib')&&window.__lastCtlTab===S.tab);window.__lastCtlTab=S.tab;
+  var __fk=(typeof TGRP!=='undefined'?TGRP:'')+'|'+(typeof OGRP!=='undefined'?OGRP:'');kSet($('#ctl'),h,(S.tab==='theme'||S.tab==='lib')&&window.__lastCtlTab===S.tab&&window.__lastFk===__fk);window.__lastCtlTab=S.tab;window.__lastFk=__fk;
   if(document.querySelector('.mth'))mpDraw();
   thDraw();
 }
