@@ -695,7 +695,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="cert-library.js?v=6"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="landing-index.js?v=3"></script>
+<script src="landing-index.js?v=4"></script>
 <script src="images.js?v=1"></script>
 <script>
 (function(){
@@ -1007,6 +1007,9 @@ const THEMES={
   gq12:{nodiv:1,lo:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 12",subj:'',subjFr:'',img:'cert/themes/gq12.jpg',th:'cert/themes/t/gq12.jpg',p0:[253, 247, 235],n0:[28, 42, 78],dI:'#1c2a4e',short:4,z:{tfs:56,title:[370,215,720,64],intro:[370,288,720,50],name:[370,350,720,56],role:[370,412,720,34],body:[470,455,640,120],'from':[530,585,400,30],date:[530,625,400,26],il:1.25}},
   gq13:{nodiv:1,o:'p',po:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 13",subj:'',subjFr:'',img:'cert/themes/gq13.jpg',th:'cert/themes/t/gq13.jpg',p0:[255, 255, 255],n0:[92, 58, 16],dI:'#5c3a10',short:4,z:{tfs:56,title:[153,430,600,70],intro:[153,525,600,56],name:[153,610,600,60],role:[153,700,600,36],body:[133,790,640,210],'from':[233,1060,440,32],date:[233,1140,440,28],il:1.25}},
   gq14:{nodiv:1,o:'p',po:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 14",subj:'',subjFr:'',img:'cert/themes/gq14.jpg',th:'cert/themes/t/gq14.jpg',p0:[255, 255, 255],n0:[23, 86, 106],dI:'#17566a',short:4,z:{tfs:56,title:[320,200,560,70],intro:[320,300,560,56],name:[320,390,560,60],role:[320,480,560,36],body:[310,570,580,210],'from':[380,860,440,32],date:[380,940,440,28],il:1.25}},
+  gq15:{nodiv:1,lo:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 15 (وردي)",subj:'',subjFr:'',img:'cert/themes/gq15.jpg',th:'cert/themes/t/gq15.jpg',p0:[253,248,247],n0:[150,70,85],dI:'#7a3a48',short:4,z:{tfs:60,title:[300,170,860,70],intro:[300,260,860,52],name:[300,335,860,60],role:[300,410,860,36],body:[330,470,800,170],'from':[400,680,660,32],date:[400,724,660,28],il:1.25}},
+  gq16:{nodiv:1,lo:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 16 (رمادي)",subj:'',subjFr:'',img:'cert/themes/gq16.jpg',th:'cert/themes/t/gq16.jpg',p0:[226,226,226],n0:[30,30,30],dI:'#1f1f1f',short:4,z:{tfs:60,title:[300,170,860,70],intro:[300,260,860,52],name:[300,335,860,60],role:[300,410,860,36],body:[330,470,800,170],'from':[400,680,660,32],date:[400,724,660,28],il:1.25}},
+  gq17:{nodiv:1,lo:1, occ:['teacher','student','thanks'],name:"القرآن الكريم 17 (أبيض)",subj:'',subjFr:'',img:'cert/themes/gq17.jpg',th:'cert/themes/t/gq17.jpg',p0:[255,255,255],n0:[70,70,70],dI:'#3a3a3a',short:4,z:{tfs:60,title:[300,170,860,70],intro:[300,260,860,52],name:[300,335,860,60],role:[300,410,860,36],body:[330,470,800,170],'from':[400,680,660,32],date:[400,724,660,28],il:1.25}},
   gst1:{nodiv:1,occ:['student','thanks'],name:"تخرج وتفوق 1",subj:'',subjFr:'',img:IMGS.gst1,p0:[254, 250, 244],n0:[10, 30, 64],short:4,z:{tfs:70,title:[284,172,680,70],intro:[284,258,680,56],name:[284,328,680,60],role:[284,404,680,36],body:[284,458,680,150],'from':[324,726,600,32],date:[324,762,600,28],il:1.3}},
   gk3:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"ذهبي — إطار مزخرف",subj:'',subjFr:'',get img(){return IMGS.gk3},p0:[249,246,237],n0:[60,45,20],short:4,nd:1,z:{tfs:76,title:[150,225,606,80],intro:[170,325,566,60],name:[170,405,566,76],role:[170,495,566,38],body:[130,555,646,300],'from':[150,905,606,36],date:[250,955,406,30],il:1.35}},
   gk4:{nodiv:1,o:'p',po:1,occ:['teacher','student','thanks'],name:"ذهبي — إطار مزدوج",subj:'',subjFr:'',get img(){return IMGS.gk4},p0:[250,246,236],n0:[60,45,20],short:4,nd:1,z:{tfs:76,title:[150,225,606,80],intro:[170,325,566,60],name:[170,405,566,76],role:[170,495,566,38],body:[130,555,646,300],'from':[150,905,606,36],date:[250,955,406,30],il:1.35}},
@@ -1890,13 +1893,13 @@ async function applyPub(id){
   const p=PUB.find(x=>x.id===id);if(!p)return;let raw;try{raw=await fetchCfg(id);}catch(_){return;}
   const f=S.folder;resetOrn();if(!loadDesign(raw))return;S._fromPub=1;S._pubTxt={};['title','intro','name','subj','role','body','from','date'].forEach(k=>{S._pubTxt[k]=S[k];});S.images.forEach(i=>{i.fx=1;});try{renderImgs();}catch(_){}S.folder=f;$('#gender-box').hidden=S.occ==='thanks';try{syncTheme();paintColors();}catch(_){}render();
 }
-const G_GEN=['mine','stu','clr','thx','tech','gen','lux','med','flo','rib'],G_SUBJ=['fr','eng','math','phys','nat','hist','quran','civic','arabic'];
+const G_GEN=['mine','stu','clr','thx','tech','quran','gen','lux','med','flo','rib'],G_SUBJ=['fr','eng','math','phys','nat','hist','civic','arabic'];
 const orderG=a=>{const r=g=>{if(g.slice(0,2)==='u_')return .5;let i=G_GEN.indexOf(g);if(i>=0)return i;i=G_SUBJ.indexOf(g);return i>=0?100+i:50;};return a.slice().sort((x,y)=>r(x)-r(y));};
 function syncTheme(){const __y=window.scrollY;try{const __tb=document.getElementById('themes');if(__tb&&__tb.dataset.fk!==String(S.folder)+'|'+S.orient){__tb.textContent='';__tb.dataset.fk=String(S.folder)+'|'+S.orient;}__syncTheme();}finally{if(Math.abs(window.scrollY-__y)>2)window.scrollTo(0,__y);}}
 function __syncTheme(){
   $('#themes').classList.toggle('port',S.orient==='p');
   const ks=Object.keys(THEMES).filter(k=>HID.items.indexOf(k)<0&&(S.orient==='l'||!THEMES[k].svg)&&!(THEMES[k].lo&&S.orient==='p')&&!(THEMES[k].po&&S.orient==='l')&&!(S.orient==='p'&&(!PGRP.includes(grpOf(k))||(PSUB.includes(grpOf(k))&&THEMES[k].o!=='p')))&&!(THEMES[k].av&&!AV_OK)).sort((a,b)=>((THEMES[a].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(a)?0:1)-(((THEMES[b].o==='p')===(S.orient==='p')?0:2)+(/^g/.test(b)?0:1)));
-  ks.sort((a,b)=>{const P=['gst18','gst19','gst21','gst2'],i=P.indexOf(a),j=P.indexOf(b);return (i<0?99:i)-(j<0?99:j);});
+  ks.sort((a,b)=>{const P=['gst18','gst19','gst21','gst2','gq15','gq16','gq17'],i=P.indexOf(a),j=P.indexOf(b);return (i<0?99:i)-(j<0?99:j);});
   const pubs=PUB.filter(p=>(p.or||'l')===S.orient);const gs0=[...new Set(ks.map(grpOf).concat(pubs.map(pgOf)))].sort((x,y)=>S.orient==='p'?PGRP.indexOf(x)-PGRP.indexOf(y):0),gs=orderG(ks.some(k=>THEMES[k].rc)?['clr',...gs0]:gs0).filter(g=>HID.folders.indexOf(g)<0),none=`<button type="button" class="theme" data-k="none" aria-pressed="${S.theme==='none'}"><div class="th-img th-none">✦︎</div>بدون ثيم</button><button type="button" class="theme" data-k="custom" aria-pressed="${S.theme==='custom'}"><div class="th-img th-up">${S.bg?`<img src="${S.bg.src}" alt="">`:'＋'}</div>خلفيتك الخاصة</button>`;
   const card=k=>`<button type="button" class="theme" data-k="${k}" aria-pressed="${S.theme===k}"><img class="th-img" data-th="${k}" src="${themeThumb(k)}" alt="">${THEMES[k].name}</button>`;
   let f=S.folder;if(f===null)f='';
