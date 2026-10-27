@@ -180,7 +180,8 @@ LAT.lob="'Lobster Two',cursive";LAT.abr="'Abril Fatface',serif";LAT.bsk="'Libre 
 function rep(num,fn){for(var i=0;i<D.length;i++){if(D[i].n.indexOf(num+' ')===0){D[i].f=fn;return}}}
 function nmT(t,x,y,sz,f,c,ls,fw){return T(t,x,y,sz*NM(),f,c,{nm:1,ls:ls,fw:fw})}
 function hrt(x,y,s,c){return '<path d="M'+x+' '+(y+s*.42)+' C'+(x-s*.62)+' '+(y-s*.05)+' '+(x-s*.55)+' '+(y-s*.5)+' '+(x-s*.25)+' '+(y-s*.5)+' C'+(x-s*.1)+' '+(y-s*.5)+' '+x+' '+(y-s*.38)+' '+x+' '+(y-s*.26)+' C'+x+' '+(y-s*.38)+' '+(x+s*.1)+' '+(y-s*.5)+' '+(x+s*.25)+' '+(y-s*.5)+' C'+(x+s*.55)+' '+(y-s*.5)+' '+(x+s*.62)+' '+(y-s*.05)+' '+x+' '+(y+s*.42)+'Z" fill="'+c+'"/>'}
-function dd(){return (S.dt||'').replace(/\./g,' • ')}
+function ltr(t){return '\u202A'+t+'\u202C'}
+function dd(){return ltr((S.dt||'').replace(/\./g,' • '))}
 // leaf along direction th (deg), base at x,y
 function lf(x,y,th,l,c){var r=th*Math.PI/180,cx=x+Math.cos(r)*l,cy=y+Math.sin(r)*l;return '<ellipse cx="'+cx.toFixed(2)+'" cy="'+cy.toFixed(2)+'" rx="'+(l*.34).toFixed(2)+'" ry="'+l.toFixed(2)+'" fill="'+c+'" transform="rotate('+(th-90)+' '+cx.toFixed(2)+' '+cy.toFixed(2)+')"/>'}
 function sprig(x,y,ang,len,c,n){var r=ang*Math.PI/180,ex=x+Math.cos(r)*len,ey=y+Math.sin(r)*len,h='<path d="M'+x+' '+y+' L'+ex.toFixed(2)+' '+ey.toFixed(2)+'" fill="none" stroke="'+c+'" stroke-width=".6"/>';
@@ -210,8 +211,8 @@ rep(56,function(){var k=K(),g=G(),ix=50,iy=70,i=fi('corner'),f=FR2[i],sc=48/f.w,
  nmT(UP(S.n1),ix+3,iy-27,3.6,LAT.sans,S.cx,2.4).replace('text-anchor="middle"','text-anchor="start"')+nmT(UP(S.n2),ix-3,iy+27,3.6,LAT.sans,S.cx,2.4).replace('text-anchor="middle"','text-anchor="end"')});
 // ---- 58 (ref 6): big heart, big bold letters + & + names + date
 rep(58,function(){var k=K(),g=G(),ix=50,iy=70,i=fi('goldheart');
- return frm2(i,ix,iy,98)+T(S.a,ix-14-g,iy-13,25*k,F('cin'),S.ca,{fw:900})+T(S.cn||'&',ix,iy-11,9*k,F('scr'),S.cc)+T(S.b,ix+14+g,iy-13,25*k,F('cin'),S.cb,{fw:900})+
- nmT(UP(S.n1)+'  &  '+UP(S.n2),ix,iy+2,3.2,LAT.cin,S.cx,.8)+(S.dt?nmT(S.dt,ix,iy+8,3.2,LAT.cin,S.cx,.8):'')});
+ return frm2(i,ix,iy,98)+T(S.a,ix-13-g,iy-8,21*k,F('cin'),S.ca,{fw:900})+(S.cn?T(S.cn,ix,iy-6,10*k,F('scr'),S.cc):'')+T(S.b,ix+13+g,iy-8,21*k,F('cin'),S.cb,{fw:900})+
+ nmT(UP(S.n1)+'  &  '+UP(S.n2),ix,iy+5,2.9,LAT.cin,S.cx,.8)+(S.dt?nmT(ltr(S.dt),ix,iy+10,2.9,LAT.cin,S.cx,.8):'')});
 // ---- 30 (ref 7)
 rep(30,function(){var k=K(),g=G(),ix=50,iy=62,c=S.cf,r=30;
  return '<circle cx="'+ix+'" cy="'+iy+'" r="'+r+'" fill="none" stroke="'+c+'" stroke-width="1.2"/>'+
@@ -232,7 +233,7 @@ rep(54,function(){var k=K(),g=G(),ix=50,iy=70,i=fi('split'),f=FR2[i],sc=90/f.w,t
  L(ix-w*.46,iy-hg,ix+w*.46,iy-hg,c,.5)+L(ix-w*.46,iy+hg,ix+w*.46,iy+hg,c,.5);
  var n1=UP(S.n1),n2=UP(S.n2),s=5.6*NM(),u=s*.66+.6,wa=n1.length*u,wb=n2.length*u,gap=s*2.6,tot=wa+wb+gap,x0=ix-tot/2;
  h+=T(n1,x0+wa/2,iy+.3,s,LAT.mar,S.cx,{ls:.6,nm:1})+'<circle cx="'+(x0+wa+gap/2)+'" cy="'+iy+'" r="'+(s*.72)+'" fill="'+c+'"/>'+T(S.cn||'&',x0+wa+gap/2,iy+.3,s*.95,LAT.mar,S.bg,{nm:1})+T(n2,x0+wa+gap+wb/2,iy+.3,s,LAT.mar,S.cx,{ls:.6,nm:1});
- h+=T('SAVE THE DATE',ix,iy-hg-4.8,3.3,LAT.mar,S.cx,{ls:1,nm:1})+(S.dt?T(S.dt,ix,iy+hg+5.2,3.6,LAT.mar,S.cx,{ls:1.2,nm:1}):'');
+ h+=T('SAVE THE DATE',ix,iy-hg-4.8,3.3,LAT.mar,S.cx,{ls:1,nm:1})+(S.dt?T(ltr(S.dt),ix,iy+hg+5.2,3.6,LAT.mar,S.cx,{ls:1.2,nm:1}):'');
  return h});
 // ---- 57 (ref 9)
 rep(57,function(){var k=K(),g=G(),ix=50,iy=60,i=fi('goldc'),c=S.cf;
@@ -243,20 +244,18 @@ rep(52,function(){var k=K(),g=G(),ix=50,iy=70,i=fi('laurel');
  return frm2(i,ix,iy-4,80)+T(S.a,ix-10-g,iy-8,34*k,F('pin'),S.ca)+T(S.cn||'&',ix-1,iy-2,12*k,F('pin'),S.cc)+T(S.b,ix+10+g,iy-4,34*k,F('pin'),S.cb)+names(iy+38,3.6)});
 // ---- 53 (ref 10): stacked M & A + names
 rep(53,function(){var k=K(),g=G(),ix=50,iy=70,i=fi('dotc');
- return frm2(i,ix,iy,84)+nmT(UP(S.n1)+' · '+UP(S.n2),ix,iy-22,2.8,LAT.sans,S.cx,1)+T(S.a,ix,iy-10-g,24*k,F('cor'),S.ca,{fw:600})+T(S.cn||'&',ix,iy+2,10*k,F('scr'),S.cc)+T(S.b,ix,iy+14+g,24*k,F('cor'),S.cb,{fw:600})+(S.dt?nmT(S.dt,ix,iy+26,2.8,LAT.sans,S.cx,1):'')});
-// ---- 59 NEW (ref 16): curved names/date, A | S, two olive branches
+ return frm2(i,ix,iy,84)+nmT(UP(S.n1)+' · '+UP(S.n2),ix,iy-22,2.8,LAT.sans,S.cx,1)+T(S.a,ix,iy-10-g,24*k,F('cor'),S.ca,{fw:600})+T(S.cn||'&',ix,iy+2,10*k,F('scr'),S.cc)+T(S.b,ix,iy+14+g,24*k,F('cor'),S.cb,{fw:600})+(S.dt?nmT(ltr(S.dt),ix,iy+26,2.8,LAT.sans,S.cx,1):'')});
+// ---- 59 NEW (ref 16): curved names/date completing the circle, A | S, two olive branches
 add(EG,"59 دائرة بأسماء منحنية",function(){var k=K(),g=G(),ix=50,iy=70,c=S.cf,r=33,id='a'+Math.random().toString(36).slice(2,6);
- var top='M'+(ix-r)+' '+iy+' A'+r+' '+r+' 0 0 1 '+(ix+r)+' '+iy,bot='M'+(ix-r)+' '+iy+' A'+r+' '+r+' 0 0 0 '+(ix+r)+' '+iy;
- var s=4*NM();
- var h='<defs><path id="t'+id+'" d="M'+(ix-r-2)+' '+iy+' A'+(r+2)+' '+(r+2)+' 0 0 1 '+(ix+r+2)+' '+iy+'"/><path id="b'+id+'" d="M'+(ix-r-5.5)+' '+iy+' A'+(r+5.5)+' '+(r+5.5)+' 0 0 0 '+(ix+r+5.5)+' '+iy+'"/></defs>';
- var n=UP(S.n1)+'  '+(S.cn||'&')+'  '+UP(S.n2);
- h+='<text font-size="'+s+'" font-family="'+LAT.mar+'" fill="'+S.cx+'" letter-spacing="1.6" data-nm="1"><textPath href="#t'+id+'" startOffset="50%" text-anchor="middle">'+esc(n)+'</textPath></text>';
- if(S.dt)h+='<text font-size="'+(3.6*NM())+'" font-family="'+LAT.mar+'" fill="'+S.cx+'" letter-spacing="1.8" data-nm="1"><textPath href="#b'+id+'" startOffset="50%" text-anchor="middle">'+esc(dd())+'</textPath></text>';
- h+='<circle cx="'+(ix-r-9)+'" cy="'+(iy+8)+'" r="1.3" fill="none" stroke="'+c+'" stroke-width=".4"/><circle cx="'+(ix+r+8)+'" cy="'+(iy-12)+'" r="1.3" fill="none" stroke="'+c+'" stroke-width=".4"/>';
- h+=arcSprig(ix,iy,r-4,150,235+360,c,0,0).slice(0,0)+arcSprig(ix,iy,r-1,118,172,c,6,3.6)+arcSprig(ix,iy,r-1,-62,-8,c,6,3.6);
+ var s=5*NM(),n=UP(S.n1)+' '+(S.cn||'&')+' '+UP(S.n2),ds=4.2*NM(),dt=dd();
+ var arcT=Math.PI*(r+3)*.5,arcB=Math.PI*(r+7)*.5;
+ var lsT=Math.max(1.2,Math.min(14,(arcT-n.length*s*.8)/Math.max(n.length-1,1))),lsB=Math.max(1.2,Math.min(14,(arcB-dt.length*ds*.8)/Math.max(dt.length-1,1)));
+ var h='<defs><path id="t'+id+'" d="M'+(ix-r-3)+' '+iy+' A'+(r+3)+' '+(r+3)+' 0 0 1 '+(ix+r+3)+' '+iy+'"/><path id="b'+id+'" d="M'+(ix-r-7)+' '+iy+' A'+(r+7)+' '+(r+7)+' 0 0 0 '+(ix+r+7)+' '+iy+'"/></defs>';
+ h+='<text font-size="'+s+'" font-family="'+LAT.mar+'" fill="'+S.cx+'" textLength="'+arcT.toFixed(1)+'" lengthAdjust="spacing" data-nm="1"><textPath href="#t'+id+'" startOffset="50%" text-anchor="middle">'+esc(n)+'</textPath></text>';
+ if(S.dt)h+='<text font-size="'+ds+'" font-family="'+LAT.mar+'" fill="'+S.cx+'" textLength="'+arcB.toFixed(1)+'" lengthAdjust="spacing" data-nm="1"><textPath href="#b'+id+'" startOffset="50%" text-anchor="middle">'+esc(dt)+'</textPath></text>';
+ h+=arcSprig(ix,iy,r+5,197,163,c,5,2.8)+arcSprig(ix,iy,r+5,-17,17,c,5,2.8);
  h+=T(S.a,ix-9-g,iy+2,25*k,F('mar'),S.ca)+L(ix,iy-13,ix,iy+16,c,.5)+T(S.b,ix+9+g,iy+2,25*k,F('mar'),S.cb);
  return h});
-
 function ringsBase(cx1,cx2,cy,r,sw,c){var bg=S.bg,id='r'+Math.random().toString(36).slice(2,6);
  var ring=function(x,w,col){return '<circle cx="'+x+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="'+w+'"/>'};
  var mid=(cx1+cx2)/2,dy=Math.sqrt(Math.max(r*r-Math.pow((cx2-cx1)/2,2),1));
@@ -270,7 +269,7 @@ add(EG,"60 خاتمان بحرفين وخط يد",function(){var k=K(),g=G(),ix=
  var a=Math.PI*-.62,gx=cx2+r*Math.cos(a),gy=cy2(a);function cy2(a){return iy+r*Math.sin(a)}
  return ringsBase(cx1,cx2,iy,r,2.6,c)+
  T(S.a,cx1-4,iy,16*k,F('pin'),S.ca)+T(S.cn||'&',ix,iy+1,9*k,F('pin'),S.cc)+T(S.b,cx2+4,iy,16*k,F('pin'),S.cb)+
- T(S.n1+' '+(S.cn||'&')+' '+S.n2,ix,iy+r+14,8.5*NM(),LAT.pin,S.cx,{nm:1})+(S.dt?T(S.dt,ix,iy+r+23,3.4*NM(),LAT.sans,S.cx,{ls:1.6,nm:1}):'')});
+ T(S.n1+' '+(S.cn||'&')+' '+S.n2,ix,iy+r+14,8.5*NM(),LAT.pin,S.cx,{nm:1})+(S.dt?T(ltr(S.dt),ix,iy+r+23,3.4*NM(),LAT.sans,S.cx,{ls:1.6,nm:1}):'')});
 // ---- 61 NEW (ref 19): bold rings with gem, letters inside
 add(EG,"61 خاتمان ذهبيان بحرفين",function(){var k=K(),g=G(),ix=50,iy=62,c=S.cf,r=17.5,cx1=ix-13-g/2,cx2=ix+13+g/2;
  return ringsBase(cx1,cx2,iy,r,4.2,c)+
@@ -293,6 +292,7 @@ rep(29,function(){var k=K(),g=G();return T(S.a,34-g,56,44*k,F('ser'),S.ca)+T(S.b
 rep(31,function(){var k=K(),g=G();return '<g opacity=".3">'+T(S.a,34-g,56,92*k,F('bod'),S.ca)+T(S.b,66+g,56,92*k,F('bod'),S.cb)+'</g>'+T(S.n1,50,48,14*NM(),LAT.scr,S.cx)+T(S.cn2,50,61,10*NM(),LAT.scr,S.cc,{nm:1})+T(S.n2,50,74,14*NM(),LAT.scr,S.cx)});
 rep(35,function(){var k=K(),g=G();return T(S.a,36-g,66,52*k,F('bod'),S.ca)+T(S.cn,50,66,14*k,F('scr'),S.cc)+T(S.b,64+g,66,52*k,F('bod'),S.cb)+names(100,3.8)});
 rep(41,function(){var k=K(),g=G();return '<path d="M'+(56+36*Math.cos(-2.3))+' '+(66+36*Math.sin(-2.3))+' A36 36 0 0 1 '+(56+36*Math.cos(.55))+' '+(66+36*Math.sin(.55))+'" fill="none" stroke="'+S.cf+'" stroke-width=".4"/><path d="M'+(56+36*Math.cos(1.9))+' '+(66+36*Math.sin(1.9))+' A36 36 0 0 0 '+(56+36*Math.cos(1.2))+' '+(66+36*Math.sin(1.2))+'" fill="none" stroke="'+S.cf+'" stroke-width=".4"/>'+T(S.a,34-g,48,42*k,F('ser'),S.ca)+T(S.cn,52,66,40*k,F('pin'),S.cc,{op:.95,rot:-8})+T(S.b,68+g,86,42*k,F('ser'),S.cb)});
+for(var q=0;q<D.length;q++){var m=parseInt(D[q].n,10);if(m>=48&&m<=58)D[q].off=false;if(m===57||m===58)D[q].gold=true}
 })();
 
 function build(d,live){var o='<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" direction="ltr" style="background:'+S.bg+'">';try{var s=d.f();if(live?!S.nm:d.off)s=s.replace(NMRE,'');o+=s}catch(e){}return o+'</svg>'}
@@ -439,7 +439,7 @@ document.addEventListener('click',function(e){var t=e.target.closest('[data-scr]
  if(d.nmt){S.nm=!S.nm;ui();draw();return}
  if(d.fl!==undefined){S.lf=d.fl;ui();draw();return}
  if(d.fn!==undefined){S.nf=d.fn;ui();draw();return}
- if(d.i){S.sel=+d.i;S.nm=!D[S.sel].off;if(!S.cnT)S.cn=D[S.sel].off?'':(S.scr==='ar'?'و':'&');resetEd();ui();draw();return}
+ if(d.i){S.sel=+d.i;S.nm=!D[S.sel].off;if(D[S.sel].gold&&S.ca==='#14213d'){S.ca=S.cb=S.cc='#b8892b';S.cx='#9a7220'}if(!S.cnT)S.cn=D[S.sel].off?'':(S.scr==='ar'?'و':'&');resetEd();ui();draw();return}
  if(d.pre){var P={navy:['#14213d','#14213d','#1b2a4a','#ffffff'],blk:['#111111','#111111','#111111','#ffffff'],roy:['#1d3a8a','#1d3a8a','#223f8f','#f6f1e7'],gold:['#d8b25e','#d8b25e','#e9d9a8','#14110d']}[d.pre];S.ca=S.cb=S.cc=S.cf=P[0];S.cx=P[2];S.bg=(EMB&&EMBBG)||P[3];ui();draw();return}
  if(d.step){S.step=+d.step;if(S.step===3)makePic();ui();draw();return}
  if(d.add){S.ex.push({k:d.add,t:d.add==='txt'?'...':d.add==='ltr'?'A':'',ad:d.add.indexOf('a:')===0?ORM2[d.add.slice(2)]:undefined});S.se=parts(S.sel).length+S.ex.length-1;draw();ui2();return}
