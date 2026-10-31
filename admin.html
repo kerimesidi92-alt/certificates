@@ -2140,7 +2140,7 @@ const guard=p=>Promise.resolve(p).catch(e=>{noteOverride='تعذّر الحفظ 
 const store={
   add(o){if(col)return guard(col.add(o));o.id='l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);orders.unshift(o);saveLocal();renderOrders();return Promise.resolve();},
   update(id,patch){if(col)return guard(col.doc(id).update(patch));const o=orders.find(x=>x.id===id);if(o){Object.assign(o,patch);saveLocal();renderOrders();}return Promise.resolve();},
-  remove(id){if(col)return guard(col.doc(id).delete());orders=orders.filter(x=>x.id!==id);saveLocal();renderOrders();return Promise.resolve();}
+  remove(id){if(col)return guard(col.doc(id).delete().then(()=>col.where('of','==',id).get().then(q=>Promise.all(q.docs.map(d=>d.ref.delete()))).catch(()=>{})));orders=orders.filter(x=>x.id!==id);saveLocal();renderOrders();return Promise.resolve();}
 };
 async function initStore(){
   const FBC=APP.firebase||{};
@@ -2462,10 +2462,21 @@ function showTab(name){
   if(name==='design'){setScale();fitAll();}
 }
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showTab(t.dataset.tab));
-function openOrder(id){S.pubEdit=null;try{window.__pubLbl&&window.__pubLbl();}catch(_){}
+async function mergeParts(o,base){
+  if(!base||!base.pp||!col)return base;
+  if(o.__mp&&o.__mp.b===base)return o.__mp.d;
+  const q=await col.where('of','==',o.id).get(),m={};
+  q.docs.forEach(x=>{const v=x.data();(m[v.k]=m[v.k]||[])[v.i]=v.d;});
+  const full=k=>(m[String(k)]||[]).join('');
+  const d=JSON.parse(JSON.stringify(base));
+  if(d.bg&&d.bg.pi!=null)d.bg.src=full(d.bg.pi);
+  (d.images||[]).forEach(im=>{if(im.pi!=null)im.src=full(im.pi);});
+  o.__mp={b:base,d};return d;}
+async function openOrder(id){S.pubEdit=null;try{window.__pubLbl&&window.__pubLbl();}catch(_){}
   const o=byId(id);if(!o||!o.design)return;
-  if(!loadDesign(o.design0||o.design))return;
-  S.openOrder=o.id;$('#btn-new').hidden=true;$('#openbar-t').textContent='الطلب المفتوح: '+(o.client||'');$('#openbar').hidden=false;$('#openbar-msg').textContent=S.images.length?'تم تحميل التصميم مع صور الزبون.':'الصور لا تُحفظ في الطلب. أضيفيها قبل إنشاء الصورة النهائية.';
+  let dsn=o.design0||o.design;try{dsn=await mergeParts(o,dsn);}catch(_e){toast('تعذّر تحميل صور الزبون',1);}
+  if(!loadDesign(dsn))return;
+  S.openOrder=o.id;$('#btn-new').hidden=true;$('#openbar-t').textContent='الطلب المفتوح: '+(o.client||'');$('#openbar').hidden=false;$('#openbar-msg').textContent=S.images.length?'تم تحميل التصميم مع صور الزبون.':'الصور لا تُحفظ في الطلب. أضيفيها قبل إنشاء الصورة النهائية.';{const qq=o.design&&o.design.q;if(qq)$('#openbar-msg').textContent+=qq[1]<0?' (وصلت بأقل جودة — السبب: '+(qq[2]||'؟')+')':qq[0]?' (تصغير إلى '+qq[0]+')':' (أصلية بدون تصغير)';}
   const nl=((/^الأسماء:\n([\s\S]*?)(\n\n|$)/.exec(o.notes||'')||[])[1]||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const m=/^(.*?)\s*\((ذكر|أنثى)\)$/.exec(x);return m?{n:m[1],g:m[2]==='أنثى'?'f':'m'}:{n:x,g:''};});let sel=document.getElementById('nm-sel');
   if(!sel){sel=document.createElement('select');sel.id='nm-sel';sel.className='btn';sel.setAttribute('aria-label','اختيار الاسم');$('#btn-save-order').before(sel);sel.onchange=()=>{if(!sel.value)return;nmApply(sel.value,sel.selectedOptions[0].dataset.g||'');};}
   let zb=document.getElementById('btn-zip');if(!zb){zb=document.createElement('button');zb.type='button';zb.id='btn-zip';zb.className='btn';zb.textContent='تصدير كل الأسماء (ZIP)';zb.onclick=exportAllNames;$('#btn-save-order').before(zb);}zb.hidden=nl.length<2;
@@ -2481,7 +2492,7 @@ $('#btn-save-order').onclick=async()=>{if(!S.openOrder)return;const id=S.openOrd
     window.__mine[id]=d;$('#openbar-msg').textContent='تم حفظ تعديلك. تصميم الزبون الأصلي لم يتغيّر.'+note;toast('تم حفظ تعديلك'+note);
   }catch(e){toast('تعذّر الحفظ ('+((e&&(e.code||e.message))||'خطأ')+')',1);}
   b.disabled=false;};
-$('#btn-orig').onclick=()=>{const keep=S.openOrder,o=keep&&byId(keep);if(!o)return;const d=o.design0||o.design;if(d&&loadDesign(d)){S.openOrder=keep;$('#openbar').hidden=false;$('#openbar-msg').textContent='هذا تصميم الزبون الأصلي كما أرسله.';toast('تم فتح تصميم الزبون الأصلي');}};
+$('#btn-orig').onclick=async()=>{const keep=S.openOrder,o=keep&&byId(keep);if(!o)return;let d=o.design0||o.design;try{d=await mergeParts(o,d);}catch(_e){}if(d&&loadDesign(d)){S.openOrder=keep;$('#openbar').hidden=false;$('#openbar-msg').textContent='هذا تصميم الزبون الأصلي كما أرسله.';toast('تم فتح تصميم الزبون الأصلي');}};
 $('#btn-mine').onclick=()=>{const keep=S.openOrder,o=keep&&byId(keep);if(!o)return;const d=o.design2||window.__mine[keep]||(o.design0?o.design:null);if(!d){toast('لا توجد تعديلات محفوظة لهذا الطلب بعد.',1);return;}if(loadDesign(d)){S.openOrder=keep;$('#openbar').hidden=false;$('#openbar-msg').textContent='هذا آخر تعديل حفظتِه.';toast('تم فتح تعديلك المحفوظ');}};
 $('#ob-tg').onclick=()=>{const b=$('#ob-body'),t=$('#ob-tg'),h=b.style.display!=='none';b.style.display=h?'none':'grid';t.textContent=h?'◂︎':'▾︎';t.setAttribute('aria-expanded',h?'false':'true');};
 $('#btn-close-order').onclick=()=>{newDesign();};
