@@ -1183,7 +1183,7 @@ function drawCard(box,st,wpx,thumb,ph){
   st.imgs.forEach(function(m){applyAuto(m,st);h+=picHtml(thumb?{sel:null,imgs:[]}:st,m);});
   h+=frameHtml(st,H);
   h+=art(st,H);
-  ['ev','n1','or','n2','dt','ln'].forEach(function(id){if(st.noText&&id!=='or')return;
+  ['ev','n1','or','n2','dt','ln'].forEach(function(id){if(st.noText&&id!=='or')return;if(id==='dt'&&st.noDate)return;
     var e=st.E[id],p=defPos(st,id,H),col=e.col||(id==='ev'||id==='or'?(pdark(st)?'#d9c08a':st.ac):ink),fam=fontOf(st,id),s=sc*e.sz*((tp&&tp.txt)?tp.txt.s:1),inner;
     if(id==='ev')inner='<div class="ev" style="font-size:calc(6.2cqw*var(--s))">'+esc(st.evText)+'</div>';
     else if(id==='n1')inner='<div class="nm" style="font-size:calc(11cqw*var(--s))">'+esc(st.n1)+'</div>';
@@ -1382,6 +1382,7 @@ function textStep(){
   h+='</div><label class="f">'+t.evw+'<input id="evt" value="'+esc(S.evText)+'"></label>';
   h+='<div class="row"><label class="f">'+t.n1+'<input id="n1" value="'+esc(S.n1)+'"></label><label class="f">'+t.n2+'<input id="n2" value="'+esc(S.n2)+'"></label></div>';
   h+='<div class="row"><label class="f">'+(UL==='ar'?'اليوم':'Jour')+'<input id="dd" type="number" min="1" max="31" value="'+(+S.date.slice(8,10))+'"></label><label class="f">'+(UL==='ar'?'الشهر':'Mois')+'<input id="dm" type="number" min="1" max="12" value="'+(+S.date.slice(5,7))+'"></label><label class="f">'+(UL==='ar'?'السنة':'Année')+'<input id="dy" type="number" min="1000" max="9999" value="'+S.date.slice(0,4)+'"></label></div><div class="row"><label class="f">'+t.line+'<textarea id="ln" rows="5">'+esc(S.line)+'</textarea></label></div>';
+  h+='<div class="row">'+btn('opt',!S.noDate,'id="nodt"',UL==='ar'?(S.noDate?'إظهار التاريخ':'إخفاء التاريخ'):(S.noDate?'Afficher la date':'Masquer la date'))+'</div>';
   h+='<div class="row"><label class="f">'+t.timeL+'<input id="tm" type="time" style="width:150px;max-width:150px" value="'+S.time+'"></label></div>'+FOLD('dst',t.dst,DST.length);if(TXTF==='dst'){h+='<div class="dv dvd">';
   DST.forEach(function(k){h+='<button data-k="dst" data-v="'+k+'" aria-pressed="'+(S.dst===k)+'"><div class="cardbox" style="width:128px"><div style="font-family:\''+DF.dt[S.lang]+'\',serif;text-align:center;display:flex;justify-content:center;color:inherit">'+dateHtml(S,k)+'</div></div></button>';});
   h+='</div>';}
@@ -1748,6 +1749,7 @@ document.addEventListener('click',function(e){
   el=e.target.closest('[data-tab]');if(el){TGRP='all';LIBCAT='all';FGRP='all';OGRP='all';TXTF=null;S.tab=el.dataset.tab;S.sel=null;build();window.scrollTo(0,0);return;}
   if(e.target.closest('#pv-toggle')){var pvx=$('#pv'),c=pvx.classList.toggle('pvc');$('#pv-toggle').innerHTML=c?'&#9660;&#xFE0E;':'&#9650;&#xFE0E;';return;}
   if(e.target.id==='blankp'){S.arts=[];S.frame='none';S.frm=null;S.tpl='blank';S.imgs=[];S.txts=[];S.orn='none';S.noText=true;S.bgKey=null;S.bh='0';S.paper='';S.fl='';S.fin=0;S.sel=null;commit();build();return;}
+  if(e.target.id==='nodt'){S.noDate=!S.noDate;commit();build();return;}
   if(e.target.id==='notext'){S.noText=!S.noText;S.sel=null;commit();build();return;}
   if(e.target.id==='resetdef'){var lg=S.lang;S=fresh(lg);S.tab='theme';commit();build();return;}
   el=e.target.closest('[data-bimgdel]');if(el){S.imgs=S.imgs.filter(function(x){return String(x.id)!==el.dataset.bimgdel});S.sel=null;commit();build();return;}
