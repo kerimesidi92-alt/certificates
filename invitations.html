@@ -2063,27 +2063,27 @@ async function submitOrder(){
  er.hidden=true;btn.disabled=true;
  try{
   omodal('<h3>'+o.sending+'</h3><p>'+o.prep+'</p>');
-  var order=null,idDone=null,cut=function(v,n){return String(v==null?'':v).slice(0,n);};
+  var order=null,idDone=null,lastErr='',cut=function(v,n){return String(v==null?'':v).slice(0,n);};
   var qn=Math.max(1,Math.min(10000,parseInt(S.qty)||1));
   var pv=await makePreview(),parts=null,oid=null;
   var mkOrder=function(design){return {client:cut(nm,120),phone:cut(ph,40),email:cut(ORD.email.trim(),120),item:cut(itemText(),160),qty:qn,price:0,status:'new',notes:cut(ORD.notes.trim(),1800),design:design,preview:pv,createdAt:Date.now(),source:'app'};};
   try{
    for(var p of [[0,1,0,6000000],[2400,.9,2400,4500000],[1800,.85,2400,3200000],[1400,.8,1800,3200000],[1000,.72,1200,3200000]]){
     var design=await packDesign(p[0],p[1],p[2]);var src=design.src||{},ks=Object.keys(src),tot=0;ks.forEach(function(k){tot+=src[k].length;});
-    if(!ks.length)break;if(tot>p[3])continue;
+    if(!ks.length){lastErr+='noimg ';break;}if(tot>p[3]){lastErr+=p[0]+':big'+Math.round(tot/1e5)/10+'M ; ';continue;}
     oid=fsNewId();design.src={};design.parts={};var pl=[];
     ks.forEach(function(k,ki){var sv=src[k],n=Math.ceil(sv.length/600000);design.parts[k]=n;for(var q=0;q<n;q++)pl.push({id:oid+'_'+ki+'_'+q,f:{part:true,of:oid,k:k,i:q,n:n,d:sv.slice(q*600000,(q+1)*600000)}});});
     design.q=[p[0],tot];var o2=mkOrder(design);if(JSON.stringify(o2).length>900000)continue;
     try{for(var pi2=0;pi2<pl.length;pi2+=3){await Promise.all(pl.slice(pi2,pi2+3).map(function(x){return fsCreate(x.id,x.f);}));}
-     await fsCreate(oid,o2);order=o2;idDone=oid;break;}catch(_e2){continue;}}
-  }catch(_e){order=null;parts=null;}
+     await fsCreate(oid,o2);order=o2;idDone=oid;break;}catch(_e2){lastErr=(lastErr?lastErr+' ; ':'')+p[0]+':'+String((_e2&&(_e2.message||_e2.name))||_e2).slice(0,40)+'/'+pl.length+'p';continue;}}
+  }catch(_e){lastErr+=' ex:'+String((_e&&_e.message)||_e).slice(0,40);order=null;parts=null;}
   if(order&&parts){
    try{for(var pi=0;pi<parts.length;pi+=3){await Promise.all(parts.slice(pi,pi+3).map(function(x){return fsCreate(x.id,x.f);}));}
     await fsCreate(oid,order);var idDone=oid;}catch(_e){order=null;parts=null;idDone=null;}
   }
   if(!order){
    for(var p of [[900,.7,900],[640,.6,640],[420,.5,480]]){
-    var design=await packDesign(p[0],p[1],p[2]);design.q=[p[0],-1];
+    var design=await packDesign(p[0],p[1],p[2]);design.q=[p[0],-1,lastErr];
     order=mkOrder(design);
     if(JSON.stringify(order).length<900000)break;order=null;}
    if(!order)throw new Error('big');
