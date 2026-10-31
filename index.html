@@ -322,10 +322,10 @@ try{CFG=JSON.parse(localStorage.getItem("kk_lcfg")||"null")}catch(e){}
 function esc(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function tx(r,k){return(lang=="fr"&&r[k+"f"])?r[k+"f"]:(r[k]||"")}
 
-var MQ=[{id:"chips",sp:26,dir:-1,x:0,h:0},{id:"dstrip",sp:34,dir:1,x:0,h:0}],mqT=0,mqOn=false;
+var MQ=[{id:"chips",sp:26,dir:-1,x:0,h:0},{id:"dstrip",sp:34,dir:1,x:0,h:0}],mqT=0,mqN=0,mqOn=false;
 function pace(){MQ.forEach(function(m){var e=document.getElementById(m.id);if(!e)return;m.e=e;var w=e.scrollWidth/2;if(w>100)m.h=w})}
 function mqTick(t){if(document.hidden){mqOn=false;return}
- var dt=mqT?Math.min(.1,(t-mqT)/1000):0;mqT=t;
+ var dt=mqT?Math.min(.1,(t-mqT)/1000):0;mqT=t;mqN++;if(mqN%20==1)pace();
  if(!document.body.classList.contains("nav"))MQ.forEach(function(m){if(!m.e||!m.h)return;m.x=(m.x+m.sp*dt)%m.h;var v=m.dir<0?-m.x:m.x-m.h;m.e.style.transform="translate3d("+v+"px,0,0)"});
  requestAnimationFrame(mqTick)}
 function mqStart(){pace();if(mqOn)return;mqOn=true;mqT=0;requestAnimationFrame(mqTick)}
