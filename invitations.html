@@ -2073,7 +2073,7 @@ async function submitOrder(){
     if(!ks.length)break;if(tot>p[3])continue;
     oid=fsNewId();design.src={};design.parts={};var pl=[];
     ks.forEach(function(k,ki){var sv=src[k],n=Math.ceil(sv.length/600000);design.parts[k]=n;for(var q=0;q<n;q++)pl.push({id:oid+'_'+ki+'_'+q,f:{part:true,of:oid,k:k,i:q,n:n,d:sv.slice(q*600000,(q+1)*600000)}});});
-    var o2=mkOrder(design);if(JSON.stringify(o2).length>900000)continue;
+    design.q=[p[0],tot];var o2=mkOrder(design);if(JSON.stringify(o2).length>900000)continue;
     try{for(var pi2=0;pi2<pl.length;pi2+=3){await Promise.all(pl.slice(pi2,pi2+3).map(function(x){return fsCreate(x.id,x.f);}));}
      await fsCreate(oid,o2);order=o2;idDone=oid;break;}catch(_e2){continue;}}
   }catch(_e){order=null;parts=null;}
@@ -2083,7 +2083,7 @@ async function submitOrder(){
   }
   if(!order){
    for(var p of [[900,.7,900],[640,.6,640],[420,.5,480]]){
-    var design=await packDesign(p[0],p[1],p[2]);
+    var design=await packDesign(p[0],p[1],p[2]);design.q=[p[0],-1];
     order=mkOrder(design);
     if(JSON.stringify(order).length<900000)break;order=null;}
    if(!order)throw new Error('big');
