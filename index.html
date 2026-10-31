@@ -116,7 +116,7 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 
 .tabs{display:flex;justify-content:center;gap:8px;margin-bottom:14px}
 .tbl{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.row{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;align-items:center;padding:12px 14px;border-top:1px solid var(--line);font-size:15px;transition:background .2s}
+.row{display:grid;grid-template-columns:1.4fr repeat(var(--n,3),1fr);align-items:center;padding:12px 14px;border-top:1px solid var(--line);font-size:15px;transition:background .2s}
 .row:not(.h):hover{background:#fff8e6}
 .row:first-child{border-top:0}
 .row.h{background:var(--navy);color:var(--gold3);font-weight:700;font-size:14px}
@@ -141,8 +141,8 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 .alt{border:1.5px solid var(--gold);color:var(--gold3)}
 .num{direction:ltr;unicode-bidi:isolate;display:block;margin-top:12px;color:var(--gold);font-weight:700;letter-spacing:.5px}
 @media(max-width:700px){.dm{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.feat{grid-template-columns:1fr}.cards{gap:10px}.card h2{font-size:20px}.card .d{font-size:12.5px}.card svg{width:64px;height:48px}
-.row{grid-template-columns:1.2fr 1fr 1fr 1fr;padding:10px 8px;font-size:13.5px}.row small{font-size:11.5px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+.row{grid-template-columns:1.2fr repeat(var(--n,3),1fr);padding:10px 8px;font-size:13.5px}.row small{font-size:11.5px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.chips .tr{animation:mq 60s linear infinite!important}.dstrip .tr{animation:mq2 120s linear infinite!important}}
 
 .band{background:linear-gradient(135deg,#0b1630,#1b2d63 60%,#2a2160);margin-top:46px;padding:46px 0 50px;position:relative;overflow:hidden}
 .band h3.t.w{color:var(--gold3)}.band .sub.w{color:#c4cce0}
@@ -277,7 +277,7 @@ body.nav *{animation:none!important;transition:none!important}
 <div class="cta"><h3 class="t" style="color:var(--gold)" data-i="ct">جاهز لتصميمك؟</h3>
 <p data-i="ctd">ابدأ من الأعلى، أو راسلنا على واتساب ونساعدك.</p>
 <div class="btns"><a class="wa" id="wal" href="https://wa.me/22233863382" data-i="wa">تواصل عبر واتساب</a></div>
-<span class="num" id="num">+222 33 86 33 82</span></div>
+<span class="num" id="num" dir="ltr" style="unicode-bidi:isolate;display:inline-block">+222 33 86 33 82</span></div>
 
 <script>
 var HERO={c:"landing/img/hero-cert.webp",i:"landing/img/hero-inv.webp"};
@@ -350,8 +350,8 @@ var SIG={};function once(k,sig,fn){if(SIG[k]===sig)return;SIG[k]=sig;fn()}
 function drawMocks(){var hg=JSON.stringify(CFG&&CFG.hero||0);once("hc",lang+hg,function(){hC.innerHTML=heroC()});once("hi",lang+hg,function(){hI.innerHTML=heroI()})}
 function render(){var d=D[lang];document.documentElement.lang=lang;document.documentElement.dir=lang=="ar"?"rtl":"ltr";
 document.querySelectorAll("[data-i]").forEach(function(e){if(typeof d[e.dataset.i]=="string")e.textContent=d[e.dataset.i]});
-var hh=tab=="frm"?d.hdf:d.hd;var h='<div class="row h">'+hh.map(function(x){return"<div>"+x+"</div>"}).join("")+"</div>";
-rows(tab).forEach(function(r){var sw=r.img?'<img class="fim" alt="" src="'+esc(r.img)+'">':(tab=="frm"?'<i class="fsw '+(r.sw||"g")+'"></i>':"");var ps=[0,1,2].map(function(i){return'<div class="price">'+fmtP(r.p[i],d.unit)+"</div>"}).join("");h+='<div class="row"><div class="n">'+sw+'<span>'+esc(r.n)+"<small>"+esc(r.d)+"</small></span></div>"+ps+"</div>"});
+var cc=(tab!="frm"&&CFG&&CFG.cols&&CFG.cols[tab]&&CFG.cols[tab].length)?CFG.cols[tab]:null,nc=cc?cc.length:3;tbl.style.setProperty("--n",nc);var hh=tab=="frm"?d.hdf:(cc?[d.hd[0]].concat(cc.map(function(c){return(lang=="fr"&&c.f)?c.f:c.a})):d.hd);var h='<div class="row h">'+hh.map(function(x){return"<div>"+x+"</div>"}).join("")+"</div>";
+rows(tab).forEach(function(r){var sw=r.img?'<img class="fim" alt="" src="'+esc(r.img)+'">':(tab=="frm"?'<i class="fsw '+(r.sw||"g")+'"></i>':"");var ps=Array.from(Array(tab=="frm"?3:nc).keys()).map(function(i){return'<div class="price">'+fmtP(r.p[i],d.unit)+"</div>"}).join("");h+='<div class="row"><div class="n">'+sw+'<span>'+esc(r.n)+"<small>"+esc(r.d)+"</small></span></div>"+ps+"</div>"});
 tbl.innerHTML=h;
 feat.innerHTML=d.ft.map(function(x,i){return'<div class="f g'+(i%6)+'"><i>'+(i+1)+'</i><em class="tg t'+x[2]+'">'+d.tg[x[2]]+'</em><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
 shp.innerHTML=d.sh.map(function(n,i){var k=['x07','x02','t12','t15','t11','a3','t02'][i];var c=['rc','ld','sq','ci','ov','ar','hs','cu'][i];return'<div class="sw"><div class="sh '+c+'" style="animation-delay:'+(i*.25)+'s">'+(k?'<span style="background-image:url('+TH['i_'+k]+')"></span>':'<span class="q">?</span>')+'</div><b>'+n+'</b></div>'}).join("");

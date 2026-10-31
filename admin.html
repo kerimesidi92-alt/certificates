@@ -61,7 +61,7 @@ html.fmopen,html.fmopen body{overscroll-behavior:none}
 
 #tab-home{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:18px;max-width:900px;width:100%;min-width:0;box-sizing:border-box}#tab-home *{box-sizing:border-box}#tab-home[hidden]{display:none}
 #tab-home .hm-box{background:var(--surface,#fff);border:1px solid var(--line,#e3dccd);border-radius:16px;padding:14px;display:grid;gap:10px;min-width:0}
-#tab-home h2{margin:0;font-size:18px}#tab-home .hint.bad{color:var(--err,#b3322e);font-weight:700}
+#tab-home h2{margin:0;font-size:18px}#tab-home .hm-cl>h2{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;user-select:none}#tab-home .hm-cl>h2:after{content:'';width:10px;height:10px;border:solid currentColor;border-width:0 0 2.5px 2.5px;transform:rotate(-45deg);margin-top:-4px;transition:transform .2s;flex:none}#tab-home .hm-cl.shut>h2:after{transform:rotate(135deg);margin-top:4px}#tab-home .hm-cl.shut>:not(h2){display:none}#tab-home .hm-cols{display:grid;gap:6px;padding-bottom:6px}#tab-home .hm-c{display:grid;grid-template-columns:1fr 1fr auto;gap:6px}#tab-home .hint.bad{color:var(--err,#b3322e);font-weight:700}
 #tab-home input[type=text],#tab-home input[type=number]{width:100%;min-width:0;min-height:42px;border:1px solid var(--line,#e3dccd);border-radius:10px;padding:6px 10px;font:inherit;background:var(--surface,#fff);color:var(--fg,#141c33)}
 #tab-home .hm-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 #tab-home .hm-up{cursor:pointer}
@@ -2374,17 +2374,19 @@ $('#order-form').addEventListener('submit',e=>{
   const MAXS=25,LIM=900000;
   const DSTRIP=["landing/img/c_ge1.webp", "landing/img/i_a1.webp", "landing/img/c_gf1.webp", "landing/img/i_a3.webp", "landing/img/c_gm1.webp", "landing/img/i_a5.webp", "landing/img/c_gh3.webp", "landing/img/i_a7.webp", "landing/img/c_gn1.webp", "landing/img/i_a9.webp", "landing/img/c_gp1.webp", "landing/img/i_t02.webp", "landing/img/c_gs1.webp", "landing/img/i_t11.webp", "landing/img/c_gf8.webp", "landing/img/i_t12.webp", "landing/img/c_gm4.webp", "landing/img/i_t13.webp", "landing/img/c_ge8.webp", "landing/img/i_t15.webp", "landing/img/i_t17.webp", "landing/img/i_x02.webp", "landing/img/i_x07.webp", "landing/img/i_x09.webp"];
   const dp=(a,b,c,d,p)=>({n:a,nf:b,d:c,df:d,p:p});
+  const cl=(a,f)=>({a:a,f:f});
   const DEF=()=>({phone:'+222 33 86 33 82',strip:DSTRIP.slice(),
     frames:[dp('إطار خشبي','Cadre en bois','بسيط ونظيف','Simple et net',[60,90,140]),dp('إطار مذهّب','Cadre doré','ذهبي لامع فاخر','Doré brillant, luxe',[120,180,260]),dp('لوحة مخمل','Plaque velours','علبة مخملية بوجه زجاجي','Boîte en velours, face vitrée',[200,300,450]),dp('إطار زجاجي','Cadre en verre','شفاف بخلفية سوداء','Transparent, fond noir',[90,130,200])],
     cert:[dp('ورق عادي','Papier standard','A4 - 80 غ','A4 - 80 g',[50,40,30]),dp('ورق مقوّى','Papier épais','A4 - 250 غ','A4 - 250 g',[80,65,50]),dp('ورق لامع','Papier brillant','A4 - صور','A4 - photo',[100,80,65]),dp('ورق فاخر','Papier luxe','A4 - لؤلؤي','A4 - nacré',[150,120,95])],
     inv:[dp('ورق عادي','Papier standard','A5 - 80 غ','A5 - 80 g',[30,22,16]),dp('ورق مقوّى','Papier épais','A5 - 250 غ','A5 - 250 g',[45,35,26]),dp('ورق لامع','Papier brillant','A5 - صور','A5 - photo',[60,45,35]),dp('ورق فاخر','Papier luxe','A5 - لؤلؤي','A5 - nacré',[90,70,55])],
     hero:{c:{img:'',show:true,col:'',t:['شهادة شكر وتقدير','تُمنح هذه الشهادة إلى','الاسم الكريم','تقديرًا للجهد المتميز والعطاء'],tf:['Certificat de remerciement','Décerné à','Nom du bénéficiaire','En reconnaissance de son travail remarquable']},i:{img:'',show:true,col:'',t:['يتشرّفون بدعوتكم','سارة و أحمد','لحضور حفل زفافهما','السبت - 8 مساءً'],tf:['Ont le plaisir de vous inviter','Sara & Ahmed','à leur mariage','Samedi - 20h']}},
+    cols:{cert:[cl('1 نسخة','1 ex.'),cl('10 نسخ','10 ex.'),cl('50 نسخة','50 ex.')],inv:[cl('1 نسخة','1 ex.'),cl('10 نسخ','10 ex.'),cl('50 نسخة','50 ex.')]},
     note:'',notef:''});
   let C=null,busy=false,pkTab='c';
   const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const T=(m,e)=>{try{toast(m,e);}catch(_){alert(m);}};
   const fdb=()=>window.__fdb;
-  function fix(c){const d=DEF();c=c&&typeof c==='object'?c:{};['strip','frames','cert','inv'].forEach(k=>{if(!Array.isArray(c[k]))c[k]=d[k];});c.phone=c.phone||d.phone;c.hero=c.hero&&typeof c.hero==='object'?c.hero:{};['c','i'].forEach(k=>{const h=c.hero[k]=Object.assign({},d.hero[k],c.hero[k]||{});h.t=(h.t||d.hero[k].t).slice(0,4);h.tf=(h.tf||d.hero[k].tf).slice(0,4);});c.note=c.note||'';c.notef=c.notef||'';c.frames.forEach(f=>{f.p=f.p||['','',''];});['cert','inv'].forEach(k=>c[k].forEach(f=>{f.p=f.p||['','','']}));return c;}
+  function fix(c){const d=DEF();c=c&&typeof c==='object'?c:{};['strip','frames','cert','inv'].forEach(k=>{if(!Array.isArray(c[k]))c[k]=d[k];});c.phone=c.phone||d.phone;c.hero=c.hero&&typeof c.hero==='object'?c.hero:{};['c','i'].forEach(k=>{const h=c.hero[k]=Object.assign({},d.hero[k],c.hero[k]||{});h.t=(h.t||d.hero[k].t).slice(0,4);h.tf=(h.tf||d.hero[k].tf).slice(0,4);});c.note=c.note||'';c.notef=c.notef||'';c.cols=c.cols&&typeof c.cols==='object'?c.cols:{};['cert','inv'].forEach(k=>{if(!Array.isArray(c.cols[k])||!c.cols[k].length)c.cols[k]=d.cols[k].map(x=>Object.assign({},x));});c.frames.forEach(f=>{f.p=f.p||['','',''];});['cert','inv'].forEach(k=>c[k].forEach(f=>{f.p=(f.p||[]).slice(0,c.cols[k].length);while(f.p.length<c.cols[k].length)f.p.push('');}));return c;}
   async function load(){if(C)return;let c=null;try{const d=await fdb().collection('config').doc('landing').get();if(d.exists&&d.data()&&d.data().json)c=JSON.parse(d.data().json);}catch(_){}C=fix(c);}
   function inp(path,val,ph,type){return '<input type="'+(type||'text')+'" data-k="'+path+'" value="'+esc(val)+'" placeholder="'+esc(ph||'')+'"'+(type==='number'?' inputmode="decimal" step="any"':'')+'>';}
   function rowHTML(kind,r,i,hasImg){
@@ -2392,24 +2394,27 @@ $('#order-form').addEventListener('submit',e=>{
     return '<div class="hm-r">'+(hasImg?'<button type="button" class="hm-im" data-a="fimg" data-i="'+i+'">'+(r.img?'<img alt="" src="'+esc(r.img)+'">':'<span>＋<br>صورة</span>')+'</button>':'')+
       '<div class="hm-f"><div class="hm-two">'+inp(base+'.n',r.n,'الاسم بالعربية')+inp(base+'.nf',r.nf,'Nom en français')+'</div>'+
       '<div class="hm-two">'+inp(base+'.d',r.d,'وصف قصير')+inp(base+'.df',r.df,'Description courte')+'</div>'+
-      '<div class="hm-three">'+(hasImg?['A5','A4','A3']:['1 نسخة','10 نسخ','50 نسخة']).map((l,j)=>'<label><span>'+l+'</span>'+inp(base+'.p.'+j,r.p[j],'السعر','number')+'</label>').join('')+'</div></div>'+
+      '<div class="hm-three"'+(hasImg?'':' style="grid-template-columns:repeat('+Math.min(C.cols[kind].length,4)+',1fr)"')+'>'+(hasImg?['A5','A4','A3']:C.cols[kind].map(c=>c.a||'؟')).map((l,j)=>'<label><span>'+esc(l)+'</span>'+inp(base+'.p.'+j,r.p[j],'السعر','number')+'</label>').join('')+'</div></div>'+
       '<div class="hm-bt"><button type="button" class="btn" data-a="up" data-g="'+kind+'" data-i="'+i+'" aria-label="أعلى">↑</button><button type="button" class="btn" data-a="dn" data-g="'+kind+'" data-i="'+i+'" aria-label="أسفل">↓</button><button type="button" class="btn" data-a="del" data-g="'+kind+'" data-i="'+i+'" aria-label="حذف">✕</button></div></div>';}
   function size(){return JSON.stringify(Object.assign({saved:1},C)).length;}
-  function paint(){
+  const OPEN=new Set();
+  function paint(){paint0();const bx=[...root.querySelectorAll(':scope > .hm-box')];bx.forEach((b,i)=>{const h=b.querySelector(':scope > h2');if(i===0||!h)return;b.classList.add('hm-cl');if(!OPEN.has(i))b.classList.add('shut');h.tabIndex=0;h.setAttribute('role','button');h.onclick=()=>{b.classList.toggle('shut');if(b.classList.contains('shut'))OPEN.delete(i);else OPEN.add(i);};h.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();h.click();}};});}
+  function paint0(){
     const sz=size(),kb=Math.round(sz/1024);
     root.innerHTML=
     '<div class="hm-box"><h2>الصفحة الرئيسية</h2><p class="hint">كل ما يظهر في صفحة البداية (التي تفتح للزبون أولًا) يُدار من هنا. اضغطي «حفظ» بعد التعديل.</p>'+
       '<div class="hm-acts"><button type="button" class="btn primary" data-a="save"'+(busy?' disabled':'')+'>حفظ</button><a class="btn" href="index.html" target="_blank" rel="noopener">فتح الصفحة الرئيسية</a><span class="hint'+(sz>LIM?' bad':'')+'">الحجم: '+kb+' / 880 ك.ب</span></div></div>'+
-    '<div class="hm-box"><h2>رقم الهاتف / واتساب</h2><p class="hint">يظهر أسفل الصفحة ويُبنى منه رابط واتساب. اكتبيه مع رمز الدولة.</p>'+inp('phone',C.phone,'+222 33 86 33 82')+'</div>'+
+    '<div class="hm-box"><h2>رقم الهاتف / واتساب</h2><p class="hint">يظهر أسفل الصفحة ويُبنى منه رابط واتساب. اكتبيه مع رمز الدولة.</p>'+inp('phone',C.phone,'+222 33 86 33 82').replace('<input ','<input dir="ltr" style="text-align:left" ')+'</div>'+
     '<div class="hm-box"><h2>الصورتان في أعلى الصفحة</h2><p class="hint">اختاري تصميم الشهادة (يُفضَّل عرضي) وتصميم الدعوة (يُفضَّل طولي)، واكتبي النص الذي يظهر عليهما.</p>'+heroHTML('c','الشهادة')+heroHTML('i','الدعوة')+'</div>'+
     '<div class="hm-box"><h2>الشريط المتحرك <span class="hint">('+C.strip.length+' / '+MAXS+')</span></h2><p class="hint">الصور التي تمرّ في الشريط. الأول يظهر أولًا من اليمين.</p>'+
       '<div class="hm-grid">'+C.strip.map((u,i)=>'<div class="hm-it"><img alt="" src="'+esc(u)+'"><div class="bt"><button type="button" data-a="sl" data-i="'+i+'" aria-label="قبل">→</button><button type="button" data-a="sr" data-i="'+i+'" aria-label="بعد">←</button><button type="button" data-a="sd" data-i="'+i+'" aria-label="حذف">✕</button></div></div>').join('')+'</div>'+
       '<div class="hm-acts"><button type="button" class="btn" data-a="pick"'+(C.strip.length>=MAXS?' disabled':'')+'>اختيار من التصاميم</button><label class="btn hm-up">رفع صورة<input type="file" accept="image/*" data-a="supload" hidden></label></div></div>'+
     '<div class="hm-box"><h2>الإطارات</h2><p class="hint">اضغطي على المربع لوضع صورة الإطار، واكتبي اسمه وأسعار المقاسات.</p>'+C.frames.map((r,i)=>rowHTML('frames',r,i,1)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="frames">＋ إطار جديد</button></div></div>'+
-    '<div class="hm-box"><h2>أسعار الشهادات (حسب الورق)</h2>'+C.cert.map((r,i)=>rowHTML('cert',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="cert">＋ نوع ورق</button></div></div>'+
-    '<div class="hm-box"><h2>أسعار الدعوات (حسب الورق)</h2>'+C.inv.map((r,i)=>rowHTML('inv',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="inv">＋ نوع ورق</button></div></div>'+
+    '<div class="hm-box"><h2>أسعار الشهادات (حسب الورق)</h2>'+colsHTML('cert')+C.cert.map((r,i)=>rowHTML('cert',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="cert">＋ نوع ورق</button></div></div>'+
+    '<div class="hm-box"><h2>أسعار الدعوات (حسب الورق)</h2>'+colsHTML('inv')+C.inv.map((r,i)=>rowHTML('inv',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="inv">＋ نوع ورق</button></div></div>'+
     '<div class="hm-box"><h2>ملاحظة تحت جدول الأسعار</h2><p class="hint">اتركيها فارغة لإخفاء الملاحظة.</p><div class="hm-two">'+inp('note',C.note,'الملاحظة بالعربية')+inp('notef',C.notef,'Note en français')+'</div></div>';
   }
+  function colsHTML(k){return '<div class="hm-cols"><b>الأعمدة (الكميات)</b>'+C.cols[k].map((c,j)=>'<div class="hm-c">'+inp('cols.'+k+'.'+j+'.a',c.a,'مثال: 10 نسخ')+inp('cols.'+k+'.'+j+'.f',c.f,'Ex: 10 ex.')+'<button type="button" class="btn" data-a="cdel" data-g="'+k+'" data-i="'+j+'" aria-label="حذف العمود">✕</button></div>').join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="cadd" data-g="'+k+'">＋ عمود جديد</button></div></div>';}
   function heroHTML(k,title){const h=C.hero[k],b='hero.'+k;
     return '<div class="hm-hero"><h3>'+title+'</h3><div class="hm-hp"><div class="hm-hpv'+(k==='i'?' port':'')+'">'+(h.img?'<img alt="" src="'+esc(h.img)+'">':'<span>الصورة الافتراضية</span>')+'</div><div class="hm-hpa"><button type="button" class="btn" data-a="hpick" data-h="'+k+'">اختيار من التصاميم</button><label class="btn hm-up">رفع صورة<input type="file" accept="image/*" data-a="hupload" data-h="'+k+'" hidden></label>'+(h.img?'<button type="button" class="btn" data-a="hclr" data-h="'+k+'">الصورة الافتراضية</button>':'')+
     '<label class="hm-chk"><input type="checkbox" data-a="hshow" data-h="'+k+'"'+(h.show!==false?' checked':'')+'> إظهار النص فوق الصورة</label>'+
@@ -2451,7 +2456,9 @@ $('#order-form').addEventListener('submit',e=>{
     else if(a==='up'){swap(C[g],i,i-1);paint();}
     else if(a==='dn'){swap(C[g],i,i+1);paint();}
     else if(a==='del'){if(confirm('حذف هذا السطر؟')){C[g].splice(i,1);paint();}}
-    else if(a==='add'){C[g].push(dp('','','','',['','','']));paint();}});
+    else if(a==='add'){C[g].push(dp('','','','',g==='frames'?['','','']:C.cols[g].map(()=>'')));paint();}
+    else if(a==='cadd'){C.cols[g].push(cl('',''));C[g].forEach(r=>r.p.push(''));paint();}
+    else if(a==='cdel'){if(C.cols[g].length<2){T('يجب أن يبقى عمود واحد على الأقل.',1);return;}if(confirm('حذف هذا العمود وأسعاره؟')){C.cols[g].splice(i,1);C[g].forEach(r=>r.p.splice(i,1));paint();}}});
   window.__hmOpen=async function(){if(!fdb()){root.innerHTML='<div class="hm-box"><p class="hint">سجّلي الدخول أولًا.</p></div>';return;}root.innerHTML='<div class="hm-box"><p class="hint">جارٍ التحميل…</p></div>';await load();paint();};
 })();
 
