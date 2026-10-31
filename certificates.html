@@ -1127,11 +1127,11 @@ function cleanDesign(d){
   if(!d||typeof d!=='object'||!OCC[d.occ])return null;
   const lang=d.lang==='fr'?'fr':d.lang==='en'?'en':'ar',X=OCC[d.occ][lang];
   return {v:3,or:d.or==='p'?'p':'l',lang,occ:d.occ,gender:d.gender==='f'?'f':'m',font:FONTS[d.font]?d.font:'ruqaa',div:DIVS.some(x=>x[0]===d.div)?d.div:'o1',divT:DIVS.some(x=>x[0]===d.divT)?d.divT:'o1',dc:(d.dc==null)?null:Math.round(num(d.dc,0,3,1)),sg:(d.sg==null)?null:Math.round(num(d.sg,0,2,2)),sgd:DIVS.some(x=>x[0]===d.sgd)?d.sgd:'s1',dsz:cleanDsz(d.dsz),off:cleanOff(d.off),fontL:LFONTS[d.fontL]?d.fontL:'classic',dn:(d.dn==null)?null:Math.round(num(d.dn,0,5,1)),frame:['full','simple','none'].includes(d.frame)?d.frame:'full',fmt:cleanFmt(d.fmt),xt:cleanXt(d.xt),ln:cleanLn(d.ln),bg:cleanBg(d.bg),theme:(d.theme==='none'||THEMES[d.theme]||(d.theme==='custom'&&cleanBg(d.bg)))?d.theme:'none',paper:hex(d.paper),deep:hex(d.deep),accent:hex(d.accent),ink:hex(d.ink),
-    title:cut(d.title,80)||X.titles[0],intro:cut(d.intro,400),name:cut(d.name,120),subj:cut(d.subj,60),role:cut(d.role,160),body:cut(d.body,1500),from:cut(d.from,160),date:cut(d.date,40),images:Array.isArray(d.images)?capI(d.images.slice(0,40).map(cleanImg).filter(Boolean)):[]};
+    title:cut(d.title,80)||X.titles[0],intro:cut(d.intro,400),name:cut(d.name,120),subj:cut(d.subj,60),role:cut(d.role,160),body:cut(d.body,1500),from:cut(d.from,160),date:cut(d.date,40),noDate:d.noDate?1:0,images:Array.isArray(d.images)?capI(d.images.slice(0,40).map(cleanImg).filter(Boolean)):[]};
 }
 function loadDesign(raw){
   const d=cleanDesign(raw);if(!d)return false;
-  const imgs=d.images;delete d.images;Object.assign(S,d);S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
+  const imgs=d.images;delete d.images;Object.assign(S,d);S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
   syncControls();renderImgs();render();renderTools();return true;
 }
 const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromCharCode(c));return btoa(x);};

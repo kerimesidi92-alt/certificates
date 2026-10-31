@@ -1842,7 +1842,7 @@ function applyTpl(id){
   S.imgs=(S.imgs||[]).filter(function(x){return !x.dflt});var prevT=S.tpl;S.tpl=id;S.arts=p.arts.slice();S.frame=p.frame;S.fl='';S.bh='0';S.paper='';S.E=newE();
   if(S.evAuto){S.ed.ev=0;S.evAuto=0;}['n1','n2','line'].forEach(function(f){if(!S.ed[f])S[f]=DEF[S.lang][f];});if(!S.ed.ev&&!p.d)S.evText=UI[S.lang].events[S.event];
   if(p.d){S.evText=S.lang==='ar'?p.d.ev:p.d.evfr;S.ed.ev=1;S.evAuto=1;if(S.lang==='ar'){S.E.n1.f.ar=p.d.fa;S.E.n2.f.ar=p.d.fa;}else{if(p.d.fn){S.E.n1.f.fr=p.d.fn;S.E.n2.f.fr=p.d.fn;}if(p.d.fe){S.E.ev.f.fr=p.d.fe;S.E.dt.f.fr=p.d.fe;}}S.orn=p.d.orn;S.olen=null;S.dst=p.d.dst;}
-  if(p.shape){S.bg=p.bg;S.ac=p.ac;S.ink=p.ink||null;}S.noText=false;
+  if(p.shape){S.bg=p.bg;S.ac=p.ac;S.ink=p.ink||null;}if(!(S.noText&&(S.txts||[]).some(function(x){return !x.orn&&String(x.text||'').trim()})))S.noText=false;
   if(p.dx!=null)['ev','n1','or','n2','dt','ln'].forEach(function(k){S.E[k].dx=p.dx;});
   applyOvTpl();
 }
