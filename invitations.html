@@ -2068,7 +2068,7 @@ async function submitOrder(){
   var pv=await makePreview(),parts=null,oid=null;
   var mkOrder=function(design){return {client:cut(nm,120),phone:cut(ph,40),email:cut(ORD.email.trim(),120),item:cut(itemText(),160),qty:qn,price:0,status:'new',notes:cut(ORD.notes.trim(),1800),design:design,preview:pv,createdAt:Date.now(),source:'app'};};
   try{
-   for(var p of [[0,1,0,6000000],[2400,.9,2400,4500000],[1800,.85,2400,3200000],[1400,.8,1800,3200000],[1000,.72,1200,3200000]]){
+   for(var p of [[0,1,0,10000000],[2400,.9,2400,8000000],[1800,.85,2400,6000000],[1400,.8,1800,4000000],[1000,.72,1200,3200000]]){
     var design=await packDesign(p[0],p[1],p[2]);var src=design.src||{},ks=Object.keys(src),tot=0;ks.forEach(function(k){tot+=src[k].length;});
     if(!ks.length){lastErr+='noimg ';break;}if(tot>p[3]){lastErr+=p[0]+':big'+Math.round(tot/1e5)/10+'M ; ';continue;}
     oid=fsNewId();design.src={};design.parts={};var pl=[];
