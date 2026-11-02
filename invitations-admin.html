@@ -711,10 +711,10 @@ var TPL=[
 /* ---- watercolor flower image: background removed, flower colour changeable ---- */
 var FLIMG={f1:'lib/frames/c0.jpg',f2:'lib/frames/c1.jpg',f3:'lib/frames/c2.jpg'};
 var FLINFO={f1:{B:[255,251,240],h:[165,265]},f2:{B:[254,254,250],h:[165,270]},f3:{B:[254,254,254],h:[225,325],noab:1,g:2}};
-var FLDATA={},FLCACHE={},FLLOAD={};
+var FLDATA={},FLCACHE={},FLLOAD={},FLTRY={};
 function flPrep(id){
   if(FLDATA[id])return FLDATA[id];
-  var im=FLLOAD[id];if(!im){var _fu=FLIMG[id];if(!_fu)return null;im=FLLOAD[id]=new Image();im.onload=function(){render();try{thDraw();}catch(e){}};im.src=_fu;return null;}
+  var im=FLLOAD[id];if(!im){var _fu=FLIMG[id];if(!_fu)return null;im=FLLOAD[id]=new Image();im.onload=function(){render();try{thDraw();}catch(e){}setTimeout(function(){try{render();thDraw();}catch(e){}},400);};im.onerror=function(){delete FLLOAD[id];FLTRY[id]=(FLTRY[id]||0)+1;if(FLTRY[id]<5)setTimeout(function(){flPrep(id)},1200*FLTRY[id]);};im.src=_fu;return null;}
   if(!im.complete||!im.naturalWidth)return null;
   var w=im.naturalWidth,h=im.naturalHeight,c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.drawImage(im,0,0);
   var d=x.getImageData(0,0,w,h).data,n=w*h,rgb=new Uint8ClampedArray(n*3),al=new Uint8ClampedArray(n),B=FLINFO[id].B,i;
@@ -1729,7 +1729,7 @@ function __buildCtl(){
     var lh='<h2>'+t.sLib+'</h2><div class="msg">'+t.libHint+'</div>';
     if(LIBCAT==='all'){lh+='<div class="lib" style="grid-template-columns:repeat(2,minmax(0,1fr))">';
       LIBC.forEach(function(c){if(HIDC.indexOf(c[0])>-1&&LIBX.indexOf(c[0])<0)return;var nms=Object.keys(ASSETS).filter(function(nm){return catOf(nm)===c[0]});if(!nms.length)return;
-        lh+='<button class="fold" data-libcat="'+c[0]+'"><img src="'+(ASSETS[nms[0]].t||ASSETS[nms[0]].d)+'" alt="" draggable="false"><span>'+c[UL==='ar'?1:2]+'</span><small>'+nms.length+'</small></button>';});
+        var cn=nms[0];if(ASSETS[cn].h/ASSETS[cn].w>3){nms.forEach(function(q){if(ASSETS[q].h/ASSETS[q].w<ASSETS[cn].h/ASSETS[cn].w)cn=q;});}lh+='<button class="fold" data-libcat="'+c[0]+'"><img src="'+(ASSETS[cn].t||ASSETS[cn].d)+'" alt="" draggable="false"><span>'+c[UL==='ar'?1:2]+'</span><small>'+nms.length+'</small></button>';});
       lh+='</div>';
     }else{
       var cc=LIBC.filter(function(c){return c[0]===LIBCAT})[0];
