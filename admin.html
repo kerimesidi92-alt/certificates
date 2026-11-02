@@ -695,7 +695,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="cert-library.js?v=9"></script>
+<script src="kpdf.js?v=1"></script><script src="cert-library.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="landing-index.js?v=5"></script>
 <script src="images.js?v=1"></script>
@@ -2015,38 +2015,11 @@ async function makeImage(keep,wm){
   }catch(err){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
 }
 
-function pdfBytes(urls,sz,land){
-  const PW=sz==='a5'?419.53:595.28,PH=sz==='a5'?595.28:841.89,pw=land?PH:PW,ph=land?PW:PH,enc=new TextEncoder(),uniq=[...new Set(urls)];
-  const load=u=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0);const d=atob(c.toDataURL('image/jpeg',.95).split(',')[1]),b=new Uint8Array(d.length);for(let i=0;i<d.length;i++)b[i]=d.charCodeAt(i);res({b,w:c.width,h:c.height});};im.onerror=()=>rej(new Error('img'));im.src=u;});
-  return Promise.all(uniq.map(load)).then(imgs=>{
-    const parts=[],offs=[];let len=0;const push=x=>{const u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=u.length;};
-    const n=urls.length,nI=imgs.length;
-    // objects: 1 catalog, 2 pages, 3..2+nI images, then per page: page obj + content obj
-    const imgObj=i=>3+i,pageObj=k=>3+nI+2*k,conObj=k=>4+nI+2*k,total=2+nI+2*n;
-    push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
-    const obj=(id,fn)=>{offs[id]=len;push(id+' 0 obj\n');fn();push('\nendobj\n');};
-    obj(1,()=>push('<</Type/Catalog/Pages 2 0 R>>'));
-    obj(2,()=>push('<</Type/Pages/Count '+n+'/Kids['+urls.map((_,k)=>pageObj(k)+' 0 R').join(' ')+']>>'));
-    imgs.forEach((im,i)=>obj(imgObj(i),()=>{push('<</Type/XObject/Subtype/Image/Width '+im.w+'/Height '+im.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+im.b.length+'>>\nstream\n');push(im.b);push('\nendstream');}));
-    urls.forEach((u,k)=>{const i=uniq.indexOf(u);
-      obj(pageObj(k),()=>push('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+pw.toFixed(2)+' '+ph.toFixed(2)+']/Resources<</XObject<</I '+imgObj(i)+' 0 R>>>>/Contents '+conObj(k)+' 0 R>>'));
-      const cs='q '+pw.toFixed(2)+' 0 0 '+ph.toFixed(2)+' 0 0 cm /I Do Q';
-      obj(conObj(k),()=>push('<</Length '+cs.length+'>>\nstream\n'+cs+'\nendstream'));});
-    const xo=len;push('xref\n0 '+(total+1)+'\n0000000000 65535 f \n');
-    for(let id=1;id<=total;id++)push(String(offs[id]).padStart(10,'0')+' 00000 n \n');
-    push('trailer\n<</Size '+(total+1)+'/Root 1 0 R>>\nstartxref\n'+xo+'\n%%EOF');
-    return new Blob(parts,{type:'application/pdf'});
-  });
-}
 function printPages(urls,land){
-  const sz=S.size==='a5'?'a5':'a4';let w=null;
-  try{w=window.open('','_blank');if(w)w.document.write('<meta name="viewport" content="width=device-width"><body style="font:18px sans-serif;text-align:center;padding:40px;direction:rtl">جارٍ تجهيز ملف الطباعة…</body>');}catch(_){}
-  pdfBytes(urls,sz,land).then(bl=>{const u=URL.createObjectURL(bl);
-    if(w){try{w.location.href=u;return;}catch(_){}}
-    const a=document.createElement('a');a.href=u;a.target='_blank';a.download='certificates-'+sz.toUpperCase()+'.pdf';document.body.appendChild(a);a.click();a.remove();
-  }).catch(()=>{if(w)try{w.close()}catch(_){}alert('تعذّر تجهيز ملف الطباعة');});
+  const sz=S.size==='a5'?'a5':'a4',W=sz==='a5'?148:210,H=sz==='a5'?210:297,u=[...new Set(urls)];
+  kPdf.show(kPdf.build(u,urls.map(x=>u.indexOf(x)),land?H:W,land?W:H),'certificates-'+sz.toUpperCase());
 }
-$('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1)),u=cv.toDataURL('image/jpeg',.95);printPages(new Array(n).fill(u),land);};
+$('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1)),u=cv.toDataURL('image/png');printPages(new Array(n).fill(u),land);};
 $('#m-wm').onclick=()=>{makeImage(false,true);};
 $('#btn-export').onclick=()=>{const o=S.openOrder&&byId(S.openOrder);$('#m-copies').value=Math.max(1,Math.min(500,(o&&+o.qty)||1));modal.hidden=false;makeImage();};
 

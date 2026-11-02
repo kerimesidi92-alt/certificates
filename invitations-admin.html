@@ -375,7 +375,7 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 .panel input[type=time],.panel input[type=date],.step input[type=time],.step input[type=date]{height:44px;-webkit-appearance:none;appearance:none;text-align:start;line-height:normal;min-height:44px}
 .xl{display:inline-block;margin-top:5px;font-size:13px;font-weight:700;color:var(--accent,#16264a);text-decoration:none;border:1px solid var(--line,#e3dccd);border-radius:999px;padding:2px 12px;background:var(--surface,#fff)}
 </style><style>html,body{touch-action:manipulation}</style>
-<script src="kmorph.js?v=2"></script><script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
+<script src="kmorph.js?v=2"></script><script src="kpdf.js?v=1"></script><script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 <style>#card,#card *,#lbcardbox .card,#lbcardbox .card *{touch-action:none}</style><style>@media (max-width:860px){body #tools{max-height:40vh}body:has(#tools:not([hidden])) .stage{height:25vh!important}}body:has(#tools:not([hidden])) .acts2{display:none}body.fs .stagewrap{padding:58px 8px 8px}body.fs .stage{height:calc(100vh - 66px)!important;height:calc(100dvh - 66px)!important;align-items:start}body.fs:has(#tools:not([hidden])) .stage{height:calc(100dvh - 66px - 40dvh)!important}body.fs #tools{max-height:40vh;max-height:40dvh}body.fs .fsx{top:10px;left:10px}</style><style>#adm-bar{max-width:1120px;margin:0 auto 12px;display:grid;gap:8px;background:var(--surface);border:1.5px solid var(--hl);border-radius:16px;padding:12px}
 #adm-bar .obh{display:flex;align-items:center;gap:10px}#adm-info{font-weight:700;flex:1}
 #ob-body{display:grid;gap:8px}.ahint{font-size:13px;color:var(--muted)}.arow{display:flex;gap:8px;flex-wrap:wrap}
@@ -2340,12 +2340,11 @@ $('#btn-export').onclick=function(){modal.hidden=false;makeImage(false);};
 $('#m-wm').onclick=function(){makeImage(true);};
 $('#m-close').onclick=function(){modal.hidden=true;};
 modal.addEventListener('click',function(e){if(e.target===modal)modal.hidden=true;});
-$('#m-print').onclick=function(){if(!lastBlob)return;var z=dimsOf(S),land=z[0]>=z[1],rd=new FileReader();rd.onload=function(){var url=rd.result;
- var html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@media screen{.bar{position:sticky;top:0;z-index:9;display:flex;gap:8px;padding:8px;background:#16264a;justify-content:center}.bar button{font:700 16px sans-serif;border:0;border-radius:10px;padding:10px 22px;background:#d6b46c;color:#16264a}.bar button+button{background:#fff}}@media print{.bar{display:none}}@page{size:A4 '+(land?'landscape':'portrait')+';margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:'+z[0]+'cm;height:auto;max-width:100%;max-height:100vh;object-fit:contain;margin:0 auto}@media screen{body{background:#ddd}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="bar"><button onclick="print()">طباعة</button><button onclick="try{window.close()}catch(e){}setTimeout(function(){history.back()},150)">رجوع</button></div><div class="hint">اضغطي على الصورة أو على زر الطباعة في المتصفح</div><img id="i" src="'+url+'" onclick="print()"><script>document.getElementById("i").onload=function(){setTimeout(function(){try{print()}catch(e){}},400)}<\/script></body></html>';
- var w=null;try{w=window.open('','_blank');}catch(_){}
- if(w){try{w.document.open();w.document.write(html);w.document.close();return;}catch(_){}}
- var fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);var d=fr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(function(){fr.remove();},60000);};rd.readAsDataURL(lastBlob);};
-
+$('#m-print').onclick=function(){if(!lastBlob)return;var z=dimsOf(S);
+ kPdf.show((async function(){var im=await loadImg(lastUrl),big=z[0]>21.05||z[1]>29.75||(z[0]>29.75),land=z[0]>=z[1],SWc=big?z[0]:(land?29.7:21),SHc=big?z[1]:(land?21:29.7),d=300,k=d/2.54,c=document.createElement('canvas');
+  c.width=Math.round(SWc*k);c.height=Math.round(SHc*k);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,Math.round((SWc-z[0])/2*k),Math.round((SHc-z[1])/2*k),Math.round(z[0]*k),Math.round(z[1]*k));
+  return kPdf.build([c],[0],SWc*10,SHc*10);})(),'invitation',toast);};
+function loadImg(u){return new Promise(function(res,rej){var im=new Image();im.onload=function(){res(im)};im.onerror=function(){rej(new Error('img'))};im.src=u;});}
 /* ---- طباعة الكمية: عدة كروت على ورقة A4/A3 مع علامات قص ---- */
 var SHEETS={A4:[21,29.7],A3:[29.7,42]},PRCAP=300;
 function NEEDCUT(){return ['circle','oval','arch','house'].indexOf(S.shape)>=0;}
@@ -2365,25 +2364,27 @@ function planUI(){var z=dimsOf(S),q=Math.max(1,parseInt($('#m-qty').value)||1),P
  var pg=Math.ceil(q/P.n);pl.textContent='مقاس الكرت '+z[0]+'×'+z[1]+' سم · '+P.n+' في الورقة'+(P.rot?' (الكرت مُدوَّر)':'')+' · الورقة '+$('#m-sz').value+(P.SW>P.SH?' أفقية':' عمودية')+' · '+pg+' ورقة'+(pg>PRCAP?' (تُطبع أول '+PRCAP+' ورقة في المرة الواحدة)':'')+planNote(P)+'.';}
 $('#m-qty').addEventListener('input',planUI);$('#m-sz').addEventListener('change',planUI);$('#m-or').addEventListener('change',planUI);$('#m-mg').addEventListener('change',planUI);
 function rotBlobUrl(bl){return new Promise(function(res,rej){var u=URL.createObjectURL(bl),im=new Image();im.onload=function(){try{var c=document.createElement('canvas');c.width=im.naturalHeight;c.height=im.naturalWidth;var x=c.getContext('2d');x.translate(c.width/2,c.height/2);x.rotate(Math.PI/2);x.drawImage(im,-im.naturalWidth/2,-im.naturalHeight/2);c.toBlob(function(b){URL.revokeObjectURL(u);b?res(URL.createObjectURL(b)):rej();},'image/png');}catch(e){rej(e);}};im.onerror=rej;im.src=u;});}
-async function printQty(){if(!lastBlob)return;var z=dimsOf(S),q=Math.max(1,parseInt($('#m-qty').value)||1),P=planSheet(z[0],z[1],$('#m-sz').value);
- if(!P){toast('الكرت أكبر بكثير من الورقة. اختاري A3.');return;}
- var url=lastUrl;if(P.rot){try{url=await rotBlobUrl(lastBlob);}catch(_e){P.rot=0;var t0=P.a;P.a=P.b;P.b=t0;url=lastUrl;}}
- var cut=NEEDCUT(),cwS=P.rot?P.b:P.a,chS=P.rot?P.a:P.b,BL=.08,PADC=BL+.1,cuts='';
- if(cut){var Hh=100*chS/cwS,bu=BL*100/cwS,pu=PADC*100/cwS,sw=(.03*100/cwS).toFixed(3);cuts=outline(S.shape,Hh,-bu,'fill="none" stroke="#000" stroke-width="'+sw+'"');var vb=(-pu)+' '+(-pu)+' '+(100+2*pu)+' '+(Hh+2*pu);}
- var tot=Math.min(q,PRCAP*P.n),pages=Math.ceil(tot/P.n),gw=P.c*P.a+(P.c-1)*P.g,gh=P.r*P.b+(P.r-1)*P.g,ox=(P.SW-gw)/2,oy=(P.SH-gh)/2,O=.1,L=Math.min(.5,P.m-O-.05),T=.03,out='';
- function ln(x,y,w,h){return '<i class="k" style="left:'+x.toFixed(3)+'cm;top:'+y.toFixed(3)+'cm;width:'+w+'cm;height:'+h+'cm"></i>';}
- for(var p=0;p<pages;p++){var cnt=Math.min(P.n,tot-p*P.n),rows=Math.ceil(cnt/P.c),cols=rows>1?P.c:cnt,h='<div class="pg">';
-  for(var k=0;k<cnt;k++){var c=k%P.c,r=Math.floor(k/P.c),tx=ox+c*(P.a+P.g),ty=oy+r*(P.b+P.g);h+='<img class="t" src="'+url+'" style="left:'+tx.toFixed(3)+'cm;top:'+ty.toFixed(3)+'cm;width:'+P.a+'cm;height:'+P.b+'cm">';
-   if(cut){var sW=cwS+2*PADC,sH=chS+2*PADC,cx=tx+P.a/2,cy=ty+P.b/2;h+='<svg class="cl" viewBox="'+vb+'" style="left:'+(cx-sW/2).toFixed(3)+'cm;top:'+(cy-sH/2).toFixed(3)+'cm;width:'+sW.toFixed(3)+'cm;height:'+sH.toFixed(3)+'cm'+(P.rot?';transform:rotate(90deg)':'')+'">'+cuts+'</svg>';}}
+async function printQty(){var z=dimsOf(S),q=Math.max(1,parseInt($('#m-qty').value)||1),P=planSheet(z[0],z[1],$('#m-sz').value);
+ if(!P){var er=new Error('x');er.userMsg='الكرت أكبر بكثير من الورقة. اختاري A3.';throw er;}
+ var im=await loadImg(lastUrl),cut=NEEDCUT(),cwS=P.rot?P.b:P.a,chS=P.rot?P.a:P.b,BL=.08,PADC=BL+.1,svgIm=null,sW=0,sH=0,dpi=Math.max(P.SW,P.SH)>30?200:300,k=dpi/2.54;
+ if(cut){var Hh=100*chS/cwS,bu=BL*100/cwS,pu=PADC*100/cwS,sw=(.03*100/cwS).toFixed(3),cuts=outline(S.shape,Hh,-bu,'fill="none" stroke="#000" stroke-width="'+sw+'"'),vb=(-pu)+' '+(-pu)+' '+(100+2*pu)+' '+(Hh+2*pu);
+  sW=cwS+2*PADC;sH=chS+2*PADC;
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+vb+'" width="'+Math.round(sW*k)+'" height="'+Math.round(sH*k)+'" overflow="visible">'+cuts+'</svg>';
+  try{svgIm=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg));}catch(_e){svgIm=null;}}
+ var tot=Math.min(q,PRCAP*P.n),pages=Math.ceil(tot/P.n),gw=P.c*P.a+(P.c-1)*P.g,gh=P.r*P.b+(P.r-1)*P.g,ox=(P.SW-gw)/2,oy=(P.SH-gh)/2,O=.1,L=Math.min(.5,P.m-O-.05),T=.03;
+ function sheet(cnt){var c=document.createElement('canvas');c.width=Math.round(P.SW*k);c.height=Math.round(P.SH*k);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+  function rc(xx,yy,w,h){x.fillStyle='#000';x.fillRect(Math.round(xx*k),Math.round(yy*k),Math.max(1,Math.round(w*k)),Math.max(1,Math.round(h*k)));}
+  var rows=Math.ceil(cnt/P.c),cols=rows>1?P.c:cnt;
+  for(var i=0;i<cnt;i++){var cc=i%P.c,r=Math.floor(i/P.c),tx=ox+cc*(P.a+P.g),ty=oy+r*(P.b+P.g),cx=(tx+P.a/2)*k,cy=(ty+P.b/2)*k;
+   x.save();x.translate(cx,cy);if(P.rot)x.rotate(Math.PI/2);x.drawImage(im,-cwS*k/2,-chS*k/2,cwS*k,chS*k);
+   if(svgIm)x.drawImage(svgIm,-sW*k/2,-sH*k/2,sW*k,sH*k);x.restore();}
   if(L>=.12){var uh=rows*P.b+(rows-1)*P.g,uw=cols*P.a+(cols-1)*P.g;
-   for(var c2=0;c2<cols;c2++){var x0=ox+c2*(P.a+P.g),x1=x0+P.a;[x0,x1].forEach(function(x){h+=ln(x-T/2,oy-O-L,T,L)+ln(x-T/2,oy+uh+O,T,L);});}
-   for(var r2=0;r2<rows;r2++){var y0=oy+r2*(P.b+P.g),y1=y0+P.b;[y0,y1].forEach(function(y){h+=ln(ox-O-L,y-T/2,L,T)+ln(ox+uw+O,y-T/2,L,T);});}}
-  out+=h+'</div>';}
- var html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@media screen{.bar{position:sticky;top:0;z-index:9;display:flex;gap:8px;padding:8px;background:#16264a;justify-content:center}.bar button{font:700 16px sans-serif;border:0;border-radius:10px;padding:10px 22px;background:#d6b46c;color:#16264a}.bar button+button{background:#fff}}@media print{.bar{display:none}}@page{size:'+P.SW+'cm '+P.SH+'cm;margin:0}html,body{margin:0;padding:0;background:#fff;width:'+P.SW+'cm}.pg{position:relative;width:'+P.SW+'cm;height:'+(P.SH-.05)+'cm;overflow:hidden;page-break-after:always;break-after:page}.pg:last-child{page-break-after:auto;break-after:auto}.t{position:absolute;display:block}.cl{position:absolute;display:block;overflow:visible}.k{position:absolute;background:#000;display:block}@media screen{body{background:#ddd}.pg{background:#fff;margin:10px auto;box-shadow:0 0 6px rgba(0,0,0,.3)}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="bar"><button onclick="print()">طباعة</button><button onclick="try{window.close()}catch(e){}setTimeout(function(){history.back()},150)">رجوع</button></div><div class="hint">'+pages+' ورقة ('+tot+' كرت). اتجاه الورقة المطلوب: '+(P.SW>P.SH?'أفقي (Landscape)':'عمودي (Portrait)')+'. اضغطي زر «طباعة» أعلاه (أو Ctrl+P). في الآيفون: زر المشاركة ثم «طباعة». اختاري: الهوامش = بدون، والمقياس = 100% (وليس «ملاءمة الصفحة»).'+(cut?' قصّي على الخط الأسود الرفيع حول كل كرت.':'')+planNote(P)+'</div>'+out+'<script>Promise.all([].map.call(document.images,function(i){return i.complete?1:new Promise(function(r){i.onload=i.onerror=r;});})).then(function(){setTimeout(function(){try{print()}catch(e){}},600)})<\/script></body></html>';
- var w=null;try{w=window.open('','_blank');}catch(_){}
- if(w){try{w.document.open();w.document.write(html);w.document.close();return;}catch(_){}}
- var fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);var d=fr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(function(){fr.remove();},120000);}
-$('#m-printq').onclick=function(){printQty();};
+   for(var c2=0;c2<cols;c2++){var x0=ox+c2*(P.a+P.g),x1=x0+P.a;[x0,x1].forEach(function(xx){rc(xx-T/2,oy-O-L,T,L);rc(xx-T/2,oy+uh+O,T,L);});}
+   for(var r2=0;r2<rows;r2++){var y0=oy+r2*(P.b+P.g),y1=y0+P.b;[y0,y1].forEach(function(yy){rc(ox-O-L,yy-T/2,L,T);rc(ox+uw+O,yy-T/2,L,T);});}}
+  return c;}
+ var items=[sheet(Math.min(P.n,tot))],order=[];for(var p=0;p<pages;p++){var cnt=Math.min(P.n,tot-p*P.n);if(cnt===Math.min(P.n,tot))order.push(0);else{items.push(sheet(cnt));order.push(items.length-1);}}
+ return kPdf.build(items,order,P.SW*10,P.SH*10);}
+$('#m-printq').onclick=function(){if(!lastBlob)return;kPdf.show(printQty(),'invitations',toast);};
 /* open bar actions */
 $('#ob-tg').onclick=function(){var b=$('#ob-body'),t=$('#ob-tg'),h=b.style.display!=='none';b.style.display=h?'none':'grid';t.innerHTML=h?'&#9666;':'&#9662;';t.setAttribute('aria-expanded',h?'false':'true');};
 $('#btn-close-order').onclick=function(){curOrder=null;var lg=S.lang;S=fresh(lg);S.tab='theme';hist=[];hpos=-1;commit();$('#adm-bar').hidden=true;build();render();toast('تصميم جديد');};
