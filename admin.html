@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><script src="modal-lock.js?v=2"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <style>html,body{touch-action:manipulation}
-#seg-orient button,#seg-lang button,#seg-gender button{min-height:34px;padding:4px 8px;font-size:12.5px}
+#seg-orient button,#seg-size button,#seg-lang button,#seg-gender button{min-height:34px;padding:4px 8px;font-size:12.5px}
 #tab-design [data-tab=theme] .field{gap:4px}
 
 #tab-mine{display:grid;gap:14px;padding-bottom:30px}
@@ -553,6 +553,7 @@ body{background:var(--bg)}
       <div class="step" data-tab="theme">
         <h2><span class="no">1</span>المناسبة واللغة</h2>
         <div class="field"><span class="lbl">اتجاه الورقة</span><div class="seg" id="seg-orient" role="group" aria-label="اتجاه الورقة"></div></div>
+        <div class="field"><span class="lbl">حجم الورقة</span><div class="seg" id="seg-size" role="group" aria-label="حجم الورقة"></div></div>
         <div class="field"><span class="lbl">لغة الشهادة</span><div class="seg" id="seg-lang" role="group" aria-label="لغة الشهادة"></div></div>
         <div class="seg" id="seg-occ" hidden style="display:none" role="group" aria-label="المناسبة"></div>
         <div id="gender-box" class="field">
@@ -1221,7 +1222,7 @@ const todayStr=l=>{const d=new Date();return l==='en'?MONTHS.en[d.getMonth()]+' 
 
 /* ---------- state ---------- */
 var TOV={};
-const S={orient:'l',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
+const S={orient:'l',size:'a4',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
   images:[],off:{},ln:[],bg:null,mv:'txt',dnv:'a',fmt:{},xt:[],st:null,dn:null,fontL:'classic',frame:'full',sel:-1,edited:{title:false,intro:false,name:false,subj:false,role:false,body:false,from:false,date:false},openOrder:null};
 const S0=JSON.stringify(S);
 const stage=$('#stage'),wrap=$('#stagewrap');
@@ -1232,7 +1233,7 @@ let scale=1;
 const dflt=k=>{const T=THEMES[S.theme];if(!T)return PLAIN[k];if(T.svg)return k==='paper'?T.pp:k==='deep'?T.dd:k==='accent'?T.aa:TDEF.ink;if(T.dI&&k==='ink')return T.dI;if(T.dA&&k==='accent')return T.dA;return k==='paper'?h2(T.p0):k==='deep'?h2(T.n0.map(c=>Math.min(255,Math.round(c*1.6+14)))):TDEF[k];};
 const eff=k=>S[k]||dflt(k);
 const cut=(v,n)=>String(v==null?'':v).slice(0,n);
-const designConfig=imgs=>{const d={v:3,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,noDate:S.noDate?1:0,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
+const designConfig=imgs=>{const d={v:3,size:S.size,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,noDate:S.noDate?1:0,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
 const num=(v,a,b,d)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):d;};
 const LIBRE=/^cert\/lib\/[a-z0-9_-]+\/[a-z0-9_.-]+\.webp$/;
 const capI=a=>{let u=0;return a.filter(i=>i.lib||++u<=4).slice(0,24);};
@@ -1252,7 +1253,7 @@ function cleanXt(a){return Array.isArray(a)?a.slice(0,8).map((t,n)=>t&&typeof t=
 function cleanDesign(d){
   if(!d||typeof d!=='object'||!OCC[d.occ])return null;
   const lang=d.lang==='fr'?'fr':d.lang==='en'?'en':'ar',X=OCC[d.occ][lang];
-  return {v:3,or:d.or==='p'?'p':'l',lang,occ:d.occ,gender:d.gender==='f'?'f':'m',font:FONTS[d.font]?d.font:'ruqaa',div:DIVS.some(x=>x[0]===d.div)?d.div:'o1',divT:DIVS.some(x=>x[0]===d.divT)?d.divT:'o1',dc:(d.dc==null)?null:Math.round(num(d.dc,0,3,1)),sg:(d.sg==null)?null:Math.round(num(d.sg,0,2,2)),sgd:DIVS.some(x=>x[0]===d.sgd)?d.sgd:'s1',dsz:cleanDsz(d.dsz),off:cleanOff(d.off),fontL:LFONTS[d.fontL]?d.fontL:'classic',dn:(d.dn==null)?null:Math.round(num(d.dn,0,5,1)),frame:['full','simple','none'].includes(d.frame)?d.frame:'full',fmt:cleanFmt(d.fmt),xt:cleanXt(d.xt),ln:cleanLn(d.ln),bg:cleanBg(d.bg),theme:(d.theme==='none'||THEMES[d.theme]||(d.theme==='custom'&&cleanBg(d.bg)))?d.theme:'none',paper:hex(d.paper),deep:hex(d.deep),accent:hex(d.accent),ink:hex(d.ink),
+  return {v:3,size:d.size==='a5'?'a5':'a4',or:d.or==='p'?'p':'l',lang,occ:d.occ,gender:d.gender==='f'?'f':'m',font:FONTS[d.font]?d.font:'ruqaa',div:DIVS.some(x=>x[0]===d.div)?d.div:'o1',divT:DIVS.some(x=>x[0]===d.divT)?d.divT:'o1',dc:(d.dc==null)?null:Math.round(num(d.dc,0,3,1)),sg:(d.sg==null)?null:Math.round(num(d.sg,0,2,2)),sgd:DIVS.some(x=>x[0]===d.sgd)?d.sgd:'s1',dsz:cleanDsz(d.dsz),off:cleanOff(d.off),fontL:LFONTS[d.fontL]?d.fontL:'classic',dn:(d.dn==null)?null:Math.round(num(d.dn,0,5,1)),frame:['full','simple','none'].includes(d.frame)?d.frame:'full',fmt:cleanFmt(d.fmt),xt:cleanXt(d.xt),ln:cleanLn(d.ln),bg:cleanBg(d.bg),theme:(d.theme==='none'||THEMES[d.theme]||(d.theme==='custom'&&cleanBg(d.bg)))?d.theme:'none',paper:hex(d.paper),deep:hex(d.deep),accent:hex(d.accent),ink:hex(d.ink),
     title:(typeof d.title==='string')?cut(d.title,80):X.titles[0],intro:cut(d.intro,400),name:cut(d.name,120),subj:cut(d.subj,60),role:cut(d.role,160),body:cut(d.body,1500),from:cut(d.from,160),date:cut(d.date,40),noDate:d.noDate?1:0,images:Array.isArray(d.images)?capI(d.images.slice(0,40).map(cleanImg).filter(Boolean)):[]};
 }
 function loadDesign(raw){
@@ -1845,6 +1846,7 @@ function freeStale(){const keys=['title','intro','name','role','body','from','da
 function onLangChange(){freeStale();setSubjDefault();resetTxtEd();applyDefaults();paintFontSeg();render();renderTools();}
 buildSeg('seg-lang',[['ar','العربية'],['fr','Français'],['en','English']],'lang',onLangChange);
 buildSeg('seg-orient',[['l','أفقي (بالعرض)'],['p','عمودي (بالطول)']],'orient',onOrientChange);
+buildSeg('seg-size',[['a4','A4 (21×29.7 سم)'],['a5','A5 (14.8×21 سم)']],'size',function(){});
 buildSeg('seg-occ',Object.entries(OCC).map(([k,o])=>[k,o.label]),'occ',onOccChange);
 const pickHTML=(list,cap)=>list.map(v=>{const l=(DIVS.find(x=>x[0]===v)||[0,v])[1];return `<button type="button" data-v="${v}" class="dvb" aria-pressed="false" aria-label="${l}" title="${l}">${v==='none'?'<span>بدون</span>':`<svg viewBox="0 0 130 ${cap>40?44:26}" width="100%" height="${cap>40?40:26}">${divSVG(65,cap>40?22:13,120,v,'currentColor','p',cap)}</svg>`}</button>`;}).join('');
 $('#seg-div').innerHTML=pickHTML(LINES,36);$('#seg-divT').innerHTML=pickHTML(CROWNS,40+8);
@@ -1939,7 +1941,7 @@ $('#title-chips').addEventListener('click',e=>{const b=e.target.closest('button'
 $('#f-name').addEventListener('focus',e=>e.target.select());
 $('#btn-reset').onclick=()=>{resetOrn();S.fmt={};S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};applyLayoutOv();applyDefaults();render();};
 function syncControls(){
-  segSync('seg-orient','orient');segSync('seg-lang','lang');paintFontSeg();segSync('seg-dn','dnv');segSync('seg-dc','dcv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-frame','frame');segSync('seg-div','div');segSync('seg-occ','occ');segSync('seg-gender','gender');$('#gender-box').hidden=S.occ==='thanks';
+  segSync('seg-orient','orient');segSync('seg-size','size');segSync('seg-lang','lang');paintFontSeg();segSync('seg-dn','dnv');segSync('seg-dc','dcv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-frame','frame');segSync('seg-div','div');segSync('seg-occ','occ');segSync('seg-gender','gender');$('#gender-box').hidden=S.occ==='thanks';
   syncTheme();paintColors();paintTitleChips();
   ['title','intro','name','subj','role','body','from','date'].forEach(k=>{$('#f-'+k).value=S[k];});
 }
@@ -2011,12 +2013,38 @@ async function makeImage(keep,wm){
   }catch(err){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
 }
 
-function printPages(urls,land){const W=land?297:210,H=land?210:297;const html='<!doctype html><html><head><meta charset="utf-8"><title>طباعة</title><style>@media screen{.bar{position:sticky;top:0;z-index:9;display:flex;gap:8px;padding:8px;background:#16264a;justify-content:center}.bar button{font:700 16px sans-serif;border:0;border-radius:10px;padding:10px 22px;background:#d6b46c;color:#16264a}.bar button+button{background:#fff}}@media print{.bar{display:none}}@page{size:'+W+'mm '+H+'mm;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;width:'+W+'mm}.pg{width:'+W+'mm;height:'+(H-3)+'mm;overflow:hidden;page-break-inside:avoid;break-inside:avoid;page-break-after:always;break-after:page}.pg:last-child{page-break-after:avoid;break-after:avoid}.pg img{display:block;width:100%;height:100%;object-fit:contain}@media screen{body{background:#ddd;width:auto}.pg{margin:8px auto;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.3);max-width:100%;height:auto}.pg img{height:auto}.hint{font:14px sans-serif;text-align:center;padding:10px;direction:rtl}}@media print{.hint{display:none}}</style></head><body><div class="bar"><button onclick="print()">طباعة</button><button onclick="try{window.close()}catch(e){}setTimeout(function(){history.back()},150)">رجوع</button></div><div class="hint">'+urls.length+' صفحة. اتجاه الورقة المطلوب: '+(land?'أفقي (Landscape)':'عمودي (Portrait)')+'. في نافذة الطباعة اختاري: الهوامش = بدون، والمقياس = 100% (وليس «ملاءمة»). إن لم تظهر النافذة اضغطي Ctrl+P.</div>'+urls.map(u=>'<div class="pg"><img src="'+u+'"></div>').join('')+'<script>Promise.all([].map.call(document.images,function(i){return i.complete?1:new Promise(function(r){i.onload=i.onerror=r;});})).then(function(){setTimeout(function(){try{print()}catch(e){}},600)})<\/script></body></html>';
-  let w=null;try{w=window.open('','_blank');}catch(_){}
-  if(w){try{w.document.open();w.document.write(html);w.document.close();return;}catch(_){}}
-  const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);
-  const d=fr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(()=>fr.remove(),120000);}
-$('#m-print').onclick=async()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,bl=await new Promise(r=>cv.toBlob(r,'image/png')),n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1)),u=URL.createObjectURL(bl);printPages(new Array(n).fill(u),land);};
+function pdfBytes(urls,sz,land){
+  const PW=sz==='a5'?419.53:595.28,PH=sz==='a5'?595.28:841.89,pw=land?PH:PW,ph=land?PW:PH,enc=new TextEncoder(),uniq=[...new Set(urls)];
+  const load=u=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0);const d=atob(c.toDataURL('image/jpeg',.95).split(',')[1]),b=new Uint8Array(d.length);for(let i=0;i<d.length;i++)b[i]=d.charCodeAt(i);res({b,w:c.width,h:c.height});};im.onerror=()=>rej(new Error('img'));im.src=u;});
+  return Promise.all(uniq.map(load)).then(imgs=>{
+    const parts=[],offs=[];let len=0;const push=x=>{const u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=u.length;};
+    const n=urls.length,nI=imgs.length;
+    // objects: 1 catalog, 2 pages, 3..2+nI images, then per page: page obj + content obj
+    const imgObj=i=>3+i,pageObj=k=>3+nI+2*k,conObj=k=>4+nI+2*k,total=2+nI+2*n;
+    push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+    const obj=(id,fn)=>{offs[id]=len;push(id+' 0 obj\n');fn();push('\nendobj\n');};
+    obj(1,()=>push('<</Type/Catalog/Pages 2 0 R>>'));
+    obj(2,()=>push('<</Type/Pages/Count '+n+'/Kids['+urls.map((_,k)=>pageObj(k)+' 0 R').join(' ')+']>>'));
+    imgs.forEach((im,i)=>obj(imgObj(i),()=>{push('<</Type/XObject/Subtype/Image/Width '+im.w+'/Height '+im.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+im.b.length+'>>\nstream\n');push(im.b);push('\nendstream');}));
+    urls.forEach((u,k)=>{const i=uniq.indexOf(u);
+      obj(pageObj(k),()=>push('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+pw.toFixed(2)+' '+ph.toFixed(2)+']/Resources<</XObject<</I '+imgObj(i)+' 0 R>>>>/Contents '+conObj(k)+' 0 R>>'));
+      const cs='q '+pw.toFixed(2)+' 0 0 '+ph.toFixed(2)+' 0 0 cm /I Do Q';
+      obj(conObj(k),()=>push('<</Length '+cs.length+'>>\nstream\n'+cs+'\nendstream'));});
+    const xo=len;push('xref\n0 '+(total+1)+'\n0000000000 65535 f \n');
+    for(let id=1;id<=total;id++)push(String(offs[id]).padStart(10,'0')+' 00000 n \n');
+    push('trailer\n<</Size '+(total+1)+'/Root 1 0 R>>\nstartxref\n'+xo+'\n%%EOF');
+    return new Blob(parts,{type:'application/pdf'});
+  });
+}
+function printPages(urls,land){
+  const sz=S.size==='a5'?'a5':'a4';let w=null;
+  try{w=window.open('','_blank');if(w)w.document.write('<meta name="viewport" content="width=device-width"><body style="font:18px sans-serif;text-align:center;padding:40px;direction:rtl">جارٍ تجهيز ملف الطباعة…</body>');}catch(_){}
+  pdfBytes(urls,sz,land).then(bl=>{const u=URL.createObjectURL(bl);
+    if(w){try{w.location.href=u;return;}catch(_){}}
+    const a=document.createElement('a');a.href=u;a.target='_blank';a.download='certificates-'+sz.toUpperCase()+'.pdf';document.body.appendChild(a);a.click();a.remove();
+  }).catch(()=>{if(w)try{w.close()}catch(_){}alert('تعذّر تجهيز ملف الطباعة');});
+}
+$('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1)),u=cv.toDataURL('image/jpeg',.95);printPages(new Array(n).fill(u),land);};
 $('#m-wm').onclick=()=>{makeImage(false,true);};
 $('#btn-export').onclick=()=>{const o=S.openOrder&&byId(S.openOrder);$('#m-copies').value=Math.max(1,Math.min(500,(o&&+o.qty)||1));modal.hidden=false;makeImage();};
 
