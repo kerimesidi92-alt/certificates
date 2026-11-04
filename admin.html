@@ -2017,7 +2017,7 @@ async function makeImage(keep,wm,batch){
     fitAll();
     await fontsFor(document);
     const run=sc=>html2canvas($('#cert'),{scale:sc,backgroundColor:null,logging:false,useCORS:true,onclone:async d=>{if(wm){const c=d.getElementById('cert'),w=d.createElement('div');w.style.cssText='position:absolute;left:0;top:0;width:'+W+'px;height:'+H+'px;z-index:50;background-repeat:repeat;background-image:url("'+wmUrl()+'")';c.appendChild(w);}const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy,.rh2').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));await fontsFor(d);}});
-    const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;let cv;const sc0=WM?1.5:(batch?(PH?2.5:3):(PH?3:4));try{cv=await run(sc0);}catch(_){try{cv=await run(2.5);}catch(_2){cv=await run(2);}}
+    const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;let cv;const sc0=WM?1.5:(batch?(PH?3:4):(PH?3:4));try{cv=await run(sc0);}catch(_){try{cv=await run(2.5);}catch(_2){cv=await run(2);}}
     $('#m-img').hidden=false;window.lastCv=cv;{const pb=$('#m-print');if(pb)pb.hidden=false;}
     if(!keep)cv.toBlob(b=>{if(!b)return;if(window.__dlu)URL.revokeObjectURL(window.__dlu);window.__dlu=URL.createObjectURL(b);$('#m-img').src=window.__dlu;const dl=$('#m-dl'),oo=S.openOrder&&byId(S.openOrder);dl.href=window.__dlu;dl.download=(((oo&&oo.client)||'certificate')+(S.name?'-'+S.name:'')).replace(/[\\/:*?"<>|]/g,'').slice(0,60)+(wm?'-معاينة':'')+'.png';dl.hidden=false;{const pf=$('#m-pdf');if(pf){pf.hidden=false;pf.dataset.n=dl.download.replace(/\.png$/,'');}}},'image/png');
     if(!batch){$('#m-msg').textContent=wm?'معاينة للزبون. النسخة النظيفة من زر «الصورة النهائية».':'اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';}
@@ -2086,10 +2086,10 @@ async function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=
       tm.textContent=(i>=2?(eta>=1?'المتبقي نحو '+eta+' دقيقة. ':'أقل من دقيقة. '):'')+'لا تغلقي الصفحة. يمكنك الضغط على «إيقاف» للحصول على ما تم.';
       nmApply(names[i],gs[i]);window.lastCv=null;await makeImage(true,false,true);
       const cv=window.lastCv;if(!cv||!cv.width){failed++;continue;}
-      const bl=await new Promise(r=>cv.toBlob(r,'image/jpeg',.95));if(!bl){failed++;continue;}
-      pland=cv.width>=cv.height;
-      const tw=360,th=Math.round(tw*cv.height/cv.width),tc=document.createElement('canvas');tc.width=tw;tc.height=th;tc.getContext('2d').drawImage(cv,0,0,tw,th);const thumb=tc.toDataURL('image/jpeg',.72);
-      cv.width=cv.height=0;window.lastCv=null;
+      const fc=document.createElement('canvas');fc.width=cv.width;fc.height=cv.height;{const fx=fc.getContext('2d');fx.fillStyle='#fff';fx.fillRect(0,0,fc.width,fc.height);fx.drawImage(cv,0,0);}cv.width=cv.height=0;const bl=await new Promise(r=>fc.toBlob(r,'image/jpeg',.97));if(!bl){failed++;continue;}
+      pland=fc.width>=fc.height;
+      const tw=360,th=Math.round(tw*fc.height/fc.width),tc=document.createElement('canvas');tc.width=tw;tc.height=th;tc.getContext('2d').drawImage(fc,0,0,tw,th);const thumb=tc.toDataURL('image/jpeg',.72);
+      fc.width=fc.height=0;window.lastCv=null;
       files.push({name:String(i+1).padStart(3,'0')+'-'+names[i].replace(/[\\/:*?"<>|]/g,'').slice(0,40)+'.jpg',blob:bl});
       const fg=document.createElement('figure');fg.style.cssText='margin:0;text-align:center;font-size:13px';const im=document.createElement('img');im.src=thumb;im.alt=names[i];im.style.cssText='width:100%;border:1px solid #ccc;border-radius:6px;cursor:pointer';im.onclick=()=>{window.open(URL.createObjectURL(bl),'_blank');};const cp=document.createElement('figcaption');cp.textContent=(i+1)+'. '+names[i];fg.append(im,cp);grid.append(fg);
       await new Promise(r=>setTimeout(r,0));}
