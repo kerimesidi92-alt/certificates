@@ -46,6 +46,11 @@ html.fmopen,html.fmopen body{overscroll-behavior:none}
 .c-img:focus,.c-img *:focus{outline:none}
 input[type=range],input[type=checkbox],input[type=radio],progress{accent-color:var(--hl,#a98534)}
 .c-img .rh2::before{content:"";position:absolute;inset:-14px}
+.nm-total{background:#16264a;color:#fff;border-radius:14px;padding:10px 12px;margin:6px 0 10px}.nm-t{display:flex;justify-content:space-between;font-weight:700;font-size:14px}.nm-s{font-size:12px;opacity:.85}.nm-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.2);margin-top:7px;overflow:hidden}.nm-bar i{display:block;height:100%;width:0;background:#d6b46c;transition:width .2s}.nm-total.ok .nm-bar i{background:#4fbf7f}.nm-total.over{background:#8a3b2b}
+.nm-tabs{display:flex;gap:6px;margin-bottom:8px}.nm-tab{flex:1;text-align:center;border:1.5px solid #d9d2c1;border-radius:12px;padding:8px 4px;font:700 14px inherit;font-family:inherit;color:#7a8499;background:#fff;cursor:pointer}.nm-tab small{display:block;font-size:11.5px;font-weight:600;margin-top:1px}.nm-tab.on.m{background:#16264a;border-color:#16264a;color:#fff}.nm-tab.on.f{background:#a8456b;border-color:#a8456b;color:#fff}
+.nm-list{border:1.5px solid #e7dfce;border-radius:14px;padding:10px;background:#fdfbf6}.nm-list.m{border-top:4px solid #16264a}.nm-list.f{border-top:4px solid #a8456b}
+.nm-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}.nm-n{width:28px;text-align:center;font-weight:700;color:#9aa3b5;font-size:13px;flex:none}.nm-row input{flex:1;min-width:0;height:40px;font-size:16px}.nm-x{width:28px;height:36px;border:0;background:none;color:#b3bac8;font-size:20px;cursor:pointer;flex:none}
+.nm-ov{position:fixed;inset:0;z-index:99;background:rgba(22,38,74,.45);display:flex;align-items:flex-end;justify-content:center}.nm-sheet{background:#fff;border-radius:20px 20px 0 0;padding:16px;width:100%;max-width:520px}.nm-sheet h3{margin:0 0 4px;font-size:17px}.nm-sheet p{margin:0 0 10px;font-size:13px;color:#7a8499;line-height:1.7}.nm-sheet textarea{width:100%;height:190px;font-size:16px;line-height:1.8}.nm-ok{background:#e8f5ec;border:1px solid #bfe0c9;border-radius:10px;padding:8px 10px;font-size:13px;margin:10px 0}.nm-btns{display:flex;gap:8px}.nm-btns button{flex:1}
 </style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
@@ -518,8 +523,11 @@ body{background:var(--bg)}
         <div class="field"><label class="lbl" for="c-email">البريد الإلكتروني (اختياري)</label><input type="email" id="c-email" autocomplete="email" dir="ltr"></div>
         <div class="field"><label class="lbl" for="c-qty">عدد النسخ</label><input type="number" id="c-qty" min="1" value="1"></div>
         <div id="c-names-wrap" hidden>
-          <div class="field"><label class="lbl" for="c-names">أسماء الذكور</label><textarea class="short" id="c-names" rows="3" placeholder="اسم في كل سطر"></textarea></div>
-          <div class="field"><label class="lbl" for="c-names-f">أسماء الإناث</label><textarea class="short" id="c-names-f" rows="3" placeholder="اسم في كل سطر"></textarea><span class="hint" id="c-names-n"></span></div>
+          <div class="nm-total"><div class="nm-t"><span>الأسماء</span><span id="nm-cnt"></span></div><div class="nm-s" id="nm-left"></div><div class="nm-bar"><i id="nm-bar"></i></div></div>
+          <div class="nm-tabs"><button type="button" class="nm-tab m on" data-g="m">ذكور<small id="nm-cm"></small></button><button type="button" class="nm-tab f" data-g="f">إناث<small id="nm-cf"></small></button></div>
+          <div class="nm-list m" id="nm-list"></div>
+          <p class="hint">تتغيّر الصيغة (للأستاذ / للأستاذة) حسب القائمة. كل سطر اسم واحد.</p>
+          <textarea id="c-names" hidden></textarea><textarea id="c-names-f" hidden></textarea>
         </div>
         <div class="field"><label class="lbl" for="c-notes">ملاحظات (اختياري)</label><textarea class="short" id="c-notes"></textarea></div>
         <p class="err" id="c-err" role="alert" hidden></p>
@@ -2009,12 +2017,27 @@ async function sendOrder(order){let err=null;
   }catch(e){err=e;}
   if(fdb){try{const ref=await Promise.race([fdb.collection('orders').add(order),new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),30000))]);return ref.id;}catch(e){err=e;}}
   throw err;}
-{const qe=$('#c-qty'),w=$('#c-names-wrap'),hn=$('#c-names-n'),upd=()=>{const q=parseInt(qe.value)||1;w.hidden=q<2||q>100;hn.textContent=q>1?'اكتب '+q+' أسماء بالضبط في الخانتين معاً، وتتغيّر الصيغة (للأستاذ / للأستاذة) حسب النوع.':'';};qe.addEventListener('input',upd);qe.addEventListener('change',upd);upd();}
+{const qe=$('#c-qty'),w=$('#c-names-wrap'),TA={m:$('#c-names'),f:$('#c-names-f')},DATA={m:[],f:[]},LST=$('#nm-list'),TOT=w.querySelector('.nm-total');let cur='m';
+const clean=x=>String(x).replace(/[()]/g,'').replace(/\s+/g,' ').trim().slice(0,60),L=g=>DATA[g].map(clean).filter(Boolean),qn=()=>Math.max(1,parseInt(qe.value)||1);
+const sync=()=>{TA.m.value=L('m').join('\n');TA.f.value=L('f').join('\n');};
+const stat=()=>{const a=L('m').length,b=L('f').length,t=a+b,n=qn();$('#nm-cnt').textContent=t+' من '+n;$('#nm-left').textContent=t<n?'باقي '+(n-t)+' اسمًا':t===n?'اكتمل العدد ✓':'زاد '+(t-n)+' عن عدد النسخ';$('#nm-bar').style.width=Math.min(100,t/n*100)+'%';TOT.classList.toggle('ok',t===n);TOT.classList.toggle('over',t>n);$('#nm-cm').textContent=a+' أسماء';$('#nm-cf').textContent=b+' أسماء';};
+const ensureEmpty=()=>{const d=DATA[cur];if(!d.length||d[d.length-1].trim())d.push('');};
+const rowHTML=(i,v)=>'<div class="nm-row"><span class="nm-n">'+(i+1)+'</span><input type="text" data-i="'+i+'" value="'+String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" placeholder="'+(cur==='m'?'اكتب':'اكتبي')+' اسمًا…" autocomplete="off"><button type="button" class="nm-x" data-x="'+i+'" aria-label="حذف">×</button></div>';
+const paint=(focusLast)=>{ensureEmpty();LST.className='nm-list '+cur;LST.innerHTML=DATA[cur].map((v,i)=>rowHTML(i,v)).join('')+'<button type="button" class="btn" id="nm-paste">📋 لصق قائمة أسماء</button>';w.querySelectorAll('.nm-tab').forEach(b=>b.classList.toggle('on',b.dataset.g===cur));if(focusLast){const ins=LST.querySelectorAll('input');ins[ins.length-1].focus();}stat();};
+const addNames=(arr,g)=>{const have=new Set(L(g).map(x=>x.toLowerCase())),add=[];arr.map(clean).filter(Boolean).forEach(x=>{const k=x.toLowerCase();if(!have.has(k)){have.add(k);add.push(x);}});DATA[g]=DATA[g].filter(x=>x.trim()).concat(add);return add.length;};
+LST.addEventListener('input',e=>{const t=e.target;if(t.tagName!=='INPUT')return;const i=+t.dataset.i;DATA[cur][i]=t.value;sync();stat();const d=DATA[cur];if(i===d.length-1&&t.value.trim()){d.push('');LST.querySelector('#nm-paste').insertAdjacentHTML('beforebegin',rowHTML(d.length-1,''));}});
+LST.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();const ins=[...LST.querySelectorAll('input')],k=ins.indexOf(e.target);if(ins[k+1])ins[k+1].focus();}});
+LST.addEventListener('paste',e=>{const t=e.target;if(t.tagName!=='INPUT')return;const tx=(e.clipboardData||window.clipboardData).getData('text')||'';if(tx.indexOf('\n')<0)return;e.preventDefault();addNames(tx.split(/\r?\n/),cur);sync();paint(true);});
+LST.addEventListener('click',e=>{const x=e.target.closest('[data-x]');if(x){DATA[cur].splice(+x.dataset.x,1);sync();paint();return;}if(e.target.closest('#nm-paste'))openPaste();});
+w.querySelectorAll('.nm-tab').forEach(b=>b.onclick=()=>{cur=b.dataset.g;paint();});
+const openPaste=()=>{const ov=document.createElement('div');ov.className='nm-ov';ov.innerHTML='<div class="nm-sheet"><h3>لصق قائمة أسماء '+(cur==='m'?'الذكور':'الإناث')+'</h3><p>انسخ الأسماء من واتساب أو من ملف أو من ورقة وألصقها هنا. <b>كل سطر يُعتبر اسمًا واحدًا</b>، وتُحذف الأسطر الفارغة والمكررة تلقائيًا.</p><textarea></textarea><div class="nm-ok" hidden></div><div class="nm-btns"><button type="button" class="btn" data-a="c">إلغاء</button><button type="button" class="btn primary" data-a="ok">إضافة الأسماء</button></div></div>';document.body.appendChild(ov);const ta=ov.querySelector('textarea'),ok=ov.querySelector('.nm-ok'),cnt=()=>{const arr=ta.value.split(/\r?\n/).map(clean).filter(Boolean),u=[...new Set(arr.map(x=>x.toLowerCase()))].length,have=new Set(L(cur).map(x=>x.toLowerCase())),nw=[...new Set(arr.map(x=>x.toLowerCase()))].filter(k=>!have.has(k)).length;ok.hidden=!arr.length;ok.textContent='✓ تم التعرف على '+u+' اسمًا'+(nw<u?' (سيُضاف '+nw+' فقط لأن '+(u-nw)+' موجودة)':'');};ta.addEventListener('input',cnt);ta.focus();ov.addEventListener('click',e=>{const a=e.target.dataset&&e.target.dataset.a;if(e.target===ov||a==='c'){ov.remove();return;}if(a==='ok'){addNames(ta.value.split(/\r?\n/),cur);sync();ov.remove();paint();}});};
+const upd=()=>{const q=qn();w.hidden=q<2||q>100;if(!w.hidden)paint();};qe.addEventListener('input',()=>{stat();upd();});qe.addEventListener('change',upd);upd();
+window.__nmFocus=g=>{cur=g;paint();};}
 $('#btn-submit').onclick=async()=>{
   const er=$('#c-err'),btn=$('#btn-submit'),v=id=>$(id).value.trim(),nm=v('#c-name'),ph=v('#c-phone');
   if(!nm){er.textContent='اكتب اسمك.';er.hidden=false;$('#c-name').focus();return;}
   if(ph.replace(/\D/g,'').length<8){er.textContent='اكتب رقم هاتف صحيح من 8 أرقام على الأقل.';er.hidden=false;$('#c-phone').focus();return;}
-  {const q0=Math.max(1,parseInt(v('#c-qty'))||1);if(q0>1&&q0<=100){const c=['#c-names','#c-names-f'].reduce((a,id)=>a+($(id).value||'').split('\n').filter(x=>x.trim()).length,0);if(c!==q0){er.textContent='عدد النسخ '+q0+': يجب كتابة '+q0+' أسماء بالضبط في خانتي الذكور والإناث (المكتوب الآن '+c+').';er.hidden=false;$('#c-names').focus();return;}}}
+  {const q0=Math.max(1,parseInt(v('#c-qty'))||1);if(q0>1&&q0<=100){const c=['#c-names','#c-names-f'].reduce((a,id)=>a+($(id).value||'').split('\n').filter(x=>x.trim()).length,0);if(c!==q0){const cm=($('#c-names').value||'').split('\n').filter(x=>x.trim()).length;er.textContent='عدد النسخ '+q0+': يجب كتابة '+q0+' أسماء بالضبط في قائمتي الذكور والإناث (المكتوب الآن '+c+': ذكور '+cm+'، إناث '+(c-cm)+').';er.hidden=false;try{$('#c-names-wrap').scrollIntoView({block:'center'});}catch(_){}return;}}}
   if(!(FBC.apiKey&&FBC.apiKey.indexOf('PASTE')<0&&FBC.projectId)){er.textContent='إرسال الطلبات غير مفعّل بعد. تواصل معنا مباشرة.';er.hidden=false;return;}
   er.hidden=true;btn.disabled=true;const t0=btn.textContent;btn.textContent='جارٍ الإرسال…';
   const f=$('#m-text').closest('.field');
