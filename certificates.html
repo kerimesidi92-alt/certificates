@@ -51,11 +51,6 @@ input[type=range],input[type=checkbox],input[type=radio],progress{accent-color:v
 .nm-list{border:1.5px solid #e7dfce;border-radius:14px;padding:10px;background:#fdfbf6}.nm-list.m{border-top:4px solid #16264a}.nm-list.f{border-top:4px solid #a8456b}
 .nm-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}.nm-n{width:28px;text-align:center;font-weight:700;color:#9aa3b5;font-size:13px;flex:none}.nm-row input{flex:1;min-width:0;height:40px;font-size:16px}.nm-x{width:28px;height:36px;border:0;background:none;color:#b3bac8;font-size:20px;cursor:pointer;flex:none}
 .nm-ov{position:fixed;inset:0;z-index:99;background:rgba(22,38,74,.45);display:flex;align-items:flex-end;justify-content:center}.nm-sheet{background:#fff;border-radius:20px 20px 0 0;padding:16px;width:100%;max-width:520px}.nm-sheet h3{margin:0 0 4px;font-size:17px}.nm-sheet p{margin:0 0 10px;font-size:13px;color:#7a8499;line-height:1.7}.nm-sheet textarea{width:100%;height:190px;font-size:16px;line-height:1.8}.nm-ok{background:#e8f5ec;border:1px solid #bfe0c9;border-radius:10px;padding:8px 10px;font-size:13px;margin:10px 0}.nm-btns{display:flex;gap:8px}.nm-btns button{flex:1}
-#alt-wrap{border:1.5px solid var(--line,#d9d4c7);border-radius:12px;padding:12px;margin:10px 0;background:rgba(0,0,0,.025)}
-#alt-wrap h4{margin:0 0 4px;font-size:15px}#alt-wrap .alt-d{font-size:12.5px;opacity:.8;margin:0 0 8px}
-#alt-wrap .alt-f{margin:8px 0}#alt-wrap .alt-f label{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:3px}
-#alt-wrap textarea,#alt-wrap input{width:100%;box-sizing:border-box}#alt-wrap .alt-r{border:0;background:none;color:inherit;text-decoration:underline;font-size:12px;cursor:pointer;opacity:.8}
-#alt-wrap .alt-pv{display:flex;gap:6px;margin-top:8px}#alt-wrap .alt-pv button{flex:1}
 </style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
@@ -457,6 +452,7 @@ body{background:var(--bg)}
         <div id="gender-box" class="field">
           <span class="lbl">صيغة الشهادة</span>
           <div class="seg" id="seg-gender" role="group" aria-label="صيغة الشهادة"></div>
+          <p class="hint" id="g-hint" hidden>عدّلتَ النص؟ كل صيغة لها نصّها: ما كتبتَه يتحوّل تلقائيًّا للصيغة الأخرى. اضغط الصيغة الأخرى لترى نصّها وتصحّحه إن لزم، وكل اسم يُطبع بنصّ صيغته.</p>
         </div>
       </div>
 
@@ -532,7 +528,6 @@ body{background:var(--bg)}
           <div class="nm-tabs"><button type="button" class="nm-tab m on" data-g="m">ذكور<small id="nm-cm"></small></button><button type="button" class="nm-tab f" data-g="f">إناث<small id="nm-cf"></small></button></div>
           <div class="nm-list m" id="nm-list"></div>
           <p class="hint">تتغيّر الصيغة (للأستاذ / للأستاذة) حسب القائمة. كل سطر اسم واحد.</p>
-          <div id="alt-wrap" class="alt-wrap" hidden></div>
           <textarea id="c-names" hidden></textarea><textarea id="c-names-f" hidden></textarea>
         </div>
         <div class="field"><label class="lbl" for="c-notes">ملاحظات (اختياري)</label><textarea class="short" id="c-notes"></textarea></div>
@@ -1119,7 +1114,7 @@ const todayStr=l=>{const d=new Date();return l==='en'?MONTHS.en[d.getMonth()]+' 
 
 /* ---------- state ---------- */
 var TOV={};
-const S={altUser:{},pv:null,orient:'l',size:'a4',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
+const S={gu:{m:{},f:{}},gl:'m',orient:'l',size:'a4',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
   images:[],off:{},ln:[],bg:null,mv:'txt',dnv:'a',fmt:{},xt:[],st:null,dn:null,fontL:'classic',frame:'full',sel:-1,edited:{title:false,intro:false,name:false,subj:false,role:false,body:false,from:false,date:false},openOrder:null};
 const stage=$('#stage'),wrap=$('#stagewrap');
 stage.innerHTML='<div class="cert" id="cert"><img id="bg" alt="" draggable="false" hidden><div id="plain"></div><div id="layer"></div>'+(WM?'<div class="wm" id="wm"></div>':'')+'</div>';
@@ -1129,7 +1124,7 @@ let scale=1;
 const dflt=k=>{const T=THEMES[S.theme];if(!T)return PLAIN[k];if(T.svg)return k==='paper'?T.pp:k==='deep'?T.dd:k==='accent'?T.aa:TDEF.ink;if(T.dI&&k==='ink')return T.dI;if(T.dA&&k==='accent')return T.dA;return k==='paper'?h2(T.p0):k==='deep'?h2(T.n0.map(c=>Math.min(255,Math.round(c*1.6+14)))):TDEF[k];};
 const eff=k=>S[k]||dflt(k);
 const cut=(v,n)=>String(v==null?'':v).slice(0,n);
-const designConfig=imgs=>{const d={v:3,size:S.size,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,noDate:S.noDate?1:0,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(altActive()){const t={};altKeys().forEach(k=>{t[k]=altVal(k);});d.alt={g:altG(),t};}if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
+const designConfig=imgs=>{const d={v:3,size:S.size,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,noDate:S.noDate?1:0,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};{const al=gAlt();if(al)d.alt=al;}if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
 const num=(v,a,b,d)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):d;};
 const LIBRE=/^cert\/lib\/[a-z0-9_-]+\/[a-z0-9_.-]+\.webp$/;
 const capI=a=>{let u=0;return a.filter(i=>i.lib||++u<=4).slice(0,24);};
@@ -1155,7 +1150,7 @@ function cleanDesign0(d){
 }
 function loadDesign(raw){
   const d=cleanDesign(raw);if(!d)return false;
-  const imgs=d.images;const al=d.alt;delete d.images;delete d.alt;Object.assign(S,d);S.altUser=al&&al.t?Object.assign({},al.t):{};S.pv=null;S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
+  const imgs=d.images;const al=d.alt;delete d.images;delete d.alt;Object.assign(S,d);S.gu={m:{},f:{}};S.gl=S.gender;if(al&&al.t)S.gu[al.g==='f'?'f':'m']=Object.assign({},al.t);S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
   syncControls();renderImgs();render();renderTools();return true;
 }
 const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromCharCode(c));return btoa(x);};
@@ -1165,7 +1160,6 @@ function defaults(gg){gg=gg||S.gender;const X=OCC[S.occ][S.lang],s=S.subj.trim()
 
 /* ---------- text in the other gender (auto-converted, editable) ---------- */
 const ALTK=['title','intro','role','body','from'],ALTL={title:'العنوان',intro:'عبارة التقديم',role:'الصفة',body:'نص الشهادة',from:'عبارة الإهداء'};
-const altG=()=>S.gender==='m'?'f':'m';
 const ALTW=new Set('تلميذ متفوق طالب استاذ أستاذ متميز ناجح مجتهد مكرم مبدع متخرج خريج متألق متالق نشيط مثالي مجد حافظ قارئ قاري معلم مدرس مدير مشرف متقن موهوب فائز حاصل مواظب منضبط ملتزم مثابر متفاني خلوق مؤدب ذكي بارع رائد'.split(' '));
 const ALTX={'ابننا':'ابنتنا','ابنكم':'ابنتكم','ابنكما':'ابنتكما','ابني':'ابنتي','ابنك':'ابنتك','ابنكن':'ابنتكن','ابنهم':'ابنتهم'};
 const ALTXR=Object.fromEntries(Object.entries(ALTX).map(([a,b])=>[b,a]));
@@ -1179,25 +1173,14 @@ function conv(t,to){
       else{if(ALTXR[st])return p+ALTXR[st];if(st.length>2&&st.endsWith('ة')&&ALTW.has(st.slice(0,-1)))return p+st.slice(0,-1);}
     }
     return w;});}
-const altKeys=()=>ALTK.filter(k=>S.edited[k]&&String(S[k]).trim());
-const altVal=k=>(S.altUser&&S.altUser[k]!=null)?S.altUser[k]:conv(S[k],altG());
-function altActive(){const c=window.__nmCnt?window.__nmCnt():null;return !!(c&&c[altG()]>0&&altKeys().length);}
-function altView(){const o=Object.assign({},S),d=defaults(altG());ALTK.forEach(k=>{o[k]=S.edited[k]?altVal(k):d[k];});return o;}
-function altUI(){
-  const w=document.getElementById('alt-wrap');if(!w)return;
-  const on=altActive();w.hidden=!on;window.__altOn=on;
-  if(!on){S.pv=null;return;}
-  const g=altG(),ks=altKeys(),sig=g+'|'+ks.join(',');
-  if(w.dataset.sig!==sig){w.dataset.sig=sig;
-    w.innerHTML='<h4>'+(g==='f'?'نص صيغة المؤنث (للإناث)':'نص صيغة المذكر (للذكور)')+'</h4><p class="alt-d">كتبتَ نصًّا خاصًّا بك، فحوّلناه تلقائيًّا لأسماء '+(g==='f'?'الإناث':'الذكور')+'. راجعه وصحّح أي كلمة لم تتحوّل.</p>'+
-    ks.map(k=>'<div class="alt-f"><label for="alt-'+k+'"><span>'+ALTL[k]+'</span><button type="button" class="alt-r" data-r="'+k+'">إعادة التحويل التلقائي</button></label>'+(k==='body'||k==='intro'?'<textarea class="short" rows="'+(k==='body'?4:2)+'" id="alt-'+k+'"></textarea>':'<input type="text" id="alt-'+k+'">')+'</div>').join('')+
-    '<div class="alt-pv"><button type="button" class="btn" data-pv="">معاينة النص الأصلي</button><button type="button" class="btn" data-pv="1">معاينة '+(g==='f'?'المؤنث':'المذكر')+'</button></div>';}
-  ks.forEach(k=>{const el=document.getElementById('alt-'+k);if(!el||document.activeElement===el)return;const v=altVal(k);if(el.value!==v)el.value=v;});
-  w.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('primary',(b.dataset.pv==='1')===!!S.pv));
-}
-document.addEventListener('input',e=>{const t=e.target;if(!t.id||t.id.indexOf('alt-')!==0||t.id==='alt-wrap')return;const k=t.id.slice(4);if(ALTK.indexOf(k)<0)return;S.altUser=S.altUser||{};S.altUser[k]=t.value;if(S.pv)render();});
-document.addEventListener('click',e=>{const r=e.target.closest('#alt-wrap [data-r]');if(r){const k=r.dataset.r;if(S.altUser)delete S.altUser[k];const el=document.getElementById('alt-'+k);if(el)el.value=conv(S[k],altG());if(S.pv)render();return;}
-  const p=e.target.closest('#alt-wrap [data-pv]');if(p){S.pv=p.dataset.pv==='1'?1:null;render();}});
+const GK=g=>g==='m'?'f':'m';
+function gExp(k,g){const h=GK(g);if(S.gu[g][k]!=null)return S.gu[g][k];if(S.gu[h][k]!=null)return conv(S.gu[h][k],g);}
+function gSyncK(k,g){const e=gExp(k,g);if(e===undefined||S[k]!==e)S.gu[g][k]=S[k];}
+function gAlt(){const g=S.gender,h=GK(g),t={},d=defaults(g);ALTK.forEach(k=>{if(!S.edited[k]||!String(S[k]).trim())return;if(S[k]===d[k]&&S.gu[g][k]==null&&S.gu[h][k]==null)return;gSyncK(k,g);t[k]=S.gu[h][k]!=null?S.gu[h][k]:conv(S[k],h);});return Object.keys(t).length?{g:h,t}:null;}
+function gSwap(g,h){const d=defaults(g);ALTK.forEach(k=>{if(!S.edited[k])return;if(S[k]===d[k]&&S.gu[g][k]==null&&S.gu[h][k]==null){S.edited[k]=false;return;}
+  gSyncK(k,g);const v=S.gu[h][k]!=null?S.gu[h][k]:conv(S.gu[g][k],h);S[k]=v;const el=$('#f-'+k);if(el)el.value=v;});}
+function gOnSwitch(){const g=S.gl,h=S.gender;if(g&&g!==h)gSwap(g,h);S.gl=h;gHint();}
+function gHint(){const el=$('#g-hint');if(!el)return;const on=ALTK.some(k=>S.edited[k]&&String(S[k]).trim());el.hidden=!on;}
 function applyDefaults(){const d=defaults();Object.keys(d).forEach(k=>{if(!S.edited[k]){S[k]=d[k];const el=$('#f-'+k);if(el)el.value=d[k];}});paintTitleChips();}
 const SUBJEN={'الرياضيات':'Mathematics','الفيزياء':'Physics','اللغة العربية':'Arabic','اللغة الفرنسية':'French','اللغة الإنجليزية':'English','العلوم الطبيعية':'Natural Sciences','التاريخ والجغرافيا':'History and Geography','التربية المدنية':'Civic Education','الجغرافيا':'Geography','الفيزياء والكيمياء':'Physics and Chemistry'};
 function subjMap(){const m={};Object.values(THEMES).forEach(T=>{if(T&&T.subj){const en=SUBJEN[T.subj]||'';[T.subj,T.subjFr,en].forEach(v=>{if(v)m[v.trim().toLowerCase()]={ar:T.subj,fr:T.subjFr,en:en};});}});return m;}
@@ -1218,7 +1201,7 @@ function plainSVG(P,D,A){
 /* ---------- certificate ---------- */
 const nfOn=()=>{const f=(S.fmt&&S.fmt.name)||{};if(f.fr!=null)return !!f.fr;const T=THEMES[S.theme];return !!(T&&T.nfr);};
 function blocks(){
-  const Q=(S.pv&&altActive())?altView():S;
+  const Q=S;
   const T=THEMES[S.theme],Z=zOf(T),fr=S.lang!=='ar',k=fr?1.1:1,F=fr?(LFONTS[S.fontL]||LFONTS.classic):(FONTS[S.font]||FONTS.ruqaa);
   const date=(S.noDate||!String(S.date).trim())?'':Z.date2?(fr?'Date\n':'التاريخ\n')+S.date:(fr?'Date : ':'التاريخ: ')+S.date;
   const L=[['title',Q.title,fr?Math.round(Z.tfs*.6*F.ts):Math.round(Z.tfs*F.ts),fr,1.12],['intro',Q.intro,Math.round(25*k),true,Z.il||1.7],['name',S.name||(S.edited.name?'':(fr?'Nom du lauréat':'اسم المكرَّم')),fr?Math.round(54*F.ns):Math.round(54*F.ns),false,1.3],['role',Q.role,25,false,1.3],['body',Q.body,Math.round(23*k),true,1.7],['from',Q.from,Z.ff||25,false,1.3],['date',date,Z.fd||21,!!Z.date2,Z.date2?1.6:1.3]];
@@ -1491,7 +1474,7 @@ function setBg(){
   });
 }
 function render(){
-  try{altUI();}catch(_){}
+  try{gHint();}catch(_){}
   try{loadUsed();}catch(_){}
   const P=eff('paper'),D=eff('deep'),A=eff('accent'),I=eff('ink'),T=THEMES[S.theme];
   const F=S.lang!=='ar'?(LFONTS[S.fontL]||LFONTS.classic):(FONTS[S.font]||FONTS.ruqaa);cert.style.cssText=`--paper:${P};--acc:${A};--ink:${I};--font-title:${F.t};--font-ui:${F.u};--font-text:${F.x};--fwt:${F.wt||700};--fwx:${F.wx||600}`;
@@ -1800,7 +1783,7 @@ $('#seg-sgd').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.sgd=
 buildSeg('seg-dc',[['a','تلقائي'],['0','0'],['1','1'],['2','2'],['3','3']],'dcv',()=>{const v=S.dcv;S.dc=v==='a'?null:+v;render();});
 buildSeg('seg-frame',[['full','كامل'],['simple','بسيط'],['none','بدون']],'frame',()=>{render();});
 
-buildSeg('seg-gender',[['m','للأستاذ / للتلميذ'],['f','للأستاذة / للتلميذة']],'gender',()=>{applyDefaults();render();});
+buildSeg('seg-gender',[['m','للأستاذ / للتلميذ'],['f','للأستاذة / للتلميذة']],'gender',()=>{gOnSwitch();applyDefaults();render();});
 
 const thumbCache={};
 const TH2={},THQ=[];let thBusy=false;const THBLANK='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -2065,7 +2048,7 @@ async function sendOrder(order){let err=null;
 {const qe=$('#c-qty'),w=$('#c-names-wrap'),TA={m:$('#c-names'),f:$('#c-names-f')},DATA={m:[],f:[]},LST=$('#nm-list'),TOT=w.querySelector('.nm-total');let cur='m';
 const clean=x=>String(x).replace(/[()]/g,'').replace(/\s+/g,' ').trim().slice(0,60),L=g=>DATA[g].map(clean).filter(Boolean),qn=()=>Math.max(1,parseInt(qe.value)||1);
 const sync=()=>{TA.m.value=L('m').join('\n');TA.f.value=L('f').join('\n');};
-const stat=()=>{const a=L('m').length,b=L('f').length,t=a+b,n=qn();window.__nmCnt=()=>({m:L('m').length,f:L('f').length});if(!!(window.__nmCnt&&(window.__altOn!==undefined))&&(window.__altOn!==altActive()))setTimeout(render,0);$('#nm-cnt').textContent=t+' من '+n;$('#nm-left').textContent=t<n?'باقي '+(n-t)+' اسمًا':t===n?'اكتمل العدد ✓':'زاد '+(t-n)+' عن عدد النسخ';$('#nm-bar').style.width=Math.min(100,t/n*100)+'%';TOT.classList.toggle('ok',t===n);TOT.classList.toggle('over',t>n);$('#nm-cm').textContent=a+' أسماء';$('#nm-cf').textContent=b+' أسماء';};
+const stat=()=>{const a=L('m').length,b=L('f').length,t=a+b,n=qn();$('#nm-cnt').textContent=t+' من '+n;$('#nm-left').textContent=t<n?'باقي '+(n-t)+' اسمًا':t===n?'اكتمل العدد ✓':'زاد '+(t-n)+' عن عدد النسخ';$('#nm-bar').style.width=Math.min(100,t/n*100)+'%';TOT.classList.toggle('ok',t===n);TOT.classList.toggle('over',t>n);$('#nm-cm').textContent=a+' أسماء';$('#nm-cf').textContent=b+' أسماء';};
 const ensureEmpty=()=>{const d=DATA[cur];if(!d.length||d[d.length-1].trim())d.push('');};
 const rowHTML=(i,v)=>'<div class="nm-row"><span class="nm-n">'+(i+1)+'</span><input type="text" data-i="'+i+'" value="'+String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" placeholder="'+(cur==='m'?'اكتب':'اكتبي')+' اسمًا…" autocomplete="off"><button type="button" class="nm-x" data-x="'+i+'" aria-label="حذف">×</button></div>';
 const paint=(focusLast)=>{ensureEmpty();LST.className='nm-list '+cur;LST.innerHTML=DATA[cur].map((v,i)=>rowHTML(i,v)).join('')+'<button type="button" class="btn" id="nm-paste">📋 لصق قائمة أسماء</button>';w.querySelectorAll('.nm-tab').forEach(b=>b.classList.toggle('on',b.dataset.g===cur));if(focusLast){const ins=LST.querySelectorAll('input');ins[ins.length-1].focus();}stat();};
