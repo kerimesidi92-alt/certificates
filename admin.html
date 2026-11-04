@@ -1224,7 +1224,7 @@ const todayStr=l=>{const d=new Date();return l==='en'?MONTHS.en[d.getMonth()]+' 
 
 /* ---------- state ---------- */
 var TOV={};
-const S={orient:'l',size:'a4',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
+const S={ll:'ar',orient:'l',size:'a4',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
   images:[],off:{},ln:[],bg:null,mv:'txt',dnv:'a',fmt:{},xt:[],st:null,dn:null,fontL:'classic',frame:'full',sel:-1,edited:{title:false,intro:false,name:false,subj:false,role:false,body:false,from:false,date:false},openOrder:null};
 const S0=JSON.stringify(S);
 const stage=$('#stage'),wrap=$('#stagewrap');
@@ -1261,7 +1261,7 @@ function cleanDesign0(d){
 }
 function loadDesign(raw){
   const d=cleanDesign(raw);if(!d)return false;
-  const imgs=d.images;delete d.images;Object.assign(S,d);S.alt=d.alt||null;S._m=null;S._mx=null;S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
+  S.ll=d.lang;S.lt={};const imgs=d.images;delete d.images;Object.assign(S,d);S.alt=d.alt||null;S._m=null;S._mx=null;S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
   syncControls();renderImgs();render();renderTools();try{histReset();}catch(_){}return true;
 }
 const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromCharCode(c));return btoa(x);};
@@ -1847,7 +1847,13 @@ function onOccChange(){
 }
 function freeStale(){const keys=['title','intro','name','role','body','from','date'],sv=S.lang,svi=S.titleIdx,pool={};keys.forEach(k=>pool[k]=new Set());try{['ar','fr','en'].forEach(l=>{S.lang=l;if(!OCC[S.occ]||!OCC[S.occ][l])return;const X=OCC[S.occ][l];for(let i=0;i<X.titles.length;i++){S.titleIdx=i;const d=defaults();keys.forEach(k=>pool[k].add(String(d[k]).trim()));}});}catch(_){}S.lang=sv;S.titleIdx=svi;keys.forEach(k=>{if(S.edited[k]&&pool[k].has(String(S[k]).trim()))S.edited[k]=false;});}
 function langOv(){const k=S.theme+'|'+S.lang;if(S._ovK&&S._ovK!==k){S.fmt={};S.xt=[];S.ln=[];S.off={};S.dsz={};S.noDate=false;S.paper=S.deep=S.accent=S.ink=null;try{$('#f-showdate').checked=true;}catch(_){}S._ovK=null;}if(S._ovK!==k)applyLayoutOv();}
-function onLangChange(){freeStale();try{langOv();}catch(_){}setSubjDefault();resetTxtEd();applyDefaults();paintFontSeg();render();renderTools();}
+const LTK=['title','intro','role','body','from'];
+function langSwap(){const nw=S.lang,old=S.ll||nw;S.ll=nw;if(old===nw)return;S.lt=S.lt||{};
+  const sn={t:{},xt:JSON.parse(JSON.stringify(S.xt||[])),gu:S.gu?JSON.parse(JSON.stringify(S.gu)):null};LTK.forEach(k=>{if(S.edited[k])sn.t[k]=S[k];});S.lt[old]=sn;
+  LTK.forEach(k=>{S.edited[k]=false;});S.xt=[];if(S.gu)S.gu={m:{},f:{}};
+  S._lr=S.lt[nw]||null;}
+function langRestore(){const sn=S._lr;S._lr=null;if(!sn)return;LTK.forEach(k=>{if(sn.t[k]!=null){S[k]=sn.t[k];S.edited[k]=true;const el=$('#f-'+k);if(el)el.value=sn.t[k];}});S.xt=sn.xt;if(sn.gu&&S.gu)S.gu=sn.gu;}
+function onLangChange(){langSwap();freeStale();try{langOv();}catch(_){}setSubjDefault();resetTxtEd();applyDefaults();langRestore();paintFontSeg();render();renderTools();}
 buildSeg('seg-lang',[['ar','العربية'],['fr','Français'],['en','English']],'lang',onLangChange);
 buildSeg('seg-orient',[['l','أفقي (بالعرض)'],['p','عمودي (بالطول)']],'orient',onOrientChange);
 buildSeg('seg-size',[['a4','A4 (21×29.7 سم)'],['a5','A5 (14.8×21 سم)']],'size',drawSz);
