@@ -1,6 +1,6 @@
 {
- "name": "صمّم كرتك",
- "short_name": "صمّم كرتك",
+ "name": "Lamsa Khasa",
+ "short_name": "Lamsa Khasa",
  "description": "بطاقات ودعوات",
  "start_url": "./",
  "scope": "./",
@@ -20,12 +20,12 @@
    "src": "icon-512.png",
    "sizes": "512x512",
    "type": "image/png",
-   "purpose": "any maskable"
+   "purpose": "any"
   },
   {
-   "src": "icon.svg",
-   "sizes": "any",
-   "type": "image/svg+xml"
+   "src": "apple-touch-icon.png",
+   "sizes": "180x180",
+   "type": "image/png"
   }
  ]
 }
