@@ -2307,6 +2307,7 @@ async function hqOn(){if(HQST)return;if(!(await loadHQ()))return;HQST={a:{},bg:{
  Object.keys(HQ.bg).forEach(function(k){HQST.bg[k]=BGIMG[k];try{Object.defineProperty(BGIMG,k,{value:HQ.bg[k],writable:true,configurable:true});}catch(_){}});}
 function hqOff(){if(!HQST)return;Object.keys(HQST.a).forEach(function(k){ASSETS[k]=HQST.a[k];});Object.keys(HQST.bg).forEach(function(k){try{Object.defineProperty(BGIMG,k,{value:HQST.bg[k],writable:true,configurable:true});}catch(_){}});HQST=null;}
 function thumbOf(blob){return new Promise(function(res){var u=URL.createObjectURL(blob),im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=c.height=24;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,24,24);x.drawImage(im,0,0,24,24);URL.revokeObjectURL(u);try{res(x.getImageData(0,0,24,24).data);}catch(e){res(null);}};im.onerror=function(){URL.revokeObjectURL(u);res(null);};im.src=u;});}
+function alphaOf(blob){return new Promise(function(res){var u=URL.createObjectURL(blob),im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=c.height=24;var x=c.getContext('2d');x.drawImage(im,0,0,24,24);URL.revokeObjectURL(u);try{var d=x.getImageData(0,0,24,24).data,a=0;for(var i=3;i<d.length;i+=4)a+=d[i];res(a/(d.length/4));}catch(e){res(null);}};im.onerror=function(){URL.revokeObjectURL(u);res(null);};im.src=u;});}
 function thumbDiff(a,b){if(!a||!b)return 0;var s=0;for(var i=0;i<a.length;i+=4)s+=Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2]);return s/(a.length/4)/3;}
 var MKBUSY=false;
 async function makeImage(wm){
@@ -2320,6 +2321,7 @@ async function makeImage(wm){
    if(S.sel){S.sel=null;buildBar();render();}
    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
    var mm0=$('#m-msg');if(mm0&&!(window.HQ&&window.HQ.__x))mm0.textContent='جارٍ تحميل الجودة العالية (أول مرة فقط)…';await hqOn();if(mm0)mm0.textContent='جارٍ تجهيز الصورة…';await paperReady(S);box=mkBox(wm);var z=dimsOf(S),px=Math.min(4000,Math.round(z[0]/2.54*300)),ratio=Math.max(1,Math.min(7,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))ratio=Math.max(1,Math.min(ratio,Math.sqrt(11e6/(600*600*z[1]/z[0]))));}catch(_e){}
+   ratio=Math.max(1,ratio*[1,.7,.5][at]);
    await preloadBox(box);
    try{var fu=fontsUsed(box);await Promise.all(Object.keys(fu).map(function(f){return Promise.race([document.fonts.load('32px "'+f+'"'),new Promise(function(r){setTimeout(r,6000);})]);}));await new Promise(function(r){setTimeout(r,120);});}catch(_e){}
    var fec=await fontEmbedCSS(box);
@@ -2328,6 +2330,7 @@ async function makeImage(wm){
    try{warm=await htmlToImage.toBlob(box,{pixelRatio:.5,cacheBust:false,fontEmbedCSS:fec,style:opt.style});}catch(_){}await new Promise(function(r){setTimeout(r,150);});
    var blob=await htmlToImage.toBlob(box,opt);
    if(!blob||blob.size<3000)throw new Error('empty');
+   var al=await alphaOf(blob);if(al!==null&&al<40)throw new Error('blank');
    if(warm&&warm.size>3000){var d=thumbDiff(await thumbOf(blob),await thumbOf(warm));if(d>12&&at<2)throw new Error('blank');}
    if(lastUrl)URL.revokeObjectURL(lastUrl);lastUrl=URL.createObjectURL(blob);lastBlob=blob;
    $('#m-img').src=lastUrl;$('#m-img').hidden=false;var dl=$('#m-dl');dl.href=lastUrl;dl.download=fname(wm)+'.png';dl.hidden=false;$('#m-print').hidden=false;try{sheetUI(wm);}catch(_e){}
