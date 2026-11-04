@@ -696,7 +696,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="kpdf.js?v=1"></script><script src="cert-library.js?v=9"></script>
+<script src="kpdf.js?v=2"></script><script src="cert-library.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="landing-index.js?v=5"></script>
 <script src="images.js?v=1"></script>
@@ -2010,7 +2010,7 @@ async function makeImage(keep,wm){
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     fitAll();
     const run=sc=>html2canvas($('#cert'),{scale:sc,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{if(wm){const c=d.getElementById('cert'),w=d.createElement('div');w.style.cssText='position:absolute;left:0;top:0;width:'+W+'px;height:'+H+'px;z-index:50;background-repeat:repeat;background-image:url("'+wmUrl()+'")';c.appendChild(w);}const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy,.rh2').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}});
-    let cv;try{cv=await run(WM?1.5:3);}catch(_){cv=await run(2);}
+    const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;let cv;try{cv=await run(WM?1.5:(PH?3:4));}catch(_){try{cv=await run(3);}catch(_2){cv=await run(2);}}
     $('#m-img').src=cv.toDataURL('image/png');$('#m-img').hidden=false;window.lastCv=cv;{const pb=$('#m-print');if(pb)pb.hidden=false;}
     if(!keep)cv.toBlob(b=>{if(!b)return;if(window.__dlu)URL.revokeObjectURL(window.__dlu);window.__dlu=URL.createObjectURL(b);const dl=$('#m-dl'),oo=S.openOrder&&byId(S.openOrder);dl.href=window.__dlu;dl.download=(((oo&&oo.client)||'certificate')+(S.name?'-'+S.name:'')).replace(/[\\/:*?"<>|]/g,'').slice(0,60)+(wm?'-معاينة':'')+'.png';dl.hidden=false;},'image/png');
     $('#m-msg').textContent=wm?'معاينة للزبون. النسخة النظيفة من زر «الصورة النهائية».':'اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
