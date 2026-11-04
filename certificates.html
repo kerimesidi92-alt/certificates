@@ -163,7 +163,8 @@ a.btn.primary{color:var(--accent-fg)}
 .pv-head .s{color:var(--muted);font-size:13px}
 /* certificate canvas: 1280x906 (A4 landscape ratio), independent of the UI theme */
 .stage-wrap[data-o=p]{max-width:520px;margin-inline:auto}
-.stage-wrap{position:relative;width:100%;overflow:hidden;border-radius:6px;background:#fff;box-shadow:0 18px 40px -16px rgba(12,18,34,.45),0 0 0 1px var(--line)}
+.stage-wrap[data-sz=a5]{background:#e7eaf0}.stage-wrap[data-sz=a5]::after{content:'A4';position:absolute;inset:3px;border:1.5px dashed #8d96ab;border-radius:5px;pointer-events:none;z-index:0;font:700 11px sans-serif;color:#7a8499;padding:3px 7px}#stage{z-index:1}
+.stage-wrap{position:relative;isolation:isolate;width:100%;overflow:hidden;border-radius:6px;background:#fff;box-shadow:0 18px 40px -16px rgba(12,18,34,.45),0 0 0 1px var(--line)}
 #stage{position:absolute;left:0;top:0;width:var(--cw,1280px);height:var(--ch,906px);transform-origin:0 0}
 .bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--surface);border:1px solid var(--hl);border-radius:12px;padding:10px 12px}
 .bar .t{font-weight:700}
@@ -440,7 +441,7 @@ body{background:var(--bg)}
       <div class="step" data-tab="theme">
         <h2><span class="no">1</span>المناسبة واللغة</h2>
         <div class="field"><span class="lbl">اتجاه الورقة</span><div class="seg" id="seg-orient" role="group" aria-label="اتجاه الورقة"></div></div>
-        <div class="field"><span class="lbl">حجم الورقة</span><div class="seg" id="seg-size" role="group" aria-label="حجم الورقة"></div><div id="sz-vis" style="display:flex;justify-content:center;margin-top:10px"></div></div>
+        <div class="field"><span class="lbl">حجم الورقة</span><div class="seg" id="seg-size" role="group" aria-label="حجم الورقة"></div></div>
         <div class="field"><span class="lbl">لغة الشهادة</span><div class="seg" id="seg-lang" role="group" aria-label="لغة الشهادة"></div></div>
         <div class="seg" id="seg-occ" hidden style="display:none" role="group" aria-label="المناسبة"></div>
         <div id="gender-box" class="field">
@@ -1449,7 +1450,7 @@ function render(){
   if(typeof updHint==='function')updHint();
 }
 function setOrient(o){S.orient=o==='p'?'p':'l';W=S.orient==='p'?906:1280;H=S.orient==='p'?1280:906;stage.style.setProperty('--cw',W+'px');stage.style.setProperty('--ch',H+'px');wrap.dataset.o=S.orient;const t=$('#themes');if(t)t.classList.toggle('port',S.orient==='p');setScale();}
-function setScale(){const w=wrap.clientWidth;scale=w/W;stage.style.setProperty('--hs',Math.round(Math.max(40,Math.min(130,36/scale)))+'px');stage.style.transform=`scale(${scale})`;wrap.style.height=(H*scale)+'px';}
+function setScale(){const w=wrap.clientWidth,f=S.size==='a5'?0.7071:1,wh=H*w/W;scale=w*f/W;stage.style.setProperty('--hs',Math.round(Math.max(40,Math.min(130,36/scale)))+'px');stage.style.transform=`translate(${(w-W*scale)/2}px,${(wh-H*scale)/2}px) scale(${scale})`;wrap.style.height=wh+'px';}
 if('ResizeObserver' in window)new ResizeObserver(setScale).observe(wrap);else window.addEventListener('resize',setScale);
 if(document.fonts){if(document.fonts.ready)document.fonts.ready.then(fitAll);if(document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',()=>{fitAll();if(S.st)fixSel();});}
 if(WM){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250"><g transform="rotate(-24 200 125)" font-family="Cairo,Arial,sans-serif" font-weight="700" text-anchor="middle"><text x="200" y="135" font-size="40" fill="#1a2440" fill-opacity="0.17" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5" paint-order="stroke">معاينة فقط</text></g></svg>`;$('#wm').style.backgroundImage=`url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;stage.addEventListener('contextmenu',e=>e.preventDefault());}
@@ -1728,7 +1729,7 @@ function onLangChange(){freeStale();setSubjDefault();applyDefaults();fixDateLang
 buildSeg('seg-lang',[['ar','العربية'],['fr','Français'],['en','English']],'lang',onLangChange);
 buildSeg('seg-orient',[['l','أفقي (بالعرض)'],['p','عمودي (بالطول)']],'orient',onOrientChange);
 buildSeg('seg-size',[['a4','A4 (21×29.7 سم)'],['a5','A5 (14.8×21 سم)']],'size',drawSz);
-function drawSz(){var el=document.getElementById('sz-vis');if(!el)return;var p=S.orient==='p',aw=p?21:29.7,ah=p?29.7:21,k=p?5.2:4.2,a5=S.size==='a5',cw=a5?(p?14.85:21):aw,ch=a5?(p?21:14.85):ah;el.innerHTML='<div style="position:relative;width:'+aw*k+'px;height:'+ah*k+'px;border:1.5px dashed #9aa3b5;border-radius:4px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.03)"><span style="position:absolute;top:3px;inset-inline-start:6px;font:700 11px sans-serif;color:#7a8499">A4</span><div style="width:'+cw*k+'px;height:'+ch*k+'px;background:#d6b46c;border-radius:2px;display:flex;align-items:center;justify-content:center;font:800 15px sans-serif;color:#16264a;box-shadow:0 2px 6px rgba(0,0,0,.25)">'+(a5?'A5':'A4')+'</div></div>';}
+function drawSz(){try{wrap.dataset.sz=S.size==='a5'?'a5':'a4';setScale();}catch(_){}}
 drawSz();
 buildSeg('seg-occ',Object.entries(OCC).map(([k,o])=>[k,o.label]),'occ',onOccChange);
 const pickHTML=(list,cap)=>list.map(v=>{const l=(DIVS.find(x=>x[0]===v)||[0,v])[1];return `<button type="button" data-v="${v}" class="dvb" aria-pressed="false" aria-label="${l}" title="${l}">${v==='none'?'<span>بدون</span>':`<svg viewBox="0 0 130 ${cap>40?44:26}" width="100%" height="${cap>40?40:26}">${divSVG(65,cap>40?22:13,120,v,'currentColor','p',cap)}</svg>`}</button>`;}).join('');
