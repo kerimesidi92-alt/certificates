@@ -2018,8 +2018,20 @@ async function makeImage(keep,wm){
 }
 
 function printPages(urls,land){
-  const sz=S.size==='a5'?'a5':'a4',W=sz==='a5'?148:210,H=sz==='a5'?210:297,u=[...new Set(urls)];
-  kPdf.show(kPdf.build(u,urls.map(x=>u.indexOf(x)),land?H:W,land?W:H),'certificates-'+sz.toUpperCase());
+  const sz=S.size==='a5'?'a5':'a4',u=[...new Set(urls)];
+  if(sz==='a4'){kPdf.show(kPdf.build(u,urls.map(x=>u.indexOf(x)),land?297:210,land?210:297),'certificates-A4');return;}
+  /* A5: two certificates per A4 sheet, each exactly half of the sheet */
+  kPdf.show((async()=>{
+    const ims={};await Promise.all(u.map(x=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>{ims[x]=im;res();};im.onerror=()=>rej(new Error('img'));im.src=x;})));
+    const SW=land?210:297,SH=land?297:210,k=360/25.4,items=[],order=[],seen={};
+    for(let i=0;i<urls.length;i+=2){const a=urls[i],b=urls[i+1]||null,key=u.indexOf(a)+'|'+(b==null?'-':u.indexOf(b));
+      if(seen[key]==null){const c=document.createElement('canvas');c.width=Math.round(SW*k);c.height=Math.round(SH*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.imageSmoothingQuality='high';
+        const hw=land?c.width:c.width/2,hh=land?c.height/2:c.height;
+        x.drawImage(ims[a],0,0,hw,hh);if(b!=null)x.drawImage(ims[b],land?0:hw,land?hh:0,hw,hh);
+        items.push(c);seen[key]=items.length-1;}
+      order.push(seen[key]);}
+    return kPdf.build(items,order,SW,SH);
+  })(),'certificates-A5');
 }
 $('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1)),u=cv.toDataURL('image/png');printPages(new Array(n).fill(u),land);};
 $('#m-wm').onclick=()=>{makeImage(false,true);};
