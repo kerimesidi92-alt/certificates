@@ -2360,7 +2360,7 @@ function planSheet(cw,ch,sk){var s=SHEETS[sk]||SHEETS.A4,orv=($('#m-or')||{}).va
  for(var t=0;t<tries.length;t++){var m=tries[t][0],g=tries[t][1];
   sheets.forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,c=Math.floor((sz[0]-2*m+g+1e-6)/(a+g)),r=Math.floor((sz[1]-2*m+g+1e-6)/(b+g));if(c>0&&r>0&&(!best||c*r>best.n))best={n:c*r,c:c,r:r,rot:rot,SW:sz[0],SH:sz[1],a:a,b:b,m:m,g:g,sc:1};});});}
  if(!best&&mgv!=='z'){sheets.forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,sc=Math.min(sz[0]/a,sz[1]/b);if(sc>=.97&&sc<=1.03&&(!best||Math.abs(1-sc)<Math.abs(1-best.sc)))best={n:1,c:1,r:1,rot:rot,SW:sz[0],SH:sz[1],a:a*sc,b:b*sc,m:0,g:0,sc:sc,full:1};});});}
- if(!best){var m2=.5;sheets.forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,sc=Math.min((sz[0]-2*m2)/a,(sz[1]-2*m2)/b);if(sc>=.6&&(!best||sc>best.sc))best={n:1,c:1,r:1,rot:rot,SW:sz[0],SH:sz[1],a:a*sc,b:b*sc,m:m2,g:0,sc:sc};});});}
+ if(!best){var m2=mgv==='z'?0:.5;sheets.forEach(function(sz){[0,1].forEach(function(rot){var a=rot?ch:cw,b=rot?cw:ch,sc=Math.min((sz[0]-2*m2)/a,(sz[1]-2*m2)/b);if(sc>=.6&&(!best||sc>best.sc))best={n:1,c:1,r:1,rot:rot,SW:sz[0],SH:sz[1],a:a*sc,b:b*sc,m:m2,g:0,sc:sc};});});}
  return best;}
 function sheetUI(wm){var sh=$('#m-sheet'),pl=$('#m-plan');if(wm){sh.hidden=true;pl.hidden=true;return;}
  var o=curOrder&&byId(curOrder);$('#m-qty').value=Math.max(1,(o&&+o.qty)||1);sh.hidden=false;pl.hidden=false;planUI();}
