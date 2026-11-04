@@ -697,7 +697,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="kpdf.js?v=4"></script><script src="cert-library.js?v=9"></script>
+<script src="kpdf.js?v=5"></script><script src="cert-library.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="landing-index.js?v=5"></script>
 <script src="images.js?v=1"></script>
@@ -2007,7 +2007,7 @@ async function fontsFor(d){
       const cs=win.getComputedStyle(el),f=cs.fontStyle+' '+cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily,k=f+'|'+t;if(seen.has(k))return;seen.add(k);jobs.push(d.fonts.load(f,t).catch(()=>0));});
     await Promise.race([Promise.all(jobs),new Promise(r=>setTimeout(r,5000))]);if(d.fonts&&d.fonts.ready)await d.fonts.ready;}catch(_){}
 }
-async function makeImage(keep,wm,batch){
+async function makeImage(keep,wm,batch,sc1){
   if(!keep)modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}if(!batch)$('#m-msg').textContent='جارٍ تجهيز الصورة…';
   try{
     if(typeof html2canvas!=='function')throw new Error('no lib');
@@ -2018,7 +2018,7 @@ async function makeImage(keep,wm,batch){
     fitAll();
     await fontsFor(document);
     const run=sc=>html2canvas($('#cert'),{scale:sc,backgroundColor:null,logging:false,useCORS:true,onclone:async d=>{if(wm){const c=d.getElementById('cert'),w=d.createElement('div');w.style.cssText='position:absolute;left:0;top:0;width:'+W+'px;height:'+H+'px;z-index:50;background-repeat:repeat;background-image:url("'+wmUrl()+'")';c.appendChild(w);}const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy,.rh2').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));if(batch===2){const ni=d.querySelector('.tb[data-k="name"] .in');if(ni)ni.style.visibility='hidden';}await fontsFor(d);}});
-    const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;let cv;const sc0=WM?1.5:(batch?3:(PH?3:4));try{cv=await run(sc0);}catch(_){try{cv=await run(2.5);}catch(_2){cv=await run(2);}}
+    const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;let cv;const sc0=WM?1.5:(sc1||(PH?3:4));try{cv=await run(sc0);}catch(_){try{cv=await run(2.5);}catch(_2){cv=await run(2);}}
     $('#m-img').hidden=false;window.lastCv=cv;{const pb=$('#m-print');if(pb)pb.hidden=false;}
     if(!keep)cv.toBlob(b=>{if(!b)return;if(window.__dlu)URL.revokeObjectURL(window.__dlu);window.__dlu=URL.createObjectURL(b);$('#m-img').src=window.__dlu;const dl=$('#m-dl'),oo=S.openOrder&&byId(S.openOrder);dl.href=window.__dlu;dl.download=(((oo&&oo.client)||'certificate')+(S.name?'-'+S.name:'')).replace(/[\\/:*?"<>|]/g,'').slice(0,60)+(wm?'-معاينة':'')+'.png';dl.hidden=false;{const pf=$('#m-pdf');if(pf){pf.hidden=false;pf.dataset.n=dl.download.replace(/\.png$/,'');}}},'image/png');
     if(!batch){$('#m-msg').textContent=wm?'معاينة للزبون. النسخة النظيفة من زر «الصورة النهائية».':'اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';}
@@ -2093,49 +2093,59 @@ function drawName(ctx,ni,sc){
 const flatten=cv=>{const fc=document.createElement('canvas');fc.width=cv.width;fc.height=cv.height;const x=fc.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,fc.width,fc.height);x.drawImage(cv,0,0);return fc;};
 const toJpg=(c,q)=>new Promise(r=>c.toBlob(r,'image/jpeg',q||.97));
 window.__nameTools={nameInfo,drawName};
-async function makeZipB(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
-  for(const f of files){const nm=enc.encode(f.name),u=new Uint8Array(await f.blob.arrayBuffer()),crc=crc32(u),n=u.length,h=new DataView(new ArrayBuffer(30));
-    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,0,true);h.setUint16(12,0x21,true);h.setUint32(14,crc,true);h.setUint32(18,n,true);h.setUint32(22,n,true);h.setUint16(26,nm.length,true);h.setUint16(28,0,true);
-    parts.push(new Uint8Array(h.buffer),nm,f.blob);
-    const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(12,0,true);c.setUint16(14,0x21,true);c.setUint32(16,crc,true);c.setUint32(20,n,true);c.setUint32(24,n,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
-    cen.push(new Uint8Array(c.buffer),nm);off+=30+nm.length+n;}
-  let cs=0;cen.forEach(x=>cs+=x.length);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
-  return new Blob([...parts,...cen,new Uint8Array(e.buffer)],{type:'application/zip'});}
-/* print every name: one base certificate per gender (name left empty), then only the name is drawn per person */
+/* print every name: one full-quality base per gender (name left empty), the name itself is a small overlay per page */
+const rgbOf=c=>{const m=String(c).match(/[\d.]+/g)||[0,0,0];return [0,1,2].map(i=>Math.max(0,Math.min(255,Math.round(+m[i]||0))));};
+async function nameMask(ni,sc){
+  const c=document.createElement('canvas'),x=c.getContext('2d'),dir=/[֐-ࣿ]/.test(ni.t)?'rtl':'ltr',font=ni.font.replace('%',(ni.fs*sc).toFixed(2));
+  x.font=font;x.direction=dir;const m=x.measureText(ni.t),asc=(m.fontBoundingBoxAscent!=null?m.fontBoundingBoxAscent:ni.fs*sc*.9),des=(m.fontBoundingBoxDescent!=null?m.fontBoundingBoxDescent:ni.fs*sc*.4);
+  const L=ni.lh*sc,pad=Math.ceil(ni.fs*sc*.3),ow=Math.ceil(m.width+pad*2),oh=Math.ceil(L+pad*2);c.width=ow;c.height=oh;
+  x.font=font;x.direction=dir;x.fillStyle='#000';x.textAlign='center';x.textBaseline='alphabetic';x.fillText(ni.t,ow/2,pad+(L-(asc+des))/2+asc);
+  const id=x.getImageData(0,0,ow,oh).data,a=new Uint8Array(ow*oh);for(let i=0;i<a.length;i++)a[i]=id[i*4+3];c.width=c.height=0;
+  const d=await kPdf.deflate(a);return {ox:ni.cx*sc-ow/2,oy:ni.cy*sc-oh/2,mw:ow,mh:oh,data:d.data,flate:d.flate,rgb:rgbOf(ni.color)};
+}
+const hasInk=cv=>{try{const s=document.createElement('canvas');s.width=48;s.height=34;const x=s.getContext('2d');x.drawImage(cv,0,0,48,34);const d=x.getImageData(0,0,48,34).data;let a=0;for(let i=3;i<d.length;i+=4)a+=d[i];return a>48*34*40;}catch(_){return false;}};
+/* a full page as one JPEG; tries lower scales if the browser returns an empty canvas */
+async function pageJpeg(mode){
+  const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;
+  for(const sc of (PH?[3,2.5,2]:[4,3,2])){
+    window.lastCv=null;await makeImage(true,false,mode,sc);const cv=window.lastCv;window.lastCv=null;if(!cv||!cv.width)continue;
+    const ok=hasInk(cv);if(!ok){cv.width=cv.height=0;continue;}
+    const fc=flatten(cv);cv.width=cv.height=0;const w=fc.width,h=fc.height,bl=await toJpg(fc,.98);fc.width=fc.height=0;
+    if(bl&&bl.size>120000)return {b:bl,w,h};
+  }
+  return null;
+}
 function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
   const opts=[...sel.options].filter(o=>o.value),names=opts.map(o=>o.value),gs=opts.map(o=>o.dataset.g||'');if(!names.length)return;
-  const keep=S.name,keepG=S.gender,t0=btn.textContent,tm=$('#m-msg'),t00=Date.now(),PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1,sc=PH?3:4;
+  const keep=S.name,keepG=S.gender,t0=btn.textContent,tm=$('#m-msg'),t00=Date.now();
   btn.disabled=true;window.__expStop=0;modal.hidden=false;modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}
   const gal=document.getElementById('m-gal')||(()=>{const g=document.createElement('div');g.id='m-gal';g.style.cssText='display:flex;flex-direction:column;gap:12px;margin-top:10px';$('#m-img').after(g);return g;})();gal.innerHTML='';
   const stopB=document.createElement('button');stopB.type='button';stopB.className='btn';stopB.textContent='إيقاف والطباعة بما تم';stopB.onclick=()=>{window.__expStop=1;stopB.disabled=true;};gal.append(stopB);
-  const files=[];let land=true;
+  let done=0;
   const job=(async()=>{
-    const bases={};let failed=0;
-    try{
-      for(let i=0;i<names.length&&!window.__expStop;i++){
-        const el=(Date.now()-t00)/1000,eta=i>=3?Math.ceil(el/i*(names.length-i)/60):0,msg='جارٍ التجهيز '+(i+1)+' من '+names.length+(i>=3&&eta>=1?' · المتبقي نحو '+eta+' دقيقة':'');
-        btn.textContent=msg;$('#m-title').textContent=msg;tm.textContent='لا تغلقي الصفحة. سيُفتح ملف الطباعة تلقائيًا عند الانتهاء.';try{kPdf.say(msg);}catch(_){}
-        nmApply(names[i],gs[i]);fitAll();await fontsFor(document);
-        let ni=nameInfo(),blob=null;const key=gs[i]||'';
-        if(ni){
-          if(!bases[key]){window.lastCv=null;await makeImage(true,false,2);const b0=window.lastCv;window.lastCv=null;if(!b0||!b0.width){ni=null;}else bases[key]=b0;}
-        }
-        if(ni&&bases[key]){const b0=bases[key],oc=window.__oc||(window.__oc=document.createElement('canvas'));if(oc.width!==b0.width||oc.height!==b0.height){oc.width=b0.width;oc.height=b0.height;}
-          const x=oc.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,oc.width,oc.height);x.drawImage(b0,0,0);drawName(x,ni,b0.width/W);land=oc.width>=oc.height;blob=await toJpg(oc,.97);}
-        else{window.lastCv=null;await makeImage(true,false,true);const cv=window.lastCv;window.lastCv=null;if(cv&&cv.width){const fc=flatten(cv);cv.width=cv.height=0;land=fc.width>=fc.height;blob=await toJpg(fc,.97);fc.width=fc.height=0;}}
-        if(!blob){failed++;continue;}
-        files.push({name:String(i+1).padStart(3,'0')+'-'+names[i].replace(/[\\/:*?"<>|]/g,'').slice(0,40)+'.jpg',blob});
-        await new Promise(r=>setTimeout(r,0));}
-    }finally{Object.values(bases).forEach(c=>{c.width=c.height=0;});if(window.__oc){window.__oc.width=window.__oc.height=0;window.__oc=null;}}
-    if(!files.length)throw new Error('none');
-    const cp=Math.max(1,Math.min(50,parseInt($('#m-copies').value)||1)),list=[];files.forEach(f=>{for(let k=0;k<cp;k++)list.push(f.blob);});
+    const imgs=[],bases={},cells=[];
+    for(let i=0;i<names.length&&!window.__expStop;i++){
+      const el=(Date.now()-t00)/1000,eta=i>=3?Math.ceil(el/i*(names.length-i)/60):0,msg='جارٍ التجهيز '+(i+1)+' من '+names.length+(i>=3&&eta>=1?' · المتبقي نحو '+eta+' دقيقة':'');
+      btn.textContent=msg;$('#m-title').textContent=msg;tm.textContent='لا تغلقي الصفحة. سيُفتح ملف الطباعة تلقائيًا عند الانتهاء.';try{kPdf.say(msg);}catch(_){}
+      nmApply(names[i],gs[i]);fitAll();await fontsFor(document);
+      let ni=nameInfo();const key=gs[i]||'';
+      if(ni&&bases[key]==null){const b0=await pageJpeg(2);if(b0){imgs.push(b0);bases[key]=imgs.length-1;}else ni=null;}
+      if(ni){const im=imgs[bases[key]],mk=await nameMask(ni,im.w/W);cells.push({i:bases[key],mk});}
+      else{const pj=await pageJpeg(true);if(!pj)throw new Error('blank');imgs.push(pj);cells.push({i:imgs.length-1});}
+      done++;await new Promise(r=>setTimeout(r,0));
+    }
+    if(!cells.length)throw new Error('none');
+    const a5=S.size==='a5',land=imgs[cells[0].i].w>=imgs[cells[0].i].h,mm=v=>v/25.4*72;
+    const SW=a5?(land?210:297):(land?297:210),SH=a5?(land?297:210):(land?210:297),PW=mm(SW),PH2=mm(SH);
+    const mkCell=(c,x,y,w,h)=>{const im=imgs[c.i],o={i:c.i,x,y,w,h};if(c.mk){const m=c.mk;o.ov={x:m.ox/im.w*w,y:m.oy/im.h*h,w:m.mw/im.w*w,h:m.mh/im.h*h,rgb:m.rgb,mw:m.mw,mh:m.mh,data:m.data,flate:m.flate};}return o;};
+    const pages=[];
+    if(!a5)cells.forEach(c=>pages.push([mkCell(c,0,0,PW,PH2)]));
+    else for(let i=0;i<cells.length;i+=2){const hw=land?PW:PW/2,hh=land?PH2/2:PH2,pg=[mkCell(cells[i],0,0,hw,hh)];if(cells[i+1])pg.push(mkCell(cells[i+1],land?0:hw,land?hh:0,hw,hh));pages.push(pg);}
     try{kPdf.say('جارٍ تجهيز ملف الطباعة…');}catch(_){}
-    return pdfPages(list,land);
+    return kPdf.buildCells(imgs,pages,SW,SH);
   })();
-  kPdf.show(job,'certificates',m=>{tm.textContent='تعذّر تجهيز الطباعة. جرّبي عددًا أقل من الأسماء.';});
-  job.then(()=>{stopB.remove();$('#m-title').textContent='تم ('+files.length+' شهادة)';tm.textContent='فُتح ملف الطباعة في تبويب جديد.';
-    const zb=document.createElement('button');zb.type='button';zb.className='btn';zb.textContent='تنزيل الصور (ZIP)';zb.onclick=async()=>{zb.disabled=true;zb.textContent='جارٍ التجهيز…';try{const a=document.createElement('a');a.href=URL.createObjectURL(await makeZipB(files));a.download='certificates.zip';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),3000);}catch(_){}zb.disabled=false;zb.textContent='تنزيل الصور (ZIP)';};gal.append(zb);
-  },()=>{stopB.remove();}).finally(()=>{nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;});
+  kPdf.show(job,'certificates',()=>{tm.textContent='تعذّر تجهيز الطباعة. جرّبي عددًا أقل من الأسماء.';});
+  job.then(()=>{stopB.remove();$('#m-title').textContent='تم ('+done+' شهادة)';tm.textContent='فُتح ملف الطباعة في تبويب جديد.';},()=>{stopB.remove();$('#m-title').textContent='تعذّر';}).finally(()=>{nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;});
 }
 
 $('#m-close').onclick=()=>{modal.hidden=true;};

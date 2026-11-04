@@ -59,6 +59,41 @@ function show(p,name,err){
     var a=document.createElement('a');a.href=u;a.target='_blank';a.download=(name||'print')+'.pdf';document.body.appendChild(a);a.click();a.remove();
   }).catch(function(e){kPdf._w=null;if(w)try{w.close()}catch(_){}(err||alert)((e&&e.userMsg)||'تعذّر تجهيز ملف الطباعة');});
 }
+
+/* pages made of cells: each cell = a shared base image (jpeg) + optional small soft-masked overlay (the name).
+   imgs: [{b:Blob(jpeg),w,h}], pages: [[{i,x,y,w,h,ov:{x,y,w,h,rgb:[r,g,b],mw,mh,data:Uint8Array,flate}}]] in points, top-left origin */
+function buildCells(imgs,pages,wmm,hmm){
+  var pw=wmm/25.4*72,ph=hmm/25.4*72,parts=[],offs=[],len=0,nid=2,f=function(v){return (+v).toFixed(2);};
+  function push(x){var u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=(u.size!==undefined?u.size:u.length);}
+  function obj(id,fn){offs[id]=len;push(id+' 0 obj\n');fn();push('\nendobj\n');}
+  var imgId=imgs.map(function(){return ++nid;});
+  var pg=pages.map(function(cells){return {page:++nid,con:++nid,cells:cells.map(function(c){var o={c:c};if(c.ov){o.oi=++nid;o.om=++nid;}return o;})};});
+  var total=nid;
+  push('%PDF-1.4\n');
+  obj(1,function(){push('<</Type/Catalog/Pages 2 0 R/ViewerPreferences<</PrintScaling/None/PickTrayByPDFSize true/Duplex/Simplex>>>>');});
+  obj(2,function(){push('<</Type/Pages/Count '+pg.length+'/Kids['+pg.map(function(p){return p.page+' 0 R';}).join(' ')+']>>');});
+  imgs.forEach(function(im,i){obj(imgId[i],function(){push('<</Type/XObject/Subtype/Image/Width '+im.w+'/Height '+im.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+im.b.size+'>>\nstream\n');push(im.b);push('\nendstream');});});
+  pg.forEach(function(p){
+    var xo='',cs='';
+    p.cells.forEach(function(o,j){var c=o.c;xo+='/B'+j+' '+imgId[c.i]+' 0 R ';
+      cs+='q '+f(c.w)+' 0 0 '+f(c.h)+' '+f(c.x)+' '+f(ph-(c.y+c.h))+' cm /B'+j+' Do Q\n';
+      if(c.ov){var v=c.ov;xo+='/O'+j+' '+o.oi+' 0 R ';cs+='q '+f(v.w)+' 0 0 '+f(v.h)+' '+f(c.x+v.x)+' '+f(ph-(c.y+v.y+v.h))+' cm /O'+j+' Do Q\n';}});
+    obj(p.page,function(){push('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+f(pw)+' '+f(ph)+']/Resources<</XObject<<'+xo+'>>>>/Contents '+p.con+' 0 R>>');});
+    obj(p.con,function(){push('<</Length '+cs.length+'>>\nstream\n'+cs+'endstream');});
+    p.cells.forEach(function(o){if(!o.c.ov)return;var v=o.c.ov;
+      obj(o.oi,function(){push('<</Type/XObject/Subtype/Image/Width 1/Height 1/ColorSpace/DeviceRGB/BitsPerComponent 8/SMask '+o.om+' 0 R/Length 3>>\nstream\n');push(new Uint8Array(v.rgb));push('\nendstream');});
+      obj(o.om,function(){push('<</Type/XObject/Subtype/Image/Width '+v.mw+'/Height '+v.mh+'/ColorSpace/DeviceGray/BitsPerComponent 8'+(v.flate?'/Filter/FlateDecode':'')+'/Length '+v.data.length+'>>\nstream\n');push(v.data);push('\nendstream');});});
+  });
+  var xo2=len;push('xref\n0 '+(total+1)+'\n0000000000 65535 f \n');
+  for(var id=1;id<=total;id++)push(String(offs[id]).padStart(10,'0')+' 00000 n \n');
+  push('trailer\n<</Size '+(total+1)+'/Root 1 0 R>>\nstartxref\n'+xo2+'\n%%EOF');
+  return new Blob(parts,{type:'application/pdf'});
+}
+function deflate(u8){
+  if(typeof CompressionStream==='undefined')return Promise.resolve({data:u8,flate:false});
+  try{var cs=new CompressionStream('deflate'),w=cs.writable.getWriter();w.write(u8);w.close();
+    return new Response(cs.readable).arrayBuffer().then(function(ab){return {data:new Uint8Array(ab),flate:true};},function(){return {data:u8,flate:false};});}catch(_){return Promise.resolve({data:u8,flate:false});}
+}
 function say(m){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent=m;}catch(_){}}
-window.kPdf={build:build,show:show,load:load,say:say,_w:null};
+window.kPdf={build:build,buildCells:buildCells,deflate:deflate,show:show,load:load,say:say,_w:null};
 })();
