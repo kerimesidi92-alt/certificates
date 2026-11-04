@@ -387,7 +387,7 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 </style></head><body style="padding-block:14px">
 <div class="amodal" id="modal" hidden role="dialog" aria-modal="true"><div class="am-panel">
  <strong id="m-title">الصورة النهائية</strong>
- <div class="arow"><a class="abtn pri" id="m-dl" hidden download="card.png">تنزيل الصورة</a><button type="button" class="abtn pri" id="m-print" hidden>طباعة</button><button type="button" class="abtn" id="m-wm">حفظ بعلامة مائية</button><button type="button" class="abtn" id="m-close">إغلاق</button></div>
+ <div class="arow"><a class="abtn pri" id="m-dl" hidden download="card.png">تنزيل الصورة</a><button type="button" class="abtn pri" id="m-pdf" hidden>تنزيل PDF</button><button type="button" class="abtn pri" id="m-print" hidden>طباعة</button><button type="button" class="abtn" id="m-wm">حفظ بعلامة مائية</button><button type="button" class="abtn" id="m-close">إغلاق</button></div>
  <div class="arow" id="m-sheet" hidden><label class="ahint" style="display:flex;gap:6px;align-items:center">عدد النسخ <input type="number" id="m-qty" min="1" max="10000" value="1" style="width:84px;min-height:38px"></label><label class="ahint" style="display:flex;gap:6px;align-items:center">الورقة <select id="m-sz" style="min-height:38px"><option value="A4">A4</option><option value="A3">A3</option></select></label><label class="ahint" style="display:flex;gap:6px;align-items:center">اتجاه الورقة <select id="m-or" style="min-height:38px"><option value="a">تلقائي</option><option value="p">عمودي</option><option value="l">أفقي</option></select></label><label class="ahint" style="display:flex;gap:6px;align-items:center">الهوامش <select id="m-mg" style="min-height:38px"><option value="a">تلقائي</option><option value="t">صغيرة</option><option value="z">بلا هوامش (حتى الحافة)</option></select></label><button type="button" class="abtn pri" id="m-printq">طباعة الكمية</button></div>
  <p class="ahint" id="m-plan" hidden></p>
  <p class="ahint" id="m-msg">جارٍ تجهيز الصورة…</p>
@@ -2313,7 +2313,7 @@ var MKBUSY=false;
 async function makeImage(wm){
  if(MKBUSY)return;MKBUSY=true;
  try{for(var w0=0;w0<80&&!window.XMORE&&!window.XFL&&!window.__fl;w0++)await new Promise(function(r){setTimeout(r,250);});rehydrate();if(window.__fp&&window.__fp.length)await Promise.all(window.__fp);}catch(_e){}
- $('#m-img').hidden=true;$('#m-print').hidden=true;$('#m-dl').hidden=true;$('#m-sheet').hidden=true;$('#m-plan').hidden=true;$('#m-msg').textContent='جارٍ تجهيز الصورة…';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
+ $('#m-img').hidden=true;$('#m-print').hidden=true;$('#m-dl').hidden=true;$('#m-pdf').hidden=true;$('#m-sheet').hidden=true;$('#m-plan').hidden=true;$('#m-msg').textContent='جارٍ تجهيز الصورة…';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
  var ok=false,lastErr=null;
  for(var at=0;at<3&&!ok;at++){
   var box=null;
@@ -2333,7 +2333,7 @@ async function makeImage(wm){
    var al=await alphaOf(blob);if(al!==null&&al<40)throw new Error('blank');
    if(warm&&warm.size>3000){var d=thumbDiff(await thumbOf(blob),await thumbOf(warm));if(d>12&&at<2)throw new Error('blank');}
    if(lastUrl)URL.revokeObjectURL(lastUrl);lastUrl=URL.createObjectURL(blob);lastBlob=blob;
-   $('#m-img').src=lastUrl;$('#m-img').hidden=false;var dl=$('#m-dl');dl.href=lastUrl;dl.download=fname(wm)+'.png';dl.hidden=false;$('#m-print').hidden=false;try{sheetUI(wm);}catch(_e){}
+   $('#m-img').src=lastUrl;$('#m-img').hidden=false;var dl=$('#m-dl');dl.href=lastUrl;dl.download=fname(wm)+'.png';dl.hidden=false;$('#m-pdf').hidden=false;$('#m-print').hidden=false;try{sheetUI(wm);}catch(_e){}
    $('#m-msg').textContent=wm?'معاينة للزبون. النسخة النظيفة من زر «الصورة النهائية».':'اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';
    ok=true;
   }catch(e){lastErr=e;if(at<2){$('#m-msg').textContent='جارٍ المحاولة مرة أخرى…';await new Promise(function(r){setTimeout(r,900);});}}
@@ -2341,6 +2341,7 @@ async function makeImage(wm){
  }
  if(!ok)$('#m-msg').textContent='تعذّر إنشاء الصورة هنا ('+((lastErr&&lastErr.message)||'خطأ')+'). يمكنك التقاط صورة للشاشة.';
  hqOff();MKBUSY=false;}
+$('#m-pdf').onclick=async function(){if(!lastBlob)return;var b=$('#m-pdf'),t0=b.textContent;b.disabled=true;b.textContent='جارٍ التجهيز…';try{var z=dimsOf(S),bl=await kPdf.build([lastBlob],[0],z[0]*10,z[1]*10),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname(false)+'.pdf';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},3000);}catch(_e){try{toast('تعذّر إنشاء PDF',1);}catch(_x){}}b.disabled=false;b.textContent=t0;};
 $('#btn-export').onclick=function(){modal.hidden=false;makeImage(false);};
 $('#m-wm').onclick=function(){makeImage(true);};
 $('#m-close').onclick=function(){modal.hidden=true;};
