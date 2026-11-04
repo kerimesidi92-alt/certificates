@@ -59,5 +59,6 @@ function show(p,name,err){
     var a=document.createElement('a');a.href=u;a.target='_blank';a.download=(name||'print')+'.pdf';document.body.appendChild(a);a.click();a.remove();
   }).catch(function(e){kPdf._w=null;if(w)try{w.close()}catch(_){}(err||alert)((e&&e.userMsg)||'تعذّر تجهيز ملف الطباعة');});
 }
-window.kPdf={build:build,show:show,load:load,_w:null};
+function say(m){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent=m;}catch(_){}}
+window.kPdf={build:build,show:show,load:load,say:say,_w:null};
 })();
