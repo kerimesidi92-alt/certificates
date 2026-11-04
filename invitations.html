@@ -980,11 +980,12 @@ function outline(sh,H,d,extra,rx){
   if(sh==='house'){var sy=.22*H+d*.5;return '<polygon points="50,'+(d+1)+' '+(100-d)+','+sy+' '+(100-d)+','+(H-d)+' '+d+','+(H-d)+' '+d+','+sy+'" '+extra+'/>';}
   return '<rect x="'+d+'" y="'+d+'" width="'+(100-2*d)+'" height="'+(H-2*d)+'" rx="'+(rx||2)+'" '+extra+'/>';
 }
-function clipCss(sh){
+function cornerRow(){if(['rect','land','square'].indexOf(S.shape)<0)return '';var ar=UL==='ar';return '<div class="msg">'+(ar?'زوايا الكرت':'Coins de la carte')+'</div><div class="row">'+btn('opt',!S.sq,'data-k="sq" data-v="0"','<span>'+(ar?'مستديرة':'Arrondis')+'</span>')+btn('opt',!!S.sq,'data-k="sq" data-v="1"','<span>'+(ar?'حادة':'Droits')+'</span>')+'</div>';}
+function clipCss(sh,sq){
   if(sh==='circle'||sh==='oval')return {r:'50%'};
   if(sh==='arch')return {r:'50cqw 50cqw 1.5cqw 1.5cqw'};
   if(sh==='house')return {c:'polygon(50% 0,100% 22%,100% 100%,0 100%,0 22%)'};
-  return {r:'1.5cqw'};
+  return {r:sq?'0':'1.5cqw'};
 }
 function topPt(sh,H,t){
   if(sh==='circle'||sh==='oval'){var th=(200+140*t)*Math.PI/180;return [50+44*Math.cos(th),H/2+(H/2-6)*Math.sin(th)];}
@@ -1211,7 +1212,7 @@ function drawCard(box,st,wpx,thumb,ph){
   USEBU=!thumb;
   var sh=st.shape,z=dimsOf(st),H=100*z[1]/z[0],ink=inkOf(st),t=UI[st.lang],card=box.firstChild;
   box.style.width=wpx+'px';box.style.height=(wpx*H/100)+'px';
-  var cc=clipCss(sh);card.style.borderRadius=cc.r||'0';card.style.clipPath=cc.c||'none';
+  var cc=clipCss(sh,st.sq);card.style.borderRadius=cc.r||'0';card.style.clipPath=cc.c||'none';
   card.style.background=st.bg;card.style.color=ink;card.dir=st.lang==='ar'?'rtl':'ltr';
   var sc=(sh==='circle'||sh==='oval')?.8:1;if(st.arts.indexOf('wreath')>-1)sc=Math.min(sc,.78);
   var h='',I;if(st.tpl==='mine'&&st.bgKey&&IMGSRC[st.bgKey])h+='<img src="'+U(IMGSRC[st.bgKey])+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none" draggable="false">';
@@ -1317,7 +1318,7 @@ function buildSide(){
   h+='</div><select id="sidesz">';
   SH[S.shape].sizes.forEach(function(z,i){h+='<option value="'+i+'"'+(!S.custom&&S.size===i?' selected':'')+'>'+(S.shape==='circle'?t.dia+' '+z[0]:z[0]+' × '+z[1])+' '+t.cm+(z[2]?' ('+z[2]+')':'')+'</option>';});
   if(S.custom)h+='<option selected>'+S.custom[0]+' × '+S.custom[1]+' '+t.cm+'</option>';
-  h+='</select><div class="msg">'+t.sBg+'</div><div class="row">';
+  h+='</select>'+cornerRow()+'<div class="msg">'+t.sBg+'</div><div class="row">';
   [['#ffffff'],['#fbf8f1'],['#d9b46a'],['#14203f'],['#f6dcdc'],['#dcebf7'],['#dcefe2']].forEach(function(q){h+=btn('sw',S.bg===q[0],'data-k="bg" data-v="'+q[0]+'" aria-label="'+q[0]+'"','','background:'+q[0]);});
   h+='<input class="cin" type="color" data-c="bg" value="'+S.bg+'"></div></div>';
   h+='<div class="panel"><h2>'+(UL==='ar'?'إدارة العناصر':'Éléments')+'</h2>';
@@ -1595,7 +1596,7 @@ function buildCtl(){var __y=window.scrollY;try{__buildCtl();}finally{if(Math.abs
 function __buildCtl(){
   var t=T(),h='',k=S.tab;
   if(k==='theme'){
-    var sp='<div class="row">';Object.keys(SH).forEach(function(q){sp+=btn('opt',S.shape===q,'data-k="shape" data-v="'+q+'"',thumbShape(q)+'<span>'+t.shapes[q]+'</span>');});sp+='</div>';
+    var sp='<div class="row">';Object.keys(SH).forEach(function(q){sp+=btn('opt',S.shape===q,'data-k="shape" data-v="'+q+'"',thumbShape(q)+'<span>'+t.shapes[q]+'</span>');});sp+='</div>'+cornerRow();
     h+=panel(t.sThemeP,sp+sizeStepInner())+gallery();
   }
   if(k==='frm'){
@@ -1835,6 +1836,7 @@ document.addEventListener('click',function(e){
   el=e.target.closest('[data-bact]');if(el){barAct(el);return;}
   el=e.target.closest('[data-k]');
   if(el){var k=el.dataset.k,v=el.dataset.v;if(k==='frame')S.frm=null;
+    if(k==='sq'){S.sq=+v;commit();var y0=window.scrollY;buildCtl();buildSide();render();window.scrollTo(0,y0);return;}
     if(k==='shape'){S.szSet=0;S.zoom='real';S.shape=v;S.size=Math.min(2,SH[v].sizes.length-1);S.custom=null;commit();var y=window.scrollY;buildCtl();buildSide();render();window.scrollTo(0,y);return;}
     if(k==='size'){S.size=+v;S.custom=null;S.zoom='real';S.szSet=1;}
     else if(k==='event'){S.event=v;S.evText=UI[S.lang].events[v];S.ed.ev=0;var inp=$('#evt');if(inp)inp.value=S.evText;}
