@@ -62,6 +62,33 @@ function show(p,name,err){
 
 /* pages made of cells: each cell = a shared base image (jpeg) + optional small soft-masked overlay (the name).
    imgs: [{b:Blob(jpeg),w,h}], pages: [[{i,x,y,w,h,ov:{x,y,w,h,rgb:[r,g,b],mw,mh,data:Uint8Array,flate}}]] in points, top-left origin */
+
+/* constant-colour RGB image data as a tiny hand-made zlib stream (fixed Huffman: 3 literals, then repeated matches of length<=258 at distance 3) */
+var _sf={};
+function _lenCode(l){var b=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258],e=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+  for(var i=28;i>=0;i--)if(l>=b[i])return {c:257+i,eb:e[i],ev:l-b[i]};}
+function solidFlate(rgb,npx){
+  var key=rgb.join(',')+'|'+npx;if(_sf[key])return _sf[key];
+  var out=[],cur=0,nb=0;
+  function bits(v,n){for(var i=n-1;i>=0;i--){cur|=((v>>i)&1)<<nb;nb++;if(nb===8){out.push(cur);cur=0;nb=0;}}}
+  function lowBits(v,n){for(var i=0;i<n;i++){cur|=((v>>i)&1)<<nb;nb++;if(nb===8){out.push(cur);cur=0;nb=0;}}}
+  function lit(v){if(v<144)bits(0x30+v,8);else bits(0x190+(v-144),9);}
+  function sym(c){if(c<256)lit(c);else if(c<280)bits(c-256,7);else bits(0xC0+(c-280),8);}
+  bits(1,1);bits(1,2);/* BFINAL=1 (written LSB-first as value), BTYPE=01 */
+  return (function(){
+    /* header bits must be LSB-first: redo properly */
+    out=[];cur=0;nb=0;lowBits(1,1);lowBits(1,2);
+    lit(rgb[0]);lit(rgb[1]);lit(rgb[2]);
+    var R=3*(npx-1);
+    function match(l){var q=_lenCode(l);sym(q.c);if(q.eb)lowBits(q.ev,q.eb);bits(2,5);}
+    while(R>0){var l=R>=258?258:R;match(l);R-=l;}
+    sym(256);if(nb)out.push(cur);
+    var a=1,b=0,r=rgb[0],g=rgb[1],bl=rgb[2];
+    for(var i=0;i<npx;i++){a=(a+r)%65521;b=(b+a)%65521;a=(a+g)%65521;b=(b+a)%65521;a=(a+bl)%65521;b=(b+a)%65521;}
+    var ad=((b<<16)|a)>>>0,res=new Uint8Array(out.length+6);
+    res[0]=0x78;res[1]=0x9C;res.set(out,2);var p=2+out.length;res[p]=ad>>>24;res[p+1]=(ad>>>16)&255;res[p+2]=(ad>>>8)&255;res[p+3]=ad&255;
+    res=res.subarray(0,p+4);_sf[key]=res;return res;})();
+}
 function buildCells(imgs,pages,wmm,hmm){
   var pw=wmm/25.4*72,ph=hmm/25.4*72,parts=[],offs=[],len=0,nid=2,f=function(v){return (+v).toFixed(2);};
   function push(x){var u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=(u.size!==undefined?u.size:u.length);}
@@ -81,7 +108,7 @@ function buildCells(imgs,pages,wmm,hmm){
     obj(p.page,function(){push('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+f(pw)+' '+f(ph)+']/Resources<</XObject<<'+xo+'>>>>/Contents '+p.con+' 0 R>>');});
     obj(p.con,function(){push('<</Length '+cs.length+'>>\nstream\n'+cs+'endstream');});
     p.cells.forEach(function(o){if(!o.c.ov)return;var v=o.c.ov;
-      obj(o.oi,function(){push('<</Type/XObject/Subtype/Image/Width 1/Height 1/ColorSpace/DeviceRGB/BitsPerComponent 8/SMask '+o.om+' 0 R/Length 3>>\nstream\n');push(new Uint8Array(v.rgb));push('\nendstream');});
+      obj(o.oi,function(){var sz=solidFlate(v.rgb,v.mw*v.mh);push('<</Type/XObject/Subtype/Image/Width '+v.mw+'/Height '+v.mh+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/FlateDecode/SMask '+o.om+' 0 R/Length '+sz.length+'>>\nstream\n');push(sz);push('\nendstream');});
       obj(o.om,function(){push('<</Type/XObject/Subtype/Image/Width '+v.mw+'/Height '+v.mh+'/ColorSpace/DeviceGray/BitsPerComponent 8'+(v.flate?'/Filter/FlateDecode':'')+'/Length '+v.data.length+'>>\nstream\n');push(v.data);push('\nendstream');});});
   });
   var xo2=len;push('xref\n0 '+(total+1)+'\n0000000000 65535 f \n');
