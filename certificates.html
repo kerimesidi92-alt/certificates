@@ -1140,8 +1140,8 @@ function cleanLn(a){return Array.isArray(a)?a.slice(0,8).map((l,n)=>l&&typeof l=
 function cleanBg(b){return b&&typeof b.src==='string'&&b.src.length<12000000&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(b.src)?{src:b.src}:null;}
 function cleanFmt(f){const r={};if(f&&typeof f==='object')['title','intro','name','role','body','from','date'].forEach(k=>{const v=f[k];if(!v||typeof v!=='object')return;const o={};if(v.fs!=null)o.fs=Math.round(num(v.fs,8,220,24));if(hex(v.c))o.c=hex(v.c);if(ALLF.has(v.f))o.f=v.f;if(typeof v.b==='boolean')o.b=v.b;if(k==='name'&&typeof v.fr==='boolean')o.fr=v.fr;if(Object.keys(o).length)r[k]=o;});return r;}
 function cleanYr(o){return o&&typeof o==='object'?{t:cut(o.t,12),cx:num(o.cx,0,1,.5),cy:num(o.cy,0,1,.5),fs:num(o.fs,.02,1,.25),lh:num(o.lh,.5,2,1.3),c:hex(o.c)||'#000000',v:o.v?1:undefined}:undefined;}
-function cleanXt(a){return Array.isArray(a)?a.slice(0,8).map((t,n)=>t&&typeof t==='object'?{id:(String(t.id||'t'+n).replace(/[^a-z0-9]/gi,'').slice(0,12))||'t'+n,t:cut(t.t,300),cx:Math.round(num(t.cx,0,1300,640)),cy:Math.round(num(t.cy,0,1300,450)),fs:Math.round(num(t.fs,8,400,44)),lh:t.lh==null?undefined:num(t.lh,.5,2,1.3),rot:Math.round(num(t.rot,-180,180,0)),c:hex(t.c),f:ALLF.has(t.f)?t.f:null,b:!!t.b,z:t.z==null?undefined:Math.round(num(t.z,0,9999,0))}:null).filter(Boolean):[];}
-function cleanDesign(d){const r=cleanDesign0(d);if(r&&d.alt&&typeof d.alt==='object'&&d.alt.t&&typeof d.alt.t==='object'){const t={},M={title:80,intro:400,role:160,body:1500,from:160};Object.keys(M).forEach(k=>{if(typeof d.alt.t[k]==='string')t[k]=cut(d.alt.t[k],M[k]);});if(Object.keys(t).length)r.alt={g:d.alt.g==='f'?'f':'m',t};}return r;}
+function cleanXt(a){return Array.isArray(a)?a.slice(0,8).map((t,n)=>t&&typeof t==='object'?{id:(String(t.id||'t'+n).replace(/[^a-z0-9]/gi,'').slice(0,12))||'t'+n,t:cut(t.t,300),ta:typeof t.ta==='string'?cut(t.ta,300):undefined,cx:Math.round(num(t.cx,0,1300,640)),cy:Math.round(num(t.cy,0,1300,450)),fs:Math.round(num(t.fs,8,400,44)),lh:t.lh==null?undefined:num(t.lh,.5,2,1.3),rot:Math.round(num(t.rot,-180,180,0)),c:hex(t.c),f:ALLF.has(t.f)?t.f:null,b:!!t.b,z:t.z==null?undefined:Math.round(num(t.z,0,9999,0))}:null).filter(Boolean):[];}
+function cleanDesign(d){const r=cleanDesign0(d);if(r&&d.alt&&typeof d.alt==='object'&&d.alt.t&&typeof d.alt.t==='object'){const t={},M={title:80,intro:400,role:160,body:1500,from:160};Object.keys(M).forEach(k=>{if(typeof d.alt.t[k]==='string')t[k]=cut(d.alt.t[k],M[k]);});r.alt={g:d.alt.g==='f'?'f':'m',t};}return r;}
 function cleanDesign0(d){
   if(!d||typeof d!=='object'||!OCC[d.occ])return null;
   const lang=d.lang==='fr'?'fr':d.lang==='en'?'en':'ar',X=OCC[d.occ][lang];
@@ -1150,7 +1150,7 @@ function cleanDesign0(d){
 }
 function loadDesign(raw){
   const d=cleanDesign(raw);if(!d)return false;
-  const imgs=d.images;const al=d.alt;delete d.images;delete d.alt;Object.assign(S,d);S.gu={m:{},f:{}};S.gl=S.gender;if(al&&al.t)S.gu[al.g==='f'?'f':'m']=Object.assign({},al.t);S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
+  const imgs=d.images;const al=d.alt;delete d.images;delete d.alt;Object.assign(S,d);S.gu={m:{},f:{}};S.gl=S.gender;(S.xt||[]).forEach(x=>{x.u={};if(x.ta!=null)x.u[GK(S.gender)]=x.ta;delete x.ta;});if(al&&al.t)S.gu[al.g==='f'?'f':'m']=Object.assign({},al.t);S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
   syncControls();renderImgs();render();renderTools();return true;
 }
 const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromCharCode(c));return btoa(x);};
@@ -1176,11 +1176,12 @@ function conv(t,to){
 const GK=g=>g==='m'?'f':'m';
 function gExp(k,g){const h=GK(g);if(S.gu[g][k]!=null)return S.gu[g][k];if(S.gu[h][k]!=null)return conv(S.gu[h][k],g);}
 function gSyncK(k,g){const e=gExp(k,g);if(e===undefined||S[k]!==e)S.gu[g][k]=S[k];}
-function gAlt(){const g=S.gender,h=GK(g),t={},d=defaults(g);ALTK.forEach(k=>{if(!S.edited[k]||!String(S[k]).trim())return;if(S[k]===d[k]&&S.gu[g][k]==null&&S.gu[h][k]==null)return;gSyncK(k,g);t[k]=S.gu[h][k]!=null?S.gu[h][k]:conv(S[k],h);});return Object.keys(t).length?{g:h,t}:null;}
-function gSwap(g,h){const d=defaults(g);ALTK.forEach(k=>{if(!S.edited[k])return;if(S[k]===d[k]&&S.gu[g][k]==null&&S.gu[h][k]==null){S.edited[k]=false;return;}
+function gAlt(){const g=S.gender,h=GK(g),t={},d=defaults(g);(S.xt||[]).forEach(x=>{xSync(x,g);x.ta=x.u[h]!=null?x.u[h]:conv(x.t,h);});ALTK.forEach(k=>{if(!S.edited[k]||!String(S[k]).trim())return;if(S[k]===d[k]&&S.gu[g][k]==null&&S.gu[h][k]==null)return;gSyncK(k,g);t[k]=S.gu[h][k]!=null?S.gu[h][k]:conv(S[k],h);});return (Object.keys(t).length||(S.xt||[]).length)?{g:h,t}:null;}
+function gSwap(g,h){const d=defaults(g);(S.xt||[]).forEach(x=>{xSync(x,g);x.t=x.u[h]!=null?x.u[h]:conv(x.u[g],h);});ALTK.forEach(k=>{if(!S.edited[k])return;if(S[k]===d[k]&&S.gu[g][k]==null&&S.gu[h][k]==null){S.edited[k]=false;return;}
   gSyncK(k,g);const v=S.gu[h][k]!=null?S.gu[h][k]:conv(S.gu[g][k],h);S[k]=v;const el=$('#f-'+k);if(el)el.value=v;});}
 function gOnSwitch(){const g=S.gl,h=S.gender;if(g&&g!==h)gSwap(g,h);S.gl=h;gHint();}
-function gHint(){const el=$('#g-hint');if(!el)return;const on=ALTK.some(k=>S.edited[k]&&String(S[k]).trim());el.hidden=!on;}
+function xSync(x,g){const h=GK(g);x.u=x.u||{};const e=x.u[g]!=null?x.u[g]:(x.u[h]!=null?conv(x.u[h],g):undefined);if(e===undefined||x.t!==e)x.u[g]=x.t;}
+function gHint(){const el=$('#g-hint');if(!el)return;const on=(S.xt||[]).length>0||ALTK.some(k=>S.edited[k]&&String(S[k]).trim());el.hidden=!on;}
 function applyDefaults(){const d=defaults();Object.keys(d).forEach(k=>{if(!S.edited[k]){S[k]=d[k];const el=$('#f-'+k);if(el)el.value=d[k];}});paintTitleChips();}
 const SUBJEN={'الرياضيات':'Mathematics','الفيزياء':'Physics','اللغة العربية':'Arabic','اللغة الفرنسية':'French','اللغة الإنجليزية':'English','العلوم الطبيعية':'Natural Sciences','التاريخ والجغرافيا':'History and Geography','التربية المدنية':'Civic Education','الجغرافيا':'Geography','الفيزياء والكيمياء':'Physics and Chemistry'};
 function subjMap(){const m={};Object.values(THEMES).forEach(T=>{if(T&&T.subj){const en=SUBJEN[T.subj]||'';[T.subj,T.subjFr,en].forEach(v=>{if(v)m[v.trim().toLowerCase()]={ar:T.subj,fr:T.subjFr,en:en};});}});return m;}
