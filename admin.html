@@ -483,7 +483,7 @@ body{background:var(--bg)}
 @media (max-width:860px){
   .preview:has(.tools:not([hidden])) .pv-head,.preview:has(.tools:not([hidden])) .mvseg,.preview:has(.tools:not([hidden])) .mvhint,.preview:has(.tools:not([hidden])) .addbar.quick{display:none}
   .preview:has(.tools:not([hidden])) #btn-addimg,.preview:has(.tools:not([hidden])) #btn-addtext,.preview:has(.tools:not([hidden])) #btn-new{display:none}
-  .preview:has(.tools:not([hidden])) #openbar-msg,.preview:has(.tools:not([hidden])) #btn-close-order,.preview:has(.tools:not([hidden])) #nm-sel,.preview:has(.tools:not([hidden])) #btn-zip{display:none}
+  .preview:has(.tools:not([hidden])) #openbar-msg,.preview:has(.tools:not([hidden])) #btn-close-order,.preview:has(.tools:not([hidden])) #nm-sel,.preview:has(.tools:not([hidden])) #btn-nmv,.preview:has(.tools:not([hidden])) #btn-zip{display:none}
   .tools{max-height:40vh!important}
   .preview:has(.tools:not([hidden])) #openbar .row .btn{min-height:36px;padding:4px 10px;font-size:13px}
   .preview:has(.tools:not([hidden])) .addbar{grid-template-columns:1fr 1fr}
@@ -2625,14 +2625,23 @@ async function mergeParts(o,base){
   if(d.bg&&d.bg.pi!=null)d.bg.src=full(d.bg.pi);
   (d.images||[]).forEach(im=>{if(im.pi!=null)im.src=full(im.pi);});
   o.__mp={b:base,d};return d;}
+
+function showNames(){const nl=window.__nl||[];const esc2=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  const col=(t,g)=>{const a=nl.filter(x=>x.g===g);return '<div style="flex:1;min-width:0"><h3 style="margin:0 0 6px;font-size:15px">'+t+' ('+a.length+') <button type="button" class="btn" data-cp="'+g+'" style="min-height:28px;padding:2px 10px;font-size:12px">نسخ</button></h3><ol style="margin:0;padding:0 24px 0 0;max-height:60vh;overflow:auto;font-size:14px;line-height:1.7">'+a.map(x=>'<li>'+esc2(x.n)+'</li>').join('')+'</ol></div>';};
+  const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:14px';
+  ov.innerHTML='<div style="background:#fff;color:#111;border-radius:14px;padding:16px;max-width:760px;width:100%;max-height:92vh;overflow:auto"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>قائمة الأسماء (المجموع '+nl.length+')</b><button type="button" class="btn" data-x="1">إغلاق</button></div><div style="display:flex;gap:16px;flex-wrap:wrap">'+col('الذكور','m')+col('الإناث','f')+(nl.some(x=>!x.g)?col('بدون تحديد',''):'')+'</div></div>';
+  document.body.appendChild(ov);
+  ov.onclick=e=>{if(e.target===ov||e.target.closest('[data-x]')){ov.remove();return;}const b=e.target.closest('[data-cp]');if(b){const t=nl.filter(x=>x.g===b.dataset.cp).map(x=>x.n).join('\n');try{navigator.clipboard.writeText(t);b.textContent='تم النسخ ✓';}catch(_){}}};}
 async function openOrder(id){S.pubEdit=null;try{window.__pubLbl&&window.__pubLbl();}catch(_){}
   const o=byId(id);if(!o||!o.design)return;
   let dsn=o.design0||o.design;try{dsn=await mergeParts(o,dsn);}catch(_e){toast('تعذّر تحميل صور الزبون',1);}
   if(!loadDesign(dsn))return;
   S.openOrder=o.id;$('#btn-new').hidden=true;setTimeout(()=>{try{if(S.alt&&S.openOrder===o.id){$('#openbar-msg').textContent+=' ⚠ في هذا الطلب نص خاص بصيغة '+(S.alt.g==='f'?'الإناث':'الذكور')+' ('+Object.keys(S.alt.t).length+' حقول) وسيُطبع تلقائيًا مع أسماء '+(S.alt.g==='f'?'الإناث':'الذكور')+'.';}}catch(_){}},0);$('#openbar-t').textContent='الطلب المفتوح: '+(o.client||'');$('#openbar').hidden=false;$('#openbar-msg').textContent=S.images.length?'تم تحميل التصميم مع صور الزبون.':'الصور لا تُحفظ في الطلب. أضيفيها قبل إنشاء الصورة النهائية.';{const qq=o.design&&o.design.q;if(qq)$('#openbar-msg').textContent+=qq[1]<0?' (وصلت بأقل جودة — السبب: '+(qq[2]||'؟')+')':qq[0]?' (تصغير إلى '+qq[0]+')':' (أصلية بدون تصغير)';}
-  const nl=((/^الأسماء:\n([\s\S]*?)(\n\n|$)/.exec(o.notes||'')||[])[1]||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const m=/^(.*?)\s*\((ذكر|أنثى)\)$/.exec(x);return m?{n:m[1],g:m[2]==='أنثى'?'f':'m'}:{n:x,g:''};});let sel=document.getElementById('nm-sel');
+  const nmd=(o.design0&&o.design0.nm)||(o.design&&o.design.nm)||null;const nl0=nmd?[].concat((nmd.m||[]).map(n=>({n:String(n),g:'m'})),(nmd.f||[]).map(n=>({n:String(n),g:'f'}))):null;
+  const nl=nl0||((/^الأسماء:\n([\s\S]*?)(\n\n|$)/.exec(o.notes||'')||[])[1]||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const m=/^(.*?)\s*\((ذكر|أنثى)\)$/.exec(x);return m?{n:m[1],g:m[2]==='أنثى'?'f':'m'}:{n:x,g:''};});let sel=document.getElementById('nm-sel');window.__nl=nl;
   if(!sel){sel=document.createElement('select');sel.id='nm-sel';sel.className='btn';sel.setAttribute('aria-label','اختيار الاسم');$('#btn-save-order').before(sel);sel.onchange=()=>{if(!sel.value)return;nmApply(sel.value,sel.selectedOptions[0].dataset.g||'');};}
   let zb=document.getElementById('btn-zip');if(!zb){zb=document.createElement('button');zb.type='button';zb.id='btn-zip';zb.className='btn';zb.textContent='طباعة كل الأسماء';zb.onclick=exportAllNames;$('#btn-save-order').before(zb);}zb.hidden=nl.length<2;
+  let vb=document.getElementById('btn-nmv');if(!vb){vb=document.createElement('button');vb.type='button';vb.id='btn-nmv';vb.className='btn';vb.onclick=showNames;$('#btn-save-order').before(vb);}vb.hidden=!nl.length;vb.textContent='الأسماء ('+nl.length+')';
   sel.hidden=!nl.length;sel.innerHTML=nl.length?'<option value="">الأسماء ('+nl.length+')</option>'+nl.map(n=>'<option data-g="'+n.g+'" value="'+esc(n.n)+'">'+esc(n.n)+(n.g==='f'?' (أنثى)':n.g==='m'?' (ذكر)':'')+'</option>').join(''):'';
   showTab('design');
 }

@@ -2066,25 +2066,25 @@ LST.addEventListener('paste',e=>{const t=e.target;if(t.tagName!=='INPUT')return;
 LST.addEventListener('click',e=>{const x=e.target.closest('[data-x]');if(x){DATA[cur].splice(+x.dataset.x,1);sync();paint();return;}if(e.target.closest('#nm-paste'))openPaste();});
 w.querySelectorAll('.nm-tab').forEach(b=>b.onclick=()=>{cur=b.dataset.g;paint();});
 const openPaste=()=>{const ov=document.createElement('div');ov.className='nm-ov';ov.innerHTML='<div class="nm-sheet"><h3>لصق قائمة أسماء '+(cur==='m'?'الذكور':'الإناث')+'</h3><p>انسخ الأسماء من واتساب أو من ملف أو من ورقة وألصقها هنا. <b>كل سطر يُعتبر اسمًا واحدًا</b>، وتُحذف الأسطر الفارغة فقط (الأسماء المكررة تبقى).</p><textarea></textarea><div class="nm-ok" hidden></div><div class="nm-btns"><button type="button" class="btn" data-a="c">إلغاء</button><button type="button" class="btn primary" data-a="ok">إضافة الأسماء</button></div></div>';document.body.appendChild(ov);const ta=ov.querySelector('textarea'),ok=ov.querySelector('.nm-ok'),cnt=()=>{const arr=ta.value.split(/\r?\n/).map(clean).filter(Boolean);ok.hidden=!arr.length;ok.textContent='✓ تم التعرف على '+arr.length+' اسمًا';};ta.addEventListener('input',cnt);ta.focus();ov.addEventListener('click',e=>{const a=e.target.dataset&&e.target.dataset.a;if(e.target===ov||a==='c'){ov.remove();return;}if(a==='ok'){addNames(ta.value.split(/\r?\n/),cur);sync();ov.remove();paint();}});};
-const upd=()=>{const q=qn();w.hidden=q<2||q>100;if(!w.hidden)paint();};qe.addEventListener('input',()=>{stat();upd();});qe.addEventListener('change',upd);upd();
+const upd=()=>{const q=qn();w.hidden=q<2||q>1000;if(!w.hidden)paint();};qe.addEventListener('input',()=>{stat();upd();});qe.addEventListener('change',upd);upd();
 window.__nmFocus=g=>{cur=g;paint();};}
 $('#btn-submit').onclick=async()=>{
   const er=$('#c-err'),btn=$('#btn-submit'),v=id=>$(id).value.trim(),nm=v('#c-name'),ph=v('#c-phone');
   if(!nm){er.textContent='اكتب اسمك.';er.hidden=false;$('#c-name').focus();return;}
   if(ph.replace(/\D/g,'').length<8){er.textContent='اكتب رقم هاتف صحيح من 8 أرقام على الأقل.';er.hidden=false;$('#c-phone').focus();return;}
-  {const q0=Math.max(1,parseInt(v('#c-qty'))||1);if(q0>1&&q0<=100){const c=['#c-names','#c-names-f'].reduce((a,id)=>a+($(id).value||'').split('\n').filter(x=>x.trim()).length,0);if(c!==q0){const cm=($('#c-names').value||'').split('\n').filter(x=>x.trim()).length;er.textContent='عدد النسخ '+q0+': يجب كتابة '+q0+' أسماء بالضبط في قائمتي الذكور والإناث (المكتوب الآن '+c+': ذكور '+cm+'، إناث '+(c-cm)+').';er.hidden=false;try{$('#c-names-wrap').scrollIntoView({block:'center'});}catch(_){}return;}}}
+  {const q0=Math.max(1,parseInt(v('#c-qty'))||1);if(q0>1&&q0<=1000){const c=['#c-names','#c-names-f'].reduce((a,id)=>a+($(id).value||'').split('\n').filter(x=>x.trim()).length,0);if(c!==q0){const cm=($('#c-names').value||'').split('\n').filter(x=>x.trim()).length;er.textContent='عدد النسخ '+q0+': يجب كتابة '+q0+' أسماء بالضبط في قائمتي الذكور والإناث (المكتوب الآن '+c+': ذكور '+cm+'، إناث '+(c-cm)+').';er.hidden=false;try{$('#c-names-wrap').scrollIntoView({block:'center'});}catch(_){}return;}}}
   if(!(FBC.apiKey&&FBC.apiKey.indexOf('PASTE')<0&&FBC.projectId)){er.textContent='إرسال الطلبات غير مفعّل بعد. تواصل معنا مباشرة.';er.hidden=false;return;}
   er.hidden=true;btn.disabled=true;const t0=btn.textContent;btn.textContent='جارٍ الإرسال…';
   const f=$('#m-text').closest('.field');
   try{
     modal.hidden=false;$('#m-title').textContent='جارٍ إرسال الطلب…';f.querySelectorAll('#m-text,.steps,#m-copy,#m-copied,.lbl').forEach(x=>x.hidden=true);$('#m-wa').hidden=true;
     $('#m-msg').textContent='جارٍ تحضير الطلب…';const preview='';
-    let order=null;const qn=Math.max(1,Math.min(10000,parseInt(v('#c-qty'))||1)),rd=(id,tag)=>($(id).value||'').split('\n').map(x=>x.trim().replace(/[()]/g,'').slice(0,60)).filter(Boolean).map(x=>x+' ('+tag+')'),nms=qn>1?[...rd('#c-names','ذكر'),...rd('#c-names-f','أنثى')].slice(0,200):[];
+    let order=null;const qn=Math.max(1,Math.min(10000,parseInt(v('#c-qty'))||1)),rd=(id,tag)=>($(id).value||'').split('\n').map(x=>x.trim().replace(/[()]/g,'').slice(0,60)).filter(Boolean).map(x=>x+' ('+tag+')'),nms=qn>1&&qn<=1000?[...rd('#c-names','ذكر'),...rd('#c-names-f','أنثى')].slice(0,1000):[],nmo=nms.length?{m:($('#c-names').value||'').split('\n').map(x=>x.trim().replace(/[()]/g,'').slice(0,60)).filter(Boolean),f:($('#c-names-f').value||'').split('\n').map(x=>x.trim().replace(/[()]/g,'').slice(0,60)).filter(Boolean)}:null;
     let idDone=null,lastErr='',direct=false;const shr=(src,m,q,ar)=>m?shrink(src,m,q):Promise.resolve({src,ar});
     for(const [mx,q,bx,cap] of [[0,1,0,1e7],[2400,.9,2400,8e6],[1800,.85,2400,6e6],[1400,.8,1800,4e6],[1000,.72,1200,3.2e6]]){
-      const design=designConfig(true);design.images=[];if(S.bg&&S.bg.src){const sb=await shr(S.bg.src,bx,q,undefined);design.bg=sb?Object.assign({},S.bg,{src:sb.src}):null;}
+      const design=designConfig(true);if(nmo)design.nm=nmo;design.images=[];if(S.bg&&S.bg.src){const sb=await shr(S.bg.src,bx,q,undefined);design.bg=sb?Object.assign({},S.bg,{src:sb.src}):null;}
       for(const im of capI(S.images)){if(im.lib){design.images.push({src:im.src,lib:1,ar:im.ar,x:im.x,y:im.y,w:im.w,h:im.h,fit:im.fit,px:im.px,py:im.py,zm:im.zm,z:im.z,shape:im.shape,layer:im.layer,op:im.op,yr:im.yr,rot:im.rot,fh:im.fh,fv:im.fv,mc:im.mc});continue;}const s=await shr(im.src,mx,q,im.ar);if(s)design.images.push({src:s.src,ar:s.ar,x:im.x,y:im.y,w:im.w,h:im.h,fit:im.fit,px:im.px,py:im.py,zm:im.zm,z:im.z,shape:im.shape,layer:im.layer,op:im.op,rot:im.rot});}
-      order={client:cut(nm,120),phone:cut(ph,40),email:cut(v('#c-email'),120),item:cut(OCC[S.occ].label+' · '+themeName()+' · '+(S.size==='a5'?'A5':'A4'),160),qty:qn,price:0,status:'new',notes:cut((nms.length?'الأسماء:\n'+nms.join('\n')+'\n\n':'')+v('#c-notes'),1800),design,preview,createdAt:Date.now(),source:'app'};
+      order={client:cut(nm,120),phone:cut(ph,40),email:cut(v('#c-email'),120),item:cut(OCC[S.occ].label+' · '+themeName()+' · '+(S.size==='a5'?'A5':'A4'),160),qty:qn,price:0,status:'new',notes:cut((nms.length?'عدد الأسماء: '+nms.length+' (ذكور '+nmo.m.length+'، إناث '+nmo.f.length+') — القائمة الكاملة في زر «الأسماء» بالأدمن\n\n':'')+v('#c-notes'),1800),design,preview,createdAt:Date.now(),source:'app'};
       const blobs=[];let tot=0;
       if(design.bg&&design.bg.src){blobs.push(design.bg.src);design.bg.src='';design.bg.pi=blobs.length-1;}
       design.images.forEach(im=>{if(!im.lib&&im.src){blobs.push(im.src);im.src='';im.pi=blobs.length-1;}});
@@ -2100,9 +2100,9 @@ $('#btn-submit').onclick=async()=>{
     }
     if(!idDone&&!direct){order=null;
     for(const [mx,q,bx] of [[560,.7,900],[420,.6,640],[300,.5,480]]){
-      const design=designConfig(true);design.images=[];if(S.bg&&S.bg.src){const sb=await shrink(S.bg.src,bx,q);design.bg=sb?Object.assign({},S.bg,{src:sb.src}):null;}
+      const design=designConfig(true);if(nmo)design.nm=nmo;design.images=[];if(S.bg&&S.bg.src){const sb=await shrink(S.bg.src,bx,q);design.bg=sb?Object.assign({},S.bg,{src:sb.src}):null;}
       for(const im of capI(S.images)){if(im.lib){design.images.push({src:im.src,lib:1,ar:im.ar,x:im.x,y:im.y,w:im.w,h:im.h,fit:im.fit,px:im.px,py:im.py,zm:im.zm,z:im.z,shape:im.shape,layer:im.layer,op:im.op,yr:im.yr,rot:im.rot,fh:im.fh,fv:im.fv,mc:im.mc});continue;}const s=await shrink(im.src,mx,q);if(s)design.images.push({src:s.src,ar:s.ar,x:im.x,y:im.y,w:im.w,h:im.h,fit:im.fit,px:im.px,py:im.py,zm:im.zm,z:im.z,shape:im.shape,layer:im.layer,op:im.op,rot:im.rot});}
-      order={client:cut(nm,120),phone:cut(ph,40),email:cut(v('#c-email'),120),item:cut(OCC[S.occ].label+' · '+themeName()+' · '+(S.size==='a5'?'A5':'A4'),160),qty:qn,price:0,status:'new',notes:cut((nms.length?'الأسماء:\n'+nms.join('\n')+'\n\n':'')+v('#c-notes'),1800),design,preview,createdAt:Date.now(),source:'app'};
+      order={client:cut(nm,120),phone:cut(ph,40),email:cut(v('#c-email'),120),item:cut(OCC[S.occ].label+' · '+themeName()+' · '+(S.size==='a5'?'A5':'A4'),160),qty:qn,price:0,status:'new',notes:cut((nms.length?'عدد الأسماء: '+nms.length+' (ذكور '+nmo.m.length+'، إناث '+nmo.f.length+') — القائمة الكاملة في زر «الأسماء» بالأدمن\n\n':'')+v('#c-notes'),1800),design,preview,createdAt:Date.now(),source:'app'};
       design.q=[mx,-1,lastErr];if(JSON.stringify(order).length<900000)break;order=null;
     }
     }
