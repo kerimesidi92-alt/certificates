@@ -1844,7 +1844,7 @@ function onOccChange(){
   setSubjDefault();syncTheme();paintColors();resetTxtEd();applyDefaults();render();
 }
 function freeStale(){const keys=['title','intro','name','role','body','from','date'],sv=S.lang,svi=S.titleIdx,pool={};keys.forEach(k=>pool[k]=new Set());try{['ar','fr','en'].forEach(l=>{S.lang=l;if(!OCC[S.occ]||!OCC[S.occ][l])return;const X=OCC[S.occ][l];for(let i=0;i<X.titles.length;i++){S.titleIdx=i;const d=defaults();keys.forEach(k=>pool[k].add(String(d[k]).trim()));}});}catch(_){}S.lang=sv;S.titleIdx=svi;keys.forEach(k=>{if(S.edited[k]&&pool[k].has(String(S[k]).trim()))S.edited[k]=false;});}
-function langOv(){const k=S.theme+'|'+S.lang;if(S._ovK&&S._ovK!==k){S.fmt={};S.xt=[];S.ln=[];S.off={};S.dsz={};S.noDate=false;try{$('#f-showdate').checked=true;}catch(_){}S._ovK=null;}if(S._ovK!==k)applyLayoutOv();}
+function langOv(){const k=S.theme+'|'+S.lang;if(S._ovK&&S._ovK!==k){S.fmt={};S.xt=[];S.ln=[];S.off={};S.dsz={};S.noDate=false;S.paper=S.deep=S.accent=S.ink=null;try{$('#f-showdate').checked=true;}catch(_){}S._ovK=null;}if(S._ovK!==k)applyLayoutOv();}
 function onLangChange(){freeStale();try{langOv();}catch(_){}setSubjDefault();resetTxtEd();applyDefaults();paintFontSeg();render();renderTools();}
 buildSeg('seg-lang',[['ar','العربية'],['fr','Français'],['en','English']],'lang',onLangChange);
 buildSeg('seg-orient',[['l','أفقي (بالعرض)'],['p','عمودي (بالطول)']],'orient',onOrientChange);
@@ -1885,7 +1885,7 @@ const clone=x=>JSON.parse(JSON.stringify(x));
 function applyLayoutOv(){const ov=TOV[S.theme+'|'+S.lang];if(!ov||!ov.o)return false;const o=ov.o;
   S.noDate=!!o.noDate;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.off=clone(o.off||{});S.fmt=clone(o.fmt||{});S.dsz=clone(o.dsz||{});S.xt=clone(o.xt||[]);S.ln=clone(o.ln||[]);
   ['div','divT','sgd'].forEach(k=>{if(o[k]!=null)S[k]=o[k];});['dc','sg','dn'].forEach(k=>{if(o[k]!==undefined)S[k]=o[k];});
-  S.dnv=S.dn==null?'a':String(S.dn);S.dcv=S.dc==null?'a':String(S.dc);S.sgv=S.sg==null?'a':String(S.sg);S._ovK=S.theme+'|'+S.lang;try{syncControls();}catch(_){}return true;}
+  S.dnv=S.dn==null?'a':String(S.dn);S.dcv=S.dc==null?'a':String(S.dc);S.sgv=S.sg==null?'a':String(S.sg);if(o.pal)['paper','deep','accent','ink'].forEach(k=>{S[k]=o.pal[k]||null;});S._ovK=S.theme+'|'+S.lang;try{syncControls();}catch(_){}return true;}
 
 function applyCF(){Object.keys(FOLDERS).forEach(k=>{if(k.slice(0,2)==='u_')delete FOLDERS[k];});CF.forEach(c=>{if(c&&c.id&&c.name)FOLDERS['u_'+c.id]=String(c.name).slice(0,40);});}
 const pgOf=p=>FOLDERS[p.folder]?p.folder:'mine';
@@ -1990,7 +1990,7 @@ $('#btn-undo').onclick=()=>histGo(-1);$('#btn-redo').onclick=()=>histGo(1);
 setTimeout(()=>{try{HIST.cur=histSnap();}catch(_){}histBtns();},1200);
 function fromPubReset(){if(!S._fromPub)return;const tx=S._pubTxt||{};['title','intro','name','subj','role','body','from','date'].forEach(k=>{if(String(S[k])===String(tx[k]))S.edited[k]=false;});S.off={};S.fmt={};S.dsz={};S.xt=[];S.ln=[];['paper','deep','accent','ink'].forEach(k=>{S[k]=null;});S._fromPub=0;}
 function dropFx(){if(S.images.some(i=>i.fx)){S.images=S.images.filter(i=>!i.fx);S.sel=-1;try{renderImgs();}catch(_){}}}
-function resetOrn(){{S.fmt={};S.xt=[];S.ln=[];S.noDate=false;try{$('#f-showdate').checked=true;}catch(_){}S._ovK=null;}S.divT='o1';S.div='e2';S.dc=null;S.dcv='a';S.dn=null;S.dnv='a';S.sg=null;S.sgv='a';S.sgd='s1';S.dsz={};S.off={};S.st=null;segSync('seg-dc','dcv');segSync('seg-dn','dnv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-div','div');}
+function resetOrn(){{S.fmt={};S.xt=[];S.ln=[];S.noDate=false;S.paper=S.deep=S.accent=S.ink=null;try{$('#f-showdate').checked=true;}catch(_){}S._ovK=null;}S.divT='o1';S.div='e2';S.dc=null;S.dcv='a';S.dn=null;S.dnv='a';S.sg=null;S.sgv='a';S.sgd='s1';S.dsz={};S.off={};S.st=null;segSync('seg-dc','dcv');segSync('seg-dn','dnv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-div','div');}
 $('#btn-clear').onclick=()=>{S.theme='none';S.themeTouched=true;S.frame='none';S.paper='#ffffff';S.bg=null;S.divT='none';S.div='none';S.dn=0;S.dnv='0';S.dc=0;S.dcv='0';S.sg=0;S.sgv='0';S.images=[];S.xt=[];S.ln=[];S.sel=-1;S.st=null;S.dsz={};
       ['seg-divT','seg-div','seg-frame','seg-dn','seg-dc','seg-sg'].forEach((id,i)=>{try{segSync(id,['divT','div','frame','dnv','dcv','sgv'][i]);}catch(_){}});try{renderImgs();}catch(_){}try{syncTheme();paintColors();}catch(_){}['title','intro','name','role','body','from','date'].forEach(k=>{S[k]='';S.edited[k]=true;const el=$('#f-'+k);if(el)el.value='';});S.off={};S.fmt={};render();renderTools();};
 $('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset.v);};setMv('lock');
@@ -2337,7 +2337,7 @@ $('#order-form').addEventListener('submit',e=>{
 (function(){
   const db=()=>window.__fdb,msg=(t,e)=>{try{toast(t,e);}catch(_){}};
   const FLD=['title','intro','role','body','from'],LN={ar:'العربية',fr:'الفرنسية',en:'الإنجليزية'};
-  const pkg=lay=>{const t={};FLD.forEach(k=>{t[k]=S[k];});if(S.edited&&S.edited.date&&S.date)t.date=S.date;const r={t};if(lay)r.o={off:clone(S.off||{}),fmt:clone(S.fmt||{}),dsz:clone(S.dsz||{}),xt:clone(S.xt||[]),ln:clone(S.ln||[]),div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dn:S.dn};return r;};
+  const pkg=lay=>{const t={};FLD.forEach(k=>{t[k]=S[k];});if(S.edited&&S.edited.date&&S.date)t.date=S.date;const r={t};if(lay)r.o={off:clone(S.off||{}),fmt:clone(S.fmt||{}),dsz:clone(S.dsz||{}),xt:clone(S.xt||[]),ln:clone(S.ln||[]),div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dn:S.dn,noDate:!!S.noDate,pal:{paper:S.paper||null,deep:S.deep||null,accent:S.accent||null,ink:S.ink||null}};return r;};
   async function write(){if(!db())throw new Error('nodb');await db().collection('config').doc('defaults').set({m:TOV});try{pubApply();}catch(_){}}
   let base=null,baseK=null,usr=0;['input','pointerdown','keydown','change'].forEach(function(e){document.addEventListener(e,function(ev){if(ev.target&&ev.target.closest&&ev.target.closest('#cert,#tools,#f-title,#f-intro,#f-role,#f-body,#f-from,#f-date,#f-name'))usr=1;},true);});const keyNow=()=>JSON.stringify(pkg(true));
   function defUI(){try{const th=THEMES[S.theme]?S.theme:null,has=th&&TOV[th+'|'+S.lang],dirty=!!(th&&base!=null&&keyNow()!==base),des=!$('#tab-design').hidden;$('#btn-defsave').hidden=!th;{const dd=$('#btn-defdel');dd.style.visibility=has?'visible':'hidden';dd.style.pointerEvents=has?'auto':'none';}$('#btn-defsave').classList.toggle('primary',dirty);}catch(_){}}
