@@ -561,6 +561,7 @@ body{background:var(--bg)}
         <div id="gender-box" class="field">
           <span class="lbl">صيغة الشهادة</span>
           <div class="seg" id="seg-gender" role="group" aria-label="صيغة الشهادة"></div>
+          <p class="hint" id="g-hint" hidden>⚠ هذا الطلب فيه نصّان: نص الذكور ونص الإناث. اضغطي الصيغة لترى نصّها. كل اسم يُطبع بنصّ صيغته.</p>
         </div>
       </div>
 
@@ -1235,7 +1236,7 @@ let scale=1;
 const dflt=k=>{const T=THEMES[S.theme];if(!T)return PLAIN[k];if(T.svg)return k==='paper'?T.pp:k==='deep'?T.dd:k==='accent'?T.aa:TDEF.ink;if(T.dI&&k==='ink')return T.dI;if(T.dA&&k==='accent')return T.dA;return k==='paper'?h2(T.p0):k==='deep'?h2(T.n0.map(c=>Math.min(255,Math.round(c*1.6+14)))):TDEF[k];};
 const eff=k=>S[k]||dflt(k);
 const cut=(v,n)=>String(v==null?'':v).slice(0,n);
-const designConfig=imgs=>{const d={v:3,size:S.size,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,noDate:S.noDate?1:0,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
+const designConfig=imgs=>{const d={v:3,size:S.size,or:S.orient,lang:S.lang,occ:S.occ,gender:S.gender,font:S.font,div:S.div,divT:S.divT,dc:S.dc,sg:S.sg,sgd:S.sgd,dsz:S.dsz,off:S.off,theme:S.theme,paper:S.paper,deep:S.deep,accent:S.accent,ink:S.ink,title:S.title,intro:S.intro,name:S.name,subj:S.subj,role:S.role,body:S.body,from:S.from,date:S.date,noDate:S.noDate?1:0,fontL:S.fontL,dn:S.dn,frame:S.frame,fmt:S.fmt,xt:S.xt,ln:S.ln};if(S.alt){const A={g:S.alt.g,t:Object.assign({},S.alt.t)};if(S._shown){d.gender=A.g==='f'?'m':'f';Object.keys(A.t).forEach(k=>{A.t[k]=S[k];if(S._m&&S._m[k]!=null)d[k]=S._m[k];});d.xt=(S.xt||[]).map((x,i)=>Object.assign({},x,{t:S._mx&&S._mx[i]!=null?S._mx[i]:x.t,ta:x.t}));}d.alt=A;}if(imgs){d.bg=S.bg;}if(imgs)d.images=S.images.map(({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc})=>({src,lib,ar,x,y,w,h,fit,shape,layer,op,z,px,py,zm,bd,bc}));return d;};
 const num=(v,a,b,d)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):d;};
 const LIBRE=/^cert\/lib\/[a-z0-9_-]+\/[a-z0-9_.-]+\.webp$/;
 const capI=a=>{let u=0;return a.filter(i=>i.lib||++u<=4).slice(0,24);};
@@ -1261,7 +1262,7 @@ function cleanDesign0(d){
 }
 function loadDesign(raw){
   const d=cleanDesign(raw);if(!d)return false;
-  S.ll=d.lang;S.lt={};const imgs=d.images;delete d.images;Object.assign(S,d);S.alt=d.alt||null;S._m=null;S._mx=null;S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
+  S.ll=d.lang;S.lt={};const imgs=d.images;delete d.images;Object.assign(S,d);S.alt=d.alt||null;S._m=null;S._mx=null;S._shown=false;try{$('#g-hint').hidden=!d.alt;}catch(_){}S.dnv=d.dn==null?'a':String(d.dn);S.dcv=d.dc==null?'a':String(d.dc);S.sgv=d.sg==null?'a':String(d.sg);setOrient(d.or);S.images=imgs;try{$('#f-showdate').checked=!S.noDate;}catch(_){}S.sel=-1;S.st=null;S.folder=null;S.themeTouched=true;S.edited={title:true,intro:true,name:true,subj:true,role:true,body:true,from:true,date:true};
   syncControls();renderImgs();render();renderTools();try{histReset();}catch(_){}return true;
 }
 const b64=s=>{let x='';new TextEncoder().encode(s).forEach(c=>x+=String.fromCharCode(c));return btoa(x);};
@@ -1874,7 +1875,7 @@ $('#seg-sgd').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.sgd=
 buildSeg('seg-dc',[['a','تلقائي'],['0','0'],['1','1'],['2','2'],['3','3']],'dcv',()=>{const v=S.dcv;S.dc=v==='a'?null:+v;render();});
 buildSeg('seg-frame',[['full','كامل'],['simple','بسيط'],['none','بدون']],'frame',()=>{render();});
 
-buildSeg('seg-gender',[['m','للأستاذ / للتلميذ'],['f','للأستاذة / للتلميذة']],'gender',()=>{applyDefaults();render();});
+buildSeg('seg-gender',[['m','للأستاذ / للتلميذ'],['f','للأستاذة / للتلميذة']],'gender',()=>{altSync(S.gender);applyDefaults();render();});
 
 const thumbCache={};
 function themeThumb(k){const T=THEMES[k];if(T.img){if(isMis(T))return adaptThumb(k)||T.img;return T.th||T.img;}return thumbCache[k]||(thumbCache[k]='data:image/svg+xml;utf8,'+encodeURIComponent(ART[k](T.pp,T.dd,T.aa)));}
@@ -2070,12 +2071,14 @@ function makeZip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
   let cs=0;cen.forEach(x=>cs+=x.length);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
   return new Blob([...parts,...cen,new Uint8Array(e.buffer)],{type:'application/zip'});}
 
-function nmApply(n,g){if(S.alt){if(!S._m){S._m={};Object.keys(S.alt.t).forEach(k=>{S._m[k]=S[k];});}Object.keys(S.alt.t).forEach(k=>{S[k]=S._m[k];});}
-  if(S.alt){if(!S._mx)S._mx=(S.xt||[]).map(x=>x.t);(S.xt||[]).forEach((x,i)=>{if(S._mx[i]!=null)x.t=S._mx[i];});}
+function altRestore(){if(!S.alt||!S._shown)return;Object.keys(S.alt.t).forEach(k=>{if(S._m&&S._m[k]!=null)S[k]=S._m[k];});(S.xt||[]).forEach((x,i)=>{if(S._mx&&S._mx[i]!=null)x.t=S._mx[i];});S._shown=false;}
+function altApply(){if(!S.alt)return;if(!S._shown){S._m={};Object.keys(S.alt.t).forEach(k=>{S._m[k]=S[k];});S._mx=(S.xt||[]).map(x=>x.t);S._shown=true;}
+  (S.xt||[]).forEach(x=>{if(x.ta!=null)x.t=x.ta;});Object.keys(S.alt.t).forEach(k=>{S[k]=S.alt.t[k];S.edited[k]=true;});}
+function altSync(g){if(!S.alt)return;if(g===S.alt.g)altApply();else altRestore();Object.keys(S.alt.t).forEach(k=>{const el=$('#f-'+k);if(el)el.value=S[k];});}
+function nmApply(n,g){altRestore();
   const old=defaults();['title','intro','role','body','from'].forEach(k=>{if(S[k]===old[k])S.edited[k]=false;});
   if(g&&S.gender!==g){S.gender=g;try{syncControls();}catch(_){}}S.name=n;S.edited=Object.assign({},S.edited,{name:true});applyDefaults();
-  if(S.alt&&g===S.alt.g){(S.xt||[]).forEach(x=>{if(x.ta!=null)x.t=x.ta;});}
-  if(S.alt&&g===S.alt.g){Object.keys(S.alt.t).forEach(k=>{S[k]=S.alt.t[k];S.edited[k]=true;const el=$('#f-'+k);if(el)el.value=S[k];});}
+  if(g)altSync(g);
   render();}
 async function makeZipB(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
   for(const f of files){const nm=enc.encode(f.name),u=new Uint8Array(await f.blob.arrayBuffer()),crc=crc32(u),n=u.length,h=new DataView(new ArrayBuffer(30));
