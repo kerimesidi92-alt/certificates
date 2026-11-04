@@ -1,32 +1,44 @@
-/* kPdf: builds a real PDF (exact page size, lossless images) and opens it. */
+/* kPdf: builds a real PDF (exact page size, JPEG .97 pages) and opens it.
+   items: urls / Blobs / canvases / functions returning one of those (lazy, one at a time in memory).
+   Pages are encoded one by one and kept as Blobs, so hundreds of pages do not exhaust memory. */
 (function(){
 var enc=new TextEncoder();
-function enc2(c,x,res){
-  function jp(){var d=atob(c.toDataURL('image/jpeg',.98).split(',')[1]),b=new Uint8Array(d.length);for(var i=0;i<d.length;i++)b[i]=d.charCodeAt(i);res({b:b,w:c.width,h:c.height,f:'DCTDecode'});}
-  if(typeof CompressionStream==='undefined')return jp();
-  try{
-    var id=x.getImageData(0,0,c.width,c.height).data,n=c.width*c.height,rgb=new Uint8Array(n*3);
-    for(var i=0,j=0;i<n;i++){rgb[j++]=id[i*4];rgb[j++]=id[i*4+1];rgb[j++]=id[i*4+2];}
-    var cs=new CompressionStream('deflate'),wr=cs.writable.getWriter();wr.write(rgb);wr.close();
-    new Response(cs.readable).arrayBuffer().then(function(ab){res({b:new Uint8Array(ab),w:c.width,h:c.height,f:'FlateDecode'});},jp);
-  }catch(_){jp();}
+function loadUrl(u){return new Promise(function(res,rej){var im=new Image();im.onload=function(){res(im);};im.onerror=function(){rej(new Error('img'));};im.src=u;});}
+function load(s){
+  if(s instanceof Blob){if(window.createImageBitmap)return createImageBitmap(s);return loadUrl(URL.createObjectURL(s));}
+  if(typeof s==='string')return loadUrl(s);
+  return Promise.resolve(s);}
+function dim(d){return {w:d.naturalWidth||d.width,h:d.naturalHeight||d.height};}
+function jpg(c,q){return new Promise(function(res,rej){c.toBlob(function(b){b?res(b):rej(new Error('jpg'));},'image/jpeg',q);});}
+/* -> {b:Blob(jpeg), w, h} */
+function encode(src,q){
+  var lazy=typeof src==='function';
+  return Promise.resolve(lazy?src():src).then(function(s){
+    if(s instanceof Blob&&s.type==='image/jpeg'){return load(s).then(function(d){var z=dim(d);if(d.close)d.close();return {b:s,w:z.w,h:z.h};});}
+    var own=lazy&&s instanceof HTMLCanvasElement;
+    return load(s).then(function(d){
+      var z=dim(d),c=document.createElement('canvas');c.width=z.w;c.height=z.h;
+      var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);x.drawImage(d,0,0);
+      if(d.close)d.close();if(own)d.width=d.height=0;
+      return jpg(c,q).then(function(b){c.width=c.height=0;return {b:b,w:z.w,h:z.h};});
+    });
+  });
 }
-function toImg(src){return new Promise(function(res,rej){
-  if(src instanceof HTMLCanvasElement){enc2(src,src.getContext('2d'),res);return;}
-  var im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0);enc2(c,x,res);};
-  im.onerror=function(){rej(new Error('img'));};im.src=src;});}
-/* items: array of urls/canvases; order: page sequence of item indexes; wmm,hmm: page size in millimetres */
-function build(items,order,wmm,hmm){
-  var pw=wmm/25.4*72,ph=hmm/25.4*72;
-  return Promise.all(items.map(toImg)).then(function(imgs){
-    var parts=[],offs=[],len=0,n=order.length,nI=imgs.length;
-    function push(x){var u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=u.length;}
+function note(i,n){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent='جارٍ تجهيز ملف الطباعة… '+i+' / '+n;}catch(_){}}
+/* order: page sequence of item indexes; wmm,hmm: page size in millimetres */
+function build(items,order,wmm,hmm,opt){
+  opt=opt||{};var q=opt.q||.97,pw=wmm/25.4*72,ph=hmm/25.4*72,imgs=[],n=order.length,nI=items.length;
+  var chain=Promise.resolve();
+  items.forEach(function(it,i){chain=chain.then(function(){note(i+1,nI);return encode(it,q).then(function(r){imgs.push(r);return new Promise(function(ok){setTimeout(ok,0);});});});});
+  return chain.then(function(){
+    var parts=[],offs=[],len=0;
+    function push(x){var u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=(u.size!==undefined?u.size:u.length);}
     var imgObj=function(i){return 3+i},pageObj=function(k){return 3+nI+2*k},conObj=function(k){return 4+nI+2*k},total=2+nI+2*n;
     function obj(id,fn){offs[id]=len;push(id+' 0 obj\n');fn();push('\nendobj\n');}
     push('%PDF-1.4\n');
     obj(1,function(){push('<</Type/Catalog/Pages 2 0 R/ViewerPreferences<</PrintScaling/None/PickTrayByPDFSize true/Duplex/Simplex>>>>');});
     obj(2,function(){push('<</Type/Pages/Count '+n+'/Kids['+order.map(function(_,k){return pageObj(k)+' 0 R'}).join(' ')+']>>');});
-    imgs.forEach(function(im,i){obj(imgObj(i),function(){push('<</Type/XObject/Subtype/Image/Width '+im.w+'/Height '+im.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/'+im.f+'/Length '+im.b.length+'>>\nstream\n');push(im.b);push('\nendstream');});});
+    imgs.forEach(function(im,i){obj(imgObj(i),function(){push('<</Type/XObject/Subtype/Image/Width '+im.w+'/Height '+im.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+im.b.size+'>>\nstream\n');push(im.b);push('\nendstream');});});
     order.forEach(function(i,k){
       obj(pageObj(k),function(){push('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+pw.toFixed(2)+' '+ph.toFixed(2)+']/Resources<</XObject<</I '+imgObj(i)+' 0 R>>>>/Contents '+conObj(k)+' 0 R>>');});
       var cs='q '+pw.toFixed(2)+' 0 0 '+ph.toFixed(2)+' 0 0 cm /I Do Q';
@@ -41,10 +53,11 @@ function build(items,order,wmm,hmm){
 function show(p,name,err){
   var w=null;
   try{w=window.open('','_blank');if(w)w.document.write('<meta name="viewport" content="width=device-width"><body style="font:18px sans-serif;text-align:center;padding:40px;direction:rtl">جارٍ تجهيز ملف الطباعة…</body>');}catch(_){}
-  Promise.resolve(p).then(function(bl){var u=URL.createObjectURL(bl);
+  kPdf._w=w;
+  Promise.resolve(p).then(function(bl){kPdf._w=null;var u=URL.createObjectURL(bl);
     if(w){try{w.location.href=u;return;}catch(_){}}
     var a=document.createElement('a');a.href=u;a.target='_blank';a.download=(name||'print')+'.pdf';document.body.appendChild(a);a.click();a.remove();
-  }).catch(function(e){if(w)try{w.close()}catch(_){}(err||alert)((e&&e.userMsg)||'تعذّر تجهيز ملف الطباعة');});
+  }).catch(function(e){kPdf._w=null;if(w)try{w.close()}catch(_){}(err||alert)((e&&e.userMsg)||'تعذّر تجهيز ملف الطباعة');});
 }
-window.kPdf={build:build,show:show};
+window.kPdf={build:build,show:show,load:load,_w:null};
 })();

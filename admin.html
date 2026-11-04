@@ -696,7 +696,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="kpdf.js?v=2"></script><script src="cert-library.js?v=9"></script>
+<script src="kpdf.js?v=3"></script><script src="cert-library.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="landing-index.js?v=5"></script>
 <script src="images.js?v=1"></script>
@@ -2000,8 +2000,14 @@ const modal=$('#modal');
 function modalReset(){const g=document.getElementById('m-gal');if(g)g.remove();$('#m-title').textContent='الصورة النهائية';const dl=$('#m-dl');if(dl)dl.hidden=true;{const pf=$('#m-pdf');if(pf)pf.hidden=true;}}
 const WMTXT='معاينة فقط';
 function wmUrl(){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240"><g transform="rotate(-28 200 120)" font-family="Cairo,Tahoma,Arial,sans-serif" font-weight="700" text-anchor="middle"><text x="200" y="130" font-size="46" fill="#1a2440" fill-opacity=".14">${WMTXT}</text></g></svg>`;return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);}
-async function makeImage(keep,wm){
-  if(!keep)modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-msg').textContent='جارٍ تجهيز الصورة…';
+async function fontsFor(d){
+  try{const jobs=[],seen=new Set(),win=d.defaultView||window;
+    d.querySelectorAll('#cert *').forEach(el=>{let t='';el.childNodes.forEach(n=>{if(n.nodeType===3)t+=n.textContent;});t=t.trim();if(!t)return;
+      const cs=win.getComputedStyle(el),f=cs.fontStyle+' '+cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily,k=f+'|'+t;if(seen.has(k))return;seen.add(k);jobs.push(d.fonts.load(f,t).catch(()=>0));});
+    await Promise.race([Promise.all(jobs),new Promise(r=>setTimeout(r,5000))]);if(d.fonts&&d.fonts.ready)await d.fonts.ready;}catch(_){}
+}
+async function makeImage(keep,wm,batch){
+  if(!keep)modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}if(!batch)$('#m-msg').textContent='جارٍ تجهيز الصورة…';
   try{
     if(typeof html2canvas!=='function')throw new Error('no lib');
     if(S.sel!==-1||S.st){S.sel=-1;S.st=null;markSel();renderTools();}
@@ -2009,12 +2015,13 @@ async function makeImage(keep,wm){
     try{await Promise.all(window.__fp||[]);}catch(_){}
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     fitAll();
-    const run=sc=>html2canvas($('#cert'),{scale:sc,backgroundColor:null,logging:false,useCORS:true,onclone:d=>{if(wm){const c=d.getElementById('cert'),w=d.createElement('div');w.style.cssText='position:absolute;left:0;top:0;width:'+W+'px;height:'+H+'px;z-index:50;background-repeat:repeat;background-image:url("'+wmUrl()+'")';c.appendChild(w);}const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy,.rh2').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));}});
-    const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;let cv;try{cv=await run(WM?1.5:(PH?3:4));}catch(_){try{cv=await run(3);}catch(_2){cv=await run(2);}}
-    $('#m-img').src=cv.toDataURL('image/png');$('#m-img').hidden=false;window.lastCv=cv;{const pb=$('#m-print');if(pb)pb.hidden=false;}
-    if(!keep)cv.toBlob(b=>{if(!b)return;if(window.__dlu)URL.revokeObjectURL(window.__dlu);window.__dlu=URL.createObjectURL(b);const dl=$('#m-dl'),oo=S.openOrder&&byId(S.openOrder);dl.href=window.__dlu;dl.download=(((oo&&oo.client)||'certificate')+(S.name?'-'+S.name:'')).replace(/[\\/:*?"<>|]/g,'').slice(0,60)+(wm?'-معاينة':'')+'.png';dl.hidden=false;{const pf=$('#m-pdf');if(pf){pf.hidden=false;pf.dataset.n=dl.download.replace(/\.png$/,'');}}},'image/png');
-    $('#m-msg').textContent=wm?'معاينة للزبون. النسخة النظيفة من زر «الصورة النهائية».':'اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
-  }catch(err){$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
+    await fontsFor(document);
+    const run=sc=>html2canvas($('#cert'),{scale:sc,backgroundColor:null,logging:false,useCORS:true,onclone:async d=>{if(wm){const c=d.getElementById('cert'),w=d.createElement('div');w.style.cssText='position:absolute;left:0;top:0;width:'+W+'px;height:'+H+'px;z-index:50;background-repeat:repeat;background-image:url("'+wmUrl()+'")';c.appendChild(w);}const st=d.getElementById('stage');st.style.transform='none';st.dataset.mv='export';const w=d.getElementById('stagewrap');w.style.height=H+'px';w.style.width=W+'px';w.style.overflow='visible';d.querySelectorAll('.rh,.rhx,.rhy,.rh2').forEach(x=>x.remove());d.querySelectorAll('.tb').forEach(b=>{const m=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(b.style.transform||'');if(m){b.style.left=(parseFloat(b.style.left)+parseFloat(m[1]))+'px';b.style.top=(parseFloat(b.style.top)+parseFloat(m[2]))+'px';}b.style.transform='none';b.style.overflow='visible';});d.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));await fontsFor(d);}});
+    const PH=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;let cv;const sc0=WM?1.5:(batch?(PH?2.5:3):(PH?3:4));try{cv=await run(sc0);}catch(_){try{cv=await run(2.5);}catch(_2){cv=await run(2);}}
+    $('#m-img').hidden=false;window.lastCv=cv;{const pb=$('#m-print');if(pb)pb.hidden=false;}
+    if(!keep)cv.toBlob(b=>{if(!b)return;if(window.__dlu)URL.revokeObjectURL(window.__dlu);window.__dlu=URL.createObjectURL(b);$('#m-img').src=window.__dlu;const dl=$('#m-dl'),oo=S.openOrder&&byId(S.openOrder);dl.href=window.__dlu;dl.download=(((oo&&oo.client)||'certificate')+(S.name?'-'+S.name:'')).replace(/[\\/:*?"<>|]/g,'').slice(0,60)+(wm?'-معاينة':'')+'.png';dl.hidden=false;{const pf=$('#m-pdf');if(pf){pf.hidden=false;pf.dataset.n=dl.download.replace(/\.png$/,'');}}},'image/png');
+    if(!batch){$('#m-msg').textContent=wm?'معاينة للزبون. النسخة النظيفة من زر «الصورة النهائية».':'اضغطي «تنزيل الصورة»، أو اضغطي مطولاً على الصورة لحفظها في الهاتف.';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';}
+  }catch(err){window.lastCv=null;if(!batch)$('#m-msg').textContent='تعذّر إنشاء الصورة هنا. يمكنك التقاط صورة للشاشة.';}
 }
 
 async function savePdf(urls,land,name){
@@ -2025,21 +2032,20 @@ async function savePdf(urls,land,name){
 function printPages(urls,land){
   const sz=S.size==='a5'?'a5':'a4',u=[...new Set(urls)];
   if(sz==='a4'){kPdf.show(kPdf.build(u,urls.map(x=>u.indexOf(x)),land?297:210,land?210:297),'certificates-A4');return;}
-  /* A5: two certificates per A4 sheet, each exactly half of the sheet */
-  kPdf.show((async()=>{
-    const ims={};await Promise.all(u.map(x=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>{ims[x]=im;res();};im.onerror=()=>rej(new Error('img'));im.src=x;})));
-    const SW=land?210:297,SH=land?297:210,k=360/25.4,items=[],order=[],seen={};
-    for(let i=0;i<urls.length;i+=2){const a=urls[i],b=urls[i+1]||null,key=u.indexOf(a)+'|'+(b==null?'-':u.indexOf(b));
-      if(seen[key]==null){const c=document.createElement('canvas');c.width=Math.round(SW*k);c.height=Math.round(SH*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.imageSmoothingQuality='high';
-        const hw=land?c.width:c.width/2,hh=land?c.height/2:c.height;
-        x.drawImage(ims[a],0,0,hw,hh);if(b!=null)x.drawImage(ims[b],land?0:hw,land?hh:0,hw,hh);
-        items.push(c);seen[key]=items.length-1;}
-      order.push(seen[key]);}
-    return kPdf.build(items,order,SW,SH);
-  })(),'certificates-A5');
+  /* A5: two certificates per A4 sheet, each exactly half of the sheet; sheets are made one at a time */
+  const SW=land?210:297,SH=land?297:210,k=360/25.4,items=[],order=[],seen={};
+  for(let i=0;i<urls.length;i+=2){const a=urls[i],b=urls[i+1]||null,key=u.indexOf(a)+'|'+(b==null?'-':u.indexOf(b));
+    if(seen[key]==null){items.push(async()=>{
+      const c=document.createElement('canvas');c.width=Math.round(SW*k);c.height=Math.round(SH*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.imageSmoothingQuality='high';
+      const hw=land?c.width:c.width/2,hh=land?c.height/2:c.height;
+      const ia=await kPdf.load(a);x.drawImage(ia,0,0,hw,hh);if(ia.close)ia.close();
+      if(b!=null){const ib=await kPdf.load(b);x.drawImage(ib,land?0:hw,land?hh:0,hw,hh);if(ib.close)ib.close();}
+      return c;});seen[key]=items.length-1;}
+    order.push(seen[key]);}
+  kPdf.show(kPdf.build(items,order,SW,SH),'certificates-A5');
 }
-$('#m-pdf').onclick=async()=>{const cv=window.lastCv;if(!cv)return;const b=$('#m-pdf'),t0=b.textContent;b.disabled=true;b.textContent='جارٍ التجهيز…';try{await savePdf([cv.toDataURL('image/png')],cv.width>=cv.height,b.dataset.n);}catch(_){try{toast('تعذّر إنشاء PDF',1);}catch(_2){}}b.disabled=false;b.textContent=t0;};
-$('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1)),u=cv.toDataURL('image/png');printPages(new Array(n).fill(u),land);};
+$('#m-pdf').onclick=async()=>{const cv=window.lastCv;if(!cv)return;const b=$('#m-pdf'),t0=b.textContent;b.disabled=true;b.textContent='جارٍ التجهيز…';try{await savePdf([cv],cv.width>=cv.height,b.dataset.n);}catch(_){try{toast('تعذّر إنشاء PDF',1);}catch(_2){}}b.disabled=false;b.textContent=t0;};
+$('#m-print').onclick=()=>{const cv=window.lastCv;if(!cv)return;const land=cv.width>=cv.height,n=Math.max(1,Math.min(500,parseInt($('#m-copies').value)||1));printPages(new Array(n).fill(cv),land);};
 $('#m-wm').onclick=()=>{makeImage(false,true);};
 $('#btn-export').onclick=()=>{const o=S.openOrder&&byId(S.openOrder);$('#m-copies').value=Math.max(1,Math.min(500,(o&&+o.qty)||1));modal.hidden=false;makeImage();};
 
@@ -2057,16 +2063,49 @@ function makeZip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
 
 function nmApply(n,g){const old=defaults();['title','intro','role','body','from'].forEach(k=>{if(S[k]===old[k])S.edited[k]=false;});
   if(g&&S.gender!==g){S.gender=g;try{syncControls();}catch(_){}}S.name=n;S.edited=Object.assign({},S.edited,{name:true});applyDefaults();render();}
+async function makeZipB(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
+  for(const f of files){const nm=enc.encode(f.name),u=new Uint8Array(await f.blob.arrayBuffer()),crc=crc32(u),n=u.length,h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,0,true);h.setUint16(12,0x21,true);h.setUint32(14,crc,true);h.setUint32(18,n,true);h.setUint32(22,n,true);h.setUint16(26,nm.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),nm,f.blob);
+    const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(12,0,true);c.setUint16(14,0x21,true);c.setUint32(16,crc,true);c.setUint32(20,n,true);c.setUint32(24,n,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+    cen.push(new Uint8Array(c.buffer),nm);off+=30+nm.length+n;}
+  let cs=0;cen.forEach(x=>cs+=x.length);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cen,new Uint8Array(e.buffer)],{type:'application/zip'});}
 async function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
-  const names=[...sel.options].map(o=>o.value).filter(Boolean),gs=[...sel.options].filter(o=>o.value).map(o=>o.dataset.g||'');if(!names.length)return;const keep=S.name,keepG=S.gender,t0=btn.textContent;btn.disabled=true;const files=[],purls=[];let pland=false;$('#m-copies').value=1;let gal=document.getElementById('m-gal');if(!gal){gal=document.createElement('div');gal.id='m-gal';gal.style.cssText='display:flex;flex-direction:column;gap:18px;margin-top:10px';$('#m-img').after(gal);}gal.innerHTML='';
-  try{modal.hidden=false;
-    for(let i=0;i<names.length;i++){btn.textContent='جارٍ التصدير '+(i+1)+'/'+names.length;nmApply(names[i],gs[i]);window.lastCv=null;await makeImage(true);
-      const cv=window.lastCv;if(!cv)throw new Error('x');const bl=await new Promise(r=>cv.toBlob(r,'image/png'));
-      files.push({name:String(i+1).padStart(2,'0')+'-'+names[i].replace(/[\\/:*?"<>|]/g,'').slice(0,40)+'.png',data:new Uint8Array(await bl.arrayBuffer())});
-      purls.push(URL.createObjectURL(bl));pland=cv.width>=cv.height;const fg=document.createElement('figure');fg.style.cssText='margin:0;text-align:center;font-size:14px';const im=document.createElement('img');im.src=URL.createObjectURL(bl);im.alt=names[i];im.style.cssText='width:100%;border:1px solid #ccc;border-radius:6px';const cp=document.createElement('figcaption');cp.textContent=(i+1)+'. '+names[i];fg.append(im,cp);gal.append(fg);}
-    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=URL.createObjectURL(makeZip(files));a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';gal.prepend(a);{const pf2=document.createElement('button');pf2.type='button';pf2.className='btn primary';pf2.textContent='تنزيل PDF لكل الأسماء ('+purls.length+' صفحة)';pf2.onclick=async()=>{const t1=pf2.textContent;pf2.disabled=true;pf2.textContent='جارٍ التجهيز…';try{await savePdf(purls.slice(),pland,'certificates');}catch(_){try{toast('تعذّر إنشاء PDF',1);}catch(_2){}}pf2.disabled=false;pf2.textContent=t1;};a.after(pf2);}{const pb2=document.createElement('button');pb2.type='button';pb2.className='btn primary';pb2.textContent='طباعة كل الأسماء ('+purls.length+' صفحة)';pb2.onclick=()=>{const cp=Math.max(1,Math.min(50,parseInt($('#m-copies').value)||1)),list=[];purls.forEach(u=>{for(let k=0;k<cp;k++)list.push(u);});printPages(list,pland);};gal.prepend(pb2);}$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}{const dl=$('#m-dl');if(dl)dl.hidden=true;{const pf=$('#m-pdf');if(pf)pf.hidden=true;}}
-    $('#m-title').textContent='الأسماء ('+files.length+')';$('#m-msg').textContent='كل الشهادات أدناه بحجمها الكامل. اضغطي كليك يمين على أي صورة ←︎ حفظ الصورة، أو نزّلي الكل بزر «تنزيل ZIP».';
-  }catch(_){$('#m-msg').textContent='تعذّر تصدير كل الأسماء. جرّبي اسمًا اسمًا.';}
+  const opts=[...sel.options].filter(o=>o.value),names=opts.map(o=>o.value),gs=opts.map(o=>o.dataset.g||'');if(!names.length)return;
+  const keep=S.name,keepG=S.gender,t0=btn.textContent,tm=$('#m-msg'),t00=Date.now();
+  btn.disabled=true;window.__expStop=0;$('#m-copies').value=1;modal.hidden=false;$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}{const dl=$('#m-dl');if(dl)dl.hidden=true;}{const pf=$('#m-pdf');if(pf)pf.hidden=true;}
+  let gal=document.getElementById('m-gal');if(!gal){gal=document.createElement('div');gal.id='m-gal';gal.style.cssText='display:flex;flex-direction:column;gap:14px;margin-top:10px';$('#m-img').after(gal);}gal.innerHTML='';
+  const stopB=document.createElement('button');stopB.type='button';stopB.className='btn';stopB.textContent='إيقاف وحفظ ما تم';stopB.onclick=()=>{window.__expStop=1;stopB.disabled=true;stopB.textContent='جارٍ الإيقاف…';};gal.append(stopB);
+  const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px';gal.append(grid);
+  const files=[];let pland=false,failed=0;
+  try{
+    for(let i=0;i<names.length&&!window.__expStop;i++){
+      const el=(Date.now()-t00)/1000,eta=i>=2?Math.ceil(el/i*(names.length-i)/60):0;
+      btn.textContent='جارٍ التصدير '+(i+1)+'/'+names.length;$('#m-title').textContent='جارٍ التصدير '+(i+1)+' من '+names.length;
+      tm.textContent=(i>=2?(eta>=1?'المتبقي نحو '+eta+' دقيقة. ':'أقل من دقيقة. '):'')+'لا تغلقي الصفحة. يمكنك الضغط على «إيقاف» للحصول على ما تم.';
+      nmApply(names[i],gs[i]);window.lastCv=null;await makeImage(true,false,true);
+      const cv=window.lastCv;if(!cv||!cv.width){failed++;continue;}
+      const bl=await new Promise(r=>cv.toBlob(r,'image/jpeg',.95));if(!bl){failed++;continue;}
+      pland=cv.width>=cv.height;
+      const tw=360,th=Math.round(tw*cv.height/cv.width),tc=document.createElement('canvas');tc.width=tw;tc.height=th;tc.getContext('2d').drawImage(cv,0,0,tw,th);const thumb=tc.toDataURL('image/jpeg',.72);
+      cv.width=cv.height=0;window.lastCv=null;
+      files.push({name:String(i+1).padStart(3,'0')+'-'+names[i].replace(/[\\/:*?"<>|]/g,'').slice(0,40)+'.jpg',blob:bl});
+      const fg=document.createElement('figure');fg.style.cssText='margin:0;text-align:center;font-size:13px';const im=document.createElement('img');im.src=thumb;im.alt=names[i];im.style.cssText='width:100%;border:1px solid #ccc;border-radius:6px;cursor:pointer';im.onclick=()=>{window.open(URL.createObjectURL(bl),'_blank');};const cp=document.createElement('figcaption');cp.textContent=(i+1)+'. '+names[i];fg.append(im,cp);grid.append(fg);
+      await new Promise(r=>setTimeout(r,0));}
+    stopB.remove();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}
+    if(!files.length)throw new Error('none');
+    tm.textContent='جارٍ تجهيز ملف ZIP…';
+    const zb=await makeZipB(files),zu=URL.createObjectURL(zb);
+    const bar=document.createElement('div');bar.style.cssText='display:flex;flex-direction:column;gap:10px';
+    const a=document.createElement('a');a.className='btn primary';a.style.cssText='text-align:center;text-decoration:none';a.href=zu;a.download='certificates.zip';a.textContent='تنزيل ZIP ('+files.length+' صورة)';
+    const pf2=document.createElement('button');pf2.type='button';pf2.className='btn primary';pf2.textContent='تنزيل PDF لكل الأسماء ('+files.length+' صفحة)';
+    pf2.onclick=async()=>{const t1=pf2.textContent;pf2.disabled=true;pf2.textContent='جارٍ التجهيز…';try{await savePdf(files.map(f=>f.blob),pland,'certificates');}catch(_){try{toast('تعذّر إنشاء PDF',1);}catch(_2){}}pf2.disabled=false;pf2.textContent=t1;};
+    const pb2=document.createElement('button');pb2.type='button';pb2.className='btn primary';pb2.textContent='طباعة كل الأسماء ('+files.length+' صفحة)';
+    pb2.onclick=()=>{const cp=Math.max(1,Math.min(50,parseInt($('#m-copies').value)||1)),list=[];files.forEach(f=>{for(let k=0;k<cp;k++)list.push(f.blob);});printPages(list,pland);};
+    bar.append(pb2,a,pf2);gal.prepend(bar);
+    $('#m-title').textContent='الأسماء ('+files.length+')';tm.textContent='تم تجهيز '+files.length+' شهادة'+(failed?' (تعذّر '+failed+')':'')+(window.__expStop&&files.length<names.length?' — توقفتِ عند '+files.length+' من '+names.length:'')+'. اضغطي أي صورة لفتحها بالحجم الكامل، أو نزّلي الكل بـ ZIP أو PDF.';
+  }catch(_){stopB.remove();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}tm.textContent='تعذّر تصدير الأسماء. جرّبي اسمًا اسمًا.';}
   nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;}
 
 $('#m-close').onclick=()=>{modal.hidden=true;};
