@@ -2179,7 +2179,7 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ren
 })();
 </script>
 
-<script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)(function(){var had=!!navigator.serviceWorker.controller,done=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(had&&!done){done=true;location.reload();}});navigator.serviceWorker.register('sw.js').then(function(r){try{r.update();}catch(e){}}).catch(function(){});})();</script><style>#cpk .cpe{flex-wrap:wrap}#cpk .cpe button{flex:1 1 140px;font:inherit;font-weight:700;font-size:13px;padding:9px 10px;border-radius:10px;border:1.5px solid var(--line,#ddd);background:var(--surface2,#f7f4ed);color:var(--fg,#141c33)}
+<script src="nobounce.js?v=1"></script><script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)(function(){var had=!!navigator.serviceWorker.controller,done=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(had&&!done){done=true;location.reload();}});navigator.serviceWorker.register('sw.js').then(function(r){try{r.update();}catch(e){}}).catch(function(){});})();</script><style>#cpk .cpe{flex-wrap:wrap}#cpk .cpe button{flex:1 1 140px;font:inherit;font-weight:700;font-size:13px;padding:9px 10px;border-radius:10px;border:1.5px solid var(--line,#ddd);background:var(--surface2,#f7f4ed);color:var(--fg,#141c33)}
 </style><script>(function(){
 var fr=document.documentElement.lang==='fr',L=fr?{scr:'Pipette (écran)'}:{scr:'قطّارة الشاشة'};
 function apply(c){var ov=document.getElementById('cpk');if(!ov)return;var x=ov.querySelector('.cpx');if(!x)return;x.value=c;x.dispatchEvent(new Event('input',{bubbles:true}));}
