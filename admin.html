@@ -2004,7 +2004,7 @@ $('#btn-clear').onclick=()=>{S.theme='none';S.themeTouched=true;S.frame='none';S
       ['seg-divT','seg-div','seg-frame','seg-dn','seg-dc','seg-sg'].forEach((id,i)=>{try{segSync(id,['divT','div','frame','dnv','dcv','sgv'][i]);}catch(_){}});try{renderImgs();}catch(_){}try{syncTheme();paintColors();}catch(_){}S.nt=1;S.off={};S.fmt={};ntSync();render();renderTools();};
 function ntSync(){const b=$('#btn-nt');if(!b)return;b.textContent=S.nt?(S.lang==='ar'?'إظهار الكتابة':'Afficher le texte'):(S.lang==='ar'?'بدون كتابة':'Sans texte');b.setAttribute('aria-pressed',S.nt?'true':'false');}
 $('#btn-nt').onclick=()=>{S.nt=S.nt?0:1;ntSync();render();renderTools();};
-['title','intro','name','role','body','from','date'].forEach(k=>{const el=$('#f-'+k);if(el)el.addEventListener('input',()=>{if(S.nt){S.nt=0;ntSync();}});});
+['title','intro','name','role','body','from','date'].forEach(k=>{const el=$('#f-'+k);if(el)el.addEventListener('input',()=>{if(S.nt){S.nt=0;ntSync();render();}});});
 $('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset.v);};setMv('lock');
 
 /* final image */
