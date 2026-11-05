@@ -1,4 +1,4 @@
-<!doctype html><html lang="ar" dir="rtl"><head><script src="modal-lock.js?v=2"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!doctype html><html lang="ar" dir="rtl"><head><script src="modal-lock.js?v=2"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>قوالب الصور</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Aref+Ruqaa:wght@700&family=Great+Vibes&family=Cormorant+Garamond:wght@500&display=swap" rel="stylesheet">
 <style>
@@ -47,7 +47,7 @@ input[type=text]:focus,input[type=date]:focus,select:focus{border-color:var(--ac
 ::selection{background:transparent}
 .pvbox{border:0!important}
 input[type=range],input[type=checkbox],input[type=radio],progress{accent-color:var(--hl,#a98534)}
-</style><link rel="icon" href="icon-192.png" type="image/png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="لمسة خاصة"><link rel="manifest" href="manifest.webmanifest"></head><body>
+</style><link rel="icon" href="icon-192.png" type="image/png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="لمسة خاصة"><link rel="manifest" href="manifest.webmanifest"><style>html{background:var(--bg,#faf6ec);overscroll-behavior-y:none;touch-action:manipulation;-webkit-text-size-adjust:100%}</style></head><body>
 <div class="top"><b>قوالب وإطارات الصور</b><button class="x" id="close" type="button">إغلاق</button></div>
 <div class="pv"><div class="pvbox" id="pvbox"><canvas id="cv"></canvas></div></div>
 <div class="ctl" id="ctl"></div>
@@ -403,4 +403,4 @@ try{if(parent&&parent!==window)parent.postMessage({kind:'kerima-col-ready'},'*')
 })();
 
 if(document.fonts&&document.fonts.load){['96px "Great Vibes"','96px "Aref Ruqaa"','34px Cairo','100px "Cormorant Garamond"'].forEach(function(f){document.fonts.load(f,'سعيد Ab').then(function(){try{draw();thumbs()}catch(e){}})})}
-</script><script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(function(){});</script></body></html>
+</script><script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(function(){});</script><script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});var t=0;d.addEventListener('touchend',function(ev){var n=Date.now();if(n-t<350&&ev.target.closest&&!ev.target.closest('input,textarea,select'))ev.preventDefault();t=n;},{passive:false});})();</script></body></html>

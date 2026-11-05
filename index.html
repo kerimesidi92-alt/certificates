@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a">
 <title>لمسة خاصة</title>
 <link rel="preload" as="image" href="landing/img/hero-cert.webp"><link rel="preload" as="image" href="landing/img/hero-inv.webp"><link rel="manifest" href="manifest.webmanifest">
@@ -231,7 +231,7 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 .spark{animation-duration:6s}
 body.nav *{animation:none!important;transition:none!important}
 .card,.chips,.dstrip{touch-action:manipulation}
-</style><link rel="icon" href="icon-192.png" type="image/png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="لمسة خاصة"></head>
+</style><link rel="icon" href="icon-192.png" type="image/png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="لمسة خاصة"><style>html{background:var(--bg,#faf6ec);overscroll-behavior-y:none;touch-action:manipulation;-webkit-text-size-adjust:100%}</style></head>
 <body>
 <header class="top"><div class="wrap"><div class="brand" data-i="brand">لمسة خاصة</div>
 <div class="lang"><button id="bAr" class="on">العربية</button><button id="bFr">Français</button></div></div></header>
@@ -383,4 +383,4 @@ render();
 fetch("https://firestore.googleapis.com/v1/projects/"+FB.p+"/databases/(default)/documents/config/landing?key="+FB.k).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.fields||!j.fields.json)return;var c=JSON.parse(j.fields.json.stringValue);CFG=c;try{localStorage.setItem("kk_lcfg",JSON.stringify(c))}catch(e){}render()}).catch(function(){});
 if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)navigator.serviceWorker.register("sw.js").catch(function(){});
 </script>
-<script>(function(){function stop(){document.body.classList.add('nav');setTimeout(function(){document.body.classList.remove('nav')},700)}document.addEventListener('click',function(e){var a=e.target.closest('a.card,#cont');if(!a)return;var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(11,22,48,.78);display:grid;place-items:center;color:#f3dfa6;font:700 20px Cairo,sans-serif';o.textContent='…';document.body.appendChild(o);setTimeout(function(){o.remove()},8000)},true);document.addEventListener('pointerdown',function(e){if(e.target.closest('a[href]:not([target]),.card'))stop()},{passive:true});['pageshow','focus','visibilitychange','pointerup','touchend'].forEach(function(ev){window.addEventListener(ev,function(){setTimeout(function(){document.body.classList.remove('nav')},ev=='pointerup'||ev=='touchend'?700:0)})});document.body.classList.remove('nav')})();</script></body></html>
+<script>(function(){function stop(){document.body.classList.add('nav');setTimeout(function(){document.body.classList.remove('nav')},700)}document.addEventListener('click',function(e){var a=e.target.closest('a.card,#cont');if(!a)return;var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(11,22,48,.78);display:grid;place-items:center;color:#f3dfa6;font:700 20px Cairo,sans-serif';o.textContent='…';document.body.appendChild(o);setTimeout(function(){o.remove()},8000)},true);document.addEventListener('pointerdown',function(e){if(e.target.closest('a[href]:not([target]),.card'))stop()},{passive:true});['pageshow','focus','visibilitychange','pointerup','touchend'].forEach(function(ev){window.addEventListener(ev,function(){setTimeout(function(){document.body.classList.remove('nav')},ev=='pointerup'||ev=='touchend'?700:0)})});document.body.classList.remove('nav')})();</script><script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});var t=0;d.addEventListener('touchend',function(ev){var n=Date.now();if(n-t<350&&ev.target.closest&&!ev.target.closest('input,textarea,select'))ev.preventDefault();t=n;},{passive:false});})();</script></body></html>
