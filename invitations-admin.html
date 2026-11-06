@@ -384,7 +384,15 @@ input.pin{width:96px!important;min-height:34px;padding:4px 8px!important}
 .amodal[hidden]{display:none}
 .am-panel{background:var(--surface);color:var(--fg);border-radius:16px;padding:14px;width:min(560px,100%);max-height:100%;overflow:auto;display:grid;gap:10px}
 .am-panel .arow{align-items:center}.am-panel img{width:100%;height:auto;display:block;border-radius:6px;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 0 0/16px 16px}
-</style></head><body style="padding-block:14px">
+</style><style id="safe-top">
+body{padding-top:calc(env(safe-area-inset-top,0px) + 14px)!important}
+#lb,#fm,#hmpk,.amodal,.modal{padding-top:calc(env(safe-area-inset-top,0px) + 14px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 14px)!important}
+.lbbox{max-height:100%;min-height:0}
+.lbbar{position:relative;z-index:5;flex:none}
+.lbimg{flex:0 1 auto;min-height:0;max-height:calc(100dvh - 170px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important}
+.lbimg img{max-height:calc(100dvh - 200px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important}
+</style>
+</head><body style="padding-block:14px">
 <div class="amodal" id="modal" hidden role="dialog" aria-modal="true"><div class="am-panel">
  <strong id="m-title">الصورة النهائية</strong>
  <div class="arow"><a class="abtn pri" id="m-dl" hidden download="card.png">تنزيل الصورة</a><button type="button" class="abtn pri" id="m-pdf" hidden>تنزيل PDF</button><button type="button" class="abtn pri" id="m-print" hidden>طباعة</button><button type="button" class="abtn" id="m-wm">حفظ بعلامة مائية</button><button type="button" class="abtn" id="m-close">إغلاق</button></div>

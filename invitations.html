@@ -2110,13 +2110,13 @@ function hqUp(){if(HQC)return;HQC=1;loadHQ().then(function(ok){if(!ok||!window.H
   try{render();}catch(_){}}).catch(function(){HQC=0;});}
 window.addEventListener('load',function(){setTimeout(function(){var c=navigator.connection;if(c&&(c.saveData||/(^|-)2g$/.test(c.effectiveType||'')))return;if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform)))return;hqUp();},2500);});
 async function makePreview(){var box=null;try{if(!window.htmlToImage)return '';if(document.fonts&&document.fonts.ready)await document.fonts.ready;
- await paperReady(S);box=pvBox();await preloadBox(box);var fec=await fontEmbedCSS(box),opt={pixelRatio:1.4,cacheBust:false,fontEmbedCSS:fec,style:{position:'static',left:'0',top:'0',margin:'0'}};
+ await paperReady(S);var __bk={};try{for(var k in IMGSRC){var v=IMGSRC[k];if(typeof v==='string'&&v.length>250000){var sm=await shrinkImg(v,1000,.82);if(sm&&sm.length<v.length){__bk[k]=v;IMGSRC[k]=sm;}}}}catch(_e){}box=pvBox();await preloadBox(box);var fec=await fontEmbedCSS(box),opt={pixelRatio:1.4,cacheBust:false,fontEmbedCSS:fec,style:{position:'static',left:'0',top:'0',margin:'0'}};
  try{await htmlToImage.toBlob(box,{pixelRatio:1,cacheBust:false,fontEmbedCSS:fec,style:opt.style});}catch(_){}
  await new Promise(function(r){setTimeout(r,120)});
  var blob=await htmlToImage.toBlob(box,opt);if(!blob)return '';
  var url=URL.createObjectURL(blob);var im=await new Promise(function(res,rj){var i=new Image();i.onload=function(){res(i)};i.onerror=rj;i.src=url});
  var r=Math.min(1,800/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=Math.round(im.width*r);cv.height=Math.round(im.height*r);var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(im,0,0,cv.width,cv.height);URL.revokeObjectURL(url);
- return cv.toDataURL('image/jpeg',.72);}catch(e){return '';}finally{if(box)box.remove();}}
+ return cv.toDataURL('image/jpeg',.72);}catch(e){return '';}finally{if(box)box.remove();try{for(var k in __bk)IMGSRC[k]=__bk[k];}catch(_e){}}}
 async function submitOrder(){
  var o=OT[UL],er=$('#o-err'),btn=$('#o-go');
  function fail(m){er.textContent=m;er.hidden=false;}

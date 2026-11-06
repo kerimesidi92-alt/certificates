@@ -108,6 +108,14 @@ input[type=range],input[type=checkbox],input[type=radio],progress{accent-color:v
 .c-img .rh2::before{content:"";position:absolute;inset:-14px}
 #nm-sel option{color:#111;background:#fff}
 </style>
+<style id="safe-top">
+body{padding-top:calc(env(safe-area-inset-top,0px) + 14px)!important}
+#lb,#fm,#hmpk,.amodal,.modal{padding-top:calc(env(safe-area-inset-top,0px) + 14px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 14px)!important}
+.lbbox{max-height:100%;min-height:0}
+.lbbar{position:relative;z-index:5;flex:none}
+.lbimg{flex:0 1 auto;min-height:0;max-height:calc(100dvh - 170px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important}
+.lbimg img{max-height:calc(100dvh - 200px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important}
+</style>
 <script>(function(){var d=document;['gesturestart','gesturechange','gestureend'].forEach(function(e){d.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});});d.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});})();</script>
 
 <title>إدارة الشهادات</title>
