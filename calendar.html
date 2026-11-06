@@ -165,6 +165,7 @@ function metUI(on,lev,idm,idl){return '<div class="row" style="align-items:cente
 function digits(s){return S.ind?String(s).replace(/\d/g,function(x){return '٠١٢٣٤٥٦٧٨٩'[x]}):String(s);}
 
 /* ---------- UI ---------- */
+function bchk(id,lab){return '<label class="chk" style="margin:-6px 0 10px"><input type="checkbox" id="'+id+'"'+(S[id]?' checked':'')+'>'+lab+'</label>';}
 function btn(label,on,attr){return '<button type="button" class="opt" aria-pressed="'+on+'" '+attr+'>'+label+'</button>';}
 function sel(id,list,cur,lab){return '<label class="f">'+lab+'<select id="'+id+'">'+list.map(function(f){return '<option value="'+f+'"'+(f===cur?' selected':'')+' style="font-family:\''+f+'\'">'+f+'</option>'}).join('')+'</select></label>';}
 function sw(kind,cur){var h='';COLORS.forEach(function(c,i){h+='<button type="button" class="sw" aria-pressed="'+(cur===i)+'" title="'+c.n+'" data-'+kind+'="'+i+'" style="background:'+(c.g?'linear-gradient(135deg,'+c.g.join(',')+')':c.s)+'"></button>';});
@@ -184,8 +185,8 @@ function ui(){
     '<label class="f" style="max-width:220px">أي لون آخر<input type="color" id="custom" value="'+(S.custom||'#a9852f')+'" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:2px"></label>'+metUI(S.cmet,S.clev,'cmet','clev')+'</div>';
  h+='<div class="g"><h3>لون الشكل</h3>'+sw('hcol',S.hcol)+'<label class="f" style="max-width:220px">أي لون آخر<input type="color" id="hcustom" value="'+(S.hcustom||'#a9852f')+'" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:2px"></label>'+metUI(S.hmet,S.hlev,'hmet','hlev')+'</div>';
  var mi=(+S.date.split('-')[1]||1)-1,mAr=LANG.ar.m[mi],mLat=(S.lang==='fr'?LANG.fr:LANG.en).m[mi],ttl=S.title.trim();
- h+=fontPick('fMon','خط اسم الشهر',mAr,mLat)+fontPick('fDay','خط أسماء الأيام','الاثنين','Mon')+fontPick('fNum','خط الأرقام','١٨ 18','18');
- h+='<div class="g"><h3>عنوان اختياري فوق التقويم</h3><div class="row"><label class="f">النص<input type="text" id="title" dir="auto" value="'+S.title.replace(/"/g,'&quot;')+'" placeholder="Save the Date"></label>'+'</div>'+fontPick('fTit','خط العنوان',ttl||'احفظوا الموعد',ttl||'Save the Date')+
+ h+=fontPick('fMon','خط اسم الشهر',mAr,mLat)+bchk('bMon','اسم الشهر غامق')+fontPick('fDay','خط أسماء الأيام','الاثنين','Mon')+bchk('bDay','أسماء الأيام غامقة')+fontPick('fNum','خط الأرقام','١٨ 18','18')+bchk('bNum','الأرقام (التواريخ) غامقة');
+ h+='<div class="g"><h3>عنوان اختياري فوق التقويم</h3><div class="row"><label class="f">النص<input type="text" id="title" dir="auto" value="'+S.title.replace(/"/g,'&quot;')+'" placeholder="Save the Date"></label>'+'</div>'+fontPick('fTit','خط العنوان',ttl||'احفظوا الموعد',ttl||'Save the Date')+bchk('bTit','العنوان غامق')+
     '<div class="row"><label class="chk"><input type="checkbox" id="year"'+(S.year?' checked':'')+'>إظهار السنة بجانب الشهر</label><label class="chk"><input type="checkbox" id="upper"'+(S.upper?' checked':'')+'>حروف كبيرة للشهر</label></div></div>';
  h+='<div class="g"><h3>خلفية التقويم (تظهر عند إضافته إلى البطاقة)</h3>'+bgUI(S)+'</div>';
  $('#ctl').innerHTML=h;
@@ -195,9 +196,10 @@ function ui(){
 var HP=null;
 function heartPath(){return shapePath();}
 function paintOf(ctx,c,x0,x1){if(!c.g)return c.s;var g=ctx.createLinearGradient(x0,0,x1,0);c.g.forEach(function(s,i){g.addColorStop(i/(c.g.length-1),s)});return g;}
-function spaced(ctx,str,x,y,sp,align){ /* manual letter spacing (Latin only) */
+function bld(ctx,txt,x,y,sz){ctx.save();ctx.lineWidth=sz*.045;ctx.lineJoin='round';ctx.strokeStyle=ctx.fillStyle;ctx.strokeText(txt,x,y);ctx.restore();}
+function spaced(ctx,str,x,y,sp,align,bold){ /* manual letter spacing (Latin only) */
  var w=0,i,ws=[];for(i=0;i<str.length;i++){ws[i]=ctx.measureText(str[i]).width;w+=ws[i]+(i<str.length-1?sp:0);}
- var cx=align==='center'?x-w/2:x;ctx.textAlign='left';for(i=0;i<str.length;i++){ctx.fillText(str[i],cx,y);cx+=ws[i]+sp;}ctx.textAlign='center';}
+ var cx=align==='center'?x-w/2:x;ctx.textAlign='left';for(i=0;i<str.length;i++){ctx.fillText(str[i],cx,y);if(bold)bld(ctx,str[i],cx,y,parseFloat(ctx.font)||sp*3.5);cx+=ws[i]+sp;}ctx.textAlign='center';}
 function drawHeart(ctx,cx,cy,size,style,paint,glow,numColor){
  var sc=size/40;ctx.save();ctx.translate(cx-20*sc,cy-18*sc);ctx.scale(sc,sc);
  var lw=1/sc;
@@ -242,22 +244,22 @@ function render(canvas,scale){
  if(rtl)ctx.direction='rtl';else ctx.direction='ltr';
  var paintText=paintOf(ctx,cc,padX,W-padX),paintHeart=paintOf(ctx,hc,padX,W-padX);
  /* title */
- if(titleSz){ctx.font=titleSz+'px "'+S.fTit+'"';ctx.fillStyle=paintText;ctx.fillText(S.title.trim(),W/2,layout.title);}
+ if(titleSz){ctx.font=titleSz+'px "'+S.fTit+'"';ctx.fillStyle=paintText;ctx.fillText(S.title.trim(),W/2,layout.title);if(S.bTit)bld(ctx,S.title.trim(),W/2,layout.title,titleSz);}
  /* month */
  var mt=L.m[m];if(S.upper&&!rtl)mt=mt.toUpperCase();
  var mtxt=mt+(S.year?(rtl?' / ':' ')+digits(y):'');
  var msz=(rtl?66:62)*u;ctx.font=msz+'px "'+S.fMon+'"';ctx.fillStyle=paintText;
- if(!rtl&&S.upper)spaced(ctx,mtxt,W/2,layout.mon,msz*.28,'center');else ctx.fillText(mtxt,W/2,layout.mon);
+ if(!rtl&&S.upper)spaced(ctx,mtxt,W/2,layout.mon,msz*.28,'center',S.bMon);else{ctx.fillText(mtxt,W/2,layout.mon);if(S.bMon)bld(ctx,mtxt,W/2,layout.mon,msz);}
  /* day names */
- var dsz=(rtl?38:36)*u;ctx.font=dsz+'px "'+S.fDay+'"';ctx.globalAlpha=.88;ctx.fillStyle=paintText;
- order.forEach(function(dow,i){var idx=rtl?(6-i):i;ctx.fillText(L.d[dow],cx0(idx),layout.hdr);});
+ var dsz=(rtl?38:36)*u;ctx.font=dsz+'px "'+S.fDay+'"';ctx.globalAlpha=S.bDay?1:.88;ctx.fillStyle=paintText;
+ order.forEach(function(dow,i){var idx=rtl?(6-i):i;ctx.fillText(L.d[dow],cx0(idx),layout.hdr);if(S.bDay)bld(ctx,L.d[dow],cx0(idx),layout.hdr,dsz);});
  ctx.globalAlpha=1;
  var nsz=(S.mode==='week'?62:50)*u;ctx.font=nsz+'px "'+S.fNum+'"';
  var hsize=(S.mode==='week'?170:118)*u,numOn=S.heart==='solid'?'#ffffff':null;
  var glow=(hc.g?hc.g[1]:hc.s);
  function num(n,cx,cy,isSel){
   if(isSel&&S.shape!=='none'){drawHeart(ctx,cx,cy-nsz*.33,hsize,S.heart,paintHeart,glow);}
-  ctx.font=nsz+'px "'+S.fNum+'"';ctx.fillStyle=(isSel&&numOn)?numOn:paintText;ctx.fillText(digits(n),cx,cy);}
+  ctx.font=nsz+'px "'+S.fNum+'"';ctx.fillStyle=(isSel&&numOn)?numOn:paintText;ctx.fillText(digits(n),cx,cy);if(S.bNum)bld(ctx,digits(n),cx,cy,nsz);}
  if(S.mode==='week'){
   var start=new Date(sel);start.setDate(sel.getDate()-((sel.getDay()-S.first+7)%7));
   for(var i2=0;i2<7;i2++){var dd=new Date(start);dd.setDate(start.getDate()+i2);var idx=rtl?(6-i2):i2;
