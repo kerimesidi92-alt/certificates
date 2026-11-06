@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#16264a"><meta name="robots" content="noindex,nofollow">
 <title>إدارة بطاقات الدعوات</title><link rel="icon" href="icon.svg" type="image/svg+xml">
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&family=Reem+Kufi:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Aref+Ruqaa+Ink:wght@400;700&family=Katibeh&family=El+Messiri:wght@400;700&family=Tajawal:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Lateef&family=Harmattan:wght@400;700&family=Markazi+Text:wght@400;700&family=Mirza&family=Lalezar&family=Rakkas&family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Pinyon+Script&family=Playfair+Display:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=Bodoni+Moda:wght@400;700&family=Italiana&family=Cinzel:wght@400;700&family=Lora:wght@400;700&family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@400;600&display=swap">
+<link rel="stylesheet" href="fonts/fonts.css?v=1">
 <style>
 /* Layout: sticky preview (card + element chips + tools bar) beside scrolling controls; every text and image is its own movable element. */
 :root{
@@ -534,10 +534,9 @@ var MON={ar:['يناير','فبراير','مارس','أبريل','مايو','ي�
  fr:['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre']};
 var DEF={ar:{n1:'محمد',n2:'مريم',line:'بحضوركم تكتمل فرحتنا'},fr:{n1:'Mohamed',n2:'Mariem',line:'Votre présence complète notre joie'}};
 /* font list: add a line here to add a font (name, script). Also add the family to the Google Fonts link above. */
-(function(){['Scheherazade New','Noto Nastaliq Urdu','Ruwudu','Jomhuria','Vibes','Blaka','Blaka Ink','Marhey','Lemonada','Amiri Quran','Gulzar','Kufam'].forEach(function(f){var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+f.replace(/ /g,'+')+'&display=swap';document.head.appendChild(l);});})();
 /* more fonts */
 var NEWS={};['Almarai','Changa','Mada','Readex Pro','IBM Plex Sans Arabic','Noto Kufi Arabic','Noto Sans Arabic','Alexandria','Baloo Bhaijaan 2','Cairo Play','Reem Kufi Fun','Reem Kufi Ink','Qahiri','Zain','Rubik','Allura','Alex Brush','Parisienne','Sacramento','Satisfy','Tangerine','Playball','Cookie','Pacifico','Marcellus','Josefin Sans','Poppins','Raleway','Prata','Cinzel Decorative','EB Garamond','Yeseva One','Abril Fatface','Bad Script','Courgette','Lobster','Rouge Script','Italianno','Arizonia','Petit Formal Script','Mrs Saint Delafield','Monsieur La Doulaise','Herr Von Muellerhoff','Birthstone','Gwendolyn','Style Script','Cormorant','Old Standard TT'].forEach(function(n){NEWS[n]=1});window.__fp=window.__fp||[];
-function LF(n){if(!NEWS[n]||NEWS[n]===2)return;NEWS[n]=2;var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+n.replace(/ /g,'+')+'&display=swap';window.__fp.push(new Promise(function(r){l.onload=l.onerror=r;}));document.head.appendChild(l);}
+function LF(n){if(!NEWS[n]||NEWS[n]===2)return;NEWS[n]=2;try{window.__fp.push(Promise.race([document.fonts.load('16px "'+n+'"'),new Promise(function(r){setTimeout(r,4000)})]).catch(function(){}));}catch(_e){}}
 var FONTS=[['Amiri','ar'],['Reem Kufi','ar'],['Aref Ruqaa','ar'],['Aref Ruqaa Ink','ar'],['Katibeh','ar'],['El Messiri','ar'],['Cairo','ar'],['Tajawal','ar'],['Noto Naskh Arabic','ar'],['Lateef','ar'],['Harmattan','ar'],['Markazi Text','ar'],['Mirza','ar'],['Scheherazade New','ar'],['Noto Nastaliq Urdu','ar'],['Ruwudu','ar'],['Jomhuria','ar'],['Vibes','ar'],['Blaka','ar'],['Blaka Ink','ar'],['Marhey','ar'],['Lemonada','ar'],['Amiri Quran','ar'],['Gulzar','ar'],['Kufam','ar'],['Lalezar','ar'],['Rakkas','ar'],['Almarai','ar'],['Changa','ar'],['Mada','ar'],['Readex Pro','ar'],['IBM Plex Sans Arabic','ar'],['Noto Kufi Arabic','ar'],['Noto Sans Arabic','ar'],['Alexandria','ar'],['Baloo Bhaijaan 2','ar'],['Cairo Play','ar'],['Reem Kufi Fun','ar'],['Reem Kufi Ink','ar'],['Qahiri','ar'],['Zain','ar'],['Rubik','ar'],
  ['Great Vibes','fr'],['Dancing Script','fr'],['Pinyon Script','fr'],['Playfair Display','fr'],['Cormorant Garamond','fr'],['Bodoni Moda','fr'],['Italiana','fr'],['Cinzel','fr'],['Lora','fr'],['Libre Baskerville','fr'],['Montserrat','fr'],['Allura','fr'],['Alex Brush','fr'],['Parisienne','fr'],['Sacramento','fr'],['Satisfy','fr'],['Tangerine','fr'],['Playball','fr'],['Cookie','fr'],['Pacifico','fr'],['Marcellus','fr'],['Josefin Sans','fr'],['Poppins','fr'],['Raleway','fr'],['Prata','fr'],['Cinzel Decorative','fr'],['EB Garamond','fr'],['Yeseva One','fr'],['Abril Fatface','fr'],['Bad Script','fr'],['Courgette','fr'],['Lobster','fr'],['Rouge Script','fr'],['Italianno','fr'],['Arizonia','fr'],['Petit Formal Script','fr'],['Mrs Saint Delafield','fr'],['Monsieur La Doulaise','fr'],['Herr Von Muellerhoff','fr'],['Birthstone','fr'],['Gwendolyn','fr'],['Style Script','fr'],['Cormorant','fr'],['Old Standard TT','fr'],['Beiruti','ar'],['Fustat','ar'],['Vazirmatn','ar'],['Alkalami','ar'],['Playpen Sans Arabic','ar'],['Handjet','ar'],['Badeen Display','ar'],['Blaka Hollow','ar'],['Parastoo','ar']];NEWS['Badeen Display']=1;NEWS['Blaka Hollow']=1;NEWS['Parastoo']=1;
 var DF={ev:{ar:'Amiri',fr:'Cormorant Garamond'},n1:{ar:'Reem Kufi',fr:'Great Vibes'},n2:{ar:'Reem Kufi',fr:'Great Vibes'},or:{ar:'Amiri',fr:'Great Vibes'},dt:{ar:'Amiri',fr:'Cormorant Garamond'},ln:{ar:'Amiri',fr:'Cormorant Garamond'}};
@@ -2287,9 +2286,10 @@ document.body.classList.add('nowm');
 var FEC={},GCSS=null;
 function fontsUsed(box){var s={};[].forEach.call(box.querySelectorAll('*'),function(e){var f=getComputedStyle(e).fontFamily;if(f)f.split(',').forEach(function(x){s[x.trim().replace(/^["']|["']$/g,'')]=1})});return s}
 function fToData(url){return fetch(url).then(function(r){return r.blob()}).then(function(b){return new Promise(function(res){var fr=new FileReader();fr.onload=function(){res(fr.result)};fr.readAsDataURL(b)})})}
-async function googleCSS(){var t='',links=[].filter.call(document.querySelectorAll('link[rel=stylesheet]'),function(l){return /fonts\.googleapis\.com/.test(l.href)});
- var done=window.__gc||(window.__gc={});
- for(var i=0;i<links.length;i++){var h=links[i].href;if(done[h]===undefined){try{done[h]=await (await fetch(h)).text()}catch(e){done[h]=''}}t+=done[h]+'\n'}return t}
+var FCSS=null;
+async function googleCSS(){if(FCSS)return FCSS;var u=new URL('fonts/fonts.css?v=1',document.baseURI).href,t='';
+ for(var k=0;k<3&&!t;k++){try{var r=await fetch(u);if(r.ok)t=await r.text();}catch(e){}if(!t)await new Promise(function(z){setTimeout(z,400);});}
+ if(!t)return '';FCSS=t.replace(/url\(([^)]+)\)/g,function(m,p){return 'url('+new URL(p.replace(/['"]/g,''),u).href+')';});return FCSS;}
 function inRange(rg,cs){return rg.split(',').some(function(p){p=p.trim().replace(/^U\+/i,'');var a=p.split('-'),lo=parseInt(a[0],16),hi=a[1]?parseInt(a[1],16):lo;return cs.some(function(c){return c>=lo&&c<=hi})})}
 async function fontEmbedCSS(box){try{var used=fontsUsed(box),css=await googleCSS(),blocks=css.match(/@font-face\s*\{[^}]*\}/g)||[],out='',cs=[],seen={};
  (box.textContent||'').split('').forEach(function(ch){var c=ch.charCodeAt(0);if(!seen[c]){seen[c]=1;cs.push(c)}});
@@ -2298,7 +2298,8 @@ async function fontEmbedCSS(box){try{var used=fontsUsed(box),css=await googleCSS
   var m=/url\(([^)]+)\)/.exec(b);if(!m)continue;var u=m[1].replace(/['"]/g,'');
   if(!(u in FEC)){try{FEC[u]=await fToData(u)}catch(e){FEC[u]=null}}
   if(FEC[u])out+=b.replace(m[0],'url('+FEC[u]+')')+'\n';}
- return out||undefined}catch(e){return undefined}}
+ try{var have={};blocks.forEach(function(q){var fm=(/font-family:\s*['"]?([^;'"]+)['"]?/.exec(q)||[])[1];if(fm)have[fm.trim()]=1;});window.__fontMiss=Object.keys(used).filter(function(x){return (typeof FONTS!=='undefined')&&FONTS.some(function(z){return z[0]===x;})&&!have[x];});}catch(_e){window.__fontMiss=[];}
+ return out||undefined}catch(e){window.__fontMiss=['?'];return undefined}}
 function mkBox(wm,id){var b=document.createElement('div');b.className='cardbox';b.id=id||'xbox';if(wm)b.classList.add('wmx');b.innerHTML='<div class="card"></div>';b.style.cssText='position:fixed;left:-99999px;top:0;filter:none;';document.body.appendChild(b);var st=JSON.parse(JSON.stringify(S));st.sel=null;drawCard(b,st,600,false);try{var lv=document.getElementById('card');if(lv&&lv.getBoundingClientRect().width>50){[].forEach.call(b.querySelectorAll('.el[data-e]'),function(x){var de=x.getAttribute('data-e'),le=lv.querySelector('.el[data-e="'+de+'"]');if(!le)return;var li=le.querySelector('.ev,.nm,.ln'),xi=x.querySelector('.ev,.nm,.ln');if(!li&&de.indexOf('t:')===0&&!le.classList.contains('oxt')){li=le.firstElementChild;xi=x.firstElementChild;}
   if(!li||!xi||li.children.length||!li.firstChild||li.firstChild.nodeType!==3)return;var tn=li.firstChild,s=tn.data,r=document.createRange(),lines=[],cur='',lt=null,hh=1;
   for(var i=0;i<s.length;i++){var ch=s.charAt(i);if(ch==='\n'){lines.push(cur);cur='';lt=null;continue;}r.setStart(tn,i);r.setEnd(tn,i+1);var rc=r.getClientRects();if(!rc.length||!rc[0].width){cur+=ch;continue;}var tp=rc[0].top;hh=rc[0].height||hh;if(lt!==null&&Math.abs(tp-lt)>hh*.6){lines.push(cur);cur='';}lt=tp;cur+=ch;}
@@ -2334,8 +2335,9 @@ async function makeImage(wm){
    var mm0=$('#m-msg');if(mm0&&!(window.HQ&&window.HQ.__x))mm0.textContent='جارٍ تحميل الجودة العالية (أول مرة فقط)…';await hqOn();if(mm0)mm0.textContent='جارٍ تجهيز الصورة…';await paperReady(S);box=mkBox(wm);var z=dimsOf(S),px=Math.min(4000,Math.round(z[0]/2.54*300)),ratio=Math.max(1,Math.min(7,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))ratio=Math.max(1,Math.min(ratio,Math.sqrt(11e6/(600*600*z[1]/z[0]))));}catch(_e){}
    ratio=Math.max(1,ratio*[1,.7,.5][at]);
    await preloadBox(box);
-   try{var fu=fontsUsed(box);await Promise.all(Object.keys(fu).map(function(f){return Promise.race([document.fonts.load('32px "'+f+'"'),new Promise(function(r){setTimeout(r,6000);})]);}));await new Promise(function(r){setTimeout(r,120);});}catch(_e){}
+   try{var fu=fontsUsed(box);await Promise.all(Object.keys(fu).map(function(f){return Promise.race([document.fonts.load('32px "'+f+'"',(box.textContent||' ')+' '),new Promise(function(r){setTimeout(r,6000);})]);}));await new Promise(function(r){setTimeout(r,120);});}catch(_e){}
    var fec=await fontEmbedCSS(box);
+   try{if(window.__fontMiss&&window.__fontMiss.length)toast('تنبيه: تعذّر تضمين هذه الخطوط: '+window.__fontMiss.join('، '),1);}catch(_e){}
    var opt={pixelRatio:ratio,cacheBust:false,fontEmbedCSS:fec,style:{position:'static',left:'0',top:'0',margin:'0'}};
    var warm=null;
    try{warm=await htmlToImage.toBlob(box,{pixelRatio:.5,cacheBust:false,fontEmbedCSS:fec,style:opt.style});}catch(_){}await new Promise(function(r){setTimeout(r,150);});
