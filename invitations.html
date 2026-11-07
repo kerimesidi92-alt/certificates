@@ -2153,7 +2153,7 @@ async function submitOrder(){
    if(!order)throw new Error('big');
   }
   var id=(typeof idDone==='string'&&idDone)?idDone:await sendOrderDoc(order);
-  var tx=o.w.n+'\n'+o.w.c+(UL==='fr'?' : ':': ')+order.client+'\n'+o.w.p+(UL==='fr'?' : ':': ')+order.phone+'\n'+o.w.i+(UL==='fr'?' : ':': ')+order.item+'\n'+o.w.q+(UL==='fr'?' : ':': ')+order.qty+(order.notes?'\n'+o.w.nt+(UL==='fr'?' : ':': ')+order.notes:'')+'\n'+o.w.id+(UL==='fr'?' : ':': ')+id;
+  var tx=KMSG.text('order',UL,{name:order.client,phone:order.phone,item:order.item,qty:order.qty,notes:order.notes,id:id});
   if(WA){var link='https://wa.me/'+WA+'?text='+encodeURIComponent(tx);
    omodal('<h3>'+o.ok+'</h3><p>'+o.waGo+'</p><a class="wa" href="'+link+'">'+o.waBtn+'</a><button class="cl" data-lbclose>'+o.close+'</button>');
    setTimeout(function(){try{location.href=link;}catch(_){}},900);}
@@ -2204,4 +2204,4 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 })();
 </script>
 <style>@media (max-width:860px){.pv-head{display:flex!important;justify-content:flex-end;min-height:0;margin-bottom:6px}.pv-head>div:first-child{display:none}#pv-toggle{display:inline-block;min-height:36px;min-width:52px;padding:0 14px;font-size:17px}}</style>
-<script>document.addEventListener('error',function(e){var im=e.target;if(im&&im.tagName==='IMG'&&!im.__r&&im.src&&im.src.indexOf('data:')!==0){im.__r=1;var u=im.src;setTimeout(function(){im.src=u},900);}},true);</script></body></html>
+<script>document.addEventListener('error',function(e){var im=e.target;if(im&&im.tagName==='IMG'&&!im.__r&&im.src&&im.src.indexOf('data:')!==0){im.__r=1;var u=im.src;setTimeout(function(){im.src=u},900);}},true);</script><script src="kmsg.js?v=1"></script></body></html>

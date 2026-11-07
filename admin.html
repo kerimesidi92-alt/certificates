@@ -2330,9 +2330,7 @@ $('#olist').addEventListener('click',e=>{
   const pv=e.target.closest('[data-pv]');if(pv){modalReset();$('#m-img').src=pv.src;$('#m-img').hidden=false;$('#m-msg').textContent='معاينة الطلب كما أرسلها الزبون.';$('#m-title').textContent='معاينة الطلب';modal.hidden=false;return;}
   const ac=e.target.closest('[data-acc]');if(ac){const o=byId(ac.dataset.acc);if(!o)return;const ns=ac.dataset.st;store.update(o.id,{status:ns});
     const q=Math.max(1,+o.qty||1),pr=+o.price||0,nm=(o.client||''),it=(o.item||'—'),tot=pr?'\nالسعر: '+(q*pr)+' MRU':'';
-    const tx={progress:'مرحباً '+nm+'\nقبلنا طلبك\nالطلب: '+it+'\nالكمية: '+q+tot+'\nسنتواصل معك قريباً. شكراً لثقتك بنا.',
-      ready:'مرحباً '+nm+'\nطلبك جاهز\nالطلب: '+it+'\nالكمية: '+q+tot+'\nيرجى إرسال المبلغ لنقوم بتسليمه لك.',
-      done:'مرحباً '+nm+'\nتم تسليم طلبك\nشكراً جزيلاً لثقتك بنا، ونرجو أن تقوموا بطلباتكم القادمة عندنا.'}[ns],lk=waLink(o.phone);
+    const LG=o.lang||(o.design&&o.design.st&&o.design.st.lang==='fr'?'fr':'ar'),tx=KMSG.text({progress:'accept',ready:'ready',done:'done'}[ns],LG,{name:nm,item:it,qty:q,price:pr?pr+' MRU':'',total:pr?(q*pr)+' MRU':'',phone:o.phone,id:o.id}),lk=waLink(o.phone);
     let file=null;try{const m=ns!=='done'&&/^data:image\/jpeg;base64,([A-Za-z0-9+\/=]+)$/.exec(o.preview||'');if(m){const bin=atob(m[1]),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);file=new File([u],'design.jpg',{type:'image/jpeg'});}}catch(_){}
     if(file&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],text:tx}).catch(()=>{});}
     else if(lk){window.open(lk+'?text='+encodeURIComponent(tx),'_blank','noopener');}
@@ -2360,7 +2358,7 @@ function syncOrderItem(){if(itemTouched)return;const el=$('#o-item');if(el)el.va
 $('#o-item').addEventListener('input',()=>{itemTouched=true;});
 $('#order-form').addEventListener('submit',e=>{
   e.preventDefault();const client=$('#o-client').value.trim();if(!client)return;
-  {const lk=waLink($('#o-phone').value),q=Math.max(1,+$('#o-qty').value||1),pr=Math.max(0,+$('#o-price').value||0);if(lk){const tx='مرحباً '+client+'\nتم تسجيل طلبك\nالطلب: '+($('#o-item').value.trim()||'—')+'\nالكمية: '+q+(pr?'\nسعر القطعة: '+pr+' MRU\nالمجموع: '+(q*pr)+' MRU':'')+'\nشكراً لثقتك بنا.';window.open(lk+'?text='+encodeURIComponent(tx),'_blank','noopener');}}
+  {const lk=waLink($('#o-phone').value),q=Math.max(1,+$('#o-qty').value||1),pr=Math.max(0,+$('#o-price').value||0);if(lk){const tx=KMSG.text('manual','ar',{name:client,item:($('#o-item').value.trim()||'—'),qty:q,price:pr?pr+' MRU':'',total:pr?(q*pr)+' MRU':''});window.open(lk+'?text='+encodeURIComponent(tx),'_blank','noopener');}}
   store.add({client:cut(client,120),phone:cut($('#o-phone').value.trim(),40),email:'',item:cut($('#o-item').value.trim()||'—',160),qty:Math.max(1,+$('#o-qty').value||1),price:Math.max(0,+$('#o-price').value||0),status:'new',notes:'',design:$('#o-link').checked?designConfig():null,createdAt:Date.now(),source:'manual'});
   $('#o-client').value='';$('#o-phone').value='';$('#o-price').value='';$('#o-qty').value='1';
 });
@@ -2729,3 +2727,4 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 </script>
 <style>.tb:not(.ml){overflow:visible}.fgrid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:200px;overflow:auto;margin:6px 0;padding:2px}.fgb{min-height:46px;font-size:19px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 8px;border:1.5px solid var(--line,#e3dccd);border-radius:10px;background:var(--surface,#fff);color:var(--fg,#141c33);font-family:inherit}.fgb.on{border-color:var(--hl,#a98534);outline:2px solid var(--hl,#a98534)}</style>
 <script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.xl');if(a&&a.href&&!e.defaultPrevented&&!e.ctrlKey&&!e.metaKey){e.preventDefault();location.href=a.href;}},true);</script>
+<script src="kmsg.js?v=1"></script>

@@ -2198,7 +2198,7 @@ function initStore(){
 }
 function waLink(p){var d=String(p||'').replace(/\D/g,'');if(d.length<8)return '';if(d.length===8)d='222'+d;return 'https://wa.me/'+d;}
 function stLabel(v){return (STATUS.find(function(s){return s[0]===v})||[0,'جديد'])[1];}
-function oLang(o){return o&&o.design&&o.design.st&&o.design.st.lang==='fr'?'fr':'ar';}
+function oLang(o){if(o&&(o.lang==='fr'||o.lang==='en'||o.lang==='ar'))return o.lang;return o&&o.design&&o.design.st&&o.design.st.lang==='fr'?'fr':'ar';}
 /* keep every order's pictures apart (keys of different customers can collide) */
 function adopt(d,tag){var st=JSON.parse(JSON.stringify(d.st));(st.imgs||[]).forEach(function(I){delete I.fx;});delete st.fxFrm;
  function nk(k){return (/^[av]:/.test(k)||/^o[^_]*_/.test(k))?k:tag+k;}
@@ -2235,7 +2235,7 @@ var WAT={
   done:function(n){return 'Bonjour '+n+'\nVotre commande a été livrée\nMerci beaucoup pour votre confiance, et au plaisir de vous revoir pour vos prochaines commandes.'},price:'\nPrix : ',man:function(n,it,q,pr){return 'Bonjour '+n+'\nVotre commande est enregistrée\nCommande : '+it+'\nQuantité : '+q+(pr?'\nPrix unitaire : '+pr+' MRU\nTotal : '+(q*pr)+' MRU':'')+'\nMerci de votre confiance.'}}};
 $('#olist').addEventListener('click',function(e){
  var ac=e.target.closest('[data-aacc]');if(ac){var o=byId(ac.dataset.aacc);if(!o)return;var ns=ac.dataset.ast;store.update(o.id,{status:ns});
-  var q=Math.max(1,+o.qty||1),pr=+o.price||0,W=WAT[oLang(o)],tot=pr?W.price+(q*pr)+' MRU':'',tx=W[ns](o.client||'',o.item||'-',q,tot),lk=waLink(o.phone);
+  var q=Math.max(1,+o.qty||1),pr=+o.price||0,W=WAT[oLang(o)],tot=pr?W.price+(q*pr)+' MRU':'',tx=KMSG.text({progress:'accept',ready:'ready',done:'done'}[ns],oLang(o),{name:o.client||'',item:o.item||'-',qty:q,price:pr?pr+' MRU':'',total:pr?(q*pr)+' MRU':'',phone:o.phone,id:o.id}),lk=waLink(o.phone);
   if(lk)window.open(lk+'?text='+encodeURIComponent(tx),'_blank','noopener');return;}
  var ar=e.target.closest('[data-aarch]');if(ar){store.update(ar.dataset.aarch,{archived:ar.dataset.to==='1'});return;}
  var c=e.target.closest('[data-acycle]'),op=e.target.closest('[data-aopen]'),d=e.target.closest('[data-adel]');
@@ -2248,7 +2248,7 @@ document.addEventListener('click',function(e){var v=e.target.closest('[data-avie
 $('#order-form').addEventListener('submit',function(e){
  e.preventDefault();var client=$('#o-client').value.trim();if(!client)return;
  var q=Math.max(1,+$('#o-qty').value||1),pr=Math.max(0,+$('#o-price').value||0),it=$('#o-item').value.trim()||'-',lk=waLink($('#o-phone').value);
- if(lk)window.open(lk+'?text='+encodeURIComponent(WAT.ar.man(client,it,q,pr)),'_blank','noopener');
+ if(lk)window.open(lk+'?text='+encodeURIComponent(KMSG.text('manual','ar',{name:client,item:it,qty:q,price:pr?pr+' MRU':'',total:pr?(q*pr)+' MRU':''})),'_blank','noopener');
  var d=null;if($('#o-link').checked){d=pack(false);}
  store.add({client:client.slice(0,120),phone:$('#o-phone').value.trim().slice(0,40),email:'',item:it.slice(0,160),qty:q,price:pr,status:'new',notes:'',design:d,createdAt:Date.now(),source:'manual'});
  $('#o-client').value='';$('#o-phone').value='';$('#o-price').value='';$('#o-qty').value='1';
@@ -2643,4 +2643,4 @@ document.addEventListener('click',function(e){var X=window.__SZX(),SH=X.SH,SZ=X.
   SZ.add[sh]=(SZ.add[sh]||[]).concat([key]);szApply(SZ);szUI();window.__rebuild();save();}});
 })();
 </script>
-</body></html>
+<script src="kmsg.js?v=1"></script></body></html>
