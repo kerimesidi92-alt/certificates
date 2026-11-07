@@ -3,29 +3,29 @@
 'use strict';
 var D={
  order:{
-  ar:'السلام عليكم 🌸\nطلب جديد من «لمسة خاصة»\nالاسم: {name}\nالهاتف: {phone}\nالطلب: {item}\nالكمية: {qty}\nملاحظات: {notes}\nرقم الطلب: {id}',
-  fr:'Bonjour 🌸\nNouvelle commande « Lamsa Khasa »\nNom : {name}\nTéléphone : {phone}\nCommande : {item}\nQuantité : {qty}\nRemarques : {notes}\nN° : {id}',
-  en:'Hello 🌸\nNew order from “Lamsa Khasa”\nName: {name}\nPhone: {phone}\nOrder: {item}\nQuantity: {qty}\nNotes: {notes}\nOrder no.: {id}'},
+  ar:'السلام عليكم\nطلب جديد من «لمسة خاصة»\nالاسم: {name}\nالهاتف: {phone}\nالطلب: {item}\nالكمية: {qty}\nملاحظات: {notes}\nرقم الطلب: {id}',
+  fr:'Bonjour\nNouvelle commande « Lamsa Khasa »\nNom : {name}\nTéléphone : {phone}\nCommande : {item}\nQuantité : {qty}\nRemarques : {notes}\nN° : {id}',
+  en:'Hello\nNew order from “Lamsa Khasa”\nName: {name}\nPhone: {phone}\nOrder: {item}\nQuantity: {qty}\nNotes: {notes}\nOrder no.: {id}'},
  accept:{
-  ar:'السلام عليكم {name} 🌸\nاستلمنا طلبك وقبلناه ✅\nالطلب: {item}\nالكمية: {qty}\nالمجموع: {total}\nسنرسل لك المعاينة قريباً لتأكيدها. شكراً لثقتك بنا.',
-  fr:'Bonjour {name} 🌸\nVotre commande est acceptée ✅\nCommande : {item}\nQuantité : {qty}\nTotal : {total}\nNous vous enverrons bientôt l’aperçu à confirmer. Merci de votre confiance.',
-  en:'Hello {name} 🌸\nYour order is accepted ✅\nOrder: {item}\nQuantity: {qty}\nTotal: {total}\nWe’ll send you the preview shortly to confirm. Thank you for your trust.'},
+  ar:'السلام عليكم {name}\nاستلمنا طلبك وقبلناه\nالطلب: {item}\nالكمية: {qty}\nالمجموع: {total}\nسنرسل لك المعاينة قريباً لتأكيدها. شكراً لثقتك بنا.',
+  fr:'Bonjour {name}\nVotre commande est acceptée\nCommande : {item}\nQuantité : {qty}\nTotal : {total}\nNous vous enverrons bientôt l’aperçu à confirmer. Merci de votre confiance.',
+  en:'Hello {name}\nYour order is accepted\nOrder: {item}\nQuantity: {qty}\nTotal: {total}\nWe’ll send you the preview shortly to confirm. Thank you for your trust.'},
  ready:{
-  ar:'{name} 🌸\nطلبك جاهز ✨\nالطلب: {item}\nالكمية: {qty}\nالمجموع: {total}\nيرجى إرسال المبلغ لنسلّمه لك.',
-  fr:'{name} 🌸\nVotre commande est prête ✨\nCommande : {item}\nQuantité : {qty}\nTotal : {total}\nMerci d’envoyer le montant pour la livraison.',
-  en:'{name} 🌸\nYour order is ready ✨\nOrder: {item}\nQuantity: {qty}\nTotal: {total}\nPlease send the payment so we can deliver it.'},
+  ar:'{name}\nطلبك جاهز\nالطلب: {item}\nالكمية: {qty}\nالمجموع: {total}\nيرجى إرسال المبلغ لنسلّمه لك.',
+  fr:'{name}\nVotre commande est prête\nCommande : {item}\nQuantité : {qty}\nTotal : {total}\nMerci d’envoyer le montant pour la livraison.',
+  en:'{name}\nYour order is ready\nOrder: {item}\nQuantity: {qty}\nTotal: {total}\nPlease send the payment so we can deliver it.'},
  done:{
-  ar:'{name} 🌸\nتم تسليم طلبك ✅\nشكراً لثقتك بنا، ويسعدنا خدمتك في مناسباتك القادمة.',
-  fr:'{name} 🌸\nVotre commande a été livrée ✅\nMerci de votre confiance, au plaisir de vous servir pour vos prochains événements.',
-  en:'{name} 🌸\nYour order has been delivered ✅\nThank you for your trust. We’d love to serve you again at your next occasion.'},
+  ar:'{name}\nتم تسليم طلبك\nشكراً لثقتك بنا، ويسعدنا خدمتك في مناسباتك القادمة.',
+  fr:'{name}\nVotre commande a été livrée\nMerci de votre confiance, au plaisir de vous servir pour vos prochains événements.',
+  en:'{name}\nYour order has been delivered\nThank you for your trust. We’d love to serve you again at your next occasion.'},
  manual:{
-  ar:'السلام عليكم {name} 🌸\nتم تسجيل طلبك ✅\nالطلب: {item}\nالكمية: {qty}\nسعر القطعة: {price}\nالمجموع: {total}\nشكراً لثقتك بنا.',
-  fr:'Bonjour {name} 🌸\nVotre commande est enregistrée ✅\nCommande : {item}\nQuantité : {qty}\nPrix unitaire : {price}\nTotal : {total}\nMerci de votre confiance.',
-  en:'Hello {name} 🌸\nYour order is recorded ✅\nOrder: {item}\nQuantity: {qty}\nUnit price: {price}\nTotal: {total}\nThank you for your trust.'},
+  ar:'السلام عليكم {name}\nتم تسجيل طلبك\nالطلب: {item}\nالكمية: {qty}\nسعر القطعة: {price}\nالمجموع: {total}\nشكراً لثقتك بنا.',
+  fr:'Bonjour {name}\nVotre commande est enregistrée\nCommande : {item}\nQuantité : {qty}\nPrix unitaire : {price}\nTotal : {total}\nMerci de votre confiance.',
+  en:'Hello {name}\nYour order is recorded\nOrder: {item}\nQuantity: {qty}\nUnit price: {price}\nTotal: {total}\nThank you for your trust.'},
  prices:{
-  ar:'السلام عليكم {name} 🌸\nهذه قائمة أسعارنا وخياراتنا (الأوراق والإطارات).\nاختر ما يناسبك وأخبرنا، وسنؤكد لك السعر النهائي.',
-  fr:'Bonjour {name} 🌸\nVoici notre liste de prix et d’options (papiers et cadres).\nChoisissez ce qui vous convient et dites-le-nous, nous confirmerons le prix final.',
-  en:'Hello {name} 🌸\nHere is our price list and options (papers and frames).\nPick what suits you and let us know, and we’ll confirm the final price.'}
+  ar:'السلام عليكم {name}\nهذه قائمة أسعارنا وخياراتنا (الأوراق والإطارات).\nاختر ما يناسبك وأخبرنا، وسنؤكد لك السعر النهائي.',
+  fr:'Bonjour {name}\nVoici notre liste de prix et d’options (papiers et cadres).\nChoisissez ce qui vous convient et dites-le-nous, nous confirmerons le prix final.',
+  en:'Hello {name}\nHere is our price list and options (papers and frames).\nPick what suits you and let us know, and we’ll confirm the final price.'}
 };
 var NAMES={order:'رسالة الزبون عند الطلب',accept:'قبول الطلب',ready:'الطلب جاهز',done:'تم التسليم',manual:'طلب يدوي',prices:'إرسال قائمة الأسعار'};
 var VARS=[['name','الاسم'],['phone','الهاتف'],['item','الطلب'],['qty','الكمية'],['price','سعر القطعة'],['total','المجموع'],['notes','ملاحظات'],['id','رقم الطلب']];
