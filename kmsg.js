@@ -93,7 +93,7 @@ function saveMsg(txt){
 }
 /* ---- price lists ---- */
 function plHtml(){
- var h='<div class="kr"><b>جداول الصفحة الرئيسية كصورة</b></div><div class="kr">'+[['cert','الشهادات'],['inv','الدعوات'],['frm','الإطارات']].map(function(k){return '<button class="kb'+(ST.lk===k[0]?' on':'')+'" data-x="lk" data-v="'+k[0]+'">'+k[1]+'</button>'}).join('')+'<select id="lgl"><option value="ar"'+(ST.lg==='fr'?'':' selected')+'>العربية</option><option value="fr"'+(ST.lg==='fr'?' selected':'')+'>Français</option></select></div><div class="kr"><button class="kb" data-x="lgpng">حفظ كصورة</button><button class="kb pri" data-x="lgshare">إرسال على واتساب</button></div><small>تؤخذ الأسعار من تبويب «الرئيسية» تلقائياً، فعدّليها هناك.</small><hr><div class="kr"><b>قوائم خاصة</b></div>'
+ var h='<div class="kr"><b>قوائم خاصة (اختيارية)</b></div>';
  h+='<div class="kr">'+ST.ids.map(function(i){return '<button class="kb'+(ST.plId===i.id?' on':'')+'" data-x="plopen" data-v="'+i.id+'">'+esc(i.title||'قائمة')+'</button>'}).join('')+'<button class="kb pri" data-x="plnew">+ قائمة جديدة</button></div>';
  var p=ST.pl;if(!p)return h+'<p><small>اختاري قائمة أو أنشئي واحدة (مثلاً: الأوراق، الإطارات، أسعار الدعوات، أسعار الشهادات).</small></p>';
  h+='<div class="kr"><input type="text" id="pt" value="'+esc(p.title)+'" placeholder="عنوان القائمة" style="flex:1"><select id="pl">'+['ar','fr','en'].map(function(l){return '<option value="'+l+'"'+(p.lang===l?' selected':'')+'>'+LN[l]+'</option>'}).join('')+'</select></div>';
@@ -178,8 +178,8 @@ function lgCanvas(C,kind,l){
    var im=ims[j],ix=rtl?pad+tw-26-70:pad+26,tx0=rtl?ix-18:ix+70+18;
    if(im){c.save();rr(c,ix,m-35,70,70,10);c.clip();var k=Math.max(70/im.width,70/im.height);c.drawImage(im,ix+(70-im.width*k)/2,m-35+(70-im.height*k)/2,im.width*k,im.height*k);c.restore();}
    else{tx0=rtl?pad+tw-26:pad+26;}
-   c.textAlign=rtl?'right':'left';c.fillStyle='#16264a';c.font='700 36px '+F;c.fillText(r.n,tx0,r.d?m-20:m,nw-110);
-   if(r.d){c.fillStyle='#8a8576';c.font='400 26px '+F;c.fillText(r.d,tx0,m+22,nw-110);}
+   c.textAlign=rtl?'right':'left';c.fillStyle='#16264a';c.font='700 36px '+F;c.fillText(r.n,tx0,r.d?m-20:m,nw-60);
+   if(r.d){c.fillStyle='#8a8576';c.font='400 26px '+F;c.fillText(r.d,tx0,m+22,nw-60);}
    c.textAlign='center';c.direction='ltr';c.fillStyle='#16264a';c.font='800 34px '+F;
    for(var i=0;i<nc;i++){var p=r.p[i];if(p===''||p==null||isNaN(Number(p))){c.fillText('—',colX(i),m);continue;}var wn=c.measureText(String(p)).width,gap=10,wu=c.measureText(L.unit).width,x0=colX(i)-(wn+gap+wu)/2;c.textAlign='left';c.fillText(String(p),x0,m);c.fillText(L.unit,x0+wn+gap,m);c.textAlign='center';}
    c.direction=rtl?'rtl':'ltr';});
@@ -187,6 +187,12 @@ function lgCanvas(C,kind,l){
   var wa=(window.APP_CONFIG&&window.APP_CONFIG.whatsapp)||'';c.fillText(wa?'+'+wa:'',W/2,H-55);
   return cv;});
 }
+K.saveTable=function(C,kind,l,share){
+ return (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){return lgCanvas(C,kind,l)}).then(toBlob).then(function(b){
+  var f=new File([b],'prices-'+kind+'-'+l+'.png',{type:'image/png'});
+  if(share&&navigator.canShare&&navigator.canShare({files:[f]})){return navigator.share({files:[f]}).catch(function(){});}
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(a.href)},1500);toast('تم حفظ الصورة');});
+};
 function lgDo(share){
  if(!db()){toast('لا يوجد اتصال');return;}
  getLanding().then(function(C){if(!C){toast('احفظي الأسعار أولاً من تبويب «الرئيسية»');return;}

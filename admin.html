@@ -2564,9 +2564,9 @@ $('#order-form').addEventListener('submit',e=>{
     '<div class="hm-box"><h2>الشريط المتحرك <span class="hint">('+C.strip.length+' / '+MAXS+')</span></h2><p class="hint">الصور التي تمرّ في الشريط. الأول يظهر أولًا من اليمين.</p>'+
       '<div class="hm-grid">'+C.strip.map((u,i)=>'<div class="hm-it"><img alt="" src="'+esc(u)+'"><div class="bt"><button type="button" data-a="sl" data-i="'+i+'" aria-label="قبل">→</button><button type="button" data-a="sr" data-i="'+i+'" aria-label="بعد">←</button><button type="button" data-a="sd" data-i="'+i+'" aria-label="حذف">✕</button></div></div>').join('')+'</div>'+
       '<div class="hm-acts"><button type="button" class="btn" data-a="pick"'+(C.strip.length>=MAXS?' disabled':'')+'>اختيار من التصاميم</button><label class="btn hm-up">رفع صورة<input type="file" accept="image/*" data-a="supload" hidden></label></div></div>'+
-    '<div class="hm-box"><h2>الإطارات</h2><p class="hint">اضغطي على المربع لوضع صورة الإطار، واكتبي اسمه وأسعار المقاسات.</p>'+C.frames.map((r,i)=>rowHTML('frames',r,i,1)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="frames">＋ إطار جديد</button></div></div>'+
-    '<div class="hm-box"><h2>أسعار الشهادات (حسب الورق)</h2>'+colsHTML('cert')+C.cert.map((r,i)=>rowHTML('cert',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="cert">＋ نوع ورق</button></div></div>'+
-    '<div class="hm-box"><h2>أسعار الدعوات (حسب الورق)</h2>'+colsHTML('inv')+C.inv.map((r,i)=>rowHTML('inv',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="inv">＋ نوع ورق</button></div></div>'+
+    '<div class="hm-box"><h2>الإطارات</h2><p class="hint">اضغطي على المربع لوضع صورة الإطار، واكتبي اسمه وأسعار المقاسات.</p>'+C.frames.map((r,i)=>rowHTML('frames',r,i,1)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="frames">＋ إطار جديد</button><button type="button" class="btn" data-a="timg" data-g="frm" data-l="ar">حفظ كصورة (عربي)</button><button type="button" class="btn" data-a="timg" data-g="frm" data-l="fr">Image (Français)</button></div></div>'+
+    '<div class="hm-box"><h2>أسعار الشهادات (حسب الورق)</h2>'+colsHTML('cert')+C.cert.map((r,i)=>rowHTML('cert',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="cert">＋ نوع ورق</button><button type="button" class="btn" data-a="timg" data-g="cert" data-l="ar">حفظ كصورة (عربي)</button><button type="button" class="btn" data-a="timg" data-g="cert" data-l="fr">Image (Français)</button></div></div>'+
+    '<div class="hm-box"><h2>أسعار الدعوات (حسب الورق)</h2>'+colsHTML('inv')+C.inv.map((r,i)=>rowHTML('inv',r,i,0)).join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="add" data-g="inv">＋ نوع ورق</button><button type="button" class="btn" data-a="timg" data-g="inv" data-l="ar">حفظ كصورة (عربي)</button><button type="button" class="btn" data-a="timg" data-g="inv" data-l="fr">Image (Français)</button></div></div>'+
     '<div class="hm-box"><h2>ملاحظة تحت جدول الأسعار</h2><p class="hint">اتركيها فارغة لإخفاء الملاحظة.</p><div class="hm-two">'+inp('note',C.note,'الملاحظة بالعربية')+inp('notef',C.notef,'Note en français')+'</div></div>';
   }
   function colsHTML(k){return '<div class="hm-cols"><b>الأعمدة (الكميات)</b>'+C.cols[k].map((c,j)=>'<div class="hm-c">'+inp('cols.'+k+'.'+j+'.a',c.a,'مثال: 10 نسخ')+inp('cols.'+k+'.'+j+'.f',c.f,'Ex: 10 ex.')+'<button type="button" class="btn" data-a="cdel" data-g="'+k+'" data-i="'+j+'" aria-label="حذف العمود">✕</button></div>').join('')+'<div class="hm-acts"><button type="button" class="btn" data-a="cadd" data-g="'+k+'">＋ عمود جديد</button></div></div>';}
@@ -2600,6 +2600,7 @@ $('#order-form').addEventListener('submit',e=>{
     else if(a==='fimgf'){const i=+e.target.dataset.i;C.frames[i].img=await shrink(f,360,460,.8);paint();}}catch(_){T('تعذّرت قراءة الصورة.',1);}});
   root.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.tagName==='INPUT')return;const a=b.dataset.a,i=+b.dataset.i,g=b.dataset.g;
     if(a==='save')save();
+    else if(a==='timg'){if(window.KMSG&&KMSG.saveTable)KMSG.saveTable(C,g,b.dataset.l,false);}
     else if(a==='pick')pkOpen('s');
     else if(a==='hpick')pkOpen(b.dataset.h);
     else if(a==='hclr'){C.hero[b.dataset.h].img='';paint();}
@@ -2727,4 +2728,4 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 </script>
 <style>.tb:not(.ml){overflow:visible}.fgrid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:200px;overflow:auto;margin:6px 0;padding:2px}.fgb{min-height:46px;font-size:19px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 8px;border:1.5px solid var(--line,#e3dccd);border-radius:10px;background:var(--surface,#fff);color:var(--fg,#141c33);font-family:inherit}.fgb.on{border-color:var(--hl,#a98534);outline:2px solid var(--hl,#a98534)}</style>
 <script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.xl');if(a&&a.href&&!e.defaultPrevented&&!e.ctrlKey&&!e.metaKey){e.preventDefault();location.href=a.href;}},true);</script>
-<script src="kmsg.js?v=2"></script>
+<script src="kmsg.js?v=3"></script>

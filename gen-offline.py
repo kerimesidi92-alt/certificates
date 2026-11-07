@@ -6,7 +6,7 @@ def walk(d):
             if f.startswith('.'):continue
             out.append(os.path.join(r,f).replace(os.sep,'/'))
     return sorted(out)
-core=['./','fonts/fonts.css?v=1','index.html','certificates.html','invitations.html','photos.html','calendar.html','monogram.html','manifest.webmanifest','manifest-admin.webmanifest','icon-192.png','icon-512.png','apple-touch-icon.png','bgui.js','nobounce.js?v=1','kmsg.js?v=2','kpick.js','modal-lock.js?v=2','kmorph.js?v=2','kpdf.js?v=6','cert-library.js?v=9','invitations-folders.js?v=21','landing-index.js?v=5','images.js?v=1']
+core=['./','fonts/fonts.css?v=1','index.html','certificates.html','invitations.html','photos.html','calendar.html','monogram.html','manifest.webmanifest','manifest-admin.webmanifest','icon-192.png','icon-512.png','apple-touch-icon.png','bgui.js','nobounce.js?v=1','kmsg.js?v=3','kpick.js','modal-lock.js?v=2','kmorph.js?v=2','kpdf.js?v=6','cert-library.js?v=9','invitations-folders.js?v=21','landing-index.js?v=5','images.js?v=1']
 thumbs=[p for p in walk('cert/lib') if '/t/' in p]+walk('cert/themes/t')+walk('cert/th')+[p for p in walk('themes') if '/t/' in p]+[p for p in walk('lib') if '/t/' in p]+walk('landing')
 full=[p for p in walk('fonts') if p.endswith('.woff2')]+[p for p in walk('cert/lib') if '/t/' not in p]+[p for p in walk('cert/themes') if '/t/' not in p]+[p for p in walk('themes') if '/t/' not in p]
 q=lambda l:[urllib.parse.quote(x,safe="/?=.:") for x in l]
