@@ -2233,13 +2233,13 @@ function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=docume
 function exportAllNames0(PN,SCOPE){SCOPE=SCOPE||'all';const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
   let opts=[...sel.options].filter(o=>o.value);if(SCOPE==='m'||SCOPE==='f')opts=opts.filter(o=>(o.dataset.g||'')===SCOPE);else if(SCOPE==='sep'){const rk=g=>g==='m'?0:g==='f'?1:2;opts=opts.map((o,i)=>[o,i]).sort((a,b)=>rk(a[0].dataset.g)-rk(b[0].dataset.g)||a[1]-b[1]).map(x=>x[0]);}const names=opts.map(o=>o.value),gs=opts.map(o=>o.dataset.g||'');if(!names.length)return;const SEP=SCOPE==='sep';if(SEP&&!PN)PN=1e9;
   let slowN=0;const whyN={};const keep=S.name,keepG=S.gender,t0=btn.textContent,tm=$('#m-msg'),t00=Date.now();
-  btn.disabled=true;window.__expStop=0;modal.hidden=false;modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}
+  btn.disabled=true;window.__expStop=0;window.__expCancel=0;window.__expRun=1;modal.hidden=false;modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}
   const gal=document.getElementById('m-gal')||(()=>{const g=document.createElement('div');g.id='m-gal';g.style.cssText='display:flex;flex-direction:column;gap:12px;margin-top:10px';$('#m-img').after(g);return g;})();gal.innerHTML='';
-  const stopB=document.createElement('button');stopB.type='button';stopB.className='btn';stopB.textContent='إيقاف والطباعة بما تم';stopB.onclick=()=>{window.__expStop=1;stopB.disabled=true;};gal.append(stopB);
+  const stopB=document.createElement('button');stopB.type='button';stopB.className='btn';stopB.textContent='إيقاف والطباعة بما تم';stopB.onclick=()=>{window.__expStop=1;stopB.disabled=true;};const canB=document.createElement('button');canB.type='button';canB.className='btn';canB.textContent='إلغاء كل شيء';canB.onclick=()=>{window.__expCancel=1;canB.disabled=true;canB.textContent='جارٍ الإلغاء…';};gal.append(stopB,canB);
   let done=0,stage='بداية';try{if(window.lastCv){window.lastCv.width=window.lastCv.height=0;}window.lastCv=null;$('#m-img').removeAttribute('src');}catch(_){}
   const job=(async()=>{try{
     const imgs=[],bases={},cells=[];
-    for(let i=0;i<names.length&&!window.__expStop;i++){
+    for(let i=0;i<names.length&&!window.__expStop&&!window.__expCancel;i++){
       const el=(Date.now()-t00)/1000,eta=i>=3?Math.ceil(el/i*(names.length-i)/60):0,msg='جارٍ التجهيز '+(i+1)+' من '+names.length+(i>=3&&eta>=1?' · المتبقي نحو '+eta+' دقيقة':'');
       btn.textContent=msg;$('#m-title').textContent=msg;tm.textContent='لا تغلقي الصفحة. سيُفتح ملف الطباعة تلقائيًا عند الانتهاء.';try{kPdf.say(msg);}catch(_){}
       stage='الاسم '+(i+1);nmApply(names[i],gs[i]);fitAll();await fontsFor(document);
@@ -2249,6 +2249,7 @@ function exportAllNames0(PN,SCOPE){SCOPE=SCOPE||'all';const sel=document.getElem
       else{stage='شهادة كاملة '+(i+1);const pj=await pageJpeg(true);if(!pj)throw new Error('blank '+(window.__why||''));imgs.push(pj);cells.push({i:imgs.length-1,nm:names[i],g:key});}
       done++;await new Promise(r=>setTimeout(r,0));
     }
+    if(window.__expCancel)throw new Error('cancel');
     if(!cells.length)throw new Error('none');
     window.__batch={imgs,cells,wd:W};
     const a5=S.size==='a5',land=imgs[cells[0].i].w>=imgs[cells[0].i].h,mm=v=>v/25.4*72;
@@ -2263,12 +2264,12 @@ function exportAllNames0(PN,SCOPE){SCOPE=SCOPE||'all';const sel=document.getElem
     try{kPdf.say('جارٍ تجهيز ملف الطباعة…');}catch(_){}
     if(PN){window.__parts={imgs,groups,SW,SH,per:a5?2:1};return null;}stage='ملف PDF';return kPdf.buildCells(imgs,pages,SW,SH);
   }catch(e){e.stage=stage;throw e;}})();
-  let lastErr='';job.catch(e=>{lastErr=' ['+(e&&e.stage||'؟')+'] '+String(e&&e.message||e).slice(0,120);});
-  if(!PN)kPdf.show(job,'certificates',()=>{tm.textContent='تعذّر تجهيز الطباعة.'+lastErr;try{console.error('print-all',lastErr);}catch(_){}});else job.catch(()=>{tm.textContent='تعذّر تجهيز الطباعة.'+lastErr;});
-  job.then(()=>{if(PN)addPartButtons(gal,PN);stopB.remove();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-title').textContent='تم ('+done+' شهادة) في '+Math.max(1,Math.round((Date.now()-t00)/60000))+' دقيقة';try{if(slowN){const rs=Object.keys(whyN).map(k=>k+': '+whyN[k]).join('، ');$('#m-msg').dataset.slow='1';setTimeout(()=>{const x=document.createElement('div');x.style.cssText='font-size:13px;color:var(--warn,#a8641a)';x.textContent='خرجت '+slowN+' شهادة بالطريقة البطيئة. السبب: '+rs;gal.prepend(x);},0);}}catch(_){}tm.textContent=PN?'لكل جزء زر «طباعة» وزر «تنزيل».':'فُتح ملف الطباعة في تبويب جديد.';gal.append(zipButton());},()=>{stopB.remove();$('#m-title').textContent='تعذّر';}).finally(()=>{nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;});
+  let lastErr='';job.catch(e=>{lastErr=(e&&e.message==='cancel')?'cancel':' ['+(e&&e.stage||'؟')+'] '+String(e&&e.message||e).slice(0,120);});
+  const bad=()=>{tm.textContent=lastErr==='cancel'?'أُلغي التجهيز.':'تعذّر تجهيز الطباعة.'+lastErr;try{if(lastErr!=='cancel')console.error('print-all',lastErr);}catch(_){}};if(!PN)kPdf.show(job,'certificates',bad);else job.catch(bad);
+  job.then(()=>{if(PN)addPartButtons(gal,PN);stopB.remove();canB.remove();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-title').textContent='تم ('+done+' شهادة) في '+Math.max(1,Math.round((Date.now()-t00)/60000))+' دقيقة';try{if(slowN){const rs=Object.keys(whyN).map(k=>k+': '+whyN[k]).join('، ');$('#m-msg').dataset.slow='1';setTimeout(()=>{const x=document.createElement('div');x.style.cssText='font-size:13px;color:var(--warn,#a8641a)';x.textContent='خرجت '+slowN+' شهادة بالطريقة البطيئة. السبب: '+rs;gal.prepend(x);},0);}}catch(_){}tm.textContent=PN?'لكل جزء زر «طباعة» وزر «تنزيل».':'فُتح ملف الطباعة في تبويب جديد.';gal.append(zipButton());},()=>{stopB.remove();canB.remove();$('#m-title').textContent=lastErr==='cancel'?'أُلغي':'تعذّر';}).finally(()=>{window.__expRun=0;if(window.__expCancel){try{modal.hidden=true;}catch(_){}}nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;});
 }
 
-$('#m-close').onclick=()=>{modal.hidden=true;};
+$('#m-close').onclick=()=>{if(window.__expRun){window.__expCancel=1;try{$('#m-title').textContent='جارٍ الإلغاء…';}catch(_){}return;}modal.hidden=true;};
 modal.addEventListener('click',e=>{if(e.target===modal)modal.hidden=true;});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.hidden=true;});
 
