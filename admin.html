@@ -2106,7 +2106,7 @@ function nameInfo(){
   if(cs.textShadow!=='none')return W_('نص الاسم له ظل');if(cs.letterSpacing!=='normal'&&parseFloat(cs.letterSpacing)!==0)return W_('مسافة بين حروف الاسم');if(parseFloat(cs.webkitTextStrokeWidth||0)>0)return W_('نص الاسم له حد');if(cs.textDecorationLine!=='none')return W_('خط تحت الاسم');if(cs.opacity!=='1')return W_('شفافية في الاسم');
   const fs=parseFloat(cs.fontSize),lh=parseFloat(cs.lineHeight)||fs*1.3,tr=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(tb.style.transform||'')||[0,0,0];
   const cx=parseFloat(tb.style.left)+parseFloat(tb.style.width)/2+parseFloat(tr[1]),cy=parseFloat(tb.style.top)+parseFloat(tb.style.height)/2+parseFloat(tr[2]);
-  const r=n.getBoundingClientRect(),m=r.height*.2;let hit=false;
+  let r=n.getBoundingClientRect();try{const rg=document.createRange();rg.selectNodeContents(n);const rr=rg.getBoundingClientRect();if(rr.width>2&&rr.height>2)r=rr;}catch(_){}const m=r.height*.2;let hit=false;
   layer.querySelectorAll('.c-img,.xt,.lnx').forEach(el=>{const q=el.getBoundingClientRect();if(!(q.right<r.left||q.left>r.right||q.bottom<r.top+m||q.top>r.bottom-m))hit=true;});
   if(hit)return W_('صندوق الاسم يلمس صورة أو نصًا أو خطًا في التصميم');
   return {t:n.textContent,fs,lh,cx,cy,font:cs.fontStyle+' '+cs.fontWeight+' %px '+cs.fontFamily,color:cs.color};
@@ -2243,7 +2243,7 @@ function exportAllNames0(PN,SCOPE){SCOPE=SCOPE||'all';const sel=document.getElem
       const el=(Date.now()-t00)/1000,eta=i>=3?Math.ceil(el/i*(names.length-i)/60):0,msg='جارٍ التجهيز '+(i+1)+' من '+names.length+(i>=3&&eta>=1?' · المتبقي نحو '+eta+' دقيقة':'');
       btn.textContent=msg;$('#m-title').textContent=msg;tm.textContent='لا تغلقي الصفحة. سيُفتح ملف الطباعة تلقائيًا عند الانتهاء.';try{kPdf.say(msg);}catch(_){}
       stage='الاسم '+(i+1);nmApply(names[i],gs[i]);fitAll();await fontsFor(document);
-      let ni=nameInfo();const key=gs[i]||'';if(!ni){slowN++;const w0=window.__niWhy||'سبب غير معروف';whyN[w0]=(whyN[w0]||0)+1;if(!window.__slowEl||!window.__slowEl.isConnected){window.__slowEl=document.createElement('div');window.__slowEl.style.cssText='font-size:13px;color:var(--warn,#a8641a)';gal.append(window.__slowEl);}window.__slowEl.textContent='تنبيه: خرجت '+slowN+' شهادة بالطريقة البطيئة (نحو 4 ثوانٍ لكل واحدة). السبب: '+w0;}
+      let ni=nameInfo();const key=gs[i]||'';if(!ni){slowN++;const w0=window.__niWhy||'سبب غير معروف';whyN[w0]=(whyN[w0]||0)+1;if(!window.__slowEl||!window.__slowEl.isConnected){window.__slowEl=document.createElement('div');window.__slowEl.style.cssText='font-size:13px;color:var(--warn,#a8641a)';gal.append(window.__slowEl);}window.__slowEl.textContent='تنبيه: خرجت '+slowN+' شهادة بالطريقة البطيئة (أبطأ بكثير). السبب: '+w0;}
       if(ni&&bases[key]==null){stage='الأساس';const b0=await pageJpeg(2);if(b0){imgs.push(b0);bases[key]=imgs.length-1;}else{ni=null;window.__baseWhy=window.__why;}}
       if(ni){stage='الاسم '+(i+1)+' (كتابة)';const im=imgs[bases[key]],mk=await nameMask(ni,im.w/W);cells.push({i:bases[key],mk,ni,nm:names[i],g:key});}
       else{stage='شهادة كاملة '+(i+1);const pj=await pageJpeg(true);if(!pj)throw new Error('blank '+(window.__why||''));imgs.push(pj);cells.push({i:imgs.length-1,nm:names[i],g:key});}
