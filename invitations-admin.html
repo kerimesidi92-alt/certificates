@@ -2341,7 +2341,7 @@ async function makeImage(wm){
   try{if(!window.htmlToImage)throw new Error('lib');
    if(S.sel){S.sel=null;buildBar();render();}
    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
-   var mm0=$('#m-msg');if(mm0&&!(window.HQ&&window.HQ.__x))mm0.textContent='جارٍ تحميل الجودة العالية (أول مرة فقط)…';await hqOn();if(mm0)mm0.textContent='جارٍ تجهيز الصورة…';await paperReady(S);box=mkBox(wm);var z=dimsOf(S),px=Math.min(4000,Math.max(3000,Math.round(z[0]/2.54*300))),ratio=Math.max(1,Math.min(7,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))ratio=Math.max(1,Math.min(ratio,Math.sqrt(11e6/(600*600*z[1]/z[0]))));}catch(_e){}
+   var mm0=$('#m-msg');if(mm0&&!(window.HQ&&window.HQ.__x))mm0.textContent='جارٍ تحميل الجودة العالية (أول مرة فقط)…';await hqOn();if(mm0)mm0.textContent='جارٍ تجهيز الصورة…';await paperReady(S);box=mkBox(wm);var z=dimsOf(S),px=Math.min(6000,Math.max(4500,Math.round(z[0]/2.54*400))),ratio=Math.max(1,Math.min(10,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))ratio=Math.max(1,Math.min(ratio,Math.sqrt(11e6/(600*600*z[1]/z[0]))));}catch(_e){}
    ratio=Math.max(1,ratio*[1,.7,.5][at]);
    await preloadBox(box);
    try{var fu=fontsUsed(box);await Promise.all(Object.keys(fu).map(function(f){return Promise.race([document.fonts.load('32px "'+f+'"',(box.textContent||' ')+' '),new Promise(function(r){setTimeout(r,6000);})]);}));await new Promise(function(r){setTimeout(r,120);});}catch(_e){}

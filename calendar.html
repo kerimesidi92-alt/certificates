@@ -312,7 +312,7 @@ document.addEventListener('input',function(e){var t=e.target;var br=bgHandle(e,S
  else if(t.tagName==='SELECT'){S[t.id]=t.value;refresh();}});
 $('#close').onclick=function(){parent.postMessage({kind:'kerima-cal-close'},'*');};
 $('#add').onclick=function(){var b=$('#add');b.disabled=true;
- fontsReady().then(function(){var c=document.createElement('canvas');var r=render(c,1.5);
+ fontsReady().then(function(){var c=document.createElement('canvas');var r=render(c,2.5);
   parent.postMessage({kind:'kerima-cal',png:c.toDataURL('image/png'),w:r.w,h:r.h,state:JSON.parse(JSON.stringify(S))},'*');b.disabled=false;});};
 window.addEventListener('message',function(e){var m=e.data||{};
  if(m.kind==='kerima-cal-init'){if(m.bg){PVBG=m.bg;}EDIT=!!m.edit;if(m.state){for(var k in m.state)S[k]=m.state[k];}
