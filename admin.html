@@ -2107,8 +2107,8 @@ function nameInfo(){
   const fs=parseFloat(cs.fontSize),lh=parseFloat(cs.lineHeight)||fs*1.3,tr=/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/.exec(tb.style.transform||'')||[0,0,0];
   const cx=parseFloat(tb.style.left)+parseFloat(tb.style.width)/2+parseFloat(tr[1]),cy=parseFloat(tb.style.top)+parseFloat(tb.style.height)/2+parseFloat(tr[2]);
   let r=n.getBoundingClientRect();try{const rg=document.createRange();rg.selectNodeContents(n);const rr=rg.getBoundingClientRect();if(rr.width>2&&rr.height>2)r=rr;}catch(_){}const m=r.height*.2;let hit=false;
-  layer.querySelectorAll('.c-img,.xt,.lnx').forEach(el=>{const q=el.getBoundingClientRect();if(!(q.right<r.left||q.left>r.right||q.bottom<r.top+m||q.top>r.bottom-m))hit=true;});
-  if(hit)return W_('صندوق الاسم يلمس صورة أو نصًا أو خطًا في التصميم');
+  let hitEl=null;layer.querySelectorAll('.c-img,.xt,.lnx').forEach(el=>{const q=el.getBoundingClientRect();if(!(q.right<r.left||q.left>r.right||q.bottom<r.top+m||q.top>r.bottom-m)){hit=true;if(!hitEl)hitEl=el;}});
+  if(hit){const ds=hitEl.classList.contains('xt')?'النص «'+String(hitEl.textContent||'').trim().slice(0,25)+'»':hitEl.classList.contains('lnx')?'خط في التصميم':'صورة أو زخرفة في التصميم';return W_(ds+' يلمس الاسم أو يتداخل معه. حرّكيه بعيدًا عن الاسم');}
   return {t:n.textContent,fs,lh,cx,cy,font:cs.fontStyle+' '+cs.fontWeight+' %px '+cs.fontFamily,color:cs.color};
 }
 function drawName(ctx,ni,sc){
