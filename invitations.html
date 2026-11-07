@@ -2073,7 +2073,14 @@ async function sendOrderDoc(order){var err=null;
 async function packDesign(mx,q,bx){var st=JSON.parse(JSON.stringify(S));st.sel=null;var src={},keys={};
  (st.imgs||[]).forEach(function(I){if(I.key&&!/^[av]:/.test(I.key))keys[I.key]=mx;});if(st.bgKey)keys[st.bgKey]=bx;
  for(var k in keys){if(IMGSRC[k]){var s=mx?await shrinkImg(IMGSRC[k],keys[k],q):IMGSRC[k];if(s)src[k]=s;}}
- return {v:1,app:'cards',st:st,src:src,uid:uid};}
+ var phm={},pm=Math.min(1800,mx||1800);
+ for(var I of (st.imgs||[])){if(!I.ds||!I.key||!DSGPH[I.key])continue;var arr=[];
+  for(var i=0;i<DSGPH[I.key].length;i++){var o=DSGPH[I.key][i];
+   if(o&&o.src){var pk='ph_'+I.key+'_'+i,sv=await shrinkImg(o.src,pm,.85);if(sv){src[pk]=sv;arr.push({k:pk,z:o.z,ox:o.ox,oy:o.oy});}else arr.push(null);}
+   else if(o&&o.__cal){var ck='phc_'+I.key,sc=await shrinkImg(o.__cal,pm,.85);if(sc){src[ck]=sc;arr.push({c:ck,s:o.__cs});}else arr.push(null);}
+   else arr.push(null);}
+  phm[I.key]=arr;}
+ return {v:1,app:'cards',st:st,src:src,uid:uid,phm:phm};}
 function itemText(){var o=OT[UL],t=T(),z=dimsOf(S),sh=(t.shapes&&t.shapes[S.shape])||S.shape;return (S.evText||'')+' · '+sh+' '+z[0]+'×'+z[1]+' '+o.cm;}
 function omodal(html){var b=lbShow('<div class="omd">'+html+'</div>');}
 /* ---- font embedding so the exported image matches the preview ---- */

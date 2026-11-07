@@ -2208,6 +2208,7 @@ function adopt(d,tag){var st=JSON.parse(JSON.stringify(d.st));(st.imgs||[]).forE
   else if(/^v:/.test(I.key))IMGSRC[I.key]='';
   I.key=n;});
  if(st.bgKey){var nb=nk(st.bgKey);if(d.src&&d.src[st.bgKey])IMGSRC[nb]=d.src[st.bgKey];st.bgKey=nb;}
+ try{if(d.phm&&d.src)Object.keys(d.phm).forEach(function(k){DSGPH[nk(k)]=d.phm[k].map(function(m){if(!m)return null;if(m.k)return d.src[m.k]?{src:d.src[m.k],z:m.z,ox:m.ox,oy:m.oy}:null;if(m.c)return d.src[m.c]?{__cal:d.src[m.c],__cs:m.s}:null;return null;});});}catch(_e){}
  var mx=d.uid||0;(st.imgs||[]).concat(st.txts||[]).forEach(function(x){if(+x.id>mx)mx=+x.id;});if(mx>=uid)uid=mx+1;
  st.sel=null;return st;}
 function thumbs(){}
