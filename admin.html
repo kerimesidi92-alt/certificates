@@ -2142,6 +2142,13 @@ async function pageJpeg(mode){
   }
   window.__why=why.join(' | ');return null;
 }
+function addPartButtons(gal,PN){const P=window.__parts;if(!P)return;const tot=P.pages.length,np=Math.ceil(tot/PN),box=document.createElement('div');box.style.cssText='display:grid;gap:8px';
+  const info=document.createElement('div');info.style.cssText='font-size:13px';info.textContent='الإجمالي '+tot+' صفحة في '+np+' جزء.';box.append(info);
+  for(let k=0;k<np;k++){const a=k*PN,b=Math.min(tot,a+PN),bt=document.createElement('button');bt.type='button';bt.className='btn primary';const lab='الجزء '+(k+1)+' من '+np+' (الصفحات '+(a+1)+'–'+b+')';bt.textContent='تنزيل '+lab;
+   bt.onclick=async()=>{bt.disabled=true;bt.textContent='جارٍ التجهيز…';try{const used=[],map={};const pg=P.pages.slice(a,b).map(cells=>cells.map(c=>{if(!(c.i in map)){map[c.i]=used.length;used.push(P.imgs[c.i]);}return Object.assign({},c,{i:map[c.i]});}));
+     const bl=await kPdf.buildCells(used,pg,P.SW,P.SH),u=document.createElement('a');u.href=URL.createObjectURL(bl);u.download='certificates-part-'+String(k+1).padStart(2,'0')+'-of-'+String(np).padStart(2,'0')+'.pdf';document.body.appendChild(u);u.click();setTimeout(()=>u.remove(),3000);bt.textContent='تم: '+lab;bt.disabled=false;}
+    catch(_){bt.textContent='تعذّر، اضغطي للمحاولة مرة أخرى';bt.disabled=false;}};box.append(bt);}
+  gal.append(box);}
 function zipButton(){
   const zb=document.createElement('button');zb.type='button';zb.className='btn primary';zb.textContent='تنزيل الصور (ZIP)';
   zb.onclick=async()=>{const B=window.__batch;if(!B)return;zb.disabled=true;
@@ -2155,7 +2162,11 @@ function zipButton(){
     zb.disabled=false;zb.textContent='تنزيل الصور (ZIP)';};
   return zb;
 }
-function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
+function askParts(n){return new Promise(res=>{const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px';
+  o.innerHTML='<div style="background:#fff;color:#141c33;border-radius:16px;padding:18px;max-width:360px;width:100%;display:grid;gap:12px;text-align:center;font-family:inherit"><b style="font-size:16px">طباعة '+n+' شهادة</b><div style="font-size:13px">اختاري طريقة الملفات:</div><button type="button" data-a="one" class="btn primary">ملف واحد للكل</button><div style="display:grid;gap:6px;border:1px solid #ccc;border-radius:12px;padding:10px"><label style="font-size:13px">أجزاء، عدد الصفحات في كل جزء:<input id="pp-n" type="number" min="1" value="100" inputmode="numeric" style="width:90px;margin-inline-start:8px;padding:6px;border:1px solid #bbb;border-radius:8px;text-align:center"></label><button type="button" data-a="parts" class="btn primary">تقسيم إلى أجزاء</button></div><button type="button" data-a="x" class="btn">إلغاء</button></div>';
+  o.onclick=e=>{const a=e.target.closest('[data-a]');if(!a)return;const v=a.dataset.a;let r=null;if(v==='one')r=0;else if(v==='parts'){r=Math.max(1,parseInt(o.querySelector('#pp-n').value)||100);}o.remove();res(r);};document.body.appendChild(o);});}
+function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;const n0=[...sel.options].filter(o=>o.value).length;if(!n0)return;askParts(n0).then(pn=>{if(pn!==null)exportAllNames0(pn);});}
+function exportAllNames0(PN){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
   const opts=[...sel.options].filter(o=>o.value),names=opts.map(o=>o.value),gs=opts.map(o=>o.dataset.g||'');if(!names.length)return;
   const keep=S.name,keepG=S.gender,t0=btn.textContent,tm=$('#m-msg'),t00=Date.now();
   btn.disabled=true;window.__expStop=0;modal.hidden=false;modalReset();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}
@@ -2183,11 +2194,11 @@ function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=docume
     if(!a5)cells.forEach(c=>pages.push([mkCell(c,0,0,PW,PH2)]));
     else for(let i=0;i<cells.length;i+=2){const hw=land?PW:PW/2,hh=land?PH2/2:PH2,pg=[mkCell(cells[i],0,0,hw,hh)];if(cells[i+1])pg.push(mkCell(cells[i+1],land?0:hw,land?hh:0,hw,hh));pages.push(pg);}
     try{kPdf.say('جارٍ تجهيز ملف الطباعة…');}catch(_){}
-    stage='ملف PDF';return kPdf.buildCells(imgs,pages,SW,SH);
+    if(PN){window.__parts={imgs,pages,SW,SH};return null;}stage='ملف PDF';return kPdf.buildCells(imgs,pages,SW,SH);
   }catch(e){e.stage=stage;throw e;}})();
   let lastErr='';job.catch(e=>{lastErr=' ['+(e&&e.stage||'؟')+'] '+String(e&&e.message||e).slice(0,120);});
-  kPdf.show(job,'certificates',()=>{tm.textContent='تعذّر تجهيز الطباعة.'+lastErr;try{console.error('print-all',lastErr);}catch(_){}});
-  job.then(()=>{stopB.remove();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-title').textContent='تم ('+done+' شهادة)';tm.textContent='فُتح ملف الطباعة في تبويب جديد.';gal.append(zipButton());},()=>{stopB.remove();$('#m-title').textContent='تعذّر';}).finally(()=>{nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;});
+  if(!PN)kPdf.show(job,'certificates',()=>{tm.textContent='تعذّر تجهيز الطباعة.'+lastErr;try{console.error('print-all',lastErr);}catch(_){}});else job.catch(()=>{tm.textContent='تعذّر تجهيز الطباعة.'+lastErr;});
+  job.then(()=>{if(PN)addPartButtons(gal,PN);stopB.remove();$('#m-img').hidden=true;{const pb=$('#m-print');if(pb)pb.hidden=true;}$('#m-title').textContent='تم ('+done+' شهادة)';tm.textContent=PN?'اختاري كل جزء ونزّليه، ثم اطبعيه.':'فُتح ملف الطباعة في تبويب جديد.';gal.append(zipButton());},()=>{stopB.remove();$('#m-title').textContent='تعذّر';}).finally(()=>{nmApply(keep,keepG);btn.disabled=false;btn.textContent=t0;});
 }
 
 $('#m-close').onclick=()=>{modal.hidden=true;};
