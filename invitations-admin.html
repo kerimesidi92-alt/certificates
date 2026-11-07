@@ -2369,7 +2369,7 @@ $('#m-wm').onclick=function(){makeImage(true);};
 $('#m-close').onclick=function(){modal.hidden=true;};
 modal.addEventListener('click',function(e){if(e.target===modal)modal.hidden=true;});
 $('#m-print').onclick=function(){if(!lastBlob)return;var z=dimsOf(S);
- kPdf.show((async function(){var im=await loadImg(lastUrl),big=z[0]>21.05||z[1]>29.75||(z[0]>29.75),land=z[0]>=z[1],SWc=big?z[0]:(land?29.7:21),SHc=big?z[1]:(land?21:29.7),d=300,k=d/2.54,c=document.createElement('canvas');
+ kPdf.show((async function(){var im=await loadImg(lastUrl),big=z[0]>21.05||z[1]>29.75||(z[0]>29.75),land=z[0]>=z[1],SWc=big?z[0]:(land?29.7:21),SHc=big?z[1]:(land?21:29.7),d=300,k,c=document.createElement('canvas');try{var _ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(!_ios&&Math.round(SWc*400/2.54)*Math.round(SHc*400/2.54)<=16.5e6)d=400;}catch(_e){}k=d/2.54;
   c.width=Math.round(SWc*k);c.height=Math.round(SHc*k);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,Math.round((SWc-z[0])/2*k),Math.round((SHc-z[1])/2*k),Math.round(z[0]*k),Math.round(z[1]*k));
   return kPdf.build([c],[0],SWc*10,SHc*10);})(),'invitation',toast);};
 function loadImg(u){return new Promise(function(res,rej){var im=new Image();im.onload=function(){res(im)};im.onerror=function(){rej(new Error('img'))};im.src=u;});}
