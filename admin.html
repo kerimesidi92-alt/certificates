@@ -2142,9 +2142,9 @@ async function pageJpeg(mode){
   }
   window.__why=why.join(' | ');return null;
 }
-function addPartButtons(gal,PN){const P=window.__parts;if(!P)return;const tot=P.pages.length,np=Math.ceil(tot/PN),box=document.createElement('div');box.style.cssText='display:grid;gap:8px';
-  const info=document.createElement('div');info.style.cssText='font-size:13px';info.textContent='الإجمالي '+tot+' صفحة في '+np+' جزء.';box.append(info);
-  for(let k=0;k<np;k++){const a=k*PN,b=Math.min(tot,a+PN),lab='الجزء '+(k+1)+' من '+np+' (الصفحات '+(a+1)+'–'+b+')',row=document.createElement('div');row.style.cssText='display:grid;gap:6px;border:1px solid rgba(128,128,128,.35);border-radius:12px;padding:8px';
+function addPartButtons(gal,PN){const P=window.__parts;if(!P)return;const per=P.per||1,nc=P.nc||P.pages.length*per,pp=Math.max(1,Math.ceil(PN/per)),tot=P.pages.length,np=Math.ceil(tot/pp),box=document.createElement('div');box.style.cssText='display:grid;gap:8px';
+  const info=document.createElement('div');info.style.cssText='font-size:13px';info.textContent='الإجمالي '+nc+' شهادة ('+tot+' صفحة'+(per>1?'، كل صفحة فيها '+per+' شهادتان':'')+') في '+np+' جزء.';box.append(info);
+  for(let k=0;k<np;k++){const a=k*pp,b=Math.min(tot,a+pp),ca=a*per+1,cb=Math.min(nc,b*per),lab='الجزء '+(k+1)+' من '+np+' (الشهادات '+ca+'–'+cb+'، '+(b-a)+' صفحة)',row=document.createElement('div');row.style.cssText='display:grid;gap:6px;border:1px solid rgba(128,128,128,.35);border-radius:12px;padding:8px';
    const t=document.createElement('div');t.style.cssText='font-size:13px;font-weight:700';t.textContent=lab;const bar=document.createElement('div');bar.style.cssText='display:flex;gap:6px';
    const pb=document.createElement('button'),db=document.createElement('button');[pb,db].forEach(x=>{x.type='button';x.className='btn primary';x.style.flex='1';});pb.textContent='طباعة';db.textContent='تنزيل';
    let blob=null;const get=async()=>{if(blob)return blob;const used=[],map={};const pg=P.pages.slice(a,b).map(cells=>cells.map(c=>{if(!(c.i in map)){map[c.i]=used.length;used.push(P.imgs[c.i]);}return Object.assign({},c,{i:map[c.i]});}));blob=await kPdf.buildCells(used,pg,P.SW,P.SH);return blob;};
@@ -2170,7 +2170,7 @@ function zipButton(){
   return zb;
 }
 function askParts(n){return new Promise(res=>{const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px';
-  o.innerHTML='<div style="background:#fff;color:#141c33;border-radius:16px;padding:18px;max-width:360px;width:100%;display:grid;gap:12px;text-align:center;font-family:inherit"><b style="font-size:16px">طباعة '+n+' شهادة</b><div style="font-size:13px">اختاري طريقة الملفات:</div><button type="button" data-a="one" class="btn primary">ملف واحد للكل</button><div style="display:grid;gap:6px;border:1px solid #ccc;border-radius:12px;padding:10px"><label style="font-size:13px">أجزاء، عدد الصفحات في كل جزء:<input id="pp-n" type="number" min="1" value="100" inputmode="numeric" style="width:90px;margin-inline-start:8px;padding:6px;border:1px solid #bbb;border-radius:8px;text-align:center"></label><button type="button" data-a="parts" class="btn primary">تقسيم إلى أجزاء</button></div><button type="button" data-a="x" class="btn">إلغاء</button></div>';
+  o.innerHTML='<div style="background:#fff;color:#141c33;border-radius:16px;padding:18px;max-width:360px;width:100%;display:grid;gap:12px;text-align:center;font-family:inherit"><b style="font-size:16px">طباعة '+n+' شهادة</b><div style="font-size:13px">اختاري طريقة الملفات:</div><button type="button" data-a="one" class="btn primary">ملف واحد للكل</button><div style="display:grid;gap:6px;border:1px solid #ccc;border-radius:12px;padding:10px"><label style="font-size:13px">أجزاء، عدد الشهادات في كل جزء:<input id="pp-n" type="number" min="1" value="100" inputmode="numeric" style="width:90px;margin-inline-start:8px;padding:6px;border:1px solid #bbb;border-radius:8px;text-align:center"></label><button type="button" data-a="parts" class="btn primary">تقسيم إلى أجزاء</button></div><button type="button" data-a="x" class="btn">إلغاء</button></div>';
   o.onclick=e=>{const a=e.target.closest('[data-a]');if(!a)return;const v=a.dataset.a;let r=null;if(v==='one')r=0;else if(v==='parts'){r=Math.max(1,parseInt(o.querySelector('#pp-n').value)||100);}o.remove();res(r);};document.body.appendChild(o);});}
 function exportAllNames(){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;const n0=[...sel.options].filter(o=>o.value).length;if(!n0)return;askParts(n0).then(pn=>{if(pn!==null)exportAllNames0(pn);});}
 function exportAllNames0(PN){const sel=document.getElementById('nm-sel'),btn=document.getElementById('btn-zip');if(!sel||!btn)return;
@@ -2201,7 +2201,7 @@ function exportAllNames0(PN){const sel=document.getElementById('nm-sel'),btn=doc
     if(!a5)cells.forEach(c=>pages.push([mkCell(c,0,0,PW,PH2)]));
     else for(let i=0;i<cells.length;i+=2){const hw=land?PW:PW/2,hh=land?PH2/2:PH2,pg=[mkCell(cells[i],0,0,hw,hh)];if(cells[i+1])pg.push(mkCell(cells[i+1],land?0:hw,land?hh:0,hw,hh));pages.push(pg);}
     try{kPdf.say('جارٍ تجهيز ملف الطباعة…');}catch(_){}
-    if(PN){window.__parts={imgs,pages,SW,SH};return null;}stage='ملف PDF';return kPdf.buildCells(imgs,pages,SW,SH);
+    if(PN){window.__parts={imgs,pages,SW,SH,per:a5?2:1,nc:cells.length};return null;}stage='ملف PDF';return kPdf.buildCells(imgs,pages,SW,SH);
   }catch(e){e.stage=stage;throw e;}})();
   let lastErr='';job.catch(e=>{lastErr=' ['+(e&&e.stage||'؟')+'] '+String(e&&e.message||e).slice(0,120);});
   if(!PN)kPdf.show(job,'certificates',()=>{tm.textContent='تعذّر تجهيز الطباعة.'+lastErr;try{console.error('print-all',lastErr);}catch(_){}});else job.catch(()=>{tm.textContent='تعذّر تجهيز الطباعة.'+lastErr;});

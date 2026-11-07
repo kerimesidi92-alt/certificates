@@ -1,4 +1,4 @@
-const V='kerima-v130';
+const V='kerima-v131';
 let WP=null;
 function warm(){if(WP)return WP;WP=(async()=>{try{const L=await (await fetch('offline.json',{cache:'no-cache'})).json();const c=await caches.open(V);await addAll(c,L.core.filter(u=>!/^images\.js/.test(u)),3);await ext(c,L.ext);await addAll(c,L.frames,4);await addAll(c,L.thumbs,4);let sd=false;try{sd=navigator.connection&&navigator.connection.saveData}catch(_){}if(!sd)await addAll(c,L.full,3);}catch(_){}WP=null;})();return WP;}
 async function addAll(c,list,conc){let i=0;async function w(){while(i<list.length){const u=list[i++];try{if(await c.match(u))continue;const r=await fetch(u);if(r&&r.ok)await c.put(u,r);}catch(_){}}}await Promise.all(Array.from({length:conc||6},w));}
