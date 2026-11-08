@@ -2663,7 +2663,7 @@ $('#order-form').addEventListener('submit',e=>{
   const swap=(a,i,j)=>{if(j<0||j>=a.length)return;const t=a[i];a[i]=a[j];a[j]=t;};
   async function save(){if(busy)return;if(!fdb()){T('غير متصل بقاعدة البيانات. سجّلي الدخول.',1);return;}
     C.saved=1;const json=JSON.stringify(C);if(json.length>LIM){T('الحجم كبير. احذفي بعض الصور المرفوعة أو قلّلي عددها.',1);return;}
-    busy=true;paint();try{await fdb().collection('config').doc('landing').set({json});T('تم الحفظ. الصفحة الرئيسية تحدّثت.');}catch(e){T('تعذّر الحفظ. تأكدي من تسجيل الدخول.',1);}busy=false;paint();}
+    busy=true;paint();try{await fdb().collection('config').doc('landing').set({json});try{localStorage.setItem('kk_lcfg',json);}catch(_){}T('تم الحفظ. الصفحة الرئيسية تحدّثت.');}catch(e){T('تعذّر الحفظ. تأكدي من تسجيل الدخول.',1);}busy=false;paint();}
   /* ---- picker ---- */
   let pk=null,pkMode='s';
   function pkClose(){if(pk){pk.remove();pk=null;document.documentElement.style.overflow='';document.body.style.overflow='';}}
