@@ -109,8 +109,7 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 .pts li:before{content:"";position:absolute;inset-inline-start:0;top:9px;width:10px;height:10px;border-radius:50%;background:var(--gold)}
 
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:s}
-.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 12px;text-align:center;counter-increment:s;transition:transform .2s,box-shadow .2s}
-.step:hover{transform:translateY(-5px);box-shadow:0 12px 24px rgba(22,38,74,.12)}
+.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 12px;text-align:center;counter-increment:s;box-shadow:0 6px 16px rgba(22,38,74,.08)}
 .step:before{content:counter(s);display:grid;place-items:center;width:38px;height:38px;margin:0 auto 8px;border-radius:50%;background:linear-gradient(135deg,var(--navy),#2a4a8f);color:var(--gold3);font-weight:800;font-size:18px}
 .step b{display:block;color:var(--navy);font-size:16px}
 .step p{font-size:13.5px;color:var(--mut);margin-top:2px}
@@ -118,7 +117,6 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 .tabs{display:flex;justify-content:center;gap:8px;margin-bottom:14px}
 .tbl{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .row{display:grid;grid-template-columns:1.4fr repeat(var(--n,3),1fr);align-items:center;padding:12px 14px;border-top:1px solid var(--line);font-size:15px;transition:background .2s}
-.row:not(.h):hover{background:#fff8e6}
 .row:first-child{border-top:0}
 .row.h{background:var(--navy);color:var(--gold3);font-weight:700;font-size:14px}
 .row div:not(:first-child){text-align:center}
@@ -129,7 +127,6 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 
 .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .f{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 16px;text-align:center;transition:transform .2s}
-.f:hover{transform:translateY(-5px)}
 .f i{display:grid;place-items:center;width:46px;height:46px;margin:0 auto 8px;border-radius:14px;background:linear-gradient(135deg,var(--gold3),var(--gold));color:var(--navy);font-style:normal;font-weight:800;font-size:22px}
 .f b{display:block;color:var(--navy);font-size:16px}
 .f p{font-size:13.5px;color:var(--mut)}
@@ -157,7 +154,6 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 @keyframes mq2{from{transform:translateX(-50%)}to{transform:none}}
 .dm2{width:130px;aspect-ratio:1.414/1;border-radius:8px;border:2px solid var(--gold);box-shadow:0 8px 18px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;transition:transform .3s}
 .dm2.p{width:92px;aspect-ratio:.72/1}
-.dm2:hover{transform:translateY(-6px) rotate(-3deg)}
 .dm2 b{width:46%;height:7px;border-radius:4px;background:var(--gold3)}
 .dm2 u{width:62%;height:4px;border-radius:3px;background:rgba(255,255,255,.7)}.dm2 u+u{width:40%}
 .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;animation:bl 12s ease-in-out infinite;pointer-events:none}
@@ -194,7 +190,6 @@ h3.t:after{content:"";display:block;width:64px;height:3px;background:linear-grad
 .sh.cu{width:92px;height:92px;filter:none;animation:none}.sh.cu span{border:2px dashed var(--gold);border-radius:10px;background:transparent;display:grid;place-items:center}
 .sh .q{color:var(--gold3);font-size:34px;font-weight:800}
 .dstrip img{margin-inline-end:14px;height:150px;min-width:90px;transform:translateZ(0);border-radius:8px;border:2px solid var(--gold);box-shadow:0 8px 18px rgba(0,0,0,.25);transition:transform .3s;flex:none;background:#fff}
-.dstrip img:hover{transform:translateY(-6px) rotate(-3deg)}
 @media(max-width:700px){.dstrip img{height:118px}.shp{gap:16px 14px}}
 
 .stage .mk.hcm,#hC{background:#fffdf6}
@@ -265,8 +260,9 @@ body.nav *{animation:none!important;transition:none!important}
 </div></section>
 
 <section id="prices"><h3 class="t rv" data-i="pr">الأسعار حسب الورق والإطار</h3><p class="sub rv" data-i="prs">السعر للنسخة الواحدة، ويقلّ مع زيادة العدد.</p>
-<div class="tabs"><button id="tCert" class="on" data-i="c1">الشهادات</button><button id="tInv" data-i="c2">الدعوات</button><button id="tFrm" data-i="tfr">الإطارات</button></div>
+<div class="tabs" id="ptabs"><button id="tCert" class="on" data-i="c1">الشهادات</button><button id="tInv" data-i="c2">الدعوات</button><button id="tFrm" data-i="tfr">الإطارات</button></div>
 <div class="tbl rv" id="tbl"></div>
+<div class="note" id="pmsg" data-i="pm" hidden style="display:none"></div>
 <div class="note" id="note" data-i="nt">الأسعار في هذه المعاينة أمثلة فقط، وسنضع أسعارك الحقيقية قبل النشر.</div></section>
 
 </div>
@@ -288,7 +284,7 @@ var D={
 ar:{cont:"تابع من حيث توقفت:",brand:"لمسة خاصة",bd:"كل ما تحتاجه في تطبيق واحد",h1a:"صمّم",h1b:"شهادتك ودعوتك",h1c:"في دقائق",hp:"اختر التصميم أو ارفع تصميمك من هاتفك، عدّل كل شيء، وشاهد النتيجة فورًا. ونحن نطبعه ونسلّمه.",c1:"الشهادات",c1d:"شكر وتقدير، تخرّج، تفوّق",c2:"الدعوات",c2d:"أعراس ومناسبات",go:"ابدأ التصميم",go2:"ابدأ التصميم",
 
 hw:"كيف تعمل الخدمة؟",hws:"أربع خطوات بسيطة من الفكرة إلى الاستلام.",s1:"اختر أو ارفع تصميمًا",s1d:"من مكتبتنا، أو ارفع تصميمك من هاتفك.",s2:"عدّل كما تشاء",s2d:"الاسم والعبارات والألوان والزخارف.",s3:"معاينة وتأكيد",s3d:"تصلك معاينة عبر واتساب لتأكيدها.",s4:"الدفع والاستلام",s4d:"بعد الدفع نطبع النسخة النظيفة ونسلّمها.",
-pr:"الأسعار حسب الورق والإطار",prs:"أسعار الطباعة للنسخة الواحدة تقلّ مع زيادة العدد، وللإطارات سعر حسب الحجم.",nt:"الأسعار في هذه المعاينة أمثلة فقط، وسنضع الأسعار الحقيقية قبل النشر.",wy:"لماذا نحن؟",ct:"ابدأ تصميمك الآن",ctd:"ابدأ من الأعلى، أو راسلنا على واتساب ونساعدك.",wa:"تواصل معنا عبر واتساب",
+pr:"الأسعار حسب الورق والإطار",prs:"أسعار الطباعة للنسخة الواحدة تقلّ مع زيادة العدد، وللإطارات سعر حسب الحجم.",pm:"الأسعار قيد التحديد وستُعلن قريبًا. للاستفسار تواصلوا معنا عبر واتساب.",nt:"الأسعار في هذه المعاينة أمثلة فقط، وسنضع الأسعار الحقيقية قبل النشر.",wy:"لماذا نحن؟",ct:"ابدأ تصميمك الآن",ctd:"ابدأ من الأعلى، أو راسلنا على واتساب ونساعدك.",wa:"تواصل معنا عبر واتساب",
 ftt:"كل ميزات التطبيق",fts:"كل ما تحتاجه لتصميم شهادتك أو دعوتك بنفسك.",
 ft:[["مكتبة مرتّبة","تصاميم في مجلدات حسب المناسبة والموضوع.",0],["ارفع تصميمك","استورد تصميمك من هاتفك وعدّل عليه.",0],["أفقي أو عمودي","بدّل اتجاه الشهادة بنقرة، وتتغيّر فورًا.",1],["أشكال الكرت","مستطيل، مربع، دائرة، بيضوي، قوس وبيت.",2],["مقاسات الكرت","مقاسات جاهزة لكل شكل، أو أدخل مقاسك بنفسك.",2],["تصاميم الأعراس","أعراس وخطوبة ومناسبات بتصاميم راقية.",2],["نصوص وخطوط","خطوط عربية وفرنسية متنوعة وألوان بحرية.",0],["ألوان الورق","لوّن الورق والعناصر بما يناسب ذوقك.",0],["حرّك كل شيء","كل نص أو صورة أو زخرفة يُسحب ويُكبَّر في مكانه.",0],["زخارف وإطارات","أنماط كثيرة جاهزة لتزيين التصميم.",0],["صور وشعارات","أضف صورة أو شعارًا داخل التصميم عند الحاجة.",0],["تراجع وإعادة","ارجع خطوة أو أكثر دون خوف من الخطأ.",0],["عدة أسماء بطلب واحد","قوائم أسماء للرجال والنساء بنقرة.",1],["عربي وفرنسي","واجهة التطبيق بلغتين تسهّل على الجميع.",0],["معاينة قبل الدفع","النتيجة كاملة أمامك قبل أي دفع.",0],["طلب عبر واتساب","يصلنا طلبك ويصلك ردّنا في الحال.",0]],
 tg:["الاثنان","شهادات","دعوات"],
@@ -304,7 +300,7 @@ inv:[["ورق عادي","A5 - 80 غ"],["ورق مقوّى","A5 - 250 غ"],["ور
 fr:{cont:"Reprendre là où vous étiez :",brand:"Lamsa Khasa",bd:"Tout dans une seule application",h1a:"Créez",h1b:"votre certificat et invitation",h1c:"en quelques minutes",hp:"Choisissez un modèle ou importez le vôtre depuis le téléphone, modifiez tout et visualisez aussitôt. Nous imprimons et livrons.",c1:"Certificats",c1d:"Remerciement, diplôme, excellence",c2:"Invitations",c2d:"Mariages et événements",go:"Commencer",go2:"Commencer",
 
 hw:"Comment ça marche ?",hws:"Quatre étapes simples, de l'idée à la livraison.",s1:"Choisir ou importer",s1d:"Dans notre bibliothèque, ou depuis votre téléphone.",s2:"Personnaliser",s2d:"Nom, phrases, couleurs et ornements.",s3:"Aperçu et validation",s3d:"Vous recevez l'aperçu sur WhatsApp.",s4:"Paiement et remise",s4d:"Après paiement, nous imprimons la version nette.",
-pr:"Tarifs selon le papier et le cadre",prs:"Prix d'impression par exemplaire, dégressif; les cadres ont un prix selon la taille.",nt:"Les prix de cet aperçu sont des exemples; les vrais tarifs seront ajoutés avant la mise en ligne.",wy:"Pourquoi nous ?",ct:"Prête à créer ?",ctd:"Commencez en haut, ou écrivez-nous sur WhatsApp.",wa:"Nous écrire sur WhatsApp",
+pr:"Tarifs selon le papier et le cadre",prs:"Prix d'impression par exemplaire, dégressif; les cadres ont un prix selon la taille.",pm:"Les tarifs seront annoncés prochainement. Contactez-nous sur WhatsApp pour toute question.",nt:"Les prix de cet aperçu sont des exemples; les vrais tarifs seront ajoutés avant la mise en ligne.",wy:"Pourquoi nous ?",ct:"Prête à créer ?",ctd:"Commencez en haut, ou écrivez-nous sur WhatsApp.",wa:"Nous écrire sur WhatsApp",
 ftt:"Toutes les fonctionnalités",fts:"Tout pour créer vous-même votre certificat ou invitation.",
 ft:[["Bibliothèque classée","Des modèles en dossiers par occasion et par thème.",0],["Importez le vôtre","Importez votre modèle depuis le téléphone et modifiez-le.",0],["Horizontal ou vertical","Changez l'orientation du certificat d'un clic.",1],["Formes de carte","Rectangle, carré, cercle, ovale, arche et maison.",2],["Tailles de carte","Tailles prêtes pour chaque forme, ou votre propre taille.",2],["Modèles de mariage","Mariages, fiançailles et événements, très élégants.",2],["Textes et polices","Polices arabes et françaises variées, couleurs libres.",0],["Couleurs du papier","Colorez le papier et les éléments à votre goût.",0],["Tout se déplace","Textes, images et ornements se déplacent et se redimensionnent.",0],["Ornements et cadres","De nombreux styles prêts pour décorer.",0],["Photos et logos","Ajoutez une photo ou un logo dans le modèle si besoin.",0],["Annuler et rétablir","Revenez en arrière sans crainte de l'erreur.",0],["Plusieurs noms","Listes de noms hommes et femmes en un clic.",1],["Arabe et français","Application bilingue, simple pour tous.",0],["Aperçu avant paiement","Vous voyez le résultat complet avant de payer.",0],["Commande WhatsApp","Votre commande nous arrive, notre réponse vous arrive aussitôt.",0]],
 tg:["Les deux","Certificats","Invitations"],
@@ -368,6 +364,7 @@ why.innerHTML=d.why.map(function(x,i){return'<div class="f"><i>'+(i+1)+'</i><b>'
 var sl=stripList();once("strip",sl.join("|"),function(){dstrip.innerHTML=sl.map(function(u){return'<img alt="" src="'+esc(u)+'">'}).join("");setTimeout(pace,300)});
 var cs=d.chips.concat(d.chips,d.chips,d.chips).map(function(c){return"<span>"+c+"</span>"}).join("");once("chips",lang,function(){chips.innerHTML=cs});
 var ph=(CFG&&CFG.phone)||"+222 33 86 33 82",dg=String(ph).replace(/\D/g,"");num.textContent=ph;wal.href="https://wa.me/"+dg;note.hidden=!!(CFG&&!CFG.note&&CFG.saved);if(CFG&&CFG.note)note.textContent=lang=="fr"&&CFG.notef?CFG.notef:CFG.note;
+var sp=!(CFG&&CFG.showPrices===false);ptabs.style.display=sp?"":"none";tbl.style.display=sp?"":"none";document.querySelector("#prices .sub").style.display=sp?"":"none";pmsg.hidden=sp;pmsg.style.display=sp?"none":"";if(!sp){note.hidden=true;var cm=lang=="fr"?CFG.pmsgf:CFG.pmsg;if(cm)pmsg.textContent=cm}
 var last=null;try{last=localStorage.getItem("kk_last")}catch(e){}
 if(last=="certificates.html"||last=="invitations.html"){cont.hidden=false;cont.href=last;cont.innerHTML=esc(d.cont)+" <b>"+(last=="certificates.html"?d.c1:d.c2)+"</b> &#8592;"}else cont.hidden=true;
 bAr.className=lang=="ar"?"on":"";bFr.className=lang=="fr"?"on":"";tCert.className=tab=="cert"?"on":"";tInv.className=tab=="inv"?"on":"";tFrm.className=tab=="frm"?"on":"";drawMocks()}
