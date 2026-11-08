@@ -32,6 +32,9 @@ var VARS=[['name','الاسم'],['phone','الهاتف'],['item','الطلب'],[
 var LN={ar:'العربية',fr:'Français',en:'English'};
 var K={cfg:{},D:D,NAMES:NAMES,VARS:VARS};
 window.KMSG=K;
+/* the business phone comes from the home-page settings (config/landing); the number written in APP_CONFIG is only a fallback */
+K.phoneText=function(C){var t=String((C&&C.phone)||K.PH||'').trim();if(t.replace(/\D/g,'').length>=8)return t;var d=String((window.APP_CONFIG&&window.APP_CONFIG.whatsapp)||'').replace(/\D/g,'');return d?'+'+d:'';};
+K.ensurePhone=function(){if(K.PH||!window.__fdb)return Promise.resolve();return window.__fdb.collection('config').doc('landing').get().then(function(d){try{var j=d.exists&&d.data()&&d.data().json;if(j)K.PH=JSON.parse(j).phone||'';}catch(_){}}).catch(function(){});};
 function tpl(key,lang){var c=(K.cfg[key]||{})[lang];if(typeof c==='string'&&c.trim())return c;var d=D[key]||{};return d[lang]||d.ar||'';}
 K.tpl=tpl;
 K.fill=function(t,v){v=v||{};return String(t).split('\n').map(function(l){var drop=false;l=l.replace(/\{(\w+)\}/g,function(m,k){var x=v[k];if(x===undefined||x===null||String(x).trim()===''){drop=true;return '';}return String(x);});return drop?null:l;}).filter(function(l){return l!==null}).join('\n');};
@@ -118,7 +121,7 @@ function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);
 function plCanvas(){
  var p=ST.pl,rows=p.rows||[],rtl=p.lang==='ar',W=1080,RH=170,top=250,H=top+rows.length*RH+130;
  var imgs=rows.map(function(r){return loadImg(r.img)});
- return (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){return Promise.all(imgs)}).then(function(ims){
+ return (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){return K.ensurePhone()}).then(function(){return Promise.all(imgs)}).then(function(ims){
   var cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
   c.fillStyle='#faf6ec';c.fillRect(0,0,W,H);c.fillStyle='#a9852f';c.fillRect(0,0,W,16);
   c.direction=rtl?'rtl':'ltr';c.textAlign='center';c.textBaseline='middle';
@@ -135,7 +138,7 @@ function plCanvas(){
    var pr=String(r.price||'').trim();c.fillText(pr&&/^[\d.,\s]+$/.test(pr)?pr+' MRU':pr,rtl?x+30:x+w-30,y+(RH-16)/2);c.direction=rtl?'rtl':'ltr';
   });
   c.textAlign='center';c.fillStyle='#8a8576';c.font='600 30px Cairo,Tahoma,Arial,sans-serif';
-  var wa=(window.APP_CONFIG&&window.APP_CONFIG.whatsapp)||'';c.direction='ltr';c.fillText(wa?'+'+wa:'',W/2,H-60);
+  c.direction='ltr';c.fillText(K.phoneText(),W/2,H-60);
   return cv;
  });
 }
@@ -184,7 +187,7 @@ function lgCanvas(C,kind,l){
    for(var i=0;i<nc;i++){var p=r.p[i];if(p===''||p==null||isNaN(Number(p))){c.fillText('—',colX(i),m);continue;}var wn=c.measureText(String(p)).width,gap=10,wu=c.measureText(L.unit).width,x0=colX(i)-(wn+gap+wu)/2;c.textAlign='left';c.fillText(String(p),x0,m);c.fillText(L.unit,x0+wn+gap,m);c.textAlign='center';}
    c.direction=rtl?'rtl':'ltr';});
   c.textAlign='center';c.direction='ltr';c.fillStyle='#8a8576';c.font='600 30px '+F;
-  var wa=(window.APP_CONFIG&&window.APP_CONFIG.whatsapp)||'';c.fillText(wa?'+'+wa:'',W/2,H-55);
+  c.fillText(K.phoneText(C),W/2,H-55);
   return cv;});
 }
 K.saveTable=function(C,kind,l,share){

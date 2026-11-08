@@ -2037,6 +2037,10 @@ window.addEventListener('resize',render);
 
 /* ---------- customer: send the order (same flow as the certificates app) ---------- */
 var APPC=window.APP_CONFIG||{},FBC=APPC.firebase||{},WA=String(APPC.whatsapp||'').replace(/\D/g,'');
+/* the order phone follows the number set in the admin (home-page settings); APP_CONFIG is the fallback */
+(function(){function dg(p){return String(p||'').replace(/\D/g,'');}
+try{var c=JSON.parse(localStorage.getItem('kk_lcfg')||'null'),d=dg(c&&c.phone);if(d.length>=8)WA=d;}catch(e){}
+try{var F=FBC||{};if(F.projectId&&F.apiKey)fetch('https://firestore.googleapis.com/v1/projects/'+F.projectId+'/databases/(default)/documents/config/landing?key='+F.apiKey).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.fields||!j.fields.json)return;var d=dg(JSON.parse(j.fields.json.stringValue).phone);if(d.length>=8)WA=d;}).catch(function(){});}catch(e){}})();
 var FBOK=!!(FBC.apiKey&&FBC.apiKey.indexOf('PASTE')<0&&FBC.projectId);
 var fdb=null;setTimeout(function(){if(fdb)window.__fdb=fdb;loadPub();},0);try{if(FBOK&&window.firebase){firebase.initializeApp(FBC);fdb=firebase.firestore();try{fdb.settings({experimentalAutoDetectLongPolling:true,merge:true});}catch(_){}}}catch(_){fdb=null;}
 var ORD={name:'',phone:'',email:'',notes:''};

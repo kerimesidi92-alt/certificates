@@ -594,7 +594,11 @@ window.APP_CONFIG={
 <script src="images.js?v=1"></script>
 <script>
 (function(){
-const APP=window.APP_CONFIG||{},WA=String(APP.whatsapp||'').replace(/\D/g,'');
+let APP=window.APP_CONFIG||{},WA=String(APP.whatsapp||'').replace(/\D/g,'');
+/* the order phone follows the number set in the admin (home-page settings); APP_CONFIG is the fallback */
+(function(){function dg(p){return String(p||'').replace(/\D/g,'');}
+try{var c=JSON.parse(localStorage.getItem('kk_lcfg')||'null'),d=dg(c&&c.phone);if(d.length>=8)WA=d;}catch(e){}
+try{var F=APP.firebase||{};if(F.projectId&&F.apiKey)fetch('https://firestore.googleapis.com/v1/projects/'+F.projectId+'/databases/(default)/documents/config/landing?key='+F.apiKey).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.fields||!j.fields.json)return;var d=dg(JSON.parse(j.fields.json.stringValue).phone);if(d.length>=8)WA=d;}).catch(function(){});}catch(e){}})();
 const WM=true;
 const IMGS={};(()=>{const A="!#$%&'()*+,-./0123456789:;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~",T=new Int16Array(128).fill(-1);for(let i=0;i<91;i++)T[A.charCodeAt(i)]=i;
 const d91=s=>{const o=new Uint8Array(Math.ceil(s.length*.82)+4);let p=0,b=0,n=0,v=-1;for(let i=0;i<s.length;i++){const c=T[s.charCodeAt(i)];if(c<0)continue;if(v<0)v=c;else{v+=c*91;b|=v<<n;n+=(v&8191)>88?13:14;do{o[p++]=b&255;b>>=8;n-=8}while(n>7);v=-1}}if(v>-1)o[p++]=(b|v<<n)&255;return o.subarray(0,p)};
