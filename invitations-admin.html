@@ -1411,6 +1411,7 @@ function render_real(){try{applyMv();}catch(_e){}
   [].forEach.call($('#zoom').children,function(b){b.setAttribute('aria-pressed',b.dataset.z===S.zoom?'true':'false')});
   $('#dim').textContent=(S.shape==='circle'?t.dia+' '+z[0]:z[0]+' × '+z[1])+' '+t.cm+'  ·  '+t.shapes[S.shape]+(function(){var tq=TPL.filter(function(x){return x.id===S.tpl})[0];return (tq&&tq.bimg&&tq.ar&&Math.abs(z[1]/z[0]/tq.ar-1)>=.1)?(UL==='ar'?'  ·  قياس مختلف عن تصميم الثيم: يُقصّ جزء منه':'  ·  format différent du modèle : image recadrée'):'';})();
 }
+try{var __ro=new ResizeObserver(function(){if(document.body.classList.contains('fs'))render();});__ro.observe($('#stage'));}catch(_e){}
 /* ---- selection bar ---- */
 var FNL=null,PFL=null,TXTF=null;
 function FOLD(k,lab,n){return '<button class="fold2" data-tf="'+k+'" aria-expanded="'+(TXTF===k)+'"><span>'+lab+' ('+n+')</span><i>'+(TXTF===k?'\u25BE':'\u25C2')+'</i></button>';}
