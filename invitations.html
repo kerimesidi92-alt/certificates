@@ -2089,7 +2089,7 @@ async function packDesign(mx,q,bx){var st=JSON.parse(JSON.stringify(S));st.sel=n
    else arr.push(null);}
   phm[I.key]=arr;}
  return {v:1,app:'cards',st:st,src:src,uid:uid,phm:phm};}
-function itemText(){var o=OT[UL],t=T(),z=dimsOf(S),sh=(t.shapes&&t.shapes[S.shape])||S.shape;return (S.evText||'')+' · '+sh+' '+z[0]+'×'+z[1]+' '+o.cm;}
+function itemText(){var o=OT[UL],t=T(),z=dimsOf(S),sh=(t.shapes&&t.shapes[S.shape])||S.shape;return (UL==='fr'?'Carte d’invitation':UL==='en'?'Invitation card':'بطاقة دعوة')+' · '+sh+' '+z[0]+'×'+z[1]+' '+o.cm;}
 function omodal(html){var b=lbShow('<div class="omd">'+html+'</div>');}
 /* ---- font embedding so the exported image matches the preview ---- */
 var FEC={},GCSS=null;
