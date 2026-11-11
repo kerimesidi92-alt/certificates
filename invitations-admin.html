@@ -1116,8 +1116,8 @@ function outline(sh,H,d,extra,rx){
 }
 function cornerRow(){if(['rect','land','square'].indexOf(S.shape)<0)return '';var ar=UL==='ar';return '<div class="msg">'+(ar?'زوايا الكرت':'Coins de la carte')+'</div><div class="row">'+btn('opt',!S.rd,'data-k="rd" data-v="0"','<span>'+(ar?'حادة':'Droits')+'</span>')+btn('opt',!!S.rd,'data-k="rd" data-v="1"','<span>'+(ar?'مستديرة':'Arrondis')+'</span>')+'</div>';}
 function clipCss(sh,rd){
-  if(sh==='circle'||sh==='oval')return {r:'50%'};
-  if(sh==='arch')return {r:'50cqw 50cqw 1.5cqw 1.5cqw'};
+  if(sh==='circle'||sh==='oval')return {r:'50%',c:'ellipse(50% 50% at 50% 50%)'};
+  if(sh==='arch')return {r:'50cqw 50cqw 1.5cqw 1.5cqw',c:'inset(0 round 50cqw 50cqw 1.5cqw 1.5cqw)'};
   if(sh==='house')return {c:'polygon(50% 0,100% 22%,100% 100%,0 100%,0 22%)'};
   return {r:rd?'1.5cqw':'0'};
 }
