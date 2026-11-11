@@ -1499,7 +1499,7 @@ function buildBar(){
   h+='<div class="th2"><span>'+t.editing+': '+name+'</span><button class="xbtn" data-bact="close" aria-label="'+t.done+'">'+IC.x+'</button></div>';
   if(o.k==='el'||o.k==='txt'){
     var cur=(o.o.f&&o.o.f[S.lang])||(o.k==='el'?DF[o.id][S.lang]:(S.lang==='ar'?'Amiri':'Cormorant Garamond'));
-    var ink=inkOf(S),ccur=o.o.col||(o.k==='el'&&(o.id==='ev'||o.id==='or')?S.ac:ink);
+    var ink=inkOf(S),ccur=o.o.col||(((o.k==='el'&&(o.id==='ev'||o.id==='or'))||(o.k==='txt'&&o.o.orn))?(pdark(S)?'#d9c08a':S.ac):ink);
     var smp=o.k==='txt'?o.o.text:(o.id==='n1'?S.n1:o.id==='n2'?S.n2:o.id==='ln'?S.line:o.id==='dt'?(S.date.slice(8,10)+' / '+S.date.slice(5,7)+' / '+S.date.slice(0,4)):o.id==='or'?S.n1:S.evText);
     if(o.k==='txt'&&!o.o.orn)h+=sg(L('النص','Texte'),'<textarea id="btxt" class="txin" rows="4" style="width:100%;min-height:96px;resize:vertical;line-height:1.5">'+esc(o.o.text)+'</textarea>');
     if(!(o.k==='el'&&o.id==='or'&&S.orn!=='amp')&&!(o.k==='txt'&&o.o.orn))h+=sg(t.font,'<button class="fontbtn" data-bact="fpick" style="font-family:\''+cur+'\',serif">'+esc(String(smp).split('\n')[0].slice(0,26))+'</button>');
