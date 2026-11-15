@@ -2321,6 +2321,11 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 @media (prefers-reduced-motion:reduce){.mk-vid{animation:none}}
 #cpk .cpr input[type=range]{direction:ltr}
 .panel.mk-col>:not(h2):not(.mk-sum){display:none!important}
+.mk-load{position:absolute;inset:0;z-index:30;display:grid;place-items:center;background:rgba(246,243,236,.55);pointer-events:none;border-radius:inherit}
+.mk-load[hidden]{display:none}
+.mk-load i{width:34px;height:34px;border-radius:50%;border:4px solid rgba(169,133,47,.25);border-top-color:#a9852f;animation:mkspin .7s linear infinite}
+@keyframes mkspin{to{transform:rotate(360deg)}}
+#stage{position:relative}
 .mk-del{color:#c62828!important;border-color:#e3a6a6!important;background:#fdf1f1!important}
 .mk-tap{transform:scale(.93)!important;filter:brightness(.86)!important;transition:transform .06s,filter .06s!important}
 #cpk{background:rgba(15,18,30,.12)!important}
