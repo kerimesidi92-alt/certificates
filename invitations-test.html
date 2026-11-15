@@ -362,7 +362,7 @@ function d91(s){var o=new Uint8Array(Math.ceil(s.length*.82)+4),p=0,b=0,n=0,v=-1
 function u64(u){var s='';for(var i=0;i<u.length;i+=24576)s+=String.fromCharCode.apply(null,u.subarray(i,i+24576));return btoa(s)}
 return function(n){if(C[n])return C[n];var e=(window.__M||{})[n];if(!e)return '';return C[n]='data:image/'+(e[0]==='j'?'jpeg':'webp')+';base64,'+u64(d91(e.slice(1)))}})();
 var UI={
-ar:{timeL:'الوقت (يظهر في بعض أشكال التاريخ)',noTxt:'بدون كتابة',showTxt:'إظهار الكتابة',myBg:'خلفيتك الخاصة',tabs:{lib:'المكتبة',theme:'الثيم',frm:'الإطارات',text:'النص',img:'الصور',color:'الألوان',orn:'زخارف بسيطة',send:'الطلب'},pvT:'المعاينة المباشرة',pvS:'اضغط على أي عنصر لتعديله، واسحبه لتحريكه.',blank:'بدون قالب',blankPaper:'ورقة فارغة',resetDef:'استعادة الافتراضي',addImgB:'+ صورة',addTxtB:'+ نص',sThemeP:'الورقة',sThemeT:'القالب (اختياري)',themeNote:'اختر القالب أو «بدون قالب» لكرت بسيط.',mv:{txt:'الكتابة',orn:'الزخارف',img:'الصور',lock:'قفل'},done:'تم',editing:'تعديل',noImgs:'لم تضيف صورا بعد.',imgN:'صورة',title:'صمّم كرتك',note:'اضغط على أي عنصر في الكرت لتعديله أو تحريكه.',
+ar:{timeL:'الوقت (يظهر في بعض أشكال التاريخ)',noTxt:'بدون كتابة',showTxt:'إظهار الكتابة',myBg:'خلفيتك الخاصة',tabs:{lib:'المكتبة',theme:'الثيم',frm:'الإطارات',text:'النص',img:'الصور',color:'الألوان',orn:'زخارف بسيطة',send:'الطلب'},pvT:'المعاينة المباشرة',pvS:'اضغط على أي عنصر لتعديله، واسحبه لتحريكه.',blank:'بدون قالب',blankPaper:'ورقة فارغة',resetDef:'استعادة الافتراضي',addImgB:'+ صورة',addTxtB:'+ نص',sThemeP:'الورقة',sThemeT:'القالب (اختياري)',themeNote:'اختر القالب أو «بدون قالب» لكرت بسيط.',mv:{txt:'الكتابة',orn:'الزخارف',img:'الصور',lock:'قفل'},done:'تم',editing:'تعديل',noImgs:'لا توجد صور بعد.',imgN:'صورة',title:'صمّم كرتك',note:'اضغط على أي عنصر في الكرت لتعديله أو تحريكه.',
  m1:'قوالب جاهزة',m2:'صمّم بنفسك',pickT:'اختر قالبا',diyGo:'تريد تصميمه بنفسك؟',diyBtn:'صمّم بنفسك',
  real:'الحجم الحقيقي',big:'تكبير',undo:'تراجع',redo:'إعادة',
  sShape:'شكل الكرت',sSize:'حجم الكرت',cw:'العرض (من اليمين لليسار)',ch:'الطول (من الأعلى للأسفل)',apply:'تطبيق',custom:'مقاس آخر',
@@ -1797,7 +1797,7 @@ function addBg(file){
     S.bgKey=key;S.tpl='mine';S.arts=[];S.frame='none';commit();build();};im.src=r.result;};r.readAsDataURL(file);
 }
 function addImage(file){
-  var url=URL.createObjectURL(file),im=new Image(),fail=function(){try{URL.revokeObjectURL(url);}catch(_e){}try{toast(UL==='ar'?'تعذّر قراءة هذه الصورة، جرّبي صورة JPG أو PNG':'Image illisible, essayez un JPG ou PNG',true);}catch(_e){alert(UL==='ar'?'تعذّر قراءة هذه الصورة':'Image illisible');}};
+  var url=URL.createObjectURL(file),im=new Image(),fail=function(){try{URL.revokeObjectURL(url);}catch(_e){}try{toast(UL==='ar'?'تعذّر قراءة هذه الصورة، جرّب صورة JPG أو PNG':'Image illisible, essayez un JPG ou PNG',true);}catch(_e){alert(UL==='ar'?'تعذّر قراءة هذه الصورة':'Image illisible');}};
   im.onerror=fail;
   im.onload=function(){
     try{
@@ -1879,7 +1879,7 @@ function barAct(el){
   if(a==='rp'){if(o.k==='el'){o.o.dx=0;o.o.dy=0;}else{o.o.x=50;o.o.y=50;}}
   if(a==='del'){if(o.k==='el'&&o.id==='or'){S.orn='none';S.sel=null;}else{S.txts=S.txts.filter(function(x){return x!==o.o});S.sel=null;}}
   if(a==='dsgEd'){if(o.o.ms)monoOpen(true);else dsgOpen(o.o.dk,true);return;}
-  if(a==='idel'){S.imgs=S.imgs.filter(function(x){return x!==o.o});S.sel=null;}
+  if(a==='idel'){S.imgs=S.imgs.filter(function(x){return x!==o.o});S.sel=null;setTimeout(function(){try{var y9=window.scrollY;buildCtl();window.scrollTo(0,y9);}catch(_e){}},0);}
   if(a==='pan'){o.o.pan=!o.o.pan;if(o.o.pan&&imgFit(o.o)!=='cover')o.o.fit='cover';}
   if(a==='bd')o.o.bd=o.o.bd?0:1;
   if(a==='mc0'){o.o.mc=null;}
@@ -2223,7 +2223,7 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 <script>document.addEventListener('error',function(e){var im=e.target;if(im&&im.tagName==='IMG'&&!im.__r&&im.src&&im.src.indexOf('data:')!==0){im.__r=1;var u=im.src;setTimeout(function(){im.src=u},900);}},true);</script><script src="kmsg.js?v=4"></script><meta name="robots" content="noindex,nofollow"><style>
 .mk-sum{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--line,#e3dccd);border-radius:12px;padding:9px 12px;font-weight:700;font-size:14px;background:var(--surface2,#fbf9f3);min-width:0}
 .mk-sum span{min-width:0;overflow-wrap:anywhere}
-.mk-sum button,.mk-all{font:inherit;font-weight:800;font-size:13px;border:1.5px solid var(--accent,#16264a);color:var(--accent,#16264a);background:var(--surface,#fff);border-radius:10px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.mk-sum button,.mk-sum b,.mk-all{font:inherit;font-weight:800;font-size:13px;border:1.5px solid var(--accent,#16264a);color:var(--accent,#16264a);background:var(--surface,#fff);border-radius:10px;padding:6px 12px;cursor:pointer;white-space:nowrap}
 .mk-all{display:block;width:100%;margin-top:8px;padding:10px}
 .mk-vid{display:inline-flex;align-items:center;gap:6px;text-decoration:none;border:0;border-radius:99px;padding:5px 11px 5px 7px;font-weight:800;font-size:12.5px;line-height:1.2;color:#fff;background:linear-gradient(135deg,#c9a04a,#a9852f);white-space:nowrap;animation:mkpulse 1.8s ease-out infinite}
 .mk-vid i{width:18px;height:18px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
@@ -2231,6 +2231,10 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 @keyframes mkpulse{0%{box-shadow:0 0 0 0 rgba(201,160,74,.75)}70%{box-shadow:0 0 0 10px rgba(201,160,74,0)}100%{box-shadow:0 0 0 0 rgba(201,160,74,0)}}
 @media (prefers-reduced-motion:reduce){.mk-vid{animation:none}}
 #cpk .cpr input[type=range]{direction:ltr}
+.panel.mk-col>:not(h2):not(.mk-sum){display:none!important}
+.mk-del{color:#c62828!important;border-color:#e3a6a6!important}
+.btn,.opt,.pill,button{transition:transform .08s,filter .08s}
+.btn:active,.opt:active,.pill:active,.mk-sum b:active,.mk-all:active{transform:scale(.96);filter:brightness(.93)}
 .mk-test{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99;background:#c62828;color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:0 0 8px 8px;pointer-events:none}
 .mk-bar{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%}
 @media (max-width:860px){body{padding-block:8px 18px!important}}
@@ -2251,17 +2255,24 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:6px
 (function(){
 var open=false,ctl=document.getElementById('ctl');if(!ctl)return;
 function fr(){return document.documentElement.lang==='fr'}
+// paper options in one line. The app re-uses its own nodes when it redraws, so nothing here keeps
+// a listener on a node inside the panel: one delegated listener, and state re-applied after each redraw.
 function apply(){
- var ap=document.getElementById('capply');if(!ap)return;var pn=ap.closest('.panel');if(!pn||pn.querySelector('.mk-sum'))return;
- var parts=[];
- [].forEach.call(pn.querySelectorAll('button[aria-pressed="true"]'),function(b){var t=b.textContent.replace(/\s+/g,' ').trim();if(t)parts.push(t)});
- var sum=document.createElement('div');sum.className='mk-sum';sum.innerHTML='<span></span><button type="button"></button>';
- sum.firstChild.textContent=parts.join(' · ');sum.lastChild.textContent=open?(fr()?'Fermer':'إغلاق'):(fr()?'Modifier':'تغيير');
- sum.lastChild.addEventListener('click',function(e){e.stopPropagation();open=!open;var s=pn.querySelector('.mk-sum');if(s)s.remove();apply()});
- var h=pn.querySelector('h2');if(h)h.after(sum);else pn.insertBefore(sum,pn.firstChild);
- [].forEach.call(pn.children,function(c){if(c.tagName!=='H2'&&c!==sum)c.style.display=open?'':'none'});
+ var ap=document.getElementById('capply');if(!ap)return;var pn=ap.closest('.panel');if(!pn)return;
+ var sum=null;[].forEach.call(pn.children,function(c){if(c.className==='mk-sum')sum=c});
+ if(!sum||sum.children.length!==2||sum.lastChild.tagName!=='B'){if(sum)sum.remove();sum=document.createElement('div');sum.className='mk-sum';sum.innerHTML='<span></span><b role="button" tabindex="0"></b>';var h=pn.querySelector('h2');if(h)h.after(sum);else pn.insertBefore(sum,pn.firstChild);}
+ var parts=[];[].forEach.call(pn.querySelectorAll('button[aria-pressed="true"]'),function(b){var t=b.textContent.replace(/\s+/g,' ').trim();if(t)parts.push(t)});
+ var t=parts.join(' · '),l=open?(fr()?'Fermer':'إغلاق'):(fr()?'Modifier':'تغيير');
+ if(sum.firstChild.textContent!==t)sum.firstChild.textContent=t;if(sum.lastChild.textContent!==l)sum.lastChild.textContent=l;
+ if(pn.classList.contains('mk-col')===open)pn.classList.toggle('mk-col',!open);
 }
-new MutationObserver(function(){apply()}).observe(ctl,{childList:true,subtree:true});apply();
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.mk-sum>b');if(!b)return;e.stopPropagation();e.preventDefault();open=!open;apply()},true);
+new MutationObserver(function(){apply();mark()}).observe(ctl,{childList:true,subtree:true,attributes:true,attributeFilter:['aria-pressed','class']});apply();
+// after "apply" on a custom size, come back to the size field (the phone keyboard closing moves the page)
+document.addEventListener('click',function(e){if(e.target.id!=='capply')return;setTimeout(function(){var el=document.getElementById('cw');if(!el)return;var r=el.getBoundingClientRect();if(r.top<innerHeight*.45||r.bottom>innerHeight-90)window.scrollTo(0,Math.max(0,scrollY+r.top-innerHeight*.62))},450)},true);
+// delete buttons in red
+function mark(){[].forEach.call(document.querySelectorAll('button'),function(b){var t=b.textContent.trim();var d=(t==='حذف'||t==='Supprimer'||t==='حذف الكل'||b.dataset.bact==='del'||b.dataset.bact==='idel');if(d!==b.classList.contains('mk-del'))b.classList.toggle('mk-del',d)})}
+new MutationObserver(function(){mark()}).observe(document.body,{childList:true,subtree:true});mark();
 var hd=document.querySelector('header.top'),home=hd&&hd.querySelector('a[href="index.html"]'),ul=document.getElementById('ulang');
 if(hd){var bar=document.createElement('div');bar.className='mk-bar';
  var a=document.createElement('a');a.className='mk-vid';a.href='https://www.tiktok.com/';a.target='_blank';a.rel='noopener';a.innerHTML='<i></i><span></span>';

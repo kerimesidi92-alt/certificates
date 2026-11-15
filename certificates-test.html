@@ -2312,7 +2312,7 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 <meta name="robots" content="noindex,nofollow"><style>
 .mk-sum{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--line,#e3dccd);border-radius:12px;padding:9px 12px;font-weight:700;font-size:14px;background:var(--surface2,#fbf9f3);min-width:0}
 .mk-sum span{min-width:0;overflow-wrap:anywhere}
-.mk-sum button,.mk-all{font:inherit;font-weight:800;font-size:13px;border:1.5px solid var(--accent,#16264a);color:var(--accent,#16264a);background:var(--surface,#fff);border-radius:10px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.mk-sum button,.mk-sum b,.mk-all{font:inherit;font-weight:800;font-size:13px;border:1.5px solid var(--accent,#16264a);color:var(--accent,#16264a);background:var(--surface,#fff);border-radius:10px;padding:6px 12px;cursor:pointer;white-space:nowrap}
 .mk-all{display:block;width:100%;margin-top:8px;padding:10px}
 .mk-vid{display:inline-flex;align-items:center;gap:6px;text-decoration:none;border:0;border-radius:99px;padding:5px 11px 5px 7px;font-weight:800;font-size:12.5px;line-height:1.2;color:#fff;background:linear-gradient(135deg,#c9a04a,#a9852f);white-space:nowrap;animation:mkpulse 1.8s ease-out infinite}
 .mk-vid i{width:18px;height:18px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
@@ -2320,6 +2320,10 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 @keyframes mkpulse{0%{box-shadow:0 0 0 0 rgba(201,160,74,.75)}70%{box-shadow:0 0 0 10px rgba(201,160,74,0)}100%{box-shadow:0 0 0 0 rgba(201,160,74,0)}}
 @media (prefers-reduced-motion:reduce){.mk-vid{animation:none}}
 #cpk .cpr input[type=range]{direction:ltr}
+.panel.mk-col>:not(h2):not(.mk-sum){display:none!important}
+.mk-del{color:#c62828!important;border-color:#e3a6a6!important}
+.btn,.opt,.pill,button{transition:transform .08s,filter .08s}
+.btn:active,.opt:active,.pill:active,.mk-sum b:active,.mk-all:active{transform:scale(.96);filter:brightness(.93)}
 .mk-test{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99;background:#c62828;color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:0 0 8px 8px;pointer-events:none}
 .mk-bar{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%}
 @media (max-width:860px){body{padding-block:8px 18px!important}}
@@ -2380,6 +2384,8 @@ document.querySelectorAll('#tab-design .step[data-tab=orn] .seg.dvseg').forEach(
  b.addEventListener('click',function(){g.classList.toggle('mk-open');p()});
  p();setTimeout(p,800);setTimeout(p,2500);document.addEventListener('click',function(){setTimeout(p,80)},true);
 });
+function mark(){[].forEach.call(document.querySelectorAll('button'),function(b){var t=b.textContent.trim();var d=(t==='حذف'||t==='Supprimer'||t==='✕ حذف'||/^حذف( الصورة| النص| العنصر)?$/.test(t));if(d!==b.classList.contains('mk-del'))b.classList.toggle('mk-del',d)})}
+new MutationObserver(function(){mark()}).observe(document.body,{childList:true,subtree:true});mark();
 var tg=document.createElement('div');tg.className='mk-test';tg.textContent='TEST';document.body.appendChild(tg);
 })();
 </script>
