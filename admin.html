@@ -520,9 +520,9 @@ body{background:var(--bg)}
       <button class="tab" role="tab" data-tab="design" aria-selected="false" id="t-design">التصميم</button>
       <button class="tab" role="tab" data-tab="mine" aria-selected="false" id="t-mine">تصاميمي</button>
       <button class="tab" role="tab" data-tab="home" aria-selected="false" id="t-home">الرئيسية</button>
-    <button type="button" class="tab" id="btn-logout">خروج</button></nav>
+    <button class="tab" role="tab" data-tab="vid" aria-selected="false" id="t-vid">فيديو الشرح</button><button type="button" class="tab" id="btn-logout">خروج</button></nav>
 
-  </header><details id="mk-vidset" style="margin:8px 12px;border:1.5px solid #d9d2c0;border-radius:12px;background:#fff;padding:8px 12px;font-family:inherit"><summary style="cursor:pointer;font-weight:800;font-size:14px">رابط فيديو الشرح (تيك توك)</summary><div style="display:grid;gap:8px;margin-top:10px"><p style="margin:0;font-size:13px;color:#6b7285">الصقي الرابط هنا، سيظهر زر «شاهد الشرح» عند الزبائن ويفتح هذا الفيديو. اتركيه فارغاً لإخفاء الزر.</p><input type="url" id="mk-vurl" dir="ltr" inputmode="url" autocomplete="off" placeholder="https://www.tiktok.com/@.../video/..." style="width:100%;box-sizing:border-box;padding:10px;border:1.5px solid #d9d2c0;border-radius:10px;font:inherit;font-size:14px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button type="button" id="mk-vsave" style="padding:9px 18px;border:0;border-radius:10px;background:#16264a;color:#fff;font:inherit;font-weight:800;cursor:pointer">حفظ الرابط</button><button type="button" id="mk-vclr" style="padding:9px 14px;border:1.5px solid #e3a6a6;border-radius:10px;background:#fdf1f1;color:#c62828;font:inherit;font-weight:800;cursor:pointer">إزالة الرابط</button><span id="mk-vmsg" style="font-size:13px;font-weight:700"></span></div></div></details>
+  </header>
 
 
   <section id="tab-orders" class="orders" aria-labelledby="t-orders">
@@ -663,6 +663,7 @@ body{background:var(--bg)}
 
   
   <section id="tab-home" hidden></section>
+  <section id="tab-vid" hidden><div style="max-width:640px;margin:14px auto;padding:0 12px;font-family:inherit"><div style="border:1.5px solid #d9d2c0;border-radius:14px;background:#fff;padding:16px;display:grid;gap:10px"><h2 style="margin:0;font-size:18px">رابط فيديو الشرح على التيك توك</h2><p style="margin:0;font-size:13.5px;color:#6b7285;line-height:1.6">الصقي رابط الفيديو هنا، فيظهر عند الزبائن زر «شاهد الشرح» ويفتح هذا الفيديو. اتركيه فارغاً لإخفاء الزر.</p><input type="url" id="mk-vurl" dir="ltr" inputmode="url" autocomplete="off" placeholder="https://www.tiktok.com/@.../video/..." style="width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #d9d2c0;border-radius:10px;font:inherit;font-size:14px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button type="button" id="mk-vsave" style="padding:10px 20px;border:0;border-radius:10px;background:#16264a;color:#fff;font:inherit;font-weight:800;cursor:pointer">حفظ الرابط</button><button type="button" id="mk-vclr" style="padding:10px 14px;border:1.5px solid #e3a6a6;border-radius:10px;background:#fdf1f1;color:#c62828;font:inherit;font-weight:800;cursor:pointer">إزالة الرابط</button><span id="mk-vmsg" style="font-size:13px;font-weight:700"></span></div></div></div></section>
 
   <section id="tab-mine" class="studio" data-sub="pb" hidden style="display:block">
     <div class="box mbox" data-s="pb" style="margin-bottom:14px"><h2>تصاميمي</h2><p class="hint">احفظي أي تصميم من تبويب «التصميم» بزر «حفظ في تصاميمي»، ثم انشريه للزبائن من هنا.</p><div id="pb-list"></div><p class="hint" id="pb-msg" role="status"></p></div>
@@ -2701,7 +2702,7 @@ $('#order-form').addEventListener('submit',e=>{
 /* open an order's design in the studio */
 function showTab(name){
   document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===name)));
-  $('#tab-orders').hidden=name!=='orders';$('#tab-design').hidden=name!=='design';$('#tab-mine').hidden=name!=='mine';$('#tab-home').hidden=name!=='home';if(name==='home'&&window.__hmOpen)window.__hmOpen();if((name==='mine'||name==='design')&&window.__pubUI)window.__pubUI();
+  $('#tab-orders').hidden=name!=='orders';$('#tab-design').hidden=name!=='design';$('#tab-mine').hidden=name!=='mine';$('#tab-home').hidden=name!=='home';{const v=document.getElementById('tab-vid');if(v)v.hidden=name!=='vid';}if(name==='home'&&window.__hmOpen)window.__hmOpen();if((name==='mine'||name==='design')&&window.__pubUI)window.__pubUI();
   if(name==='design'){setScale();fitAll();}
 }
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showTab(t.dataset.tab));
