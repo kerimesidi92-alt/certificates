@@ -1497,7 +1497,7 @@ function setOrient(o){S.orient=o==='p'?'p':'l';W=S.orient==='p'?906:1280;H=S.ori
 function setScale(){const w=wrap.clientWidth,f=S.size==='a5'?0.7071:1,wh=H*w/W;scale=w*f/W;stage.style.setProperty('--hs',Math.round(Math.max(40,Math.min(130,36/scale)))+'px');stage.style.transform=`translate(${(w-W*scale)/2}px,${(wh-H*scale)/2}px) scale(${scale})`;wrap.style.height=wh+'px';}
 if('ResizeObserver' in window)new ResizeObserver(setScale).observe(wrap);else window.addEventListener('resize',setScale);
 if(document.fonts){if(document.fonts.ready)document.fonts.ready.then(fitAll);if(document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',()=>{fitAll();if(S.st)fixSel();});}
-if(WM){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><g transform="rotate(-30 200 150)" font-family="Cairo,Arial,sans-serif" font-weight="800" text-anchor="middle" fill="#1a2440" fill-opacity="0.2" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.5" paint-order="stroke"><text x="200" y="95" font-size="36">لمسة خاصة · معاينة فقط</text><text x="200" y="225" font-size="36">لمسة خاصة · معاينة فقط</text></g></svg>`;$('#wm').style.backgroundImage=`url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;stage.addEventListener('contextmenu',e=>e.preventDefault());}
+if(WM){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="560" height="360"><g transform="rotate(-30 280 180)" font-family="Cairo,Arial,sans-serif" font-weight="800" text-anchor="middle" fill="#1a2440" fill-opacity="0.2" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.5" paint-order="stroke"><text x="280" y="115" font-size="36">لمسة خاصة · 44005480 · معاينة فقط</text><text x="280" y="265" font-size="36">لمسة خاصة · 44005480 · معاينة فقط</text></g></svg>`;$('#wm').style.backgroundImage=`url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;stage.addEventListener('contextmenu',e=>e.preventDefault());}
 /* ---------- photos: drag, corner handle, pinch ---------- */
 const ptrs=new Map();let gst=null;
 const MG=6;
@@ -2320,8 +2320,9 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 @keyframes mkpulse{0%{box-shadow:0 0 0 0 rgba(201,160,74,.75)}70%{box-shadow:0 0 0 10px rgba(201,160,74,0)}100%{box-shadow:0 0 0 0 rgba(201,160,74,0)}}
 @media (prefers-reduced-motion:reduce){.mk-vid{animation:none}}
 #cpk .cpr input[type=range]{direction:ltr}
-.mk-test{position:fixed;top:0;left:0;z-index:99;background:#c62828;color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:0 0 8px 0;pointer-events:none}
-.mk-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%}
+.mk-test{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99;background:#c62828;color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:0 0 8px 8px;pointer-events:none}
+.mk-bar{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%}
+@media (max-width:860px){body{padding-block:8px 18px!important}}
 .mk-bar a[href="index.html"]{padding:5px 10px!important;font-size:12.5px!important;border-radius:99px!important}
 
 #tab-design .step[data-tab=orn] .seg.dvseg:not(.mk-open)>:nth-child(n+10){display:none}
@@ -2331,10 +2332,15 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 .mk-lang button[aria-pressed="true"]{background:#16264a;color:#fff}
 header.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .addbar.quick{display:flex!important;gap:6px}
+.addbar.quick .btn{background:var(--surface,#fff)!important;border-style:solid!important}
+.brand h1{font-family:var(--font-ui,'Cairo',system-ui,sans-serif)!important;font-weight:700}
 .addbar.quick .btn{flex:1 1 0;min-width:0;min-height:30px!important;padding:3px 6px!important;font-size:12px!important;line-height:1.25;border-radius:99px}
 @media (max-width:860px){
  header.top{padding-top:6px;padding-bottom:6px;margin-bottom:6px}
  header.top .brand h1{font-size:21px;margin:0}
+ html[lang=fr] header.top .brand h1{font-size:16px}
+ header.top .brand{min-width:0;flex:1 1 0}
+ header.top{padding-top:0!important;margin-top:0!important}
  header.top .brand p{display:none}
 }
 </style><script>
@@ -2353,7 +2359,7 @@ if(hd){var bar=document.createElement('div');bar.className='mk-bar';
  function pl(){[].forEach.call(lg.children,function(b){b.setAttribute('aria-pressed',String((b.dataset.l==='fr')===fr()))})}
  lg.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;try{localStorage.setItem('kl',b.dataset.l)}catch(_){}if(window.__setLang)window.__setLang(b.dataset.l);pl()});
  var a=document.createElement('a');a.className='mk-vid';a.href='https://www.tiktok.com/';a.target='_blank';a.rel='noopener';a.innerHTML='<i></i><span>شاهد الشرح</span>';
- function hl(){if(home)home.textContent=fr()?'← Accueil':'→ الرئيسية'}bar.appendChild(lg);if(home)bar.appendChild(home);bar.appendChild(a);hd.appendChild(bar);pl();hl();lg.addEventListener('click',function(){setTimeout(hl,50)});}
+ function hl(){if(home)home.textContent=fr()?'← Accueil':'→ الرئيسية'}hd.appendChild(lg);if(home)bar.appendChild(home);bar.appendChild(a);hd.appendChild(bar);pl();hl();lg.addEventListener('click',function(){setTimeout(hl,50)});}
 // "occasion and language" in one line
 var ids=['seg-orient','seg-size','seg-lang','seg-gender'],open=false;
 var fields=ids.map(function(i){var e=document.getElementById(i);return e?e.closest('.field'):null}).filter(Boolean);
