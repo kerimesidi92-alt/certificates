@@ -1881,7 +1881,7 @@ $('#colors').addEventListener('change',e=>{if(e.target.closest('input[type=color
 [['title',true],['intro',true],['name',true],['subj',true],['role',true],['body',true],['from',true],['date',true]].forEach(([k,ed])=>{$('#f-'+k).addEventListener('input',e=>{S[k]=e.target.value;if(ed)S.edited[k]=true;if(k==='subj')applyDefaults();if(k==='title')paintTitleChips();render();});});
 $('#title-chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.titleIdx=+b.dataset.i;S.edited.title=false;applyDefaults();render();});
 $('#f-name').addEventListener('focus',e=>e.target.select());
-$('#btn-reset').onclick=()=>{resetOrn();S.fmt={};S.nt=0;try{ntSync();}catch(_){}S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};applyLayoutOv();applyDefaults();render();};
+$('#btn-reset').onclick=()=>{S._ovK=S._ovK||'x';resetOrn();S.fmt={};S.nt=0;try{ntSync();}catch(_){}S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};applyLayoutOv();applyDefaults();try{paintColors();}catch(_){}render();try{renderTools();}catch(_){}};
 function syncControls(){
   segSync('seg-orient','orient');segSync('seg-size','size');drawSz();segSync('seg-lang','lang');paintFontSeg();segSync('seg-dn','dnv');segSync('seg-dc','dcv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-frame','frame');segSync('seg-div','div');segSync('seg-occ','occ');segSync('seg-gender','gender');
   syncTheme();paintColors();paintTitleChips();
@@ -2314,7 +2314,10 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 .mk-sum span{min-width:0;overflow-wrap:anywhere}
 .mk-sum button,.mk-all{font:inherit;font-weight:800;font-size:13px;border:1.5px solid var(--accent,#16264a);color:var(--accent,#16264a);background:var(--surface,#fff);border-radius:10px;padding:6px 12px;cursor:pointer;white-space:nowrap}
 .mk-all{display:block;width:100%;margin-top:8px;padding:10px}
-.mk-vid{display:inline-flex;align-items:center;gap:6px;text-decoration:none;border:1.5px solid #b8893a;border-radius:12px;padding:9px 14px;font-weight:700;font-size:14px;color:#8a6420;background:var(--surface,#fff);white-space:nowrap}
+.mk-vid{display:inline-flex;align-items:center;gap:8px;text-decoration:none;border:0;border-radius:99px;padding:9px 16px 9px 12px;font-weight:800;font-size:14.5px;color:#fff;background:linear-gradient(135deg,#c9a04a,#a9852f);box-shadow:0 3px 10px rgba(169,133,47,.45);white-space:nowrap}
+.mk-vid i{width:22px;height:22px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.mk-vid i::before{content:"";border-style:solid;border-width:5px 0 5px 8px;border-color:transparent transparent transparent #a9852f;margin-inline-start:2px}
+#cpk .cpr input[type=range]{direction:ltr}
 .mk-test{position:fixed;top:0;left:0;z-index:99;background:#c62828;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:0 0 8px 0;pointer-events:none}
 
 #tab-design .step[data-tab=orn] .seg.dvseg:not(.mk-open)>:nth-child(n+10){display:none}
@@ -2342,7 +2345,7 @@ document.querySelectorAll('#tab-design .step[data-tab=orn] .seg.dvseg').forEach(
  b.addEventListener('click',function(){g.classList.toggle('mk-open');p()});
  p();setTimeout(p,800);setTimeout(p,2500);document.addEventListener('click',function(){setTimeout(p,60)},true);
 });
-var a=document.createElement('a');a.className='mk-vid';a.href='https://www.tiktok.com/';a.target='_blank';a.rel='noopener';a.textContent=fr()?'Voir le tutoriel':'شاهد الشرح';
+var a=document.createElement('a');a.className='mk-vid';a.href='https://www.tiktok.com/';a.target='_blank';a.rel='noopener';a.innerHTML='<i></i><span>'+(fr()?'Voir le tutoriel':'شاهد الشرح')+'</span>';
 var hd=document.querySelector('header.top a[href="index.html"]');if(hd)hd.after(a);
 var tg=document.createElement('div');tg.className='mk-test';tg.textContent='TEST';document.body.appendChild(tg);
 })();

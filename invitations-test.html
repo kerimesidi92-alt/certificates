@@ -1395,10 +1395,10 @@ function buildBar(){
     if(I.yr)h+='<div class="sg" style="padding:6px 14px"><label class="selr"><span>'+L('السنة / النص','Année / texte')+'</span><input class="cin" data-iyr maxlength="12" inputmode="numeric" value="'+esc(I.yr.t)+'" style="width:100px"></label><label class="selr"><span>'+L('لون السنة','Couleur')+'</span><input class="cin" type="color" data-iyc value="'+(I.yr.c||'#000000')+'"></label></div>';
     var adv='';
     if(!fr)adv+=sg(t.izm,sl(t.izm,30,400,I.zm,'data-iv="zm"','zm'))+sg(t.ipy,sl(t.ipy,0,100,I.py==null?50:I.py,'data-iv="py"','py'))+sg(t.ipx,sl(t.ipx,0,100,I.px==null?50:I.px,'data-iv="px"','px'));
-    adv+='<div class="pills" style="margin-top:8px">'+pill('iar',L('إرجاع النسبة الأصلية (إلغاء التمديد)','Proportion d\'origine'));
+    adv+='<div class="pills" style="margin:8px 14px 0">'+pill('iar',L('إرجاع النسبة الأصلية (إلغاء التمديد)','Proportion d\'origine'));
     if(!fr)adv+=pill('pan',L('تحريك الصورة داخل الإطار','Déplacer dans le cadre'),!!I.pan)+pill('bd',I.bd?t.bdOn:t.bdOff)+pill('ires',L('إلغاء تكبير الصورة وإزاحتها داخل الإطار','Réinitialiser'));
     adv+='</div>';
-    if(!fr&&!I.bd)adv+='<label class="selr" style="margin-top:8px"><span>'+t.bc+'</span><input class="cin" type="color" data-ibc value="'+(I.bc||S.ac)+'"></label>';
+    if(!fr&&!I.bd)adv+='<label class="selr" style="margin:8px 14px 14px"><span>'+t.bc+'</span><input class="cin" type="color" data-ibc value="'+(I.bc||S.ac)+'"></label>';
     h+='<div class="sg" style="padding:6px 0"><div class="sgt" style="padding:0 14px">'+L('تحريك وضبط الصورة','Déplacer et ajuster')+'</div>'+adv+'</div>';
   }
   box.hidden=false;box.innerHTML=h;placeTools();if(innerWidth<860&&!document.body.classList.contains('fs')){var pvq=$('#pv');if(pvq){setTimeout(function(){if(pvq.getBoundingClientRect().top>60)pvq.scrollIntoView({block:'start'});},80);}}
@@ -2225,7 +2225,10 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 .mk-sum span{min-width:0;overflow-wrap:anywhere}
 .mk-sum button,.mk-all{font:inherit;font-weight:800;font-size:13px;border:1.5px solid var(--accent,#16264a);color:var(--accent,#16264a);background:var(--surface,#fff);border-radius:10px;padding:6px 12px;cursor:pointer;white-space:nowrap}
 .mk-all{display:block;width:100%;margin-top:8px;padding:10px}
-.mk-vid{display:inline-flex;align-items:center;gap:6px;text-decoration:none;border:1.5px solid #b8893a;border-radius:12px;padding:9px 14px;font-weight:700;font-size:14px;color:#8a6420;background:var(--surface,#fff);white-space:nowrap}
+.mk-vid{display:inline-flex;align-items:center;gap:8px;text-decoration:none;border:0;border-radius:99px;padding:9px 16px 9px 12px;font-weight:800;font-size:14.5px;color:#fff;background:linear-gradient(135deg,#c9a04a,#a9852f);box-shadow:0 3px 10px rgba(169,133,47,.45);white-space:nowrap}
+.mk-vid i{width:22px;height:22px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.mk-vid i::before{content:"";border-style:solid;border-width:5px 0 5px 8px;border-color:transparent transparent transparent #a9852f;margin-inline-start:2px}
+#cpk .cpr input[type=range]{direction:ltr}
 .mk-test{position:fixed;top:0;left:0;z-index:99;background:#c62828;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:0 0 8px 0;pointer-events:none}
 header.top{flex-wrap:wrap;gap:8px}</style><script>
 (function(){
@@ -2242,7 +2245,7 @@ function apply(){
  [].forEach.call(pn.children,function(c){if(c.tagName!=='H2'&&c!==sum)c.style.display=open?'':'none'});
 }
 new MutationObserver(function(){apply()}).observe(ctl,{childList:true,subtree:true});apply();
-var a=document.createElement('a');a.className='mk-vid';a.href='https://www.tiktok.com/';a.target='_blank';a.rel='noopener';a.textContent=fr()?'Voir le tutoriel':'شاهد الشرح';
+var a=document.createElement('a');a.className='mk-vid';a.href='https://www.tiktok.com/';a.target='_blank';a.rel='noopener';a.innerHTML='<i></i><span>'+(fr()?'Voir le tutoriel':'شاهد الشرح')+'</span>';
 var hd=document.querySelector('header.top a[href="index.html"]');if(hd)hd.after(a);
 var tg=document.createElement('div');tg.className='mk-test';tg.textContent='TEST';document.body.appendChild(tg);
 })();
