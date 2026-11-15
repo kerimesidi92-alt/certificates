@@ -522,7 +522,7 @@ body{background:var(--bg)}
       <button class="tab" role="tab" data-tab="home" aria-selected="false" id="t-home">الرئيسية</button>
     <button type="button" class="tab" id="btn-logout">خروج</button></nav>
 
-  </header>
+  </header><details id="mk-vidset" style="margin:8px 12px;border:1.5px solid #d9d2c0;border-radius:12px;background:#fff;padding:8px 12px;font-family:inherit"><summary style="cursor:pointer;font-weight:800;font-size:14px">رابط فيديو الشرح (تيك توك)</summary><div style="display:grid;gap:8px;margin-top:10px"><p style="margin:0;font-size:13px;color:#6b7285">الصقي الرابط هنا، سيظهر زر «شاهد الشرح» عند الزبائن ويفتح هذا الفيديو. اتركيه فارغاً لإخفاء الزر.</p><input type="url" id="mk-vurl" dir="ltr" inputmode="url" autocomplete="off" placeholder="https://www.tiktok.com/@.../video/..." style="width:100%;box-sizing:border-box;padding:10px;border:1.5px solid #d9d2c0;border-radius:10px;font:inherit;font-size:14px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button type="button" id="mk-vsave" style="padding:9px 18px;border:0;border-radius:10px;background:#16264a;color:#fff;font:inherit;font-weight:800;cursor:pointer">حفظ الرابط</button><button type="button" id="mk-vclr" style="padding:9px 14px;border:1.5px solid #e3a6a6;border-radius:10px;background:#fdf1f1;color:#c62828;font:inherit;font-weight:800;cursor:pointer">إزالة الرابط</button><span id="mk-vmsg" style="font-size:13px;font-weight:700"></span></div></div></details>
 
 
   <section id="tab-orders" class="orders" aria-labelledby="t-orders">
@@ -1234,7 +1234,7 @@ const todayStr=l=>{const d=new Date();return l==='en'?MONTHS.en[d.getMonth()]+' 
 /* ---------- state ---------- */
 var TOV={};
 const S={ll:'ar',orient:'l',size:'a4',lang:'ar',occ:'teacher',gender:'m',font:'ruqaa',div:'e2',divT:'o1',dc:null,dcv:'a',sg:null,sgv:'a',sgd:'s1',dsz:{},folder:null,theme:'gm1',themeTouched:false,paper:null,deep:null,accent:null,ink:null,titleIdx:0,title:'',intro:'',name:$('#f-name').value,subj:'الرياضيات',role:'',body:'',from:'',date:todayStr('ar'),
-  images:[],off:{},ln:[],bg:null,mv:'txt',dnv:'a',fmt:{},xt:[],st:null,dn:null,fontL:'classic',frame:'full',sel:-1,edited:{title:false,intro:false,name:false,subj:false,role:false,body:false,from:false,date:false},openOrder:null};
+  images:[],off:{},ln:[],bg:null,mv:'txt',dnv:'a',fmt:{},xt:[],st:null,dn:null,fontL:'classic',frame:'full',sel:-1,edited:{title:false,intro:false,name:false,subj:false,role:false,body:false,from:false,date:false},openOrder:null};const __INIT=JSON.stringify(S);
 const S0=JSON.stringify(S);
 const stage=$('#stage'),wrap=$('#stagewrap');
 stage.innerHTML='<div class="cert" id="cert"><img id="bg" alt="" draggable="false" hidden><div id="plain"></div><div id="layer"></div>'+(WM?'<div class="wm" id="wm"></div>':'')+'</div>';
@@ -1576,7 +1576,7 @@ function render(){
   const F=S.lang!=='ar'?(LFONTS[S.fontL]||LFONTS.classic):(FONTS[S.font]||FONTS.ruqaa);cert.style.cssText=`--paper:${P};--acc:${A};--ink:${I};--font-title:${F.t};--font-ui:${F.u};--font-text:${F.x};--fwt:${F.wt||700};--fwx:${F.wx||600}`;
   cert.className='cert'+(S.lang!=='ar'?' fr':'');
   if((T&&!T.svg)||(S.theme==='custom'&&S.bg)){plainEl.hidden=true;plainEl.innerHTML='';}else{plainEl.hidden=false;plainEl.innerHTML=T?ART[S.theme](P,D,A):plainSVG(P,D,A);}
-  layer.innerHTML=divsHTML()+blocks()+imgsHTML()+xtHTML()+lnHTML();fitAll();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitAll);const fb=$('#frame-box');if(fb)fb.hidden=!!T;
+  {const __o=[];layer.querySelectorAll('.c-img').forEach(e=>__o.push([e.dataset.i,e,e.outerHTML]));layer.innerHTML=divsHTML()+blocks()+imgsHTML()+xtHTML()+lnHTML();__o.forEach(([k,e,h])=>{const n=layer.querySelector('.c-img[data-i="'+k+'"]');if(n&&n.outerHTML===h)layer.replaceChild(e,n);});}fitAll();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitAll);const fb=$('#frame-box');if(fb)fb.hidden=!!T;
   clearTimeout(bgTimer);bgTimer=setTimeout(setBg,30);
   if(typeof syncOrderItem==='function')syncOrderItem();
   if(typeof updHint==='function')updHint();
@@ -1651,7 +1651,7 @@ function hitText(e){const sel=S.mv==='orn'?'.dvg':'.tb .in,.xt';
   });
   return best;
 }
-stage.addEventListener('pointerdown',e=>{
+const allHit=e=>{const P=r=>{const dx=Math.max(r.left-e.clientX,0,e.clientX-r.right),dy=Math.max(r.top-e.clientY,0,e.clientY-r.bottom);return Math.hypot(dx,dy);};let best=null,bs=1e30;const add=(el,mv,sub)=>{let r=null;if(el.classList.contains('in')){try{const rg=document.createRange();rg.selectNodeContents(el);r=rg.getBoundingClientRect();}catch(_){}}if(!r||!r.width)r=el.getBoundingClientRect();if(!r.width||!r.height)return;const d=P(r);if(d>26)return;const sc=d<=.5?r.width*r.height:1e12+d;if(sc<bs){bs=sc;best={mv,sub};}};layer.querySelectorAll('.tb .in,.xt').forEach(el=>add(el,'txt',null));layer.querySelectorAll('.dvg').forEach(el=>add(el,'orn',null));layer.querySelectorAll('.c-img:not(.fxd)').forEach(el=>add(el,'img',el.classList.contains('lb')?'lib':'img'));return best;};stage.addEventListener('pointerdown',e=>{if(!window.__mkAll)return;const t=e.target;if(t.closest&&t.closest('[data-rz],.rh,.rhx,.rhy,.rot'))return;const h=allHit(e);if(!h)return;if(S.mv!==h.mv)setMv(h.mv);if(h.sub)stage.dataset.sub=h.sub;},true);const allIdle=()=>{setTimeout(()=>{try{if(window.__mkAll&&S.sel===-1&&S.st==null&&S.mv!=='lock'&&!gst)setMv('lock');}catch(_){}},80);};document.addEventListener('pointerup',allIdle,true);document.addEventListener('click',allIdle,true);stage.addEventListener('pointerdown',e=>{
   const t=e.target;
   if(S.mv==='lock'){return;}
   if(S.mv!=='img'){
@@ -1747,7 +1747,7 @@ function addText(){
 const toolsBox=$('#tools');
 
 /* close the tools sheet: tap outside it, or drag its header down */
-document.addEventListener('pointerdown',e=>{if(toolsBox.hidden)return;const t=e.target;if(!t||!t.closest)return;if(t.closest('#tools,#stage,#stagewrap,.cert,.preview,select,option,.modal,#tabbar,#login'))return;try{pick('none');}catch(_){}},true);
+document.addEventListener('pointerdown',e=>{if(toolsBox.hidden)return;const t=e.target;if(!t||!t.closest)return;if(t.closest('#tools,#stage,#stagewrap,.cert,.preview,select,option,.modal,#tabbar,#login,#cpk'))return;try{pick('none');}catch(_){}},true);
 {let y0=null;toolsBox.addEventListener('touchstart',e=>{y0=e.target.closest('.tl-h')?e.touches[0].clientY:null;},{passive:true});toolsBox.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0>60){try{pick('none');}catch(_){}}y0=null;},{passive:true});}
 toolsBox.addEventListener('input',e=>{
   const a=e.target.dataset.a;if(!a)return;
@@ -1961,7 +1961,7 @@ $('#colors').addEventListener('change',e=>{if(e.target.closest('input[type=color
 [['title',true],['intro',true],['name',true],['subj',true],['role',true],['body',true],['from',true],['date',true]].forEach(([k,ed])=>{$('#f-'+k).addEventListener('input',e=>{S[k]=e.target.value;if(ed)S.edited[k]=true;if(k==='subj')applyDefaults();if(k==='title')paintTitleChips();render();});});
 $('#title-chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.titleIdx=+b.dataset.i;S.edited.title=false;applyDefaults();render();});
 $('#f-name').addEventListener('focus',e=>e.target.select());
-$('#btn-reset').onclick=()=>{resetOrn();S.fmt={};S.nt=0;try{ntSync();}catch(_){}S.edited={title:false,intro:false,name:S.edited.name,subj:S.edited.subj,role:false,body:false,from:false,date:false};applyLayoutOv();applyDefaults();render();};
+$('#btn-reset').onclick=()=>{const k={gu:S.gu,gl:S.gl,ll:S.ll,orient:S.orient,size:S.size,lang:S.lang,gender:S.gender,occ:S.occ,font:S.font,fontL:S.fontL,openOrder:S.openOrder};if(S.orient==='p'){k.theme=S.theme;k.folder=S.folder;k.themeTouched=S.themeTouched;}const d=JSON.parse(__INIT);Object.keys(d).forEach(x=>{S[x]=d[x];});Object.assign(S,k);S.noDate=false;S.nt=0;S._ovK=null;S.bgKey=null;try{$('#f-showdate').checked=true;}catch(_){}resetOrn();applyLayoutOv();try{setSubjDefault();}catch(_){}applyDefaults();try{syncControls();}catch(_){}try{renderImgs();}catch(_){}try{ntSync();}catch(_){}render();try{renderTools();}catch(_){}};
 function syncControls(){
   segSync('seg-orient','orient');segSync('seg-size','size');drawSz();segSync('seg-lang','lang');paintFontSeg();segSync('seg-dn','dnv');segSync('seg-dc','dcv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-frame','frame');segSync('seg-div','div');segSync('seg-occ','occ');segSync('seg-gender','gender');$('#gender-box').hidden=S.occ==='thanks';
   syncTheme();paintColors();paintTitleChips();
@@ -2011,7 +2011,7 @@ function dropFx(){if(S.images.some(i=>i.fx)){S.images=S.images.filter(i=>!i.fx);
 function resetOrn(){{S.fmt={};S.xt=[];S.ln=[];S.noDate=false;S.paper=S.deep=S.accent=S.ink=null;try{$('#f-showdate').checked=true;}catch(_){}S._ovK=null;}S.divT='o1';S.div='e2';S.dc=null;S.dcv='a';S.dn=null;S.dnv='a';S.sg=null;S.sgv='a';S.sgd='s1';S.dsz={};S.off={};S.st=null;segSync('seg-dc','dcv');segSync('seg-dn','dnv');segSync('seg-sg','sgv');segSync('seg-sgd','sgd');segSync('seg-divT','divT');segSync('seg-div','div');}
 $('#btn-clear').onclick=()=>{S.theme='none';S.themeTouched=true;S.frame='none';S.paper='#ffffff';S.bg=null;S.divT='none';S.div='none';S.dn=0;S.dnv='0';S.dc=0;S.dcv='0';S.sg=0;S.sgv='0';S.images=[];S.xt=[];S.ln=[];S.sel=-1;S.st=null;S.dsz={};
       ['seg-divT','seg-div','seg-frame','seg-dn','seg-dc','seg-sg'].forEach((id,i)=>{try{segSync(id,['divT','div','frame','dnv','dcv','sgv'][i]);}catch(_){}});try{renderImgs();}catch(_){}try{syncTheme();paintColors();}catch(_){}S.nt=1;S.off={};S.fmt={};ntSync();render();renderTools();};
-function ntSync(){const b=$('#btn-nt');if(!b)return;b.textContent=S.nt?(S.lang==='ar'?'إظهار الكتابة':'Afficher le texte'):(S.lang==='ar'?'بدون كتابة':'Sans texte');b.setAttribute('aria-pressed',S.nt?'true':'false');}
+function ntSync(){const b=$('#btn-nt');if(!b)return;b.textContent=S.nt?'إظهار الكتابة':'بدون كتابة';b.setAttribute('aria-pressed',S.nt?'true':'false');}
 $('#btn-nt').onclick=()=>{S.nt=S.nt?0:1;ntSync();render();renderTools();};
 ['title','intro','name','role','body','from','date'].forEach(k=>{const el=$('#f-'+k);if(el)el.addEventListener('input',()=>{if(S.nt){S.nt=0;ntSync();render();}});});
 $('#seg-mv').onclick=e=>{const b=e.target.closest('button');if(b)setMv(b.dataset.v);};setMv('lock');
@@ -2349,7 +2349,7 @@ const have=ORD.filter(k=>sec.querySelector('[data-tab="'+k+'"]'));
 const bar=document.createElement('nav');bar.id='tabbar';bar.setAttribute('role','tablist');bar.setAttribute('aria-label','أقسام التصميم');
 have.forEach(k=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.dataset.t=k;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg><span>'+NAMES[k]+'</span>';b.onclick=()=>show(k,true);bar.appendChild(b);});
 sec.appendChild(bar);
-function show(k,go){try{setMv({text:'txt',orn:'orn',img:'img',lib:'img'}[k]||'lock');}catch(_){}try{stage.dataset.sub=k==='lib'?'lib':'img';const si=S.images[S.sel];if(si&&!!si.lib!==(k==='lib')){S.sel=-1;markSel();renderTools();}}catch(_){}sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
+function show(k,go){try{setMv({text:'txt',orn:'orn',img:'img',lib:'img'}[k]||'lock');}catch(_){}try{window.__mkAll=(k==='theme');}catch(_){}try{stage.dataset.sub=k==='lib'?'lib':'img';const si=S.images[S.sel];if(si&&!!si.lib!==(k==='lib')){S.sel=-1;markSel();renderTools();}}catch(_){}sec.querySelectorAll('[data-tab]').forEach(e=>{e.hidden=e.dataset.tab!==k;});[...bar.children].forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===k)));
   if(go&&window.innerWidth<=860){const c=sec.querySelector('.controls'),pv=sec.querySelector('.preview');if(c&&pv){const y=c.getBoundingClientRect().top+scrollY-pv.offsetHeight-6;try{window.scrollTo({top:Math.max(0,y),behavior:'smooth'});}catch(e){window.scrollTo(0,Math.max(0,y));}}}}
 show('theme');
 })();
@@ -2809,3 +2809,39 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 <style>.tb:not(.ml){overflow:visible}.fgrid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:200px;overflow:auto;margin:6px 0;padding:2px}.fgb{min-height:46px;font-size:19px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 8px;border:1.5px solid var(--line,#e3dccd);border-radius:10px;background:var(--surface,#fff);color:var(--fg,#141c33);font-family:inherit}.fgb.on{border-color:var(--hl,#a98534);outline:2px solid var(--hl,#a98534)}</style>
 <script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.xl');if(a&&a.href&&!e.defaultPrevented&&!e.ctrlKey&&!e.metaKey){e.preventDefault();location.href=a.href;}},true);</script>
 <script src="kmsg.js?v=4"></script>
+<style>
+#cpk .cpr input[type=range]{direction:ltr}
+#cpk{background:rgba(15,18,30,.12)!important}
+@media (max-width:860px){
+ #cpk .cpb{gap:8px!important;padding-top:10px!important}
+ #cpk canvas{height:118px!important}
+ #cpk .cph button{padding:6px 16px!important}
+ #cpk .cps{grid-template-columns:repeat(12,1fr)!important;gap:4px!important}
+ #cpk .cps button{width:24px!important;height:24px!important}
+ #cpk .cpx{width:92px!important;padding:5px!important;font-size:13px!important}
+ #cpk .cpe button{padding:6px 10px!important}
+}
+.mk-del{color:#c62828!important;border-color:#e3a6a6!important;background:#fdf1f1!important}
+.mk-tap{transform:scale(.93)!important;filter:brightness(.86)!important;transition:transform .06s,filter .06s!important}
+</style><script>
+(function(){
+function mark(){[].forEach.call(document.querySelectorAll('button'),function(b){var t=b.textContent.trim();var d=/^(حذف|Supprimer)/.test(t)||b.matches('[data-a="del"],[data-del],[data-bact="del"],[data-bact="idel"],[data-mgop="del"],[aria-label="حذف"],[aria-label="Supprimer"]');if(d!==b.classList.contains('mk-del'))b.classList.toggle('mk-del',d)})}
+var mt=0;new MutationObserver(function(){clearTimeout(mt);mt=setTimeout(mark,30)}).observe(document.body,{childList:true,subtree:true});mark();
+// when the colour sheet opens, bring the element being coloured above it so the change is seen live
+document.addEventListener('click',function(e){if(!(e.target.closest&&e.target.closest('input[type=color]')))return;setTimeout(function(){var sh=document.querySelector('#cpk .cpb');if(!sh||document.getElementById('cpk').hidden)return;var top=sh.getBoundingClientRect().top;var el=document.querySelector('#layer .sel,#card .sel,#cert .sel,#layer .xt.on')||document.querySelector('#cert,#card');if(!el)return;var r=el.getBoundingClientRect();if(r.bottom>top-12)window.scrollBy(0,r.bottom-top+24);else if(r.top<0)window.scrollBy(0,r.top-12)},120)},true);
+// visible press feedback (iOS needs a touch listener for it, and a class is the reliable way)
+document.addEventListener('touchstart',function(){},{passive:true});
+document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('button,.btn,.opt,.pill,.theme,.sw,.mk-vid,[role=button]');if(!b||b.closest('#card,#cert,#layer,#cpk canvas')||b.disabled)return;b.classList.add('mk-tap');setTimeout(function(){b.classList.remove('mk-tap')},220)},true);
+})();
+</script><script>
+(function(){var u=document.getElementById('mk-vurl'),m=document.getElementById('mk-vmsg');if(!u)return;
+function say(t,e){m.textContent=t;m.style.color=e?'#b3261e':'#1b7a3d'}
+function db(){return window.__fdb||(window.firebase&&firebase.apps&&firebase.apps.length?firebase.firestore():null)}
+var n=0,t=setInterval(function(){var d=db();if(!d&&++n<80)return;clearInterval(t);if(!d)return;
+ try{d.collection('config').doc('video').get().then(function(x){if(x.exists&&x.data()&&x.data().url&&!u.value)u.value=x.data().url}).catch(function(){})}catch(_){}},400);
+function save(v){var d=db();if(!d){say('لم يتصل بالقاعدة بعد، حاولي بعد قليل',1);return}
+ d.collection('config').doc('video').set({url:v,t:Date.now()}).then(function(){try{localStorage.setItem('kk_vid',v)}catch(_){}say(v?'تم الحفظ ✓':'تمت إزالة الرابط ✓')}).catch(function(e){say('تعذّر الحفظ: '+((e&&e.code)||'خطأ')+' — تأكدي أنك مسجلة الدخول',1)})}
+document.getElementById('mk-vsave').addEventListener('click',function(){var v=u.value.trim();if(!/^https:\/\/[^\s]+$/i.test(v)){say('الرابط يجب أن يبدأ بـ https://',1);return}save(v)});
+document.getElementById('mk-vclr').addEventListener('click',function(){u.value='';save('')});
+})();
+</script>
