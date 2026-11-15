@@ -1658,7 +1658,7 @@ function addText(){
 const toolsBox=$('#tools');
 
 /* close the tools sheet: tap outside it, or drag its header down */
-document.addEventListener('pointerdown',e=>{if(toolsBox.hidden)return;const t=e.target;if(!t||!t.closest)return;if(t.closest('#tools,#stage,#stagewrap,.cert,.preview,select,option,.modal,#tabbar,#login'))return;try{pick('none');}catch(_){}},true);
+document.addEventListener('pointerdown',e=>{if(toolsBox.hidden)return;const t=e.target;if(!t||!t.closest)return;if(t.closest('#tools,#stage,#stagewrap,.cert,.preview,select,option,.modal,#tabbar,#login,#cpk'))return;try{pick('none');}catch(_){}},true);
 {let y0=null;toolsBox.addEventListener('touchstart',e=>{y0=e.target.closest('.tl-h')?e.touches[0].clientY:null;},{passive:true});toolsBox.addEventListener('touchend',e=>{if(y0!=null&&e.changedTouches[0].clientY-y0>60){try{pick('none');}catch(_){}}y0=null;},{passive:true});}
 toolsBox.addEventListener('input',e=>{
   const a=e.target.dataset.a;if(!a)return;
@@ -2321,7 +2321,18 @@ document.addEventListener('touchend',function(e){var t=e.target,inp=t&&t.closest
 @media (prefers-reduced-motion:reduce){.mk-vid{animation:none}}
 #cpk .cpr input[type=range]{direction:ltr}
 .panel.mk-col>:not(h2):not(.mk-sum){display:none!important}
-.mk-del{color:#c62828!important;border-color:#e3a6a6!important}
+.mk-del{color:#c62828!important;border-color:#e3a6a6!important;background:#fdf1f1!important}
+.mk-tap{transform:scale(.93)!important;filter:brightness(.86)!important;transition:transform .06s,filter .06s!important}
+#cpk{background:rgba(15,18,30,.12)!important}
+@media (max-width:860px){
+ #cpk .cpb{gap:8px!important;padding-top:10px!important}
+ #cpk canvas{height:118px!important}
+ #cpk .cph button{padding:6px 16px!important}
+ #cpk .cps{grid-template-columns:repeat(12,1fr)!important;gap:4px!important}
+ #cpk .cps button{width:24px!important;height:24px!important}
+ #cpk .cpx{width:92px!important;padding:5px!important;font-size:13px!important}
+ #cpk .cpe button{padding:6px 10px!important}
+}
 .btn,.opt,.pill,button{transition:transform .08s,filter .08s}
 .btn:active,.opt:active,.pill:active,.mk-sum b:active,.mk-all:active{transform:scale(.96);filter:brightness(.93)}
 .mk-test{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99;background:#c62828;color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:0 0 8px 8px;pointer-events:none}
@@ -2384,8 +2395,16 @@ document.querySelectorAll('#tab-design .step[data-tab=orn] .seg.dvseg').forEach(
  b.addEventListener('click',function(){g.classList.toggle('mk-open');p()});
  p();setTimeout(p,800);setTimeout(p,2500);document.addEventListener('click',function(){setTimeout(p,80)},true);
 });
-function mark(){[].forEach.call(document.querySelectorAll('button'),function(b){var t=b.textContent.trim();var d=(t==='حذف'||t==='Supprimer'||t==='✕ حذف'||/^حذف( الصورة| النص| العنصر)?$/.test(t));if(d!==b.classList.contains('mk-del'))b.classList.toggle('mk-del',d)})}
-new MutationObserver(function(){mark()}).observe(document.body,{childList:true,subtree:true});mark();
 var tg=document.createElement('div');tg.className='mk-test';tg.textContent='TEST';document.body.appendChild(tg);
+})();
+</script><script>
+(function(){
+function mark(){[].forEach.call(document.querySelectorAll('button'),function(b){var t=b.textContent.trim();var d=/^(حذف|Supprimer)/.test(t)||b.matches('[data-a="del"],[data-del],[data-bact="del"],[data-bact="idel"],[data-mgop="del"],[aria-label="حذف"],[aria-label="Supprimer"]');if(d!==b.classList.contains('mk-del'))b.classList.toggle('mk-del',d)})}
+var mt=0;new MutationObserver(function(){clearTimeout(mt);mt=setTimeout(mark,30)}).observe(document.body,{childList:true,subtree:true});mark();
+// when the colour sheet opens, bring the element being coloured above it so the change is seen live
+document.addEventListener('click',function(e){if(!(e.target.closest&&e.target.closest('input[type=color]')))return;setTimeout(function(){var sh=document.querySelector('#cpk .cpb');if(!sh||document.getElementById('cpk').hidden)return;var top=sh.getBoundingClientRect().top;var el=document.querySelector('#layer .sel,#card .sel,#cert .sel,#layer .xt.on')||document.querySelector('#cert,#card');if(!el)return;var r=el.getBoundingClientRect();if(r.bottom>top-12)window.scrollBy(0,r.bottom-top+24);else if(r.top<0)window.scrollBy(0,r.top-12)},120)},true);
+// visible press feedback (iOS needs a touch listener for it, and a class is the reliable way)
+document.addEventListener('touchstart',function(){},{passive:true});
+document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('button,.btn,.opt,.pill,.theme,.sw,.mk-vid,[role=button]');if(!b||b.closest('#card,#cert,#layer,#cpk canvas')||b.disabled)return;b.classList.add('mk-tap');setTimeout(function(){b.classList.remove('mk-tap')},220)},true);
 })();
 </script>
