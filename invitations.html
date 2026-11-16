@@ -204,6 +204,8 @@ body:has(#tools:not([hidden])) #tabbar{display:none}
 #tools input[type=range]{width:110px;accent-color:var(--hl)}
 #tools .mini{font:inherit;font-size:12px;background:var(--surface2);color:var(--fg);border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;cursor:pointer}
 #tools .mini[aria-pressed="true"]{border-color:var(--hl);font-weight:700}
+#tools .mini{background:var(--surface);border-color:var(--hl);font-weight:600;border-radius:12px;min-height:36px;box-shadow:0 1px 3px rgba(20,28,51,.08)}
+#tools .mini:active{transform:scale(.97)}
 #tools input[type=text]{font:inherit;font-size:13px;width:150px;background:var(--surface2);color:var(--fg);border:1.5px solid var(--line);border-radius:8px;padding:3px 8px}
 #tools .cin{width:30px;height:24px;padding:0;border:2px solid var(--line);border-radius:8px;background:none;cursor:pointer}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
@@ -1280,7 +1282,10 @@ function render_real(){try{applyMv();}catch(_e){}
   [].forEach.call($('#zoom').children,function(b){b.setAttribute('aria-pressed',b.dataset.z===S.zoom?'true':'false')});
   $('#dim').textContent=(S.shape==='circle'?t.dia+' '+z[0]:z[0]+' × '+z[1])+' '+t.cm+'  ·  '+t.shapes[S.shape]+(function(){var tq=TPL.filter(function(x){return x.id===S.tpl})[0];return (tq&&tq.bimg&&tq.ar&&Math.abs(z[1]/z[0]/tq.ar-1)>=.1)?(UL==='ar'?'  ·  قياس مختلف عن تصميم الثيم: يُقصّ جزء منه':'  ·  format différent du modèle : image recadrée'):'';})();
 }
-try{var __ro=new ResizeObserver(function(){if(document.body.classList.contains('fs'))render();});__ro.observe($('#stage'));}catch(_e){}
+try{var __sw=0,__sh=0,__rq=0;var __ro=new ResizeObserver(function(){var st=$('#stage'),w=st.clientWidth,h=st.clientHeight;if(w===__sw&&h===__sh)return;__sw=w;__sh=h;if(__rq)return;__rq=1;requestAnimationFrame(function(){__rq=0;render();});});__ro.observe($('#stage'));}catch(_e){}
+/* the preview is drawn from the stage size: redraw whenever the stage changes (hide/show, edit sheet, app resumed) so the card never stays a tiny dot */
+['pageshow','focus','orientationchange'].forEach(function(n){window.addEventListener(n,function(){setTimeout(render,60);});});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(render,60);});
 /* ---- selection bar ---- */
 var FNL=null,PFL=null,TXTF=null;
 function FOLD(k,lab,n){return '<button class="fold2" data-tf="'+k+'" aria-expanded="'+(TXTF===k)+'"><span>'+lab+' ('+n+')</span><i>'+(TXTF===k?'\u25BE':'\u25C2')+'</i></button>';}
