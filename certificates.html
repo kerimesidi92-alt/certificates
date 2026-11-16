@@ -1199,7 +1199,7 @@ function plainSVG(P,D,A){
   const cn=(x,y,sx,sy)=>`<g transform="translate(${x} ${y}) scale(${sx} ${sy})" fill="none" stroke="${A}"><path d="M0 0H92M0 0V92" stroke-width="3.5"/><path d="M16 16H64M16 16V64" stroke-width="1.6"/><rect x="-6" y="-6" width="12" height="12" transform="rotate(45)" fill="${A}" stroke="none"/><circle cx="86" cy="0" r="3" fill="${A}" stroke="none"/><circle cx="0" cy="86" r="3" fill="${A}" stroke="none"/></g>`;
   const fr=S.frame||'full',p=S.orient==='p';
   const SP=p?[[453,545,540],[453,285,400],[453,895,260]]:[[640,478,640],[640,232,380],[640,756,300]];
-  const sp=SP.slice(0,S.dn==null?3:Math.min(3,S.dn)).map(a=>ornS(a[0],a[1],a[2],A)).join('');
+  const sp=SP.slice(0,S.dn==null?3:0).map(a=>ornS(a[0],a[1],a[2],A)).join('');
   const frame=fr==='none'?'':`<rect x="34" y="34" width="${W-68}" height="${H-68}" fill="none" stroke="${D}" stroke-width="${fr==='simple'?4:7}"/>`+(fr==='simple'?'':`<rect x="54" y="54" width="${W-108}" height="${H-108}" fill="none" stroke="${A}" stroke-width="1.6" opacity=".7"/>`);
   const cor=fr==='full'?cn(78,78,1,1)+cn(W-78,78,-1,1)+cn(78,H-78,1,-1)+cn(W-78,H-78,-1,-1):'';
   return wrapSVG(P,D,A,frame+cor+sp);
