@@ -252,7 +252,7 @@ function render(canvas,scale){
  var msz=(rtl?66:62)*u*(TL?1.3:1);ctx.font=msz+'px "'+S.fMon+'"';ctx.fillStyle=paintText;
  if(!rtl&&S.upper)spaced(ctx,mtxt,W/2,layout.mon,msz*.28,'center',S.bMon);else{ctx.fillText(mtxt,W/2,layout.mon);if(S.bMon)bld(ctx,mtxt,W/2,layout.mon,msz);}
  /* day names */
- var dsz=(rtl?38:36)*u*(TL?1.12:1);ctx.font=dsz+'px "'+S.fDay+'"';ctx.globalAlpha=S.bDay?1:.88;ctx.fillStyle=paintText;
+ var dsz=(rtl?38:36)*u;ctx.font=dsz+'px "'+S.fDay+'"';ctx.globalAlpha=S.bDay?1:.88;ctx.fillStyle=paintText;
  order.forEach(function(dow,i){var idx=rtl?(6-i):i;ctx.fillText(L.d[dow],cx0(idx),layout.hdr);if(S.bDay)bld(ctx,L.d[dow],cx0(idx),layout.hdr,dsz);});
  ctx.globalAlpha=1;
  var nsz=(S.mode==='week'?62:50)*u*(TL?1.5:1);ctx.font=nsz+'px "'+S.fNum+'"';

@@ -173,7 +173,7 @@ function sw(kind,cur){var h='';COLORS.forEach(function(c,i){h+='<button type="bu
  return '<div class="row">'+h+'</div>';}
 function ui(){
  var h='';
- h+='<div class="g"><h3>النوع</h3><div class="row">'+btn('أسبوعي',S.mode==='week','data-mode="week"')+btn('شهري',S.mode==='month','data-mode="month"')+'</div></div>';
+ h+='<div class="g"><h3>النوع</h3><div class="row">'+btn('أسبوعي',S.mode==='week','data-mode="week"')+btn('شهري',S.mode==='month'&&!S.tall,'data-mode="month"')+btn('شهري طولي',S.mode==='month'&&!!S.tall,'data-mode="mtall"')+'</div></div>';
  h+='<div class="g"><h3>التاريخ واللغة</h3><div class="row"><label class="f">يوم الزفاف<input type="date" id="date" value="'+S.date+'"></label></div>'+
     '<div class="row">'+btn('العربية',S.lang==='ar','data-lang="ar"')+btn('Français',S.lang==='fr','data-lang="fr"')+btn('English',S.lang==='en','data-lang="en"')+'</div>'+
     '<div class="row"><span class="note" style="align-self:center">أول يوم في الأسبوع:</span>'+btn('السبت',S.first===6,'data-first="6"')+btn('الأحد',S.first===0,'data-first="0"')+btn('الاثنين',S.first===1,'data-first="1"')+'</div>'+
@@ -232,12 +232,13 @@ function render(canvas,scale){
  var layout={title:0,mon:0,hdr:0,rows:0,after:0};
  var cur=36*u;
  if(titleSz){layout.title=cur+titleSz*.8;cur+=titleSz*1.15;}
- layout.mon=cur+70*u;cur+=120*u;
- layout.hdr=cur+36*u;cur+=82*u;
+ var TL=!!S.tall&&S.mode==='month';
+ layout.mon=cur+(TL?100:70)*u;cur+=(TL?160:120)*u;
+ layout.hdr=cur+(TL?48:36)*u;cur+=(TL?116:82)*u;
  var rowH=(S.mode==='week'?0:92*u);
  if(S.mode==='week'){layout.rows=cur+74*u;cur+=140*u;var hs=(S.heart==='solid'?150:176)*u;
    if(S.stem&&S.heart!=='dbl'||S.stem)cur+=150*u;else cur+=40*u;}
- else{var pad=(new Date(y,m,1).getDay()-S.first+7)%7,dim=new Date(y,m+1,0).getDate(),rows=Math.ceil((pad+dim)/7);layout.rows=cur+rowH*.5;cur+=rowH*rows+30*u;}
+ else{var pad=(new Date(y,m,1).getDay()-S.first+7)%7,dim=new Date(y,m+1,0).getDate(),rows=Math.ceil((pad+dim)/7);if(TL){var P0=S.bgm?S.bgpd*12*u:0,Ht=(W+2*P0)/0.676-2*P0;rowH=Math.max(92*u,(Ht-cur-30*u)/rows)}layout.rows=cur+rowH*.5;cur+=rowH*rows+30*u;}
  H=Math.ceil(cur);
  canvas.width=Math.round(W);canvas.height=H;
  var ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.textBaseline='alphabetic';ctx.textAlign='center';
@@ -248,14 +249,14 @@ function render(canvas,scale){
  /* month */
  var mt=L.m[m];if(S.upper&&!rtl)mt=mt.toUpperCase();
  var mtxt=mt+(S.year?(rtl?' / ':' ')+digits(y):'');
- var msz=(rtl?66:62)*u;ctx.font=msz+'px "'+S.fMon+'"';ctx.fillStyle=paintText;
+ var msz=(rtl?66:62)*u*(TL?1.3:1);ctx.font=msz+'px "'+S.fMon+'"';ctx.fillStyle=paintText;
  if(!rtl&&S.upper)spaced(ctx,mtxt,W/2,layout.mon,msz*.28,'center',S.bMon);else{ctx.fillText(mtxt,W/2,layout.mon);if(S.bMon)bld(ctx,mtxt,W/2,layout.mon,msz);}
  /* day names */
  var dsz=(rtl?38:36)*u;ctx.font=dsz+'px "'+S.fDay+'"';ctx.globalAlpha=S.bDay?1:.88;ctx.fillStyle=paintText;
  order.forEach(function(dow,i){var idx=rtl?(6-i):i;ctx.fillText(L.d[dow],cx0(idx),layout.hdr);if(S.bDay)bld(ctx,L.d[dow],cx0(idx),layout.hdr,dsz);});
  ctx.globalAlpha=1;
- var nsz=(S.mode==='week'?62:50)*u;ctx.font=nsz+'px "'+S.fNum+'"';
- var hsize=(S.mode==='week'?170:118)*u,numOn=S.heart==='solid'?'#ffffff':null;
+ var nsz=(S.mode==='week'?62:50)*u*(TL?1.5:1);ctx.font=nsz+'px "'+S.fNum+'"';
+ var hsize=(S.mode==='week'?170:118)*u*(TL?1.3:1),numOn=S.heart==='solid'?'#ffffff':null;
  var glow=(hc.g?hc.g[1]:hc.s);
  function num(n,cx,cy,isSel){
   if(isSel&&S.shape!=='none'){drawHeart(ctx,cx,cy-nsz*.33,hsize,S.heart,paintHeart,glow);}
@@ -291,7 +292,7 @@ document.addEventListener('click',function(e){
  var ft=e.target.closest('[data-fpt]');if(ft){FPT=ft.dataset.fpt;fpRender();return;}
  var fv=e.target.closest('[data-fv]');if(fv){var q=fv.dataset.fv.split('|');S[q[0]]=q.slice(1).join('|');fpRender();ui();refresh();return;}
  var b=e.target.closest('[data-mode],[data-lang],[data-first],[data-heart],[data-shape],[data-col],[data-hcol]');if(!b)return;
- if(b.dataset.mode)S.mode=b.dataset.mode;
+ if(b.dataset.mode){var mm=b.dataset.mode;S.tall=(mm==='mtall');S.mode=(mm==='mtall'?'month':mm);}
  if(b.dataset.lang){S.lang=b.dataset.lang;S.fMon=S.lang==='ar'?(FTIT.indexOf(S.fMon)>=0&&/Amiri|Aref|Reem|Messiri|Katibeh|Mirza|Marhey/.test(S.fMon)?S.fMon:'Amiri'):(/Amiri|Aref|Reem|Messiri|Katibeh|Mirza|Marhey/.test(S.fMon)?'Great Vibes':S.fMon);
    S.fDay=S.lang==='ar'?'Cairo':(S.fDay==='Cairo'?'Playfair Display':S.fDay);S.fNum=S.lang==='ar'?'Amiri':(S.fNum==='Amiri'?'Playfair Display':S.fNum);
    S.first=S.lang==='ar'?6:(S.first===6?0:S.first);if(S.lang==='ar'&&!S._arSet){}}
