@@ -577,6 +577,8 @@ var ART_IDS=['garTop','garBot','side','wreath','big','stars'];
 var TPL=[
  {id:'blank',n:{ar:'بدون قالب',fr:'Sans modèle'},shape:null,size:null,arts:[],frame:'thin',bg:null,ac:null,ev:'wedding'},
  {id:'tmeas',n:{ar:'ورقة القياس (اختبار طباعة)',fr:'Feuille de mesure'},shape:'rect',size:8,arts:[],frame:'none',bg:'#ffffff',ac:'#00122e',ink:'#00122e',ev:'wedding',bimg:'xms',ar:1.4143,cm:[21,29.7],txt:{x:50,t:80,b:4,w:70,s:0.5},d:{fa:'Amiri',orn:'none',dst:'line',ev:'',evfr:''}},
+ {id:'tmpadA',n:{ar:'اختبار هامش A (يسار 2، والباقي 1)',fr:'Feuille de mesure'},shape:'rect',size:8,arts:[],frame:'none',bg:'#ffffff',ac:'#00122e',ink:'#00122e',ev:'wedding',bimg:'xtmpada',ar:1.4143,cm:[21,29.7],txt:{x:50,t:80,b:4,w:70,s:0.5},d:{fa:'Amiri',orn:'none',dst:'line',ev:'',evfr:''}},
+ {id:'tmpadB',n:{ar:'اختبار هامش B (3 مم لكل جهة)',fr:'Feuille de mesure'},shape:'rect',size:8,arts:[],frame:'none',bg:'#ffffff',ac:'#00122e',ink:'#00122e',ev:'wedding',bimg:'xtmpadb',ar:1.4143,cm:[21,29.7],txt:{x:50,t:80,b:4,w:70,s:0.5},d:{fa:'Amiri',orn:'none',dst:'line',ev:'',evfr:''}},
  {id:'t02',n:{ar:'إطار أبيض وذهبي',fr:'Cadre blanc et or'},shape:'rect',size:2,arts:[],frame:'none',bg:'#fbfaf8',ac:'#b8923f',ink:'#5a4030',ev:'wedding',bimg:'x99',ar:1.4151,cm:[10,14.2],txt:{x:50,t:22,b:26,w:56,s:0.7},d:{fa:'Amiri',orn:'dots',dst:'line',ev:'دعوة حفل زفاف',evfr:'Invitation de mariage'}},
  {id:'t01',n:{ar:'أوراق بورجندي',fr:'Feuilles bordeaux'},shape:'rect',size:9,arts:[],frame:'none',bg:'#f6f3f0',ac:'#7a1f35',ink:'#4a2a30',ev:'wedding',bimg:'t01',ar:1.5007,txt:{x:50,t:8,b:36,w:44,s:0.75},d:{fa:'Aref Ruqaa',orn:'leaf',dst:'big',ev:'بسم الله الرحمن الرحيم',evfr:'Au nom de Dieu'}},
  {id:'t04',n:{ar:'دائرة بيضاء وذهبية',fr:'Cercle blanc et or'},shape:'rect',size:2,arts:[],frame:'none',bg:'#fbfaf8',ac:'#b8923f',ink:'#6b5430',ev:'wedding',bimg:'t04',ar:1.4172,txt:{x:44,t:31,b:40,w:36,s:0.6},d:{fa:'Katibeh',orn:'heart',dst:'box',ev:'احجزوا الموعد',evfr:'Save the date'}},
@@ -958,7 +960,7 @@ ASSETS['03_magnolia']={w:1100,h:422,d:''};
 ASSETS['12_lines_frame']={w:245,h:502,d:''};
 ASSETS['12_lines_corner']={w:610,h:944,d:''};
 
-var BGIMG={};BGIMG['xms']='themes/test/measure-edges-a4.jpg';
+var BGIMG={};BGIMG['xms']='themes/test/measure-edges-a4.jpg';BGIMG['xtmpada']='themes/test/pad-a.jpg';BGIMG['xtmpadb']='themes/test/pad-b.jpg';
 function kcFreeCol(i,col){var kc=KCOR[i],o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 75" preserveAspectRatio="none">';kcPcs(kc,75,0).forEach(function(r){o+='<svg x="'+r.L+'" y="'+r.T+'" width="'+r.pw+'" height="'+r.ph+'" viewBox="'+r.p.x+' '+r.p.y+' '+r.p.w+' '+r.p.h+'" preserveAspectRatio="xMidYMid meet"><path fill="'+(col||kc.c)+'" d="'+r.p.d+'"/></svg>';});return o+'</svg>';}
 function kcFree(i){var kc=KCOR[i],o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 75" preserveAspectRatio="none">';kcPcs(kc,75,0).forEach(function(r){o+='<svg x="'+r.L+'" y="'+r.T+'" width="'+r.pw+'" height="'+r.ph+'" viewBox="'+r.p.x+' '+r.p.y+' '+r.p.w+' '+r.p.h+'"><path fill="'+kc.c+'" d="'+r.p.d+'"/></svg>';});return o+'</svg>';}
 
@@ -1674,7 +1676,7 @@ var PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0
 function TOVM(){return window.__TOV||{};}
 function okS(v){return true;}
 function jclone(x){return JSON.parse(JSON.stringify(x));}
-function applyOvTpl(){if(S.tpl==='tmeas'){S.noText=true;S.noDate=true;S.ovF=1;return;}var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov){if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}return;}if(ov.nt!=null||ov.nd!=null){S.noText=!!ov.nt;S.noDate=!!ov.nd;S.ovF=1;}else if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}var t=ov.t||{},o=ov.o;
+function applyOvTpl(){if(/^tm(eas|pad)/.test(S.tpl)){S.noText=true;S.noDate=true;S.ovF=1;return;}var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov){if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}return;}if(ov.nt!=null||ov.nd!=null){S.noText=!!ov.nt;S.noDate=!!ov.nd;S.ovF=1;}else if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}var t=ov.t||{},o=ov.o;
  if(t.evText!=null&&okS(t.evText))S.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f]&&okS(t[f]))S[f]=t[f];});
  if(o){if(o.E)S.E=jclone(o.E);if(o.orn!=null){S.orn=o.orn;S.olen=o.olen==null?null:o.olen;}if(o.dst!=null)S.dst=o.dst;
   if(o.txts)S.txts=jclone(o.txts).map(function(x){x.id=uid++;return x;});}if(o&&o.imgs){o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;I.dflt=1;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k))IMGSRC[k]='';(S.imgs=S.imgs||[]).push(I);});}}
