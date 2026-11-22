@@ -958,7 +958,7 @@ ASSETS['03_magnolia']={w:1100,h:422,d:''};
 ASSETS['12_lines_frame']={w:245,h:502,d:''};
 ASSETS['12_lines_corner']={w:610,h:944,d:''};
 
-var BGIMG={};BGIMG['xms']='themes/test/measure-a4.jpg';
+var BGIMG={};BGIMG['xms']='themes/test/measure-edges-a4.jpg';
 function kcFreeCol(i,col){var kc=KCOR[i],o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 75" preserveAspectRatio="none">';kcPcs(kc,75,0).forEach(function(r){o+='<svg x="'+r.L+'" y="'+r.T+'" width="'+r.pw+'" height="'+r.ph+'" viewBox="'+r.p.x+' '+r.p.y+' '+r.p.w+' '+r.p.h+'" preserveAspectRatio="xMidYMid meet"><path fill="'+(col||kc.c)+'" d="'+r.p.d+'"/></svg>';});return o+'</svg>';}
 function kcFree(i){var kc=KCOR[i],o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 75" preserveAspectRatio="none">';kcPcs(kc,75,0).forEach(function(r){o+='<svg x="'+r.L+'" y="'+r.T+'" width="'+r.pw+'" height="'+r.ph+'" viewBox="'+r.p.x+' '+r.p.y+' '+r.p.w+' '+r.p.h+'"><path fill="'+kc.c+'" d="'+r.p.d+'"/></svg>';});return o+'</svg>';}
 
