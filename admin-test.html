@@ -1298,7 +1298,7 @@ function plainSVG(P,D,A){
 
 /* ---------- certificate ---------- */
 const nfOn=()=>{const f=(S.fmt&&S.fmt.name)||{};if(f.fr!=null)return !!f.fr;const T=THEMES[S.theme];return !!(T&&T.nfr);};
-function blocks(){if(S.nt)return '';
+function blocks(){if(S.nt||S.theme==='tmeas')return '';
   const T=THEMES[S.theme],Z=zOf(T),fr=S.lang!=='ar',k=fr?1.1:1,F=fr?(LFONTS[S.fontL]||LFONTS.classic):(FONTS[S.font]||FONTS.ruqaa);
   const date=(S.noDate||!String(S.date).trim())?'':Z.date2?(fr?'Date\n':'التاريخ\n')+S.date:(fr?'Date : ':'التاريخ: ')+S.date;
   const L=[['title',S.title,fr?Math.round(Z.tfs*.6*F.ts):Math.round(Z.tfs*F.ts),fr,1.12],['intro',S.intro,Math.round(25*k),true,Z.il||1.7],['name',S.name||(S.edited.name?'':(fr?'Nom du lauréat':'اسم المكرَّم')),fr?Math.round(54*F.ns):Math.round(54*F.ns),false,1.3],['role',S.role,25,false,1.3],['body',S.body,Math.round(23*k),true,1.7],['from',S.from,Z.ff||25,false,1.3],['date',date,Z.fd||21,!!Z.date2,Z.date2?1.6:1.3]];
@@ -1417,7 +1417,7 @@ function divSVG(cx,y,w,st,c,id,cap){
 }
 const dzd=k=>k==='dvh'?[1,1,0,1,0]:[1,1,0,0,0];
 const dzOf=k=>{const v=S.dsz&&S.dsz[k],d=dzd(k);return v?[v[0],v[1],v[2]==null?d[2]:v[2],v[3]==null?d[3]:v[3],v[4]==null?d[4]:v[4]]:d;};
-function divsHTML(){
+function divsHTML(){if(S.theme==='tmeas')return '';
   const T0=THEMES[S.theme],T=T0||{nodiv:1};
   const Z=zOf(T0),c=eff('accent'),out=[],o=k=>(S.off&&S.off[k])||[0,0],has=k=>(k==='date'&&S.noDate)?'':String(S[k]).trim(),CR=S.divT||'o1',LN0=S.div,LND={dvr:'e2',dvf:'e2',dvm:'e2'};
   const exC=S.dc!=null,exL=S.dn!=null,grp=(k,cx,y,w,id,sty,cap)=>{const [dx,dy]=o(k),[sx,sy,rot,fy,fx]=dzOf(k),[rw,rh]=divDims(sty,w*sx,cap*sx),rx=Math.max(rw,60),ry=Math.max(rh,26);

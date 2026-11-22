@@ -1674,7 +1674,7 @@ var PUB=[],PUBALL=[],PUBDEL=[],COV={},CF=[],HID={items:[],folders:[]},__pubSub=0
 function TOVM(){return window.__TOV||{};}
 function okS(v){return true;}
 function jclone(x){return JSON.parse(JSON.stringify(x));}
-function applyOvTpl(){var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov){if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}return;}if(ov.nt!=null||ov.nd!=null){S.noText=!!ov.nt;S.noDate=!!ov.nd;S.ovF=1;}else if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}var t=ov.t||{},o=ov.o;
+function applyOvTpl(){if(S.tpl==='tmeas'){S.noText=true;S.noDate=true;S.ovF=1;return;}var ov=TOVM()[S.tpl+'|'+S.lang];if(!ov){if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}return;}if(ov.nt!=null||ov.nd!=null){S.noText=!!ov.nt;S.noDate=!!ov.nd;S.ovF=1;}else if(S.ovF){S.noText=false;S.noDate=false;S.ovF=0;}var t=ov.t||{},o=ov.o;
  if(t.evText!=null&&okS(t.evText))S.evText=t.evText;['n1','n2','line'].forEach(function(f){if(t[f]!=null&&!S.ed[f]&&okS(t[f]))S[f]=t[f];});
  if(o){if(o.E)S.E=jclone(o.E);if(o.orn!=null){S.orn=o.orn;S.olen=o.olen==null?null:o.olen;}if(o.dst!=null)S.dst=o.dst;
   if(o.txts)S.txts=jclone(o.txts).map(function(x){x.id=uid++;return x;});}if(o&&o.imgs){o.imgs.forEach(function(I0){var I=jclone(I0);I.id=uid++;I.dflt=1;var k=I.key||'';if(/^a:/.test(k)){var nm=k.slice(2);if(ASSETS[nm])IMGSRC[k]=ASSETS[nm].d;}else if(/^v:/.test(k))IMGSRC[k]='';(S.imgs=S.imgs||[]).push(I);});}}
