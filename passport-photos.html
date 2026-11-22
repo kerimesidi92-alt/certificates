@@ -99,6 +99,9 @@ details .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 <div class="info" style="margin-bottom:4px">عدد الصور</div>
 <div class="row" id="chips"><label style="width:78px"><input type="number" id="cnt" value="8" min="1" max="200"></label></div>
 <div class="info" id="capinfo" style="margin-top:6px"></div>
+<div class="info" style="margin:10px 0 4px">المسافة بين الصور</div>
+<div class="row" id="gapchips"></div>
+<label style="margin-top:10px">مكان الصور على الورقة <select id="place"><option value="tr">من أعلى اليمين (الباقي فارغ لتستعمليه)</option><option value="tl">من أعلى اليسار</option><option value="br">من أسفل اليمين</option><option value="bl">من أسفل اليسار</option><option value="c">في الوسط</option></select></label>
 </div>
 <div id="modeB" style="margin-top:10px" hidden>
 <div class="info" style="margin-bottom:6px">تُطبع المقاسات المحددة على A4 بنفس الصورة، مع اسم المقاس تحت كل صورة.</div>
@@ -110,7 +113,7 @@ details .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 <label>الاتجاه <select id="orient"><option value="auto">تلقائي</option><option value="p">طولي</option><option value="l">عرضي</option></select></label>
 <label>الدقة <select id="dpi"><option value="300">300 dpi</option><option value="400">400 dpi</option></select></label>
 <label>هامش الأمان (مم)<input type="number" id="mar" value="2" min="0" max="15" step="0.5"></label>
-<label>الفراغ بين الصور (مم)<input type="number" id="gap" value="1" min="0" max="10" step="0.5"></label>
+<input type="hidden" id="gap" value="1">
 <label style="grid-column:1/3">خطوط القص <select id="gd"><option value="ticks">علامات خارج الصور</option><option value="lines">خطوط في الفراغات</option><option value="none">بدون</option></select></label>
 </div>
 <div class="sl" style="margin-top:8px">
@@ -172,6 +175,7 @@ PAPERS.forEach(p=>$('#paper').add(new Option(p.n,p.id)));
 $('#paper').value='p1015';
 SIZES.filter(s=>s.id!=='cus').forEach(s=>{const l=document.createElement('label');l.innerHTML='<input type="checkbox" value="'+s.id+'" checked> '+s.n;$('#tchecks').appendChild(l);});
 [4,6,8,12,16,20].forEach(n=>{const b=document.createElement('button');b.className='chip';b.textContent=n;b.onclick=()=>{$('#cnt').value=n;changed();};$('#chips').appendChild(b);});
+[['0','ملتصقة'],['1','1 مم'],['2','2 مم'],['3','3 مم']].forEach(([v,t])=>{const b=document.createElement('button');b.className='chip'+(v==='1'?' on':'');b.textContent=t;b.dataset.v=v;b.onclick=()=>{$('#gap').value=v;[...$('#gapchips').children].forEach(x=>x.classList.toggle('on',x===b));changed();};$('#gapchips').appendChild(b);});
 {const b=document.createElement('button');b.className='chip';b.textContent='الأقصى للورقة';b.onclick=()=>{$('#cnt').value=capOf().cap;changed();};$('#chips').appendChild(b);}
 
 function curSize(){const id=$('#size').value;if(id==='cus')return{n:'مخصص',w:Math.max(10,+$('#cw').value||35),h:Math.max(10,+$('#ch').value||45)};return SIZES.find(s=>s.id===id);}
@@ -337,16 +341,24 @@ function gridFor(op,n){
   return best;
 }
 function buildPhotoPages(){
-  const s=curSize(),N=Math.max(1,Math.min(200,Math.round(+$('#cnt').value||1))),op=capOf();
+  const s=curSize(),N=Math.max(1,Math.min(200,Math.round(+$('#cnt').value||1))),op=capOf(),gp=+$('#gap').value||0,pl=$('#place').value;
   if(!op||op.cap<1)return{err:'المقاس أكبر من الورقة أو الهامش كبير جدًا.',pages:[]};
   const np=Math.ceil(N/op.cap),out=[];let left=N;
   for(let i=0;i<np;i++){
-    const n=Math.min(left,op.cap);left-=n;const g=gridFor(op,n),gp=+$('#gap').value||0;
-    const x0=(op.W-g.bw)/2,y0=(op.H-g.bh)/2,items=[];
-    for(let k=0;k<n;k++){const r=Math.floor(k/g.c),c=k%g.c;
-      const inRow=(r===g.r-1)?(n-(g.r-1)*g.c):g.c,off=(g.c-inRow)*(s.w+gp)/2;
-      items.push({x:x0+c*(s.w+gp)+(r===g.r-1?off:0),y:y0+r*(s.h+gp),w:s.w,h:s.h});}
-    out.push({W:op.W,H:op.H,items,block:{x:x0,y:y0,w:g.bw,h:g.bh},cols:g.c,rows:g.r});
+    const n=Math.min(left,op.cap);left-=n;const items=[];
+    if(pl==='c'){
+      const g=gridFor(op,n),x0=(op.W-g.bw)/2,y0=(op.H-g.bh)/2;
+      for(let k=0;k<n;k++){const r=Math.floor(k/g.c),c=k%g.c;const inRow=(r===g.r-1)?(n-(g.r-1)*g.c):g.c,off=(g.c-inRow)*(s.w+gp)/2;
+        items.push({x:x0+c*(s.w+gp)+(r===g.r-1?off:0),y:y0+r*(s.h+gp),w:s.w,h:s.h});}
+    }else{
+      // standard (maximum) grid, filled from the chosen corner so the free area stays in one piece
+      const C=op.mc,R=op.mr,bw=C*s.w+(C-1)*gp,bh=R*s.h+(R-1)*gp,x0=(op.W-bw)/2,y0=(op.H-bh)/2;
+      const right=pl[1]==='r',bottom=pl[0]==='b';
+      for(let k=0;k<n;k++){let r=Math.floor(k/C),c=k%C;if(right)c=C-1-c;if(bottom)r=R-1-r;
+        items.push({x:x0+c*(s.w+gp),y:y0+r*(s.h+gp),w:s.w,h:s.h});}
+    }
+    const x1=Math.min(...items.map(t=>t.x)),y1=Math.min(...items.map(t=>t.y)),x2=Math.max(...items.map(t=>t.x+t.w)),y2=Math.max(...items.map(t=>t.y+t.h));
+    out.push({W:op.W,H:op.H,items,block:{x:x1,y:y1,w:x2-x1,h:y2-y1}});
   }
   return{pages:out,cap:op.cap,orient:op.k,N,np};
 }
@@ -380,7 +392,7 @@ function drawPage(pg,idx,total,test){
       x.strokeRect(Math.round(mm(it.x))-.5,Math.round(mm(it.y))-.5,Math.round(mm(it.w))+1,Math.round(mm(it.h))+1);});
     return c;
   }
-  const mode=$('#gd').value,b=pg.block;
+  let mode=$('#gd').value;const b=pg.block;if(mode==='lines'&&!(+$('#gap').value>0))mode='ticks';
   if(mode!=='none'&&photos.length){
     const sx=(b.x),ex=(b.x+b.w),sy=b.y,ey=b.y+b.h;
     const spaceX=Math.min(sx,pg.W-ex),spaceY=Math.min(sy,pg.H-ey);
@@ -458,7 +470,7 @@ $('#rot90').onclick=()=>{S.rq=(S.rq+1)%4;syncRot();changed();};
 $('#reset').onclick=()=>{$('#auto').checked=false;$('#bri').value=0;$('#con').value=0;$('#shp').value=25;resetView();};
 ['auto','bri','con','shp'].forEach(i=>$('#'+i).oninput=changed);
 $('#guides').onchange=()=>drawEditor();
-['paper','orient','mar','gap','gd','dpi','cnt','tcopies'].forEach(i=>{$('#'+i).oninput=changed;$('#'+i).onchange=changed;});
+['paper','orient','mar','gd','dpi','cnt','tcopies','place'].forEach(i=>{$('#'+i).oninput=changed;$('#'+i).onchange=changed;});
 $('#tchecks').onchange=changed;
 function setMode(m){S.mode=m;$('#tA').classList.toggle('on',m==='A');$('#tB').classList.toggle('on',m==='B');$('#modeA').hidden=m!=='A';$('#modeB').hidden=m!=='B';changed();}
 function openViewer(i){
