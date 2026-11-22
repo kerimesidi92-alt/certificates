@@ -34,9 +34,9 @@ button:disabled{opacity:.4;cursor:default}
 .ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}
 .note{background:#fbf8f1;border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:12.5px;color:#5b5440}
 #ed{width:100%;height:auto;aspect-ratio:1/1.05;border-radius:12px;background:#1a1f2b;touch-action:none;display:block;cursor:grab}
-.edrow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;margin-top:10px;align-items:start}
-.edrow .fin{text-align:center;font-size:12px;color:var(--mut)}
-#final{width:120px;height:auto;display:block;border:1px solid #bbb;background:#fff;margin-bottom:3px}
+.edrow{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px;margin-top:10px;align-items:start}
+.edrow .fin{text-align:center;font-size:12px;color:var(--mut);position:sticky;top:60px;align-self:start}
+#final{width:140px;height:auto;display:block;border:1px solid #bbb;background:#fff;margin-bottom:3px}
 .sl{display:flex;flex-direction:column;gap:8px}
 details{border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
 summary{cursor:pointer;font-weight:700;font-size:14px}
@@ -85,8 +85,16 @@ details .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 <div class="sl">
 <label>التكبير <input type="range" id="zoom" min="0" max="100" value="0"></label>
 <label>تدوير بسيط <input type="range" id="rot" min="-150" max="150" value="0"></label>
-<div class="row"><button id="flip">قلب</button><button id="rot90">تدوير 90°</button><button id="reset">إعادة</button></div>
+<div class="row"><button id="flip">مرآة (يمين↔يسار)</button><button id="rot180">رأس على عقب</button><button id="rot90">جانبي 90°</button><button id="reset">إعادة</button></div>
 </div></div>
+<div class="sl" style="margin-top:6px">
+<div class="info"><b>تحسين الصورة</b> — شاهدي الأثر في المربع الصغير «هكذا تُطبع»</div>
+<label class="ck"><input type="checkbox" id="auto"> تحسين تلقائي للإضاءة (يوازن الفاتح والغامق)</label>
+<label>السطوع <span class="info">أفتح ← → أغمق</span><input type="range" id="bri" min="-50" max="50" value="0"></label>
+<label>التباين <span class="info">الفرق بين الفاتح والغامق</span><input type="range" id="con" min="-50" max="50" value="0"></label>
+<label>الحدّة <span class="info">وضوح التفاصيل والحواف</span><input type="range" id="shp" min="0" max="100" value="25"></label>
+<label class="ck"><input type="checkbox" id="guides" checked> خطوط إرشاد الرأس والعينين</label>
+</div>
 <div class="info" id="qinfo" style="margin-top:8px"></div>
 </div>
 
@@ -99,8 +107,11 @@ details .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 <div class="info" style="margin-bottom:4px">عدد الصور</div>
 <div class="row" id="chips"><label style="width:78px"><input type="number" id="cnt" value="8" min="1" max="200"></label></div>
 <div class="info" id="capinfo" style="margin-top:6px"></div>
+<div class="info" style="margin:10px 0 4px">هامش الأمان <span>(بين الصور وحافة الورقة)</span></div>
+<div class="row" id="marchips"></div>
 <div class="info" style="margin:10px 0 4px">المسافة بين الصور</div>
 <div class="row" id="gapchips"></div>
+<label style="margin-top:10px">اطبعي على <select id="pon"><option value="a4">ورقة A4 (الورقة المختارة داخلها)</option><option value="self">الورقة المختارة نفسها</option></select></label>
 <label style="margin-top:10px">مكان الصور على الورقة <select id="place"><option value="tr">من أعلى اليمين (الباقي فارغ لتستعمليه)</option><option value="tl">من أعلى اليسار</option><option value="br">من أسفل اليمين</option><option value="bl">من أسفل اليسار</option><option value="c">في الوسط</option></select></label>
 </div>
 <div id="modeB" style="margin-top:10px" hidden>
@@ -111,17 +122,11 @@ details .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 <details><summary>إعدادات متقدمة</summary>
 <div class="g2">
 <label>الاتجاه <select id="orient"><option value="auto">تلقائي</option><option value="p">طولي</option><option value="l">عرضي</option></select></label>
-<label>الدقة <select id="dpi"><option value="300">300 dpi</option><option value="400">400 dpi</option></select></label>
-<label>هامش الأمان (مم)<input type="number" id="mar" value="2" min="0" max="15" step="0.5"></label>
+<label>الجودة <select id="dpi"><option value="max">الأعلى الممكن (حتى 600)</option><option value="300">300 dpi</option></select></label>
+<input type="hidden" id="mar" value="2">
 <input type="hidden" id="gap" value="1">
 <label style="grid-column:1/3">خطوط القص <select id="gd"><option value="ticks">علامات خارج الصور</option><option value="lines">خطوط في الفراغات</option><option value="none">بدون</option></select></label>
 </div>
-<div class="sl" style="margin-top:8px">
-<label class="ck"><input type="checkbox" id="auto"> تحسين تلقائي للإضاءة</label>
-<label>السطوع <input type="range" id="bri" min="-50" max="50" value="0"></label>
-<label>التباين <input type="range" id="con" min="-50" max="50" value="0"></label>
-<label>الحدّة <input type="range" id="shp" min="0" max="100" value="25"></label>
-<label class="ck"><input type="checkbox" id="guides" checked> خطوط إرشاد الرأس والعينين</label>
 </div></details>
 </div>
 </div>
@@ -170,17 +175,23 @@ const E=$('#ed'),ec=E.getContext('2d');
 let tileCache=new Map(),pages=[],renderTimer=0;
 
 /* ---------- init selects ---------- */
-SIZES.forEach(s=>$('#size').add(new Option(s.n,s.id)));
-PAPERS.forEach(p=>$('#paper').add(new Option(p.n,p.id)));
+const ltr=t=>String(t).replace(/[\d.]+\s*×\s*[\d.]+/g,m=>'\u200E'+m.replace(/\s*×\s*/,'\u200E×\u200E')+'\u200E');
+SIZES.forEach(s=>$('#size').add(new Option(ltr(s.n),s.id)));
+PAPERS.forEach(p=>$('#paper').add(new Option(ltr(p.n),p.id)));
 $('#paper').value='p1015';
-SIZES.filter(s=>s.id!=='cus').forEach(s=>{const l=document.createElement('label');l.innerHTML='<input type="checkbox" value="'+s.id+'" checked> '+s.n;$('#tchecks').appendChild(l);});
+SIZES.filter(s=>s.id!=='cus').forEach(s=>{const l=document.createElement('label');l.innerHTML='<input type="checkbox" value="'+s.id+'" checked> '+ltr(s.n);$('#tchecks').appendChild(l);});
 [4,6,8,12,16,20].forEach(n=>{const b=document.createElement('button');b.className='chip';b.textContent=n;b.onclick=()=>{$('#cnt').value=n;changed();};$('#chips').appendChild(b);});
+[['0','بدون'],['2','2 مم'],['3','3 مم'],['5','5 مم']].forEach(([v,t])=>{const b=document.createElement('button');b.className='chip'+(v==='2'?' on':'');b.textContent=t;b.onclick=()=>{$('#mar').value=v;[...$('#marchips').children].forEach(x=>x.classList.toggle('on',x===b));changed();};$('#marchips').appendChild(b);});
 [['0','ملتصقة'],['1','1 مم'],['2','2 مم'],['3','3 مم']].forEach(([v,t])=>{const b=document.createElement('button');b.className='chip'+(v==='1'?' on':'');b.textContent=t;b.dataset.v=v;b.onclick=()=>{$('#gap').value=v;[...$('#gapchips').children].forEach(x=>x.classList.toggle('on',x===b));changed();};$('#gapchips').appendChild(b);});
 {const b=document.createElement('button');b.className='chip';b.textContent='الأقصى للورقة';b.onclick=()=>{$('#cnt').value=capOf().cap;changed();};$('#chips').appendChild(b);}
 
 function curSize(){const id=$('#size').value;if(id==='cus')return{n:'مخصص',w:Math.max(10,+$('#cw').value||35),h:Math.max(10,+$('#ch').value||45)};return SIZES.find(s=>s.id===id);}
 function curPaper(){return PAPERS.find(p=>p.id===$('#paper').value);}
-const dpiV=()=>+$('#dpi').value||300;
+function dpiV(){
+  if($('#dpi').value!=='max')return 300;
+  let W=210,H=297;if(S.mode!=='B'){const pn=$('#pon').value==='a4'?{w:210,h:297}:curPaper();W=pn.w;H=pn.h;}
+  const inch2=(W/25.4)*(H/25.4),d=Math.sqrt(14e6/inch2);return Math.max(300,Math.min(600,Math.floor(d/50)*50));
+}
 
 /* ---------- loading the image (no recompression, EXIF orientation honoured) ---------- */
 async function loadFile(f){
@@ -293,7 +304,7 @@ function drawEditor(){
 function drawFinal(){
   const f=$('#final'),x=f.getContext('2d');
   if(!S.bmp){f.width=105;f.height=135;x.fillStyle='#eee';x.fillRect(0,0,105,135);return;}
-  const s=curSize(),t=renderTile(s.w,s.h);f.width=t.width;f.height=t.height;x.drawImage(t,0,0);f.style.width='120px';
+  const s=curSize(),t=renderTile(s.w,s.h);f.width=t.width;f.height=t.height;x.drawImage(t,0,0);f.style.width='140px';
 }
 function quality(){
   if(!S.bmp){$('#qinfo').textContent='';return;}
@@ -302,7 +313,7 @@ function quality(){
   // does frame leave the image?
   const a=s.w/s.h,hw=hsNow()*a/2,hh=hsNow()/2,r=S.rot*Math.PI/180,cos=Math.cos(r),sin=Math.sin(r);let out=false;
   [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(q=>{let ux=q[0]*hw*(S.flip?-1:1),uy=q[1]*hh;const sx=S.cx+ux*cos+uy*sin,sy=S.cy-ux*sin+uy*cos;if(sx<-1||sy<-1||sx>S.iw+1||sy>S.ih+1)out=true;});
-  $('#qinfo').innerHTML='دقة الصورة الفعلية داخل الإطار: <span class="'+cls+'">'+Math.round(dpi)+' dpi — '+msg+'</span>'+(out?'<br><span class="bad">الإطار يخرج عن حدود الصورة (ستظهر حواف بيضاء).</span>':'');
+  $('#qinfo').innerHTML='جودة الصورة الأصلية لهذا المقاس: <span class="'+cls+'">'+Math.round(dpi)+' dpi — '+msg+'</span> <span class="info">(المطلوب للطباعة الجيدة 300)</span>'+(out?'<br><span class="bad">الإطار يخرج عن حدود الصورة (ستظهر حواف بيضاء).</span>':'');
 }
 /* pointer interaction */
 const ptrs=new Map();let pinch0=null;
@@ -358,7 +369,15 @@ function buildPhotoPages(){
         items.push({x:x0+c*(s.w+gp),y:y0+r*(s.h+gp),w:s.w,h:s.h});}
     }
     const x1=Math.min(...items.map(t=>t.x)),y1=Math.min(...items.map(t=>t.y)),x2=Math.max(...items.map(t=>t.x+t.w)),y2=Math.max(...items.map(t=>t.y+t.h));
-    out.push({W:op.W,H:op.H,items,block:{x:x1,y:y1,w:x2-x1,h:y2-y1}});
+    let pw=op.W,ph=op.H,sub=null;
+    if($('#pon').value==='a4'&&(op.W<209||op.H<296)){
+      const pm=Math.max(+$('#mar').value||0,2);let ox=0,oy=0;
+      if(pl==='c'){ox=(210-op.W)/2;oy=(297-op.H)/2;}
+      else{ox=pl[1]==='r'?210-op.W-pm:pm;oy=pl[0]==='b'?297-op.H-pm:pm;}
+      items.forEach(t=>{t.x+=ox;t.y+=oy;});sub={x:ox,y:oy,w:op.W,h:op.H};pw=210;ph=297;
+    }
+    const q1=Math.min(...items.map(t=>t.x)),r1=Math.min(...items.map(t=>t.y)),q2=Math.max(...items.map(t=>t.x+t.w)),r2=Math.max(...items.map(t=>t.y+t.h));
+    out.push({W:pw,H:ph,items,block:{x:q1,y:r1,w:q2-q1,h:r2-r1},sub});
   }
   return{pages:out,cap:op.cap,orient:op.k,N,np};
 }
@@ -388,10 +407,11 @@ function drawPage(pg,idx,total,test){
     x.font='700 '+Math.round(mm(3.1))+'px Tajawal,sans-serif';x.textAlign='left';
     x.fillText('ورقة تجربة المقاسات — لمسة خاصة'+(total>1?'  ('+(idx+1)+'/'+total+')':''),Math.round(mm(6)),Math.round(mm(8)));
     x.font='500 '+Math.round(mm(2.6))+'px Tajawal,sans-serif';
-    photos.forEach(it=>{x.fillText(it.label,Math.round(mm(it.x)),Math.round(mm(it.y+it.h+3.6)));
+    photos.forEach(it=>{x.fillText(ltr(it.label),Math.round(mm(it.x)),Math.round(mm(it.y+it.h+3.6)));
       x.strokeRect(Math.round(mm(it.x))-.5,Math.round(mm(it.y))-.5,Math.round(mm(it.w))+1,Math.round(mm(it.h))+1);});
     return c;
   }
+  if(pg.sub){x.save();x.setLineDash([Math.round(mm(1.6)),Math.round(mm(1.2))]);x.strokeStyle='#9a9a9a';x.lineWidth=Math.max(1,Math.round(d/300));x.strokeRect(Math.round(mm(pg.sub.x))+.5,Math.round(mm(pg.sub.y))+.5,Math.round(mm(pg.sub.w)),Math.round(mm(pg.sub.h)));x.restore();}
   let mode=$('#gd').value;const b=pg.block;if(mode==='lines'&&!(+$('#gap').value>0))mode='ticks';
   if(mode!=='none'&&photos.length){
     const sx=(b.x),ex=(b.x+b.w),sy=b.y,ey=b.y+b.h;
@@ -430,8 +450,8 @@ function renderSheets(){
   box.innerHTML='';pages=[];
   r.pages.forEach((pg,i)=>{const c=drawPage(pg,i,r.pages.length,test);pages.push({c,W:pg.W,H:pg.H});
     c.onclick=()=>openViewer(i);const w=document.createElement('div');w.style.width='100%';w.style.textAlign='center';w.appendChild(c);
-    const p=document.createElement('div');p.className='pg';p.textContent='ورقة '+(i+1)+' من '+r.pages.length+' — '+pg.W+'×'+pg.H+' مم — '+c.width+'×'+c.height+' بكسل';w.appendChild(p);box.appendChild(w);});
-  {const P=curPaper();$('#pinfo').textContent=test?('ورقة تجربة المقاسات — '+pages.length+' ورقة A4'):($('#cnt').value+' صورة · '+curSize().n+' · ورقة '+P.n+' · '+pages.length+' ورقة');}
+    const p=document.createElement('div');p.className='pg';p.textContent='ورقة '+(i+1)+' من '+r.pages.length+' — '+ltr(pg.W+'×'+pg.H)+' مم — '+ltr(c.width+'×'+c.height)+' بكسل ('+dpiV()+' dpi)';w.appendChild(p);box.appendChild(w);});
+  {const P=curPaper();$('#pinfo').textContent=test?('ورقة تجربة المقاسات — '+pages.length+' ورقة A4'):($('#cnt').value+' صورة · '+ltr(curSize().n)+' · ورقة '+ltr(P.n)+($('#pon').value==='a4'&&P.w<210?' داخل A4':'')+' · '+pages.length+' ورقة');}
   setBtn(true);
 }
 function setBtn(on){['print','png','pdf','zoomv'].forEach(i=>$('#'+i).disabled=!on);}
@@ -466,11 +486,12 @@ $('#size').onchange=()=>{$('#customsz').hidden=$('#size').value!=='cus';if(S.bmp
 $('#zoom').oninput=()=>{S.zoom=zoomFromSlider(+$('#zoom').value);changed();};
 $('#rot').oninput=()=>{syncRot();changed();};
 $('#flip').onclick=()=>{S.flip=!S.flip;changed();};
+$('#rot180').onclick=()=>{S.rq=(S.rq+2)%4;syncRot();changed();};
 $('#rot90').onclick=()=>{S.rq=(S.rq+1)%4;syncRot();changed();};
 $('#reset').onclick=()=>{$('#auto').checked=false;$('#bri').value=0;$('#con').value=0;$('#shp').value=25;resetView();};
 ['auto','bri','con','shp'].forEach(i=>$('#'+i).oninput=changed);
 $('#guides').onchange=()=>drawEditor();
-['paper','orient','mar','gd','dpi','cnt','tcopies','place'].forEach(i=>{$('#'+i).oninput=changed;$('#'+i).onchange=changed;});
+['paper','orient','mar','gd','dpi','cnt','tcopies','place','pon'].forEach(i=>{$('#'+i).oninput=changed;$('#'+i).onchange=changed;});
 $('#tchecks').onchange=changed;
 function setMode(m){S.mode=m;$('#tA').classList.toggle('on',m==='A');$('#tB').classList.toggle('on',m==='B');$('#modeA').hidden=m!=='A';$('#modeB').hidden=m!=='B';changed();}
 function openViewer(i){
