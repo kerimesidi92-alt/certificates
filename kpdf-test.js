@@ -54,7 +54,7 @@ function bleedDraw(x,d,z,PG){
   /* same recipe for both orientations (landscape = portrait turned): the printer shifts the sheet towards one side and eats the other,
      so the design is moved 2 mm away from the eaten edge and the opened strips are filled with the design's own edge colour. */
   var W=z.w,H=z.h,k=W/PG.w,land=PG.w>PG.h,
-  X=land?0:2,Y=0,Wm=PG.w-2,Hm=PG.h-2,
+  X=land?0:2,Y=-0.4,Wm=PG.w-2,Hm=PG.h-2+0.4,
   tx=Math.round(X*k),ty=Math.round(Y*k),tw=Math.round(Wm*k),th=Math.round(Hm*k),rx=tx+tw,by=ty+th,
   mo=Math.round(3/10*k*10/10*1)||2;
   mo=Math.max(3,Math.round(3*k));
