@@ -680,6 +680,7 @@ body{background:var(--bg)}
         <button type="button" class="btn" id="m-wm">حفظ بعلامة مائية</button><button type="button" class="btn primary" id="m-pdf" hidden>تنزيل PDF</button><a class="btn primary" id="m-dl" hidden download="certificate.png" style="text-decoration:none">تنزيل الصورة</a><button type="button" class="btn primary" id="m-print" hidden>طباعة</button><label id="m-cp" style="display:inline-flex;gap:6px;align-items:center;font-size:13px">النسخ <input type="number" id="m-copies" min="1" max="500" value="1" style="width:64px;min-height:36px"></label>
         <button type="button" class="btn" id="m-close">إغلاق</button>
       </div>
+      <div class="row"><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="m-bleed" style="width:20px;height:20px"> حواف للطابعة (Borderless) — اختياري <small style="opacity:.7">للتصاميم التي تملأ ورقة A4 كاملة</small></label></div>
       <p class="hint" id="m-msg">جارٍ تجهيز الصورة…</p>
       <img id="m-img" alt="الشهادة" hidden>
 
@@ -706,7 +707,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="kpdf.js?v=6"></script><script src="cert-library.js?v=9"></script>
+<script src="kpdf-test.js?v=1"></script><script src="cert-library.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="landing-index.js?v=5"></script>
 <script src="images.js?v=1"></script>
@@ -2836,3 +2837,4 @@ document.addEventListener('touchstart',function(){},{passive:true});
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('button,.btn,.opt,.pill,.theme,.sw,.mk-vid,[role=button]');if(!b||b.closest('#card,#cert,#layer,#cpk canvas')||b.disabled)return;b.classList.add('mk-tap');setTimeout(function(){b.classList.remove('mk-tap')},220)},true);
 })();
 </script>
+<script>(function(){function set(v){try{kPdf.bleed=!!v;}catch(_){}}document.addEventListener('change',function(e){if(e.target&&e.target.id==='m-bleed'){set(e.target.checked);try{localStorage.setItem('kBleed',e.target.checked?'1':'0');}catch(_){}}});window.addEventListener('load',function(){var v=false;try{v=localStorage.getItem('kBleed')==='1';}catch(_){}var c=document.getElementById('m-bleed');if(c)c.checked=v;set(v);});})();</script>
