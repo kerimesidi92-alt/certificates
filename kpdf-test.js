@@ -54,7 +54,7 @@ function bleedDraw(x,d,z,PG){
   /* same recipe for both orientations (landscape = portrait turned): the printer shifts the sheet towards one side and eats the other,
      so the design is moved 2 mm away from the eaten edge and the opened strips are filled with the design's own edge colour. */
   var W=z.w,H=z.h,k=W/PG.w,land=PG.w>PG.h,
-  TOP=(typeof kPdf.top==='number'&&kPdf.top>=0&&kPdf.top<=3)?kPdf.top:0.4,X=land?0:2,Y=-TOP,Wm=PG.w-2,Hm=PG.h-2+TOP,
+  TOP=(typeof kPdf.top==='number'&&kPdf.top>=0&&kPdf.top<=3)?kPdf.top:0,X=land?0:2,Y=-TOP,Wm=PG.w-2,Hm=PG.h-2+TOP,
   tx=Math.round(X*k),ty=Math.round(Y*k),tw=Math.round(Wm*k),th=Math.round(Hm*k),rx=tx+tw,by=ty+th,
   mo=Math.round(3/10*k*10/10*1)||2;
   mo=Math.max(3,Math.round(3*k));
@@ -167,5 +167,5 @@ function deflate(u8){
     return new Response(cs.readable).arrayBuffer().then(function(ab){return {data:new Uint8Array(ab),flate:true};},function(){return {data:u8,flate:false};});}catch(_){return Promise.resolve({data:u8,flate:false});}
 }
 function say(m){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent=m;}catch(_){}}
-window.kPdf={bleed:false,top:0.4,_bd:function(d,wmm,hmm){var z=dim(d),c=document.createElement('canvas');c.width=z.w;c.height=z.h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);var PG={w:wmm,h:hmm};if(isA4(PG)&&reachesEdge(d,z))bleedDraw(x,d,z,PG);else x.drawImage(d,0,0);return c;},build:build,buildCells:buildCells,deflate:deflate,show:show,load:load,say:say,_w:null};
+window.kPdf={bleed:false,top:0,_bd:function(d,wmm,hmm){var z=dim(d),c=document.createElement('canvas');c.width=z.w;c.height=z.h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);var PG={w:wmm,h:hmm};if(isA4(PG)&&reachesEdge(d,z))bleedDraw(x,d,z,PG);else x.drawImage(d,0,0);return c;},build:build,buildCells:buildCells,deflate:deflate,show:show,load:load,say:say,_w:null};
 })();
