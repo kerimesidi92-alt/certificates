@@ -680,7 +680,7 @@ body{background:var(--bg)}
         <button type="button" class="btn" id="m-wm">حفظ بعلامة مائية</button><button type="button" class="btn primary" id="m-pdf" hidden>تنزيل PDF</button><a class="btn primary" id="m-dl" hidden download="certificate.png" style="text-decoration:none">تنزيل الصورة</a><button type="button" class="btn primary" id="m-print" hidden>طباعة</button><label id="m-cp" style="display:inline-flex;gap:6px;align-items:center;font-size:13px">النسخ <input type="number" id="m-copies" min="1" max="500" value="1" style="width:64px;min-height:36px"></label>
         <button type="button" class="btn" id="m-close">إغلاق</button>
       </div>
-      <div class="row"><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="m-bleed" style="width:20px;height:20px"> حواف للطابعة (Borderless) — اختياري <small style="opacity:.7">للتصاميم التي تملأ ورقة A4 كاملة · الأعلى +0.4 مم (نسخة 6)</small></label></div>
+      <div class="row"><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="m-bleed" style="width:20px;height:20px"> حواف للطابعة (Borderless) — اختياري <small style="opacity:.7">للتصاميم التي تملأ ورقة A4 كاملة · نسخة 7</small></label><select id="m-top" style="min-height:34px;margin-inline-start:6px"><option value="0">الأعلى: 0</option><option value="0.4" selected>الأعلى: 0.4 مم</option><option value="0.8">الأعلى: 0.8 مم</option><option value="1.2">الأعلى: 1.2 مم</option><option value="1.6">الأعلى: 1.6 مم</option></select></div>
       <p class="hint" id="m-msg">جارٍ تجهيز الصورة…</p>
       <img id="m-img" alt="الشهادة" hidden>
 
@@ -707,7 +707,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="kpdf-test.js?v=6"></script><script src="cert-library.js?v=9"></script>
+<script src="kpdf-test.js?v=7"></script><script src="cert-library.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="landing-index.js?v=5"></script>
 <script src="images.js?v=1"></script>
@@ -2837,4 +2837,4 @@ document.addEventListener('touchstart',function(){},{passive:true});
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('button,.btn,.opt,.pill,.theme,.sw,.mk-vid,[role=button]');if(!b||b.closest('#card,#cert,#layer,#cpk canvas')||b.disabled)return;b.classList.add('mk-tap');setTimeout(function(){b.classList.remove('mk-tap')},220)},true);
 })();
 </script>
-<script>(function(){function set(v){try{kPdf.bleed=!!v;}catch(_){}}document.addEventListener('change',function(e){if(e.target&&e.target.id==='m-bleed'){set(e.target.checked);try{localStorage.setItem('kBleed',e.target.checked?'1':'0');}catch(_){}}});window.addEventListener('load',function(){var v=false;try{v=localStorage.getItem('kBleed')==='1';}catch(_){}var c=document.getElementById('m-bleed');if(c)c.checked=v;set(v);});})();</script>
+<script>(function(){function set(v){try{kPdf.bleed=!!v;}catch(_){}}document.addEventListener('change',function(e){if(e.target&&e.target.id==='m-top'){try{kPdf.top=parseFloat(e.target.value);localStorage.setItem('kTop',e.target.value);}catch(_){}}if(e.target&&e.target.id==='m-bleed'){set(e.target.checked);try{localStorage.setItem('kBleed',e.target.checked?'1':'0');}catch(_){}}});window.addEventListener('load',function(){var v=false;try{v=localStorage.getItem('kBleed')==='1';}catch(_){}var c=document.getElementById('m-bleed');if(c)c.checked=v;set(v);try{var t=localStorage.getItem('kTop');var ts=document.getElementById('m-top');if(t!==null&&ts){ts.value=t;kPdf.top=parseFloat(t);}}catch(_){}});})();</script>
