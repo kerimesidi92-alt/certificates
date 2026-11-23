@@ -36,7 +36,7 @@ function reachesEdge(d,z){
     for(var i=0;i<tw;i++){px(i,0);px(i,1);px(i,th-1);px(i,th-2);}
     for(var j=0;j<th;j++){px(0,j);px(1,j);px(tw-1,j);px(tw-2,j);}
     c.width=c.height=0;return n/t>.15;}catch(_){return false;}}
-function pickLine(d,z,side,maxO){
+function pickLine(d,z,side,maxO,t0){
   /* which pixel line (0..maxO px from the edge) best represents the edge colour: the one closest to the median colour of the outer 3 mm */
   var vert=side==='l'||side==='r',len=vert?z.h:z.w,w=Math.max(2,maxO),c=document.createElement('canvas');c.width=vert?w:len;c.height=vert?len:w;
   var x=c.getContext('2d',{willReadFrequently:true});
@@ -47,8 +47,8 @@ function pickLine(d,z,side,maxO){
     if(side==='l'){X=o;Y=p}else if(side==='r'){X=w-1-o;Y=p}else if(side==='t'){X=p;Y=o}else{X=p;Y=w-1-o}
     var i=(Y*c.width+X)*4;for(ch=0;ch<3;ch++){sum[ch]+=D[i+ch];all[ch].push(D[i+ch]);}n++;}
     avg.push([sum[0]/n,sum[1]/n,sum[2]/n]);}
-  var med=all.map(function(a){a.sort(function(u,v){return u-v});return a[a.length>>1];}),best=0,bd=1e9;
-  for(o=0;o<w;o++){var dd=Math.abs(avg[o][0]-med[0])+Math.abs(avg[o][1]-med[1])+Math.abs(avg[o][2]-med[2])+o*.5;if(dd<bd){bd=dd;best=o;}}
+  var med=all.map(function(a){a.sort(function(u,v){return u-v});return a[a.length>>1];}),best=Math.min(t0||0,w-1),bd=1e9;
+  for(o=Math.min(t0||0,w-1);o<w;o++){var dd=Math.abs(avg[o][0]-med[0])+Math.abs(avg[o][1]-med[1])+Math.abs(avg[o][2]-med[2])+o*.5;if(dd<bd){bd=dd;best=o;}}
   c.width=c.height=0;return best;}
 function bleedDraw(x,d,z,PG){
   /* same recipe for both orientations (landscape = portrait turned): the printer shifts the sheet towards one side and eats the other,
@@ -58,7 +58,8 @@ function bleedDraw(x,d,z,PG){
   tx=Math.round(X*k),ty=Math.round(Y*k),tw=Math.round(Wm*k),th=Math.round(Hm*k),rx=tx+tw,by=ty+th,
   mo=Math.round(3/10*k*10/10*1)||2;
   mo=Math.max(3,Math.round(3*k));
-  var oL=tx>0?pickLine(d,z,'l',mo):0,oR=rx<W?pickLine(d,z,'r',mo):0,oB=by<H?pickLine(d,z,'b',mo):0,oT=ty>0?pickLine(d,z,'t',mo):0;
+  var tr=Math.max(2,Math.round(.25*k)),sL=tx>0?tr:0,sR=rx<W?tr:0,sT=ty>0?tr:0,sB=by<H?tr:0,mo2=Math.max(mo,tr+2),
+  oL=tx>0?pickLine(d,z,'l',mo2,tr):0,oR=rx<W?pickLine(d,z,'r',mo2,tr):0,oB=by<H?pickLine(d,z,'b',mo2,tr):0,oT=ty>0?pickLine(d,z,'t',mo2,tr):0;
   if(tx>0)x.drawImage(d,oL,0,1,H,0,ty,tx,th);
   if(rx<W)x.drawImage(d,W-1-oR,0,1,H,rx,ty,W-rx,th);
   if(ty>0)x.drawImage(d,0,oT,W,1,tx,0,tw,ty);
@@ -67,7 +68,7 @@ function bleedDraw(x,d,z,PG){
   if(rx<W&&ty>0)x.drawImage(d,W-1-oR,oT,1,1,rx,0,W-rx,ty);
   if(tx>0&&by<H)x.drawImage(d,oL,H-1-oB,1,1,0,by,tx,H-by);
   if(rx<W&&by<H)x.drawImage(d,W-1-oR,H-1-oB,1,1,rx,by,W-rx,H-by);
-  x.drawImage(d,tx,ty,tw,th);}
+  x.drawImage(d,sL,sT,W-sL-sR,H-sT-sB,tx,ty,tw,th);}
 function note(i,n){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent='جارٍ تجهيز ملف الطباعة… '+i+' / '+n;}catch(_){}}
 /* order: page sequence of item indexes; wmm,hmm: page size in millimetres */
 function build(items,order,wmm,hmm,opt){
