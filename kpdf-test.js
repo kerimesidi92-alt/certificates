@@ -32,22 +32,41 @@ function isA4(PG){return !!PG&&((Math.abs(PG.w-210)<1&&Math.abs(PG.h-297)<1)||(M
 function reachesEdge(d,z){
   try{var tw=Math.min(240,z.w),th=Math.max(2,Math.round(tw*z.h/z.w)),c=document.createElement('canvas');c.width=tw;c.height=th;
     var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(d,0,0,tw,th);var D=x.getImageData(0,0,tw,th).data,n=0,t=0;
-    function px(i,j){var o=(j*tw+i)*4;t++;if(D[o]<235||D[o+1]<235||D[o+2]<235)n++;}
+    function px(i,j){var o=(j*tw+i)*4;t++;if(D[o]<248||D[o+1]<248||D[o+2]<248)n++;}
     for(var i=0;i<tw;i++){px(i,0);px(i,1);px(i,th-1);px(i,th-2);}
     for(var j=0;j<th;j++){px(0,j);px(1,j);px(tw-1,j);px(tw-2,j);}
-    c.width=c.height=0;return n/t>.3;}catch(_){return false;}}
+    c.width=c.height=0;return n/t>.15;}catch(_){return false;}}
+function pickLine(d,z,side,maxO){
+  /* which pixel line (0..maxO px from the edge) best represents the edge colour: the one closest to the median colour of the outer 3 mm */
+  var vert=side==='l'||side==='r',len=vert?z.h:z.w,w=Math.max(2,maxO),c=document.createElement('canvas');c.width=vert?w:len;c.height=vert?len:w;
+  var x=c.getContext('2d',{willReadFrequently:true});
+  if(side==='l')x.drawImage(d,0,0,w,z.h,0,0,w,z.h);else if(side==='r')x.drawImage(d,z.w-w,0,w,z.h,0,0,w,z.h);
+  else if(side==='t')x.drawImage(d,0,0,z.w,w,0,0,z.w,w);else x.drawImage(d,0,z.h-w,z.w,w,0,0,z.w,w);
+  var D=x.getImageData(0,0,c.width,c.height).data,step=Math.max(1,Math.floor(len/160)),avg=[],all=[[],[],[]],o,p,ch;
+  for(o=0;o<w;o++){var sum=[0,0,0],n=0;for(p=0;p<len;p+=step){var X,Y;
+    if(side==='l'){X=o;Y=p}else if(side==='r'){X=w-1-o;Y=p}else if(side==='t'){X=p;Y=o}else{X=p;Y=w-1-o}
+    var i=(Y*c.width+X)*4;for(ch=0;ch<3;ch++){sum[ch]+=D[i+ch];all[ch].push(D[i+ch]);}n++;}
+    avg.push([sum[0]/n,sum[1]/n,sum[2]/n]);}
+  var med=all.map(function(a){a.sort(function(u,v){return u-v});return a[a.length>>1];}),best=0,bd=1e9;
+  for(o=0;o<w;o++){var dd=Math.abs(avg[o][0]-med[0])+Math.abs(avg[o][1]-med[1])+Math.abs(avg[o][2]-med[2])+o*.5;if(dd<bd){bd=dd;best=o;}}
+  c.width=c.height=0;return best;}
 function bleedDraw(x,d,z,PG){
-  var W=z.w,H=z.h,k=W/PG.w,land=PG.w>PG.h,s=3,
-  X=land?-0.8:2,Y=land?-0.9:0,Wm=land?PG.w-0.3:PG.w-2,Hm=land?PG.h-0.3:PG.h-2,
-  tx=Math.round(X*k),ty=Math.round(Y*k),tw=Math.round(Wm*k),th=Math.round(Hm*k),rx=tx+tw,by=ty+th;
-  if(tx>0)x.drawImage(d,s,0,1,H,0,ty,tx,th);
-  if(rx<W)x.drawImage(d,W-1-s,0,1,H,rx,ty,W-rx,th);
-  if(ty>0)x.drawImage(d,0,s,W,1,tx,0,tw,ty);
-  if(by<H)x.drawImage(d,0,H-1-s,W,1,tx,by,tw,H-by);
-  if(tx>0&&ty>0)x.drawImage(d,s,s,1,1,0,0,tx,ty);
-  if(rx<W&&ty>0)x.drawImage(d,W-1-s,s,1,1,rx,0,W-rx,ty);
-  if(tx>0&&by<H)x.drawImage(d,s,H-1-s,1,1,0,by,tx,H-by);
-  if(rx<W&&by<H)x.drawImage(d,W-1-s,H-1-s,1,1,rx,by,W-rx,H-by);
+  /* same recipe for both orientations (landscape = portrait turned): the printer shifts the sheet towards one side and eats the other,
+     so the design is moved 2 mm away from the eaten edge and the opened strips are filled with the design's own edge colour. */
+  var W=z.w,H=z.h,k=W/PG.w,land=PG.w>PG.h,
+  X=land?0:2,Y=0,Wm=PG.w-2,Hm=PG.h-2,
+  tx=Math.round(X*k),ty=Math.round(Y*k),tw=Math.round(Wm*k),th=Math.round(Hm*k),rx=tx+tw,by=ty+th,
+  mo=Math.round(3/10*k*10/10*1)||2;
+  mo=Math.max(3,Math.round(3*k));
+  var oL=tx>0?pickLine(d,z,'l',mo):0,oR=rx<W?pickLine(d,z,'r',mo):0,oB=by<H?pickLine(d,z,'b',mo):0,oT=ty>0?pickLine(d,z,'t',mo):0;
+  if(tx>0)x.drawImage(d,oL,0,1,H,0,ty,tx,th);
+  if(rx<W)x.drawImage(d,W-1-oR,0,1,H,rx,ty,W-rx,th);
+  if(ty>0)x.drawImage(d,0,oT,W,1,tx,0,tw,ty);
+  if(by<H)x.drawImage(d,0,H-1-oB,W,1,tx,by,tw,H-by);
+  if(tx>0&&ty>0)x.drawImage(d,oL,oT,1,1,0,0,tx,ty);
+  if(rx<W&&ty>0)x.drawImage(d,W-1-oR,oT,1,1,rx,0,W-rx,ty);
+  if(tx>0&&by<H)x.drawImage(d,oL,H-1-oB,1,1,0,by,tx,H-by);
+  if(rx<W&&by<H)x.drawImage(d,W-1-oR,H-1-oB,1,1,rx,by,W-rx,H-by);
   x.drawImage(d,tx,ty,tw,th);}
 function note(i,n){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent='جارٍ تجهيز ملف الطباعة… '+i+' / '+n;}catch(_){}}
 /* order: page sequence of item indexes; wmm,hmm: page size in millimetres */
