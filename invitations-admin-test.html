@@ -2353,8 +2353,8 @@ async function makeImage(wm){
    var mm0=$('#m-msg');if(mm0&&!(window.HQ&&window.HQ.__x))mm0.textContent='جارٍ تحميل الجودة العالية (أول مرة فقط)…';await hqOn();if(mm0)mm0.textContent='جارٍ تجهيز الصورة…';await paperReady(S);
    try{if(MOB){MOBSV=MOBSV||{};var lim=[1500,1100,800][at];var ks=(S.imgs||[]).map(function(I){return I.key;});if(S.bgKey)ks.push(S.bgKey);
      for(var kq=0;kq<ks.length;kq++){var kk=ks[kq];if(!kk||/^[av]:|^v:/.test(kk))continue;if(!(kk in MOBSV))MOBSV[kk]=IMGSRC[kk];var o9=MOBSV[kk];if(typeof o9==='string'&&o9.length>200000)IMGSRC[kk]=await shrinkSrc(o9,lim,.85);}}}catch(_m){}
-   box=mkBox(wm);var z=dimsOf(S),px=Math.min(6000,Math.max(4500,Math.round(z[0]/2.54*400))),ratio=Math.max(1,Math.min(10,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)|Android|Mobi/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||(navigator.maxTouchPoints>1&&Math.min(screen.width,screen.height)<900))ratio=Math.max(1,Math.min(ratio,Math.sqrt(11e6/(600*600*z[1]/z[0]))));}catch(_e){}
-   ratio=Math.max(1,ratio*[1,.7,.5][at]);
+   box=mkBox(wm);var z=dimsOf(S),px=Math.min(6000,Math.max(4500,Math.round(z[0]/2.54*400))),ratio=Math.max(1,Math.min(10,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)|Android|Mobi/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||(navigator.maxTouchPoints>1&&Math.min(screen.width,screen.height)<900))ratio=Math.max(1,Math.min(ratio,Math.sqrt([6e6,3e6,1.5e6][at]/(600*600*z[1]/z[0]))));}catch(_e){}
+   if(!MOB)ratio=Math.max(1,ratio*[1,.7,.5][at]);
    await preloadBox(box);
    try{var fu=fontsUsed(box);await Promise.all(Object.keys(fu).map(function(f){return Promise.race([document.fonts.load('32px "'+f+'"',(box.textContent||' ')+' '),new Promise(function(r){setTimeout(r,6000);})]);}));await new Promise(function(r){setTimeout(r,120);});}catch(_e){}
    var fec=await fontEmbedCSS(box);
@@ -2364,7 +2364,7 @@ async function makeImage(wm){
    try{warm=await htmlToImage.toBlob(box,{pixelRatio:.5,cacheBust:false,fontEmbedCSS:fec,style:opt.style});}catch(_){}await new Promise(function(r){setTimeout(r,150);});
    var blob=await htmlToImage.toBlob(box,opt);
    if(!blob||blob.size<3000)throw new Error('empty');
-   var al=await alphaOf(blob);if(al!==null&&al<40)throw new Error('blank');try{var th0=await thumbOf(blob);if(th0&&(S.imgs||[]).length&&at<2){var mn=255;for(var q0=0;q0<th0.length;q0+=4){mn=Math.min(mn,th0[q0],th0[q0+1],th0[q0+2]);}if(mn>=250)throw new Error('blank');}}catch(e5){if(e5&&e5.message==='blank')throw e5;}
+   var al=await alphaOf(blob);if(al!==null&&al<40)throw new Error('blank');try{var th0=await thumbOf(blob);if(th0&&(S.imgs||[]).length){var mn=255;for(var q0=0;q0<th0.length;q0+=4){mn=Math.min(mn,th0[q0],th0[q0+1],th0[q0+2]);}if(mn>=250)throw new Error('blank');}}catch(e5){if(e5&&e5.message==='blank')throw e5;}
    if(warm&&warm.size>3000){var d=thumbDiff(await thumbOf(blob),await thumbOf(warm));if(d>12&&at<2)throw new Error('blank');}
    if(lastUrl)URL.revokeObjectURL(lastUrl);lastUrl=URL.createObjectURL(blob);lastBlob=blob;
    $('#m-img').src=lastUrl;$('#m-img').hidden=false;var dl=$('#m-dl');dl.href=lastUrl;dl.download=fname(wm)+'.png';dl.hidden=false;$('#m-pdf').hidden=false;$('#m-print').hidden=false;try{sheetUI(wm);}catch(_e){}
