@@ -167,5 +167,12 @@ function deflate(u8){
     return new Response(cs.readable).arrayBuffer().then(function(ab){return {data:new Uint8Array(ab),flate:true};},function(){return {data:u8,flate:false};});}catch(_){return Promise.resolve({data:u8,flate:false});}
 }
 function say(m){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent=m;}catch(_){}}
-window.kPdf={bleed:false,top:0,_bd:function(d,wmm,hmm){var z=dim(d),c=document.createElement('canvas');c.width=z.w;c.height=z.h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);var PG={w:wmm,h:hmm};if(isA4(PG)&&reachesEdge(d,z))bleedDraw(x,d,z,PG);else x.drawImage(d,0,0);return c;},build:build,buildCells:buildCells,deflate:deflate,show:show,load:load,say:say,_w:null};
+
+/* batch of names (pages made of cells, A4 only): same printer-edge recipe applied to each base image once, and the same transform given for the name overlays */
+function _xf(wmm,hmm){var land=wmm>hmm,TOP=(typeof kPdf.top==='number'&&kPdf.top>=0&&kPdf.top<=3)?kPdf.top:0,X=land?0:2;
+  return {sx:(wmm-2)/wmm,sy:(hmm-2+TOP)/hmm,tx:X/wmm,ty:-TOP/hmm};}
+function _bdBlob(im,wmm,hmm){return load(im.b).then(function(d){var c=document.createElement('canvas');c.width=im.w;c.height=im.h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,im.w,im.h);
+  bleedDraw(x,d,{w:im.w,h:im.h},{w:wmm,h:hmm});if(d.close)d.close();
+  return new Promise(function(ok,no){c.toBlob(function(b){c.width=c.height=0;b?ok({b:b,w:im.w,h:im.h}):no(new Error('jpeg'));},'image/jpeg',.97);});});}
+window.kPdf={bleed:false,top:0,_cellsEdge:false,_xf:_xf,_bdBlob:_bdBlob,isA4:isA4,_reach:function(bl){return load(bl).then(function(d){var z=dim(d),r=reachesEdge(d,z);if(d.close)d.close();return r;}).catch(function(){return false;});},_bd:function(d,wmm,hmm){var z=dim(d),c=document.createElement('canvas');c.width=z.w;c.height=z.h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);var PG={w:wmm,h:hmm};if(isA4(PG)&&reachesEdge(d,z))bleedDraw(x,d,z,PG);else x.drawImage(d,0,0);return c;},build:build,buildCells:buildCells,deflate:deflate,show:show,load:load,say:say,_w:null};
 })();

@@ -680,7 +680,7 @@ body{background:var(--bg)}
         <button type="button" class="btn" id="m-wm">حفظ بعلامة مائية</button><button type="button" class="btn primary" id="m-pdf" hidden>تنزيل PDF</button><a class="btn primary" id="m-dl" hidden download="certificate.png" style="text-decoration:none">تنزيل الصورة</a><button type="button" class="btn primary" id="m-print" hidden>طباعة</button><label id="m-cp" style="display:inline-flex;gap:6px;align-items:center;font-size:13px">النسخ <input type="number" id="m-copies" min="1" max="500" value="1" style="width:64px;min-height:36px"></label>
         <button type="button" class="btn" id="m-close">إغلاق</button>
       </div>
-      <div class="row"><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="m-bleed" style="width:20px;height:20px"> حواف للطابعة (Borderless) — اختياري <small style="opacity:.7">للتصاميم التي تملأ ورقة A4 كاملة · نسخة 8</small></label><select id="m-top" style="min-height:34px;margin-inline-start:6px"><option value="0" selected>الأعلى: بدون زيادة</option><option value="0.4">الأعلى: 0.4 مم</option><option value="0.8">الأعلى: 0.8 مم</option><option value="1.2">الأعلى: 1.2 مم</option><option value="1.6">الأعلى: 1.6 مم</option></select></div>
+      <div class="row"><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="m-bleed" style="width:20px;height:20px"> حواف للطابعة (Borderless) — اختياري <small style="opacity:.7">للتصاميم التي تملأ ورقة A4 كاملة · نسخة 9 · تشمل طباعة كل الأسماء</small></label><select id="m-top" style="min-height:34px;margin-inline-start:6px"><option value="0" selected>الأعلى: بدون زيادة</option><option value="0.4">الأعلى: 0.4 مم</option><option value="0.8">الأعلى: 0.8 مم</option><option value="1.2">الأعلى: 1.2 مم</option><option value="1.6">الأعلى: 1.6 مم</option></select></div>
       <p class="hint" id="m-msg">جارٍ تجهيز الصورة…</p>
       <img id="m-img" alt="الشهادة" hidden>
 
@@ -2255,9 +2255,11 @@ function exportAllNames0(PN,SCOPE){SCOPE=SCOPE||'all';const sel=document.getElem
     if(window.__expCancel)throw new Error('cancel');
     if(!cells.length)throw new Error('none');
     window.__batch={imgs,cells,wd:W};
+    /* printer-edge fix for the batch (A4 pages only): redraw each base image with the recipe; name overlays get the same transform below */
+    let XF=null;try{if(kPdf.bleed&&!(S.size==='a5')&&await kPdf._reach(imgs[cells[0].i].b)){XF=kPdf._xf(imgs[cells[0].i].w>=imgs[cells[0].i].h?297:210,imgs[cells[0].i].w>=imgs[cells[0].i].h?210:297);for(let q=0;q<imgs.length;q++){const lw=imgs[q].w>=imgs[q].h;imgs[q]=await kPdf._bdBlob(imgs[q],lw?297:210,lw?210:297);}}}catch(_){XF=null;}
     const a5=S.size==='a5',land=imgs[cells[0].i].w>=imgs[cells[0].i].h,mm=v=>v/25.4*72;
     const SW=a5?(land?210:297):(land?297:210),SH=a5?(land?297:210):(land?210:297),PW=mm(SW),PH2=mm(SH);
-    const mkCell=(c,x,y,w,h)=>{const im=imgs[c.i],o={i:c.i,x,y,w,h};if(c.mk){const m=c.mk;o.ov={x:m.ox/im.w*w,y:m.oy/im.h*h,w:m.mw/im.w*w,h:m.mh/im.h*h,rgb:m.rgb,mw:m.mw,mh:m.mh,data:m.data,flate:m.flate};}return o;};
+    const mkCell=(c,x,y,w,h)=>{const im=imgs[c.i],o={i:c.i,x,y,w,h};if(c.mk){const m=c.mk,X=XF||{sx:1,sy:1,tx:0,ty:0};o.ov={x:X.tx*w+m.ox/im.w*w*X.sx,y:X.ty*h+m.oy/im.h*h*X.sy,w:m.mw/im.w*w*X.sx,h:m.mh/im.h*h*X.sy,rgb:m.rgb,mw:m.mw,mh:m.mh,data:m.data,flate:m.flate};}return o;};
     const pagesOf=cs=>{const pg=[];if(!a5)cs.forEach(c=>pg.push([mkCell(c,0,0,PW,PH2)]));
       else for(let i=0;i<cs.length;i+=2){const hw=land?PW:PW/2,hh=land?PH2/2:PH2,p=[mkCell(cs[i],0,0,hw,hh)];if(cs[i+1])p.push(mkCell(cs[i+1],land?0:hw,land?hh:0,hw,hh));pg.push(p);}return pg;};
     const GN={m:'ذكور',f:'إناث','':'بدون جنس'},groups=[];
