@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795555268"><script>(function(){try{var me="1795555268",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
+<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795556434"><script>(function(){try{var me="1795556434",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <script>try{localStorage.setItem("kk_last","invitations.html")}catch(_){}</script><title>لمسة خاصة</title>
@@ -979,7 +979,7 @@ function newE(){var e={};['ev','n1','or','n2','dt','ln'].forEach(function(k){e[k
 function fresh(lang){return {lang:lang||'ar',mode:'tpl',tpl:'blank',shape:'rect',size:2,custom:null,bg:'#fbf8f1',ac:'#b8923f',ink:null,arts:[],frame:'thin',event:'wedding',evText:UI[lang||'ar'].events.wedding,
  time:'20:00',n1:DEF[lang||'ar'].n1,n2:DEF[lang||'ar'].n2,line:DEF[lang||'ar'].line,date:(function(d){d.setDate(d.getDate()+30);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})(new Date()),orn:'amp',dst:'big',qty:100,zoom:(window.innerWidth<=860?'big':'real'),E:newE(),txts:[],imgs:[],frm:null,fin:0,fcol:null,sel:null,ed:{},tab:'theme',mv:'lock',noText:false,bgKey:null,fl:'',bh:'0',dgt:'w'};}
 S=fresh('ar');
-window.__K={get:function(){return S},addImg:function(png,wmm,hmm){var key='k'+(uid++);IMGSRC[key]=png;var ar=+(hmm/wmm).toFixed(4),z=dimsOf(S),w0=Math.min(100,Math.max(4,+(wmm/10/z[0]*100).toFixed(2))),id=uid++;S.imgs.push({id:id,key:key,ar:ar,x:50,y:50,w:w0,h:+(w0*ar).toFixed(2),fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0});S.sel='i:'+id;S.tab='img';commit();build();},geo:function(k){if(NSH[k])return NSH[k];var z=SH[k].sizes[defSize(k)],H=100*z[1]/z[0],d;if(k==='circle'||k==='oval')d='M0 '+H/2+'A50 '+H/2+' 0 1 0 100 '+H/2+'A50 '+H/2+' 0 1 0 0 '+H/2+'Z';else if(k==='arch'){var r=Math.min(50,H);d='M0 '+H+'V'+r+'A50 '+r+' 0 0 1 100 '+r+'V'+H+'Z';}else if(k==='house')d='M50 0L100 '+.22*H+'V'+H+'H0V'+.22*H+'Z';else d='M0 0H100V'+H+'H0Z';return{n:k,cm:z,vb:[0,0,100,H],d:d};},bg:function(){return BGIMG},tpls:function(){return TPL},shf:function(){return __shfList()},thumb:function(k){return thumbShape(k)},name:function(k){return (T().shapes&&T().shapes[k])||(NSH[k]&&NSH[k].n)||k},dims:function(){return dimsOf(S)},
+window.__K={get:function(){return S},useShape:function(k,i){S.szSet=0;S.zoom='real';S.shape=k;S.size=(i==null?defSize(k):i);S.custom=null;commit();buildCtl();buildSide();render();},addImg:function(png,wmm,hmm){var key='k'+(uid++);IMGSRC[key]=png;var ar=+(hmm/wmm).toFixed(4),z=dimsOf(S),w0=Math.min(100,Math.max(4,+(wmm/10/z[0]*100).toFixed(2))),id=uid++;S.imgs.push({id:id,key:key,ar:ar,x:50,y:50,w:w0,h:+(w0*ar).toFixed(2),fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0});S.sel='i:'+id;S.tab='img';commit();build();},geo:function(k){if(NSH[k])return NSH[k];var z=SH[k].sizes[defSize(k)],H=100*z[1]/z[0],d;if(k==='circle'||k==='oval')d='M0 '+H/2+'A50 '+H/2+' 0 1 0 100 '+H/2+'A50 '+H/2+' 0 1 0 0 '+H/2+'Z';else if(k==='arch'){var r=Math.min(50,H);d='M0 '+H+'V'+r+'A50 '+r+' 0 0 1 100 '+r+'V'+H+'Z';}else if(k==='house')d='M50 0L100 '+.22*H+'V'+H+'H0V'+.22*H+'Z';else d='M0 0H100V'+H+'H0Z';return{n:k,cm:z,vb:[0,0,100,H],d:d};},bg:function(){return BGIMG},tpls:function(){return TPL},shf:function(){return __shfList()},thumb:function(k){return thumbShape(k)},name:function(k){return (T().shapes&&T().shapes[k])||(NSH[k]&&NSH[k].n)||k},dims:function(){return dimsOf(S)},
  exp:function(k){var a=SH[k].sizes;if(a.length>1)return;var b=a[0],w=b[0],h=b[1];SH[k].sizes=[.7,.85,1,1.2,1.5].map(function(q){return q===1?b:[Math.round(w*q*10)/10,Math.round(h*q*10)/10]}).filter(function(z){return z[0]<=60&&z[1]<=60});},
  sz:function(k){return SH[k]?SH[k].sizes:[]},
  all:function(){return Object.keys(SH)},
@@ -2739,7 +2739,8 @@ setInterval(hcheck,350);
 function hgo(d){hcheck();var n=HI+d;if(n<0||n>=HIST.length)return;HI=n;ST=JSON.parse(HIST[HI]);SEL=null;LSEL=null;uid=ST.pcs.reduce(function(m,p){return Math.max(m,p.id)},0)+1;render();}
 $('kfun').onclick=function(){hgo(-1)};$('kfre').onclick=function(){hgo(1)};
 function chooser(){var cs=K.get().shape,nm=K.name(cs);modal('<h4 style="margin:0 0 8px">ماذا تريدين أن تصمّمي؟</h4><div class="g" style="grid-template-columns:1fr"><button data-c="s" style="min-height:70px"><b>تصميم على الشكل المختار</b><span>'+esc(nm)+' ← يُفتح هنا ويمكنك الإضافة عليه</span></button><button data-c="f" style="min-height:70px"><b>تصميم حرّ (ورقة بيضاء)</b><span>أي أشكال بأي ألوان، وتُضاف إلى الكارت</span></button></div>');[].forEach.call($('kfmb').querySelectorAll('[data-c]'),function(b){b.onclick=function(){closeM();if(b.dataset.c==='s')open();else open({free:true});};});}
-function open(edit){ST=fresh();if(edit&&edit.free){ST.mode='free';ST.base=null;ST.W=100;ST.H=100;ST.name='عنصر';edit=null;}SEL=null;LSEL=null;uid=1;if(edit&&edit.state){ST=JSON.parse(JSON.stringify(edit.state));ST.from=edit.key;uid=ST.pcs.reduce(function(m,p){return Math.max(m,p.id)},0)+1;}ST.zc=ST.zc||{};ST.mode=ST.mode||'shape';$('kfok').textContent=ST.mode==='free'?'إضافة إلى الكارت':'إنشاء الشكل وفتحه في التطبيق';hreset();render();window.scrollTo(0,0);document.documentElement.style.overflow='hidden';$('kfd').classList.add('on');}
+function open(edit){ST=fresh();if(edit&&edit.base){var bk=edit.base,zz=K.sz(bk)[edit.size||0]||K.geo(bk).cm;ST.W=Math.round(zz[0]*10);ST.H=Math.round(zz[1]*10);ST.base=(bk==='rect'||bk==='land')?null:bk;ST.bnoh=true;edit=null;}if(edit&&edit.free){ST.mode='free';ST.base=null;ST.W=100;ST.H=100;ST.name='عنصر';edit=null;}SEL=null;LSEL=null;uid=1;if(edit&&edit.state){ST=JSON.parse(JSON.stringify(edit.state));ST.from=edit.key;uid=ST.pcs.reduce(function(m,p){return Math.max(m,p.id)},0)+1;}ST.zc=ST.zc||{};ST.mode=ST.mode||'shape';$('kfok').textContent=ST.mode==='free'?'إضافة إلى الكارت':'إنشاء الشكل وفتحه في التطبيق';hreset();render();window.scrollTo(0,0);document.documentElement.style.overflow='hidden';$('kfd').classList.add('on');}
+window.__KFG={openOn:function(k,i){open({base:k,size:i});}};
 function shut(){$('kfd').classList.remove('on');document.documentElement.style.overflow='';}
 $('kfx').onclick=shut;
 $('kfok').onclick=function(){var b=this;if(ST.mode==='free'){buildFree().then(function(r){if(r)shut();else alert('أضيفي قطعة أولاً');});return;}b.textContent='جارٍ الإنشاء…';build().then(function(){b.textContent='إنشاء الشكل وفتحه في التطبيق';shut();},function(e){b.textContent='إنشاء الشكل وفتحه في التطبيق';shut();console.error('FDERR '+(e&&e.stack||e));});};
@@ -2750,6 +2751,60 @@ if(row){var fb=document.createElement('button');fb.className='btn';fb.id='kfdb';
 function syncBtns(){if(!eb)return;var r=FD[K.get().shape];eb.style.display=r?'':'none';sb.style.display=(r&&!r.saved)?'':'none';}
 setInterval(syncBtns,600);
 try{K.all().forEach(function(k){K.exp(k)});}catch(e){}
-window.__KFD={open:open};
+window.__KFO={open:open};
+})();</script>
+<style>
+#kgl{position:fixed;inset:0;z-index:9400;background:#f4f1ea;display:none;flex-direction:column;direction:rtl;color:#16264a;font-family:inherit}
+#kgl.on{display:flex}
+#kgl .hd{display:flex;gap:8px;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 8px;background:#fffdfa;border-bottom:1px solid #e3dccb}
+#kgl .hd b{flex:1;font-size:17px}
+#kgl .b{font:inherit;font-size:14px;font-weight:600;border:1.5px solid #d8cfba;background:#fff;color:#16264a;border-radius:12px;padding:9px 14px}
+#kgl .b.pri{background:#16264a;color:#fff;border-color:#16264a}
+#kgl .sr{padding:8px 12px 0}
+#kgl .sr input{width:100%;box-sizing:border-box;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid #d8cfba;border-radius:12px;background:#fff}
+#kgl .ch{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;-webkit-overflow-scrolling:touch}
+#kgl .ch button{flex:none;font:inherit;font-size:13px;border:1.5px solid #d8cfba;background:#fff;color:#16264a;border-radius:20px;padding:7px 13px}
+#kgl .ch button.on{background:#16264a;color:#fff;border-color:#16264a}
+#kgl .gr{flex:1;overflow:auto;padding:4px 12px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-content:start;-webkit-overflow-scrolling:touch}
+#kgl .gr button{border:1.5px solid #e3dccb;background:#fff;border-radius:14px;padding:8px 4px;font:inherit;font-size:12px;color:#16264a;display:flex;flex-direction:column;align-items:center;gap:4px}
+#kgl .gr button i{font-style:normal;font-size:11px;color:#8a7f66}
+#kgl .th{height:92px;width:100%;display:grid;place-items:center}
+#kgl .kth svg{height:92px;width:auto;max-width:90%}
+#kgl .gh{grid-column:1/-1;margin:8px 0 0;font-size:14px;color:#8a6a24;font-weight:700}
+#kgs{position:absolute;left:0;right:0;bottom:0;background:#fffdfa;border-radius:20px 20px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.2);padding:14px 14px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;max-height:80%;overflow:auto}
+#kgs.on{display:block}
+#kgs .pv{height:170px;display:grid;place-items:center;background:#f4f1ea;border-radius:14px;margin-bottom:8px}
+#kgs .pv svg{height:150px;width:auto;max-width:80%}
+#kgs .row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+#kgs .row .b.on{background:#16264a;color:#fff;border-color:#16264a}
+</style>
+<div id="kgl"><div class="hd"><button class="b" id="kgx">إغلاق</button><b>كل الأشكال</b></div><div class="sr"><input id="kgq" type="search" placeholder="ابحثي باسم الشكل…"></div><div class="ch" id="kgc"></div><div class="gr" id="kgg"></div><div id="kgs"></div></div>
+<script>(function(){
+var K=window.__K,$=function(i){return document.getElementById(i)};if(!K||!K.shf)return;
+var row=$('kacts');if(!row)return;
+var FO='',Q='',cur=null,ci=0;
+function esc(s){return String(s).replace(/[<>&"]/g,'')}
+function dm(k,i){var a=K.sz(k)[i]||K.geo(k).cm;return a[0]+'×'+a[1]+' سم'}
+function folders(){return K.shf().filter(function(f){return f[3].length&&f[0]!=='tmp'})}
+function chips(){var h='<button data-f="" class="'+(FO===''?'on':'')+'">الكل</button>';folders().forEach(function(f){h+='<button data-f="'+f[0]+'" class="'+(FO===f[0]?'on':'')+'">'+esc(f[1])+' ('+f[3].length+')</button>'});$('kgc').innerHTML=h;
+ [].forEach.call($('kgc').querySelectorAll('button'),function(b){b.onclick=function(){FO=b.dataset.f;chips();grid();};});}
+function grid(){var h='',q=Q.trim();folders().forEach(function(f){if(FO&&f[0]!==FO)return;var ks=f[3].filter(function(k){return !q||K.name(k).indexOf(q)>-1});if(!ks.length)return;
+  if(!FO)h+='<div class="gh">'+esc(f[1])+'</div>';
+  ks.forEach(function(k){try{K.exp(k);}catch(e){}h+='<button data-k="'+k+'"><span class="kth">'+K.thumb(k)+'</span>'+esc(K.name(k))+'<i>'+dm(k,0)+'</i></button>'});});
+ $('kgg').innerHTML=h||'<div class="gh">لا نتائج</div>';
+ [].forEach.call($('kgg').querySelectorAll('[data-k]'),function(b){b.onclick=function(){show(b.dataset.k);};});}
+function show(k){cur=k;try{K.exp(k);}catch(e){}var a=K.sz(k),def=Math.min(2,a.length-1);ci=def;sheet();}
+function sheet(){var k=cur,a=K.sz(k),h='<div class="pv">'+K.thumb(k)+'</div><b>'+esc(K.name(k))+'</b><div class="row">';
+ a.forEach(function(z,i){h+='<button class="b'+(i===ci?' on':'')+'" data-i="'+i+'">'+z[0]+'×'+z[1]+(z[2]?' '+z[2]:'')+'</button>'});
+ h+='</div><div class="row"><button class="b pri" id="kglu" style="flex:1">استخدام هذا الشكل</button><button class="b" id="kglo" style="flex:1">فتحه في التصميم الحر</button></div><div class="row"><button class="b" id="kgln" style="flex:1">رجوع</button></div>';
+ var s=$('kgs');s.innerHTML=h;s.classList.add('on');
+ [].forEach.call(s.querySelectorAll('[data-i]'),function(b){b.onclick=function(){ci=+b.dataset.i;sheet();};});
+ $('kgln').onclick=function(){s.classList.remove('on');};
+ $('kglu').onclick=function(){K.useShape(k,ci);closeG();};
+ $('kglo').onclick=function(){closeG();if(window.__KFG)window.__KFG.openOn(k,ci);};}
+function closeG(){$('kgl').classList.remove('on');$('kgs').classList.remove('on');document.documentElement.style.overflow='';}
+function openG(){chips();grid();$('kgl').classList.add('on');document.documentElement.style.overflow='hidden';}
+$('kgx').onclick=closeG;$('kgq').oninput=function(){Q=this.value;grid();};
+var b=document.createElement('button');b.className='btn';b.id='kglb';b.textContent='كل الأشكال';b.onclick=openG;row.insertBefore(b,row.firstChild);
 })();</script>
 </body></html>
