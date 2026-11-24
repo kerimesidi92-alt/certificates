@@ -680,7 +680,7 @@ body{background:var(--bg)}
         <button type="button" class="btn" id="m-wm">حفظ بعلامة مائية</button><button type="button" class="btn primary" id="m-pdf" hidden>تنزيل PDF</button><a class="btn primary" id="m-dl" hidden download="certificate.png" style="text-decoration:none">تنزيل الصورة</a><button type="button" class="btn primary" id="m-print" hidden>طباعة</button><label id="m-cp" style="display:inline-flex;gap:6px;align-items:center;font-size:13px">النسخ <input type="number" id="m-copies" min="1" max="500" value="1" style="width:64px;min-height:36px"></label>
         <button type="button" class="btn" id="m-close">إغلاق</button>
       </div>
-      <div class="row"><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="m-bleed" style="width:20px;height:20px"> حواف للطابعة (Borderless) — اختياري <small style="opacity:.7">للتصاميم التي تملأ ورقة A4 كاملة · نسخة 9 · تشمل طباعة كل الأسماء</small></label><select id="m-top" style="min-height:34px;margin-inline-start:6px"><option value="0" selected>الأعلى: بدون زيادة</option><option value="0.4">الأعلى: 0.4 مم</option><option value="0.8">الأعلى: 0.8 مم</option><option value="1.2">الأعلى: 1.2 مم</option><option value="1.6">الأعلى: 1.6 مم</option></select></div>
+      <div class="row"><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="m-bleed" style="width:20px;height:20px"> حواف للطابعة (Borderless) — اختياري <small style="opacity:.7">للتصاميم التي تملأ ورقة A4 كاملة · نسخة 10 · تدوير الأفقي</small></label><label class="hint" style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-inline-start:6px"><input type="checkbox" id="m-rot" style="width:20px;height:20px"> تدوير الأفقي إلى عمودي عند الطباعة (A4)</label><select id="m-top" style="min-height:34px;margin-inline-start:6px"><option value="0" selected>الأعلى: بدون زيادة</option><option value="0.4">الأعلى: 0.4 مم</option><option value="0.8">الأعلى: 0.8 مم</option><option value="1.2">الأعلى: 1.2 مم</option><option value="1.6">الأعلى: 1.6 مم</option></select></div>
       <p class="hint" id="m-msg">جارٍ تجهيز الصورة…</p>
       <img id="m-img" alt="الشهادة" hidden>
 
@@ -707,7 +707,7 @@ window.APP_CONFIG={
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="kpdf-test.js?v=9"></script><script src="cert-library.js?v=9"></script>
+<script src="kpdf-test.js?v=10"></script><script src="cert-library.js?v=9"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="landing-index.js?v=5"></script>
 <script src="images.js?v=1"></script>
@@ -2256,10 +2256,16 @@ function exportAllNames0(PN,SCOPE){SCOPE=SCOPE||'all';const sel=document.getElem
     if(!cells.length)throw new Error('none');
     window.__batch={imgs,cells,wd:W};
     /* printer-edge fix for the batch (A4 pages only): redraw each base image with the recipe; name overlays get the same transform below */
-    let XF=null;try{if(kPdf.bleed&&!(S.size==='a5')&&await kPdf._reach(imgs[cells[0].i].b)){XF=kPdf._xf(imgs[cells[0].i].w>=imgs[cells[0].i].h?297:210,imgs[cells[0].i].w>=imgs[cells[0].i].h?210:297);for(let q=0;q<imgs.length;q++){const lw=imgs[q].w>=imgs[q].h;imgs[q]=await kPdf._bdBlob(imgs[q],lw?297:210,lw?210:297);}}}catch(_){XF=null;}
-    const a5=S.size==='a5',land=imgs[cells[0].i].w>=imgs[cells[0].i].h,mm=v=>v/25.4*72;
-    const SW=a5?(land?210:297):(land?297:210),SH=a5?(land?297:210):(land?210:297),PW=mm(SW),PH2=mm(SH);
-    const mkCell=(c,x,y,w,h)=>{const im=imgs[c.i],o={i:c.i,x,y,w,h};if(c.mk){const m=c.mk,X=XF||{sx:1,sy:1,tx:0,ty:0};o.ov={x:X.tx*w+m.ox/im.w*w*X.sx,y:X.ty*h+m.oy/im.h*h*X.sy,w:m.mw/im.w*w*X.sx,h:m.mh/im.h*h*X.sy,rgb:m.rgb,mw:m.mw,mh:m.mh,data:m.data,flate:m.flate};}return o;};
+    let XF=null,ROT=false;const OD=imgs.map(m=>({w:m.w,h:m.h}));
+    try{const a4=!(S.size==='a5'),l0=imgs[cells[0].i].w>=imgs[cells[0].i].h;
+      if(kPdf.rot&&a4&&l0){ROT=true;const rc=!!(kPdf.bleed&&await kPdf._reach(imgs[cells[0].i].b));XF=rc?kPdf._xf(210,297):null;for(let q=0;q<imgs.length;q++)imgs[q]=await kPdf._rotBlob(imgs[q],rc);}
+      else if(kPdf.bleed&&a4&&await kPdf._reach(imgs[cells[0].i].b)){XF=kPdf._xf(l0?297:210,l0?210:297);for(let q=0;q<imgs.length;q++){const lw=imgs[q].w>=imgs[q].h;imgs[q]=await kPdf._bdBlob(imgs[q],lw?297:210,lw?210:297);}}}catch(_){XF=null;ROT=false;}
+    const a5=S.size==='a5',land=ROT?true:imgs[cells[0].i].w>=imgs[cells[0].i].h,mm=v=>v/25.4*72;
+    const SW=ROT?210:(a5?(land?210:297):(land?297:210)),SH=ROT?297:(a5?(land?297:210):(land?210:297)),PW=mm(SW),PH2=mm(SH);
+    const mkCell=(c,x,y,w,h)=>{const im=imgs[c.i],o={i:c.i,x,y,w,h};if(c.mk){const m=c.mk,X=XF||{sx:1,sy:1,tx:0,ty:0};
+      if(ROT){const od=OD[c.i],fx=m.ox/od.w,fy=m.oy/od.h,fw=m.mw/od.w,fh=m.mh/od.h,px=1-(fy+fh),py=fx,pw=fh,ph=fw;
+        o.ov={rot:1,x:X.tx*w+px*w*X.sx,y:X.ty*h+py*h*X.sy,w:pw*w*X.sx,h:ph*h*X.sy,rgb:m.rgb,mw:m.mw,mh:m.mh,data:m.data,flate:m.flate};}
+      else o.ov={x:X.tx*w+m.ox/im.w*w*X.sx,y:X.ty*h+m.oy/im.h*h*X.sy,w:m.mw/im.w*w*X.sx,h:m.mh/im.h*h*X.sy,rgb:m.rgb,mw:m.mw,mh:m.mh,data:m.data,flate:m.flate};}return o;};
     const pagesOf=cs=>{const pg=[];if(!a5)cs.forEach(c=>pg.push([mkCell(c,0,0,PW,PH2)]));
       else for(let i=0;i<cs.length;i+=2){const hw=land?PW:PW/2,hh=land?PH2/2:PH2,p=[mkCell(cs[i],0,0,hw,hh)];if(cs[i+1])p.push(mkCell(cs[i+1],land?0:hw,land?hh:0,hw,hh));pg.push(p);}return pg;};
     const GN={m:'ذكور',f:'إناث','':'بدون جنس'},groups=[];
@@ -2839,4 +2845,4 @@ document.addEventListener('touchstart',function(){},{passive:true});
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('button,.btn,.opt,.pill,.theme,.sw,.mk-vid,[role=button]');if(!b||b.closest('#card,#cert,#layer,#cpk canvas')||b.disabled)return;b.classList.add('mk-tap');setTimeout(function(){b.classList.remove('mk-tap')},220)},true);
 })();
 </script>
-<script>(function(){function set(v){try{kPdf.bleed=!!v;}catch(_){}}document.addEventListener('change',function(e){if(e.target&&e.target.id==='m-top'){try{kPdf.top=parseFloat(e.target.value);localStorage.setItem('kTop',e.target.value);}catch(_){}}if(e.target&&e.target.id==='m-bleed'){set(e.target.checked);try{localStorage.setItem('kBleed',e.target.checked?'1':'0');}catch(_){}}});window.addEventListener('load',function(){var v=false;try{v=localStorage.getItem('kBleed')==='1';}catch(_){}var c=document.getElementById('m-bleed');if(c)c.checked=v;set(v);try{var t=localStorage.getItem('kTop');var ts=document.getElementById('m-top');if(t!==null&&ts){ts.value=t;kPdf.top=parseFloat(t);}}catch(_){}});})();</script>
+<script>(function(){function set(v){try{kPdf.bleed=!!v;}catch(_){}}document.addEventListener('change',function(e){if(e.target&&e.target.id==='m-top'){try{kPdf.top=parseFloat(e.target.value);localStorage.setItem('kTop',e.target.value);}catch(_){}}if(e.target&&e.target.id==='m-rot'){try{kPdf.rot=e.target.checked;localStorage.setItem('kRot',e.target.checked?'1':'0');}catch(_){}}if(e.target&&e.target.id==='m-bleed'){set(e.target.checked);try{localStorage.setItem('kBleed',e.target.checked?'1':'0');}catch(_){}}});window.addEventListener('load',function(){var v=false;try{v=localStorage.getItem('kBleed')==='1';}catch(_){}var c=document.getElementById('m-bleed');if(c)c.checked=v;set(v);try{var rr=localStorage.getItem('kRot')==='1',rc=document.getElementById('m-rot');if(rc)rc.checked=rr;kPdf.rot=rr;}catch(_){}try{var t=localStorage.getItem('kTop');var ts=document.getElementById('m-top');if(t!==null&&ts){ts.value=t;kPdf.top=parseFloat(t);}}catch(_){}});})();</script>
