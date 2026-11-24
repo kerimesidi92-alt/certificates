@@ -2339,8 +2339,9 @@ function thumbOf(blob){return new Promise(function(res){var u=URL.createObjectUR
 function alphaOf(blob){return new Promise(function(res){var u=URL.createObjectURL(blob),im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=c.height=24;var x=c.getContext('2d');x.drawImage(im,0,0,24,24);URL.revokeObjectURL(u);try{var d=x.getImageData(0,0,24,24).data,a=0;for(var i=3;i<d.length;i+=4)a+=d[i];res(a/(d.length/4));}catch(e){res(null);}};im.onerror=function(){URL.revokeObjectURL(u);res(null);};im.src=u;});}
 function thumbDiff(a,b){if(!a||!b)return 0;var s=0;for(var i=0;i<a.length;i+=4)s+=Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2]);return s/(a.length/4)/3;}
 var MKBUSY=false;
+var MOB=/iP(hone|ad|od)|Android|Mobi/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&Math.min(screen.width,screen.height)<900),MOBSV=null;
 async function makeImage(wm){
- if(MKBUSY)return;MKBUSY=true;
+ if(MKBUSY)return;MKBUSY=true;MOBSV=null;
  try{for(var w0=0;w0<80&&!window.XMORE&&!window.XFL&&!window.__fl;w0++)await new Promise(function(r){setTimeout(r,250);});rehydrate();if(window.__fp&&window.__fp.length)await Promise.all(window.__fp);}catch(_e){}
  $('#m-img').hidden=true;$('#m-print').hidden=true;$('#m-dl').hidden=true;$('#m-pdf').hidden=true;$('#m-sheet').hidden=true;$('#m-plan').hidden=true;$('#m-msg').textContent='جارٍ تجهيز الصورة…';$('#m-title').textContent=wm?'معاينة بعلامة مائية':'الصورة النهائية';
  var ok=false,lastErr=null;
@@ -2349,7 +2350,10 @@ async function makeImage(wm){
   try{if(!window.htmlToImage)throw new Error('lib');
    if(S.sel){S.sel=null;buildBar();render();}
    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
-   var mm0=$('#m-msg');if(mm0&&!(window.HQ&&window.HQ.__x))mm0.textContent='جارٍ تحميل الجودة العالية (أول مرة فقط)…';await hqOn();if(mm0)mm0.textContent='جارٍ تجهيز الصورة…';await paperReady(S);box=mkBox(wm);var z=dimsOf(S),px=Math.min(6000,Math.max(4500,Math.round(z[0]/2.54*400))),ratio=Math.max(1,Math.min(10,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)|Android|Mobi/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||(navigator.maxTouchPoints>1&&Math.min(screen.width,screen.height)<900))ratio=Math.max(1,Math.min(ratio,Math.sqrt(11e6/(600*600*z[1]/z[0]))));}catch(_e){}
+   var mm0=$('#m-msg');if(mm0&&!(window.HQ&&window.HQ.__x))mm0.textContent='جارٍ تحميل الجودة العالية (أول مرة فقط)…';await hqOn();if(mm0)mm0.textContent='جارٍ تجهيز الصورة…';await paperReady(S);
+   try{if(MOB){MOBSV=MOBSV||{};var lim=[1500,1100,800][at];var ks=(S.imgs||[]).map(function(I){return I.key;});if(S.bgKey)ks.push(S.bgKey);
+     for(var kq=0;kq<ks.length;kq++){var kk=ks[kq];if(!kk||/^[av]:|^v:/.test(kk))continue;if(!(kk in MOBSV))MOBSV[kk]=IMGSRC[kk];var o9=MOBSV[kk];if(typeof o9==='string'&&o9.length>200000)IMGSRC[kk]=await shrinkSrc(o9,lim,.85);}}}catch(_m){}
+   box=mkBox(wm);var z=dimsOf(S),px=Math.min(6000,Math.max(4500,Math.round(z[0]/2.54*400))),ratio=Math.max(1,Math.min(10,px/600));if(wm)ratio=Math.min(ratio,2);try{if(/iP(hone|ad|od)|Android|Mobi/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||(navigator.maxTouchPoints>1&&Math.min(screen.width,screen.height)<900))ratio=Math.max(1,Math.min(ratio,Math.sqrt(11e6/(600*600*z[1]/z[0]))));}catch(_e){}
    ratio=Math.max(1,ratio*[1,.7,.5][at]);
    await preloadBox(box);
    try{var fu=fontsUsed(box);await Promise.all(Object.keys(fu).map(function(f){return Promise.race([document.fonts.load('32px "'+f+'"',(box.textContent||' ')+' '),new Promise(function(r){setTimeout(r,6000);})]);}));await new Promise(function(r){setTimeout(r,120);});}catch(_e){}
@@ -2370,7 +2374,7 @@ async function makeImage(wm){
   if(box)box.remove();
  }
  if(!ok)$('#m-msg').textContent='تعذّر إنشاء الصورة هنا ('+((lastErr&&lastErr.message)||'خطأ')+'). يمكنك التقاط صورة للشاشة.';
- hqOff();MKBUSY=false;}
+ hqOff();try{if(MOBSV)Object.keys(MOBSV).forEach(function(k){IMGSRC[k]=MOBSV[k];});}catch(_r){}MOBSV=null;MKBUSY=false;}
 $('#m-pdf').onclick=async function(){if(!lastBlob)return;var b=$('#m-pdf'),t0=b.textContent;b.disabled=true;b.textContent='جارٍ التجهيز…';try{var z=dimsOf(S),bl=await kPdf.build([lastBlob],[0],z[0]*10,z[1]*10),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname(false)+'.pdf';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},3000);}catch(_e){try{toast('تعذّر إنشاء PDF',1);}catch(_x){}}b.disabled=false;b.textContent=t0;};
 $('#btn-export').onclick=function(){modal.hidden=false;makeImage(false);};
 $('#m-wm').onclick=function(){makeImage(true);};
