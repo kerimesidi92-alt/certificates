@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795524298"><script>(function(){try{var me="1795524298",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
+<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795553692"><script>(function(){try{var me="1795553692",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <script>try{localStorage.setItem("kk_last","invitations.html")}catch(_){}</script><title>لمسة خاصة</title>
@@ -1047,7 +1047,7 @@ function paperUrl(src,t){var k=paperKey(src,t),c=PAPC[k];if(c)return c.u||null;
 async function paperReady(st){var tp=TPL.filter(function(x){return x.id===st.tpl})[0];
   if(st.paper&&tp&&tp.bimg&&BGIMG[tp.bimg]){var s=BGIMG[tp.bimg];paperUrl(s,st.paper);var c=PAPC[paperKey(s,st.paper)];if(c&&c.p)await c.p;}}
 
-function dimsOf(st){var s=SH[st.shape];return st.custom?st.custom:s.sizes[Math.min(st.size,s.sizes.length-1)];}
+function dimsOf(st){var s=SH[st.shape];if(!s&&!st.custom){st.shape=SH.rect?'rect':Object.keys(SH)[0];st.size=0;s=SH[st.shape];}return st.custom?st.custom:s.sizes[Math.min(st.size||0,s.sizes.length-1)];}
 function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function fontOf(st,id){var _f=fontOf0(st,id);LF(_f);return _f;}
 function fontOf0(st,id){var e=id.charAt(0)==='t'&&id.charAt(1)===':'?null:st.E[id];return (e&&e.f[st.lang])||DF[id]&&DF[id][st.lang]||(st.lang==='ar'?'Amiri':'Cormorant Garamond');}
