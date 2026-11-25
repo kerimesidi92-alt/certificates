@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795560732"><script>(function(){try{var me="1795560732",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
+<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795604549"><script>(function(){try{var me="1795604549",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <script>try{localStorage.setItem("kk_last","invitations.html")}catch(_){}</script><title>لمسة خاصة</title>
@@ -979,7 +979,7 @@ function newE(){var e={};['ev','n1','or','n2','dt','ln'].forEach(function(k){e[k
 function fresh(lang){return {lang:lang||'ar',mode:'tpl',tpl:'blank',shape:'rect',size:2,custom:null,bg:'#fbf8f1',ac:'#b8923f',ink:null,arts:[],frame:'thin',event:'wedding',evText:UI[lang||'ar'].events.wedding,
  time:'20:00',n1:DEF[lang||'ar'].n1,n2:DEF[lang||'ar'].n2,line:DEF[lang||'ar'].line,date:(function(d){d.setDate(d.getDate()+30);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})(new Date()),orn:'amp',dst:'big',qty:100,zoom:(window.innerWidth<=860?'big':'real'),E:newE(),txts:[],imgs:[],frm:null,fin:0,fcol:null,sel:null,ed:{},tab:'theme',mv:'lock',noText:false,bgKey:null,fl:'',bh:'0',dgt:'w'};}
 S=fresh('ar');
-window.__K={get:function(){return S},useShape:function(k,i){S.szSet=0;S.zoom='real';S.shape=k;S.size=(i==null?defSize(k):i);S.custom=null;commit();buildCtl();buildSide();render();},addImg:function(png,wmm,hmm){var key='k'+(uid++);IMGSRC[key]=png;var ar=+(hmm/wmm).toFixed(4),z=dimsOf(S),w0=Math.min(100,Math.max(4,+(wmm/10/z[0]*100).toFixed(2))),id=uid++;S.imgs.push({id:id,key:key,ar:ar,x:50,y:50,w:w0,h:+(w0*ar).toFixed(2),fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0});S.sel='i:'+id;S.tab='img';commit();build();},geo:function(k){if(NSH[k])return NSH[k];var z=SH[k].sizes[defSize(k)],H=100*z[1]/z[0],d;if(k==='circle'||k==='oval')d='M0 '+H/2+'A50 '+H/2+' 0 1 0 100 '+H/2+'A50 '+H/2+' 0 1 0 0 '+H/2+'Z';else if(k==='arch'){var r=Math.min(50,H);d='M0 '+H+'V'+r+'A50 '+r+' 0 0 1 100 '+r+'V'+H+'Z';}else if(k==='house')d='M50 0L100 '+.22*H+'V'+H+'H0V'+.22*H+'Z';else d='M0 0H100V'+H+'H0Z';return{n:k,cm:z,vb:[0,0,100,H],d:d};},bg:function(){return BGIMG},tpls:function(){return TPL},shf:function(){return __shfList()},thumb:function(k){return thumbShape(k)},name:function(k){return (T().shapes&&T().shapes[k])||(NSH[k]&&NSH[k].n)||k},dims:function(){return dimsOf(S)},
+window.__K={get:function(){return S},pk:function(){var st=JSON.parse(JSON.stringify(S));st.sel=null;var src={};(st.imgs||[]).forEach(function(I){if(I.key&&!/^[av]:/.test(I.key)&&IMGSRC[I.key])src[I.key]=IMGSRC[I.key];});if(st.bgKey&&IMGSRC[st.bgKey])src[st.bgKey]=IMGSRC[st.bgKey];var o={v:1,app:'cards',st:st,src:src,uid:uid};if(/^cu_/.test(S.shape)&&NSH[S.shape])o.nsh={k:S.shape,o:NSH[S.shape]};return o;},prev:function(){return makePreview();},pub:function(){return PUBALL;},pf:function(q){return pubFld(q);},openD:function(cfg,id){var st=adoptPub(cfg,'p'+id+'_');(st.imgs||[]).forEach(function(I){delete I.fx;});delete st.fxFrm;if(cfg.nsh&&cfg.nsh.k&&!SH[cfg.nsh.k])window.__K.reg(cfg.nsh.k,(cfg.nsh.o&&cfg.nsh.o.n)||'شكل',cfg.nsh.o,true);S=st;S.sel=null;S.tab='theme';hist=[];hpos=-1;commit();try{buildCtl();buildSide();}catch(_e){}build();render();},useShape:function(k,i){S.szSet=0;S.zoom='real';S.shape=k;S.size=(i==null?defSize(k):i);S.custom=null;commit();buildCtl();buildSide();render();},addImg:function(png,wmm,hmm){var key='k'+(uid++);IMGSRC[key]=png;var ar=+(hmm/wmm).toFixed(4),z=dimsOf(S),w0=Math.min(100,Math.max(4,+(wmm/10/z[0]*100).toFixed(2))),id=uid++;S.imgs.push({id:id,key:key,ar:ar,x:50,y:50,w:w0,h:+(w0*ar).toFixed(2),fit:'fill',shape:'free',layer:'front',op:1,bd:0,bc:null,zm:100,px:50,py:50,pan:false,rot:0,fh:0,fv:0});S.sel='i:'+id;S.tab='img';commit();build();},geo:function(k){if(NSH[k])return NSH[k];var z=SH[k].sizes[defSize(k)],H=100*z[1]/z[0],d;if(k==='circle'||k==='oval')d='M0 '+H/2+'A50 '+H/2+' 0 1 0 100 '+H/2+'A50 '+H/2+' 0 1 0 0 '+H/2+'Z';else if(k==='arch'){var r=Math.min(50,H);d='M0 '+H+'V'+r+'A50 '+r+' 0 0 1 100 '+r+'V'+H+'Z';}else if(k==='house')d='M50 0L100 '+.22*H+'V'+H+'H0V'+.22*H+'Z';else d='M0 0H100V'+H+'H0Z';return{n:k,cm:z,vb:[0,0,100,H],d:d};},bg:function(){return BGIMG},tpls:function(){return TPL},shf:function(){return __shfList()},thumb:function(k){return thumbShape(k)},name:function(k){return (T().shapes&&T().shapes[k])||(NSH[k]&&NSH[k].n)||k},dims:function(){return dimsOf(S)},
  exp:function(k){var a=SH[k].sizes;if(a.length>1)return;var b=a[0],w=b[0],h=b[1];SH[k].sizes=[.7,.85,1,1.2,1.5].map(function(q){return q===1?b:[Math.round(w*q*10)/10,Math.round(h*q*10)/10]}).filter(function(z){return z[0]<=60&&z[1]<=60});},
  sz:function(k){return SH[k]?SH[k].sizes:[]},
  all:function(){return Object.keys(SH)},
@@ -2139,7 +2139,7 @@ var APPC=window.APP_CONFIG||{},FBC=APPC.firebase||{},WA=String(APPC.whatsapp||''
 try{var c=JSON.parse(localStorage.getItem('kk_lcfg')||'null'),d=dg(c&&c.phone);if(d.length>=8)WA=d;}catch(e){}
 try{var F=FBC||{};if(F.projectId&&F.apiKey)fetch('https://firestore.googleapis.com/v1/projects/'+F.projectId+'/databases/(default)/documents/config/landing?key='+F.apiKey).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.fields||!j.fields.json)return;var d=dg(JSON.parse(j.fields.json.stringValue).phone);if(d.length>=8)WA=d;}).catch(function(){});}catch(e){}})();
 var FBOK=!!(FBC.apiKey&&FBC.apiKey.indexOf('PASTE')<0&&FBC.projectId);
-var fdb=null;setTimeout(function(){if(fdb)window.__fdb=fdb;loadPub();},0);try{if(FBOK&&window.firebase){firebase.initializeApp(FBC);fdb=firebase.firestore();try{fdb.settings({experimentalAutoDetectLongPolling:true,merge:true});}catch(_){}}}catch(_){fdb=null;}
+window.__ADM=1;var fdb=null;setTimeout(function(){if(fdb)window.__fdb=fdb;loadPub();},0);try{if(FBOK&&window.firebase){firebase.initializeApp(FBC);fdb=firebase.firestore();try{fdb.settings({experimentalAutoDetectLongPolling:true,merge:true});}catch(_){}}}catch(_){fdb=null;}
 var ORD={name:'',phone:'',email:'',notes:''};
 var OT={
 ar:{name:'الاسم',phone:'رقم الهاتف',email:'البريد (اختياري)',notes:'ملاحظات (اختياري)',noteH:'اكتب أي تفصيل يهمك: الوقت، المكان، عدد الأسماء...',send:'إرسال الطلب',sending:'جارٍ إرسال الطلب...',prep:'جارٍ تحضير الطلب...',ok:'تم إرسال طلبك',okM:'وصلنا طلبك وسنتواصل معك قريبا على رقمك.',waGo:'وصلنا طلبك. جارٍ فتح واتساب... اضغط «إرسال» هناك لتصلنا نسخة من الطلب. وإن لم يفتح اضغط الزر.',waBtn:'أرسل الطلب على واتساب',close:'إغلاق',eName:'اكتب اسمك.',ePhone:'اكتب رقم هاتف صحيح من 8 أرقام على الأقل.',eOff:'إرسال الطلبات غير مفعّل بعد. تواصل معنا مباشرة.',eBig:'الصور كبيرة جدا. قلّل عددها أو حجمها ثم أعد الإرسال.',eNet:'تعذّر إرسال الطلب. تحقق من الاتصال وأعد المحاولة.',cm:'سم',
@@ -2500,6 +2500,146 @@ document.addEventListener('touchstart',function(e){var t=e.touches[0];if(!t||e.t
 document.addEventListener('click',function(e){got=true;if(e.isTrusted&&lastEl&&Date.now()-lastSyn<900&&(e.target===lastEl||lastEl.contains(e.target))){e.stopPropagation();e.preventDefault();}},true);
 document.addEventListener('touchend',function(e){var el=tgt;tgt=null;if(!el)return;var c=e.changedTouches[0];if(!c||Math.abs(c.clientX-tx)>10||Math.abs(c.clientY-ty)>10||Date.now()-tt>700)return;
  setTimeout(function(){if(got||!document.contains(el)||el.disabled)return;lastEl=el;lastSyn=Date.now();el.click();},350);},{capture:true,passive:true});
+})();</script>
+<style>
+#kdzov{position:fixed;inset:0;z-index:9500;background:#f6f3ee;display:none;flex-direction:column;direction:rtl;font-family:inherit}
+#kdzov.on{display:flex}
+#kdzov .kdzh{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#16264a;color:#fff}
+#kdzov .kdzh b{flex:1;font-size:16px}
+#kdzov .kdzh button{font:inherit;font-size:14px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:10px;padding:8px 12px;min-height:40px}
+#kdzov .kdzbar{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;-webkit-overflow-scrolling:touch;background:#fff;border-bottom:1px solid #e5dfd3}
+#kdzov .kdzbar button,#kdzov .kdzbar select{flex:none;font:inherit;font-size:13px;border:1.5px solid #d8d0c0;background:#fff;color:#2b2b2b;border-radius:999px;padding:7px 12px;min-height:38px}
+#kdzov .kdzbar button.on{background:#16264a;color:#fff;border-color:#16264a}
+#kdzls{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px}
+#kdzls .kdzg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+#kdzls .kdzc{background:#fff;border:1px solid #e5dfd3;border-radius:14px;padding:8px;display:grid;gap:6px;align-content:start}
+#kdzls .kdzc.off{background:#fbf8f1}
+#kdzls .kdzc img,#kdzls .kdzr img{width:100%;height:120px;object-fit:contain;background:repeating-conic-gradient(#f0ece3 0 25%,#fff 0 50%) 0 0/14px 14px;border-radius:8px}
+#kdzls .kdzc b{font-size:14px;word-break:break-word}
+#kdzls .kdzc small,#kdzls .kdzr small{color:#6b6458;font-size:12px}
+#kdzls .kdzst{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:#e6f3e8;color:#1f6b33}
+#kdzls .kdzst.off{background:#f1ece0;color:#7a6a3d}
+#kdzls .kdzb{display:flex;gap:5px;flex-wrap:wrap}
+#kdzls .kdzb button{flex:1 1 auto;font:inherit;font-size:13px;border:1.5px solid #d8d0c0;background:#fff;border-radius:10px;padding:7px 8px;min-height:38px}
+#kdzls .kdzb button.p{background:#16264a;color:#fff;border-color:#16264a}
+#kdzls .kdzb button.d{color:#b3261e}
+#kdzls table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}
+#kdzls td{padding:6px;border-bottom:1px solid #eee7d8;vertical-align:middle}
+#kdzls .kdzr img{width:54px;height:54px}
+#kdzls .kdzm{color:#6b6458;text-align:center;padding:30px 10px}
+#kdzsv{position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.5);display:none;place-items:center;padding:16px;direction:rtl}
+#kdzsv.on{display:grid}
+#kdzsv .kdzbx{background:#fff;border-radius:16px;padding:16px;width:min(100%,380px);display:grid;gap:10px;max-height:90vh;overflow:auto}
+#kdzsv h2{margin:0;font-size:16px}
+#kdzsv input[type=text],#kdzsv select{font:inherit;font-size:16px;padding:10px;border:1.5px solid #ddd;border-radius:10px;min-height:44px;width:100%;box-sizing:border-box}
+#kdzsv label.kdzk{display:flex;gap:8px;align-items:center;font-size:14px}
+#kdzsv button{font:inherit;font-size:15px;border:1.5px solid #d8d0c0;background:#fff;border-radius:10px;padding:10px;min-height:44px}
+#kdzsv button.p{background:#16264a;color:#fff;border-color:#16264a}
+#kdzsv .kdzn{font-size:12px;color:#6b6458;min-height:16px}
+#kdzt{position:fixed;left:10px;right:10px;bottom:90px;z-index:9700;background:#16264a;color:#fff;border-radius:12px;padding:10px 12px;font-size:14px;text-align:center;display:none;direction:rtl}
+#kdzt.err{background:#b3261e}
+</style>
+<div id="kdzov" role="dialog" aria-label="تصاميمي">
+ <div class="kdzh"><b>تصاميمي</b><button type="button" id="kdzvw">جدول</button><button type="button" id="kdzcl">رجوع للتصميم</button></div>
+ <div class="kdzbar" id="kdzfl"></div>
+ <div id="kdzls"></div>
+</div>
+<div id="kdzsv" role="dialog" aria-label="حفظ التصميم"><div class="kdzbx">
+ <h2 id="kdzttl">حفظ التصميم</h2>
+ <input type="text" id="kdzn" placeholder="اسم التصميم" maxlength="60">
+ <select id="kdzf"></select>
+ <input type="text" id="kdznf" placeholder="اسم المجلد الجديد" hidden maxlength="40">
+ <label class="kdzk"><input type="checkbox" id="kdzpb"> نشر للزبائن (يظهر لهم مباشرة)</label>
+ <div class="kdzn" id="kdzmsg"></div>
+ <button type="button" class="p" id="kdzok">حفظ</button>
+ <button type="button" id="kdznew" hidden>حفظ كتصميم جديد</button>
+ <button type="button" id="kdzno">إلغاء</button>
+</div></div>
+<div id="kdzt" role="status"></div>
+<script>(function(){
+var K=window.__K,P=window.__KP,$=function(i){return document.getElementById(i)};if(!K||!K.pk||!$('kacts'))return;
+var row=$('kacts'),EID=null,FLT='all',FF='allt',VW='g',busy=false,MODE=null,TT=0;
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function toast(t,e){var x=$('kdzt');x.textContent=t;x.className=e?'err':'';x.style.display='block';clearTimeout(TT);TT=setTimeout(function(){x.style.display='none'},e?6000:2800);}
+function db(){return window.__fdb}
+function all(){return (K.pub()||[]).filter(function(p){return p.del!==true})}
+function fl(g){try{return K.grp().fld(g,true)}catch(e){return g}}
+/* الأزرار في الشريط */
+var s=document.createElement('button');s.className='btn';s.id='kdzb1';s.textContent='حفظ التصميم';
+var m=document.createElement('button');m.className='btn';m.id='kdzb2';m.textContent='تصاميمي';
+var ref=$('kfinb')||row.firstChild;row.insertBefore(s,ref);row.insertBefore(m,ref);
+function cnt(){m.textContent='تصاميمي'+(all().length?' ('+all().length+')':'');}
+/* خيارات المجلد */
+function fopts(){var g=K.grp(),o='<option value="mine">'+esc(fl('mine'))+'</option>';
+ (g.CF||[]).forEach(function(c){o+='<option value="u_'+esc(c.id)+'">'+esc(c.name)+'</option>';});
+ o+='<option disabled>──────</option>';
+ K.all().forEach(function(q){if(/^cu_/.test(q))return;o+='<option value="sh:'+esc(q)+'">'+esc(fl('sh:'+q))+'</option>';});
+ (g.GTN||[]).forEach(function(x){o+='<option value="'+esc(x[0])+'">'+esc(x[1])+'</option>';});
+ return o+'<option value="__new">＋ مجلد جديد…</option>';}
+function curEd(){return EID&&all().filter(function(p){return p.id===EID})[0]}
+/* نافذة الحفظ / النشر */
+var ASK=null;
+function ask(o){ASK=o;$('kdzttl').textContent=o.title;$('kdzn').value=o.name||'';$('kdzf').innerHTML=fopts();$('kdzf').value=o.folder||'mine';if($('kdzf').value!==(o.folder||'mine'))$('kdzf').value='mine';
+ $('kdznf').hidden=true;$('kdznf').value='';$('kdzpb').checked=!!o.pub;$('kdzpb').parentNode.hidden=!!o.hidePub;$('kdzok').textContent=o.ok;$('kdznew').hidden=!o.canNew;$('kdzmsg').textContent='';
+ $('kdzok').disabled=$('kdznew').disabled=false;$('kdzsv').classList.add('on');}
+function closeAsk(){$('kdzsv').classList.remove('on');ASK=null;}
+async function folderVal(){var v=$('kdzf').value;if(v!=='__new')return v;var n=$('kdznf').value.trim();if(!n){$('kdznf').focus();return null;}
+ var id=Date.now().toString(36),g=K.grp(),list=(g.CF||[]).concat([{id:id,name:n.slice(0,40)}]);
+ await db().collection('config').doc('folders').set({list:list});return 'u_'+id;}
+/* حجم الصور */
+function dl(src,mx){return new Promise(function(res){var im=new Image();im.onload=function(){var r=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*r));c.height=Math.max(1,Math.round(im.height*r));c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(/^data:image\/jpe?g/.test(src)?c.toDataURL('image/jpeg',.85):c.toDataURL('image/png'));};im.onerror=function(){res(src)};im.src=src;});}
+async function fit(cfg){var mx=[1800,1300,1000,750,550];for(var t=0;t<5&&JSON.stringify(cfg).length>880000;t++){for(var k in cfg.src){var v=cfg.src[k];if(typeof v==='string'&&v.length>50000)cfg.src[k]=await dl(v,mx[t]);}}
+ return JSON.stringify(cfg).length>1000000?null:cfg;}
+async function thumb(){var u=await K.prev();if(!u)return null;return await dl(u,300).then(function(x){return x.indexOf('image/png')>0?x:x;});}
+async function doSave(asNew){
+ if(busy)return;var name=$('kdzn').value.trim();if(!name){$('kdzn').focus();return;}
+ if(!db()){$('kdzmsg').textContent='لم يتم الاتصال بقاعدة البيانات. سجّلي الدخول أولاً.';return;}
+ busy=true;$('kdzok').disabled=$('kdznew').disabled=true;$('kdzmsg').textContent='جارٍ الحفظ…';
+ try{var fo=await folderVal();if(fo==null){busy=false;$('kdzok').disabled=$('kdznew').disabled=false;$('kdzmsg').textContent='';return;}
+  var th=await thumb();if(!th)throw new Error('تعذّر تصوير التصميم');
+  var cfg=await fit(K.pk());if(!cfg)throw new Error('التصميم كبير جداً (الصور ثقيلة)');
+  var js=JSON.stringify(cfg),on=$('kdzpb').checked,ed=!asNew&&curEd();
+  if(ASK&&ASK.mode==='save'){
+   if(ed){await db().collection('dcfg').doc(ed.id).set({cfg:js});await db().collection('designs').doc(ed.id).set({name:name,folder:fo,on:on,thumb:th},{merge:true});toast('تم حفظ التعديل'+(on?' ويظهر للزبائن.':'.'));}
+   else{var r=await db().collection('designs').add({name:name,folder:fo,on:on,thumb:th,ord:Date.now()});await db().collection('dcfg').doc(r.id).set({cfg:js});EID=r.id;toast(on?'تم الحفظ والنشر للزبائن.':'تم الحفظ في «تصاميمي».');}
+  }
+  closeAsk();refresh();
+ }catch(e){$('kdzmsg').textContent='تعذّر الحفظ: '+String((e&&e.message)||e).slice(0,140);try{console.warn(e)}catch(_){}}
+ finally{busy=false;$('kdzok').disabled=$('kdznew').disabled=false;}}
+/* زر حفظ التصميم */
+s.addEventListener('click',function(){
+ if(P&&P.st&&P.st.editing){toast('أنتِ على ظهر الورقة. ارجعي للوجه ثم احفظي.',1);return;}
+ var ed=curEd(),def=/^cu_/.test(K.get().shape)?'mine':'sh:'+K.get().shape;
+ ask({mode:'save',title:ed?'حفظ التصميم: '+(ed.name||''):'حفظ التصميم',name:ed?ed.name:'تصميم '+(all().length+1),folder:ed?(K.pf(ed)):def,pub:ed?ed.on!==false:false,ok:ed?'حفظ التعديل':'حفظ',canNew:!!ed});});
+$('kdzok').addEventListener('click',function(){if(!ASK)return;if(ASK.mode==='save')doSave(false);else ASK.cb();});
+$('kdznew').addEventListener('click',function(){if(ASK&&ASK.mode==='save')doSave(true);});
+$('kdzno').addEventListener('click',closeAsk);
+$('kdzf').addEventListener('change',function(e){$('kdznf').hidden=e.target.value!=='__new';if(!$('kdznf').hidden)$('kdznf').focus();});
+/* القائمة */
+function pubs(){var a=all(),f=a;if(FLT==='on')f=a.filter(function(p){return p.on!==false});else if(FLT==='off')f=a.filter(function(p){return p.on===false});if(FF!=='allt')f=f.filter(function(p){return K.pf(p)===FF});return f;}
+function refresh(){cnt();if(!$('kdzov').classList.contains('on'))return;var a=all(),on=a.filter(function(p){return p.on!==false}).length,fc={};a.forEach(function(p){var k=K.pf(p);fc[k]=(fc[k]||0)+1;});
+ var o='<option value="allt">كل المجلدات</option>'+Object.keys(fc).sort(function(x,y){return fc[y]-fc[x]}).map(function(k){return '<option value="'+esc(k)+'"'+(FF===k?' selected':'')+'>'+esc(fl(k))+' ('+fc[k]+')</option>'}).join('');
+ $('kdzfl').innerHTML='<button type="button" data-f="all" class="'+(FLT==='all'?'on':'')+'">الكل ('+a.length+')</button><button type="button" data-f="on" class="'+(FLT==='on'?'on':'')+'">منشور ('+on+')</button><button type="button" data-f="off" class="'+(FLT==='off'?'on':'')+'">محفوظ ('+(a.length-on)+')</button><select id="kdzfs">'+o+'</select>';
+ $('kdzvw').textContent=VW==='g'?'جدول':'بطاقات';
+ var L=pubs();if(!L.length){$('kdzls').innerHTML='<div class="kdzm">'+(a.length?'لا توجد تصاميم بهذا الفلتر.':'لا توجد تصاميم محفوظة بعد. صمّمي ثم اضغطي «حفظ التصميم».')+'</div>';return;}
+ var bt=function(p){var off=p.on===false;return '<div class="kdzb"><button type="button" class="p" data-a="edit" data-id="'+esc(p.id)+'">تعديل</button>'+(off?'<button type="button" data-a="pub" data-id="'+esc(p.id)+'">نشر</button>':'<button type="button" data-a="unpub" data-id="'+esc(p.id)+'">إلغاء النشر</button>')+'<button type="button" data-a="ren" data-id="'+esc(p.id)+'">الاسم/المجلد</button><button type="button" class="d" data-a="del" data-id="'+esc(p.id)+'">حذف</button></div>';};
+ var st=function(p){var off=p.on===false;return '<span class="kdzst'+(off?' off':'')+'">'+(off?'محفوظ':'منشور للزبائن')+'</span>';};
+ if(VW==='g')$('kdzls').innerHTML='<div class="kdzg">'+L.map(function(p){return '<div class="kdzc'+(p.on===false?' off':'')+'"><img src="'+esc(p.thumb||'')+'" alt=""><b>'+esc(p.name)+'</b><small>'+esc(fl(K.pf(p)))+'</small>'+st(p)+bt(p)+'</div>';}).join('')+'</div>';
+ else $('kdzls').innerHTML='<table>'+L.map(function(p){return '<tr class="kdzr"><td style="width:60px"><img src="'+esc(p.thumb||'')+'" alt=""></td><td><b>'+esc(p.name)+'</b><br><small>'+esc(fl(K.pf(p)))+' · '+(p.ord?new Date(p.ord).toLocaleDateString('ar'):'')+'</small><br>'+st(p)+'</td><td style="width:46%">'+bt(p)+'</td></tr>';}).join('')+'</table>';}
+window.__pubUI=refresh;
+m.addEventListener('click',function(){$('kdzov').classList.add('on');refresh();});
+$('kdzcl').addEventListener('click',function(){$('kdzov').classList.remove('on');});
+$('kdzvw').addEventListener('click',function(){VW=VW==='g'?'t':'g';refresh();});
+$('kdzfl').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(b){FLT=b.dataset.f;refresh();}});
+$('kdzfl').addEventListener('change',function(e){if(e.target.id==='kdzfs'){FF=e.target.value;refresh();}});
+$('kdzls').addEventListener('click',async function(e){var b=e.target.closest('[data-a]');if(!b)return;var id=b.dataset.id,p=all().filter(function(x){return x.id===id})[0];if(!p||!db())return;
+ try{
+  if(b.dataset.a==='edit'){var d=await db().collection('dcfg').doc(id).get();if(!d.exists)throw new Error('لا توجد بيانات لهذا التصميم');K.openD(JSON.parse(d.data().cfg),id);EID=id;$('kdzov').classList.remove('on');toast('فُتح للتعديل. عدّلي ثم اضغطي «حفظ التصميم».');}
+  else if(b.dataset.a==='pub'||b.dataset.a==='ren'){var pu=b.dataset.a==='pub';ask({mode:'x',title:pu?'نشر للزبائن':'الاسم والمجلد',name:p.name,folder:K.pf(p),pub:true,hidePub:true,ok:pu?'نشر':'حفظ',cb:async function(){var n=$('kdzn').value.trim();if(!n){$('kdzn').focus();return;}try{var fo=await folderVal();if(fo==null)return;var u={name:n,folder:fo};if(pu)u.on=true;await db().collection('designs').doc(id).update(u);closeAsk();toast(pu?'تم النشر. يظهر للزبائن مباشرة.':'تم الحفظ.');}catch(_){$('kdzmsg').textContent='تعذّر التنفيذ. تأكدي من القواعد.';}}});}
+  else if(b.dataset.a==='unpub'){await db().collection('designs').doc(id).update({on:false});toast('أُلغي النشر.');}
+  else if(b.dataset.a==='del'){if(!confirm('حذف «'+(p.name||'')+'»؟ ينتقل للمحذوفات.'))return;await db().collection('designs').doc(id).update({del:true,on:false});if(EID===id)EID=null;toast('نُقل إلى المحذوفات.');}
+ }catch(er){toast('تعذّر: '+String((er&&er.message)||er).slice(0,100),1);}});
+cnt();setInterval(cnt,3000);
 })();</script>
 <style>
 #kfd{position:fixed;inset:0;z-index:9500;background:#f4f1ea;display:none;flex-direction:column;font-family:inherit;color:#16264a;direction:rtl;-webkit-user-select:none;user-select:none}
