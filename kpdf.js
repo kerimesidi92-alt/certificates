@@ -11,25 +11,73 @@ function load(s){
 function dim(d){return {w:d.naturalWidth||d.width,h:d.naturalHeight||d.height};}
 function jpg(c,q){return new Promise(function(res,rej){c.toBlob(function(b){b?res(b):rej(new Error('jpg'));},'image/jpeg',q);});}
 /* -> {b:Blob(jpeg), w, h} */
-function encode(src,q){
+function encode(src,q,PG,rot){
   var lazy=typeof src==='function';
   return Promise.resolve(lazy?src():src).then(function(s){
-    if(s instanceof Blob&&s.type==='image/jpeg'){return load(s).then(function(d){var z=dim(d);if(d.close)d.close();return {b:s,w:z.w,h:z.h};});}
+    if(!rot&&s instanceof Blob&&s.type==='image/jpeg'&&!(kPdf.bleed&&isA4(PG))){return load(s).then(function(d){var z=dim(d);if(d.close)d.close();return {b:s,w:z.w,h:z.h};});}
     var own=lazy&&s instanceof HTMLCanvasElement;
     return load(s).then(function(d){
-      var z=dim(d),c=document.createElement('canvas');c.width=z.w;c.height=z.h;
-      var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);x.drawImage(d,0,0);
+      var z=dim(d);
+      if(rot){var t=document.createElement('canvas');t.width=z.h;t.height=z.w;var tx=t.getContext('2d');tx.translate(z.h,0);tx.rotate(Math.PI/2);tx.drawImage(d,0,0);
+        if(d.close)d.close();if(own)d.width=d.height=0;d=t;own=true;z={w:t.width,h:t.height};}
+      var c=document.createElement('canvas');c.width=z.w;c.height=z.h;
+      var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);if(kPdf.bleed&&isA4(PG)&&reachesEdge(d,z))bleedDraw(x,d,z,PG);else x.drawImage(d,0,0);
       if(d.close)d.close();if(own)d.width=d.height=0;
       return jpg(c,q).then(function(b){c.width=c.height=0;return {b:b,w:z.w,h:z.h};});
     });
   });
 }
+
+/* ---- optional printer-edge fix (test): for A4 pages whose design reaches the paper edge.
+   Portrait: design moved 2 mm from the left and ends 2 mm above the bottom; landscape: moved 0.8 mm left / 0.9 mm up, 0.3 mm short on right/bottom.
+   The strips that open up are filled with the design's own edge colour (sampled 3 px inside). Off unless kPdf.bleed is true. */
+function isA4(PG){return !!PG&&((Math.abs(PG.w-210)<1&&Math.abs(PG.h-297)<1)||(Math.abs(PG.w-297)<1&&Math.abs(PG.h-210)<1));}
+function reachesEdge(d,z){
+  try{var tw=Math.min(240,z.w),th=Math.max(2,Math.round(tw*z.h/z.w)),c=document.createElement('canvas');c.width=tw;c.height=th;
+    var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(d,0,0,tw,th);var D=x.getImageData(0,0,tw,th).data,n=0,t=0;
+    function px(i,j){var o=(j*tw+i)*4;t++;if(D[o]<248||D[o+1]<248||D[o+2]<248)n++;}
+    for(var i=0;i<tw;i++){px(i,0);px(i,1);px(i,th-1);px(i,th-2);}
+    for(var j=0;j<th;j++){px(0,j);px(1,j);px(tw-1,j);px(tw-2,j);}
+    c.width=c.height=0;return n/t>.15;}catch(_){return false;}}
+function pickLine(d,z,side,maxO,t0){
+  /* which pixel line (0..maxO px from the edge) best represents the edge colour: the one closest to the median colour of the outer 3 mm */
+  var vert=side==='l'||side==='r',len=vert?z.h:z.w,w=Math.max(2,maxO),c=document.createElement('canvas');c.width=vert?w:len;c.height=vert?len:w;
+  var x=c.getContext('2d',{willReadFrequently:true});
+  if(side==='l')x.drawImage(d,0,0,w,z.h,0,0,w,z.h);else if(side==='r')x.drawImage(d,z.w-w,0,w,z.h,0,0,w,z.h);
+  else if(side==='t')x.drawImage(d,0,0,z.w,w,0,0,z.w,w);else x.drawImage(d,0,z.h-w,z.w,w,0,0,z.w,w);
+  var D=x.getImageData(0,0,c.width,c.height).data,step=Math.max(1,Math.floor(len/160)),avg=[],all=[[],[],[]],o,p,ch;
+  for(o=0;o<w;o++){var sum=[0,0,0],n=0;for(p=0;p<len;p+=step){var X,Y;
+    if(side==='l'){X=o;Y=p}else if(side==='r'){X=w-1-o;Y=p}else if(side==='t'){X=p;Y=o}else{X=p;Y=w-1-o}
+    var i=(Y*c.width+X)*4;for(ch=0;ch<3;ch++){sum[ch]+=D[i+ch];all[ch].push(D[i+ch]);}n++;}
+    avg.push([sum[0]/n,sum[1]/n,sum[2]/n]);}
+  var med=all.map(function(a){a.sort(function(u,v){return u-v});return a[a.length>>1];}),best=Math.min(t0||0,w-1),bd=1e9;
+  for(o=Math.min(t0||0,w-1);o<w;o++){var dd=Math.abs(avg[o][0]-med[0])+Math.abs(avg[o][1]-med[1])+Math.abs(avg[o][2]-med[2])+o*.5;if(dd<bd){bd=dd;best=o;}}
+  c.width=c.height=0;return best;}
+function bleedDraw(x,d,z,PG){
+  /* same recipe for both orientations (landscape = portrait turned): the printer shifts the sheet towards one side and eats the other,
+     so the design is moved 2 mm away from the eaten edge and the opened strips are filled with the design's own edge colour. */
+  var W=z.w,H=z.h,k=W/PG.w,land=PG.w>PG.h,
+  TOP=(typeof kPdf.top==='number'&&kPdf.top>=0&&kPdf.top<=3)?kPdf.top:0,X=land?0:2,Y=-TOP,Wm=PG.w-2,Hm=PG.h-2+TOP,
+  tx=Math.round(X*k),ty=Math.round(Y*k),tw=Math.round(Wm*k),th=Math.round(Hm*k),rx=tx+tw,by=ty+th,
+  mo=Math.round(3/10*k*10/10*1)||2;
+  mo=Math.max(3,Math.round(3*k));
+  var tr=Math.max(2,Math.round(.25*k)),sL=tx>0?tr:0,sR=rx<W?tr:0,sT=ty>0?tr:0,sB=by<H?tr:0,mo2=Math.max(mo,tr+2),
+  oL=tx>0?pickLine(d,z,'l',mo2,tr):0,oR=rx<W?pickLine(d,z,'r',mo2,tr):0,oB=by<H?pickLine(d,z,'b',mo2,tr):0,oT=ty>0?pickLine(d,z,'t',mo2,tr):0;
+  if(tx>0)x.drawImage(d,oL,0,1,H,0,ty,tx,th);
+  if(rx<W)x.drawImage(d,W-1-oR,0,1,H,rx,ty,W-rx,th);
+  if(ty>0)x.drawImage(d,0,oT,W,1,tx,0,tw,ty);
+  if(by<H)x.drawImage(d,0,H-1-oB,W,1,tx,by,tw,H-by);
+  if(tx>0&&ty>0)x.drawImage(d,oL,oT,1,1,0,0,tx,ty);
+  if(rx<W&&ty>0)x.drawImage(d,W-1-oR,oT,1,1,rx,0,W-rx,ty);
+  if(tx>0&&by<H)x.drawImage(d,oL,H-1-oB,1,1,0,by,tx,H-by);
+  if(rx<W&&by<H)x.drawImage(d,W-1-oR,H-1-oB,1,1,rx,by,W-rx,H-by);
+  x.drawImage(d,sL,sT,W-sL-sR,H-sT-sB,tx,ty,tw,th);}
 function note(i,n){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent='جارٍ تجهيز ملف الطباعة… '+i+' / '+n;}catch(_){}}
 /* order: page sequence of item indexes; wmm,hmm: page size in millimetres */
 function build(items,order,wmm,hmm,opt){
-  opt=opt||{};var q=opt.q||.97,pw=wmm/25.4*72,ph=hmm/25.4*72,imgs=[],n=order.length,nI=items.length;
+  opt=opt||{};var ROT=!!(kPdf.rot&&wmm>hmm&&isA4({w:wmm,h:hmm}));if(ROT){var _t=wmm;wmm=hmm;hmm=_t;}var PG={w:wmm,h:hmm},q=opt.q||.97,pw=wmm/25.4*72,ph=hmm/25.4*72,imgs=[],n=order.length,nI=items.length;
   var chain=Promise.resolve();
-  items.forEach(function(it,i){chain=chain.then(function(){note(i+1,nI);return encode(it,q).then(function(r){imgs.push(r);return new Promise(function(ok){setTimeout(ok,0);});});});});
+  items.forEach(function(it,i){chain=chain.then(function(){note(i+1,nI);return encode(it,q,PG,ROT).then(function(r){imgs.push(r);return new Promise(function(ok){setTimeout(ok,0);});});});});
   return chain.then(function(){
     var parts=[],offs=[],len=0;
     function push(x){var u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=(u.size!==undefined?u.size:u.length);}
@@ -104,7 +152,7 @@ function buildCells(imgs,pages,wmm,hmm){
     var xo='',cs='';
     p.cells.forEach(function(o,j){var c=o.c;xo+='/B'+j+' '+imgId[c.i]+' 0 R ';
       cs+='q '+f(c.w)+' 0 0 '+f(c.h)+' '+f(c.x)+' '+f(ph-(c.y+c.h))+' cm /B'+j+' Do Q\n';
-      if(c.ov){var v=c.ov;xo+='/O'+j+' '+o.oi+' 0 R ';cs+='q '+f(v.w)+' 0 0 '+f(v.h)+' '+f(c.x+v.x)+' '+f(ph-(c.y+v.y+v.h))+' cm /O'+j+' Do Q\n';}});
+      if(c.ov){var v=c.ov;xo+='/O'+j+' '+o.oi+' 0 R ';if(v.rot)cs+='q 0 '+f(-v.h)+' '+f(v.w)+' 0 '+f(c.x+v.x)+' '+f(ph-(c.y+v.y))+' cm /O'+j+' Do Q\n';else cs+='q '+f(v.w)+' 0 0 '+f(v.h)+' '+f(c.x+v.x)+' '+f(ph-(c.y+v.y+v.h))+' cm /O'+j+' Do Q\n';}});
     obj(p.page,function(){push('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+f(pw)+' '+f(ph)+']/Resources<</XObject<<'+xo+'>>>>/Contents '+p.con+' 0 R>>');});
     obj(p.con,function(){push('<</Length '+cs.length+'>>\nstream\n'+cs+'endstream');});
     p.cells.forEach(function(o){if(!o.c.ov)return;var v=o.c.ov;
@@ -122,5 +170,16 @@ function deflate(u8){
     return new Response(cs.readable).arrayBuffer().then(function(ab){return {data:new Uint8Array(ab),flate:true};},function(){return {data:u8,flate:false};});}catch(_){return Promise.resolve({data:u8,flate:false});}
 }
 function say(m){try{var w=kPdf._w;if(w&&!w.closed&&w.document&&w.document.body)w.document.body.textContent=m;}catch(_){}}
-window.kPdf={build:build,buildCells:buildCells,deflate:deflate,show:show,load:load,say:say,_w:null};
+
+/* batch of names (pages made of cells, A4 only): same printer-edge recipe applied to each base image once, and the same transform given for the name overlays */
+function _xf(wmm,hmm){var land=wmm>hmm,TOP=(typeof kPdf.top==='number'&&kPdf.top>=0&&kPdf.top<=3)?kPdf.top:0,X=land?0:2;
+  return {sx:(wmm-2)/wmm,sy:(hmm-2+TOP)/hmm,tx:X/wmm,ty:-TOP/hmm};}
+function _bdBlob(im,wmm,hmm){return load(im.b).then(function(d){var c=document.createElement('canvas');c.width=im.w;c.height=im.h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,im.w,im.h);
+  bleedDraw(x,d,{w:im.w,h:im.h},{w:wmm,h:hmm});if(d.close)d.close();
+  return new Promise(function(ok,no){c.toBlob(function(b){c.width=c.height=0;b?ok({b:b,w:im.w,h:im.h}):no(new Error('jpeg'));},'image/jpeg',.97);});});}
+function _rotBlob(im,recipe){return load(im.b).then(function(d){var z=dim(d),t=document.createElement('canvas');t.width=z.h;t.height=z.w;var tx=t.getContext('2d');tx.translate(z.h,0);tx.rotate(Math.PI/2);tx.drawImage(d,0,0);if(d.close)d.close();
+  var c=document.createElement('canvas');c.width=t.width;c.height=t.height;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+  if(recipe)bleedDraw(x,t,{w:t.width,h:t.height},{w:210,h:297});else x.drawImage(t,0,0);var o={w:c.width,h:c.height};t.width=t.height=0;
+  return new Promise(function(ok,no){c.toBlob(function(b){c.width=c.height=0;b?ok({b:b,w:o.w,h:o.h}):no(new Error('jpeg'));},'image/jpeg',.97);});});}
+window.kPdf={bleed:false,rot:false,_rotBlob:_rotBlob,top:0,_cellsEdge:false,_xf:_xf,_bdBlob:_bdBlob,isA4:isA4,_reach:function(bl){return load(bl).then(function(d){var z=dim(d),r=reachesEdge(d,z);if(d.close)d.close();return r;}).catch(function(){return false;});},_bd:function(d,wmm,hmm){var z=dim(d),c=document.createElement('canvas');c.width=z.w;c.height=z.h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,z.w,z.h);var PG={w:wmm,h:hmm};if(isA4(PG)&&reachesEdge(d,z))bleedDraw(x,d,z,PG);else x.drawImage(d,0,0);return c;},build:build,buildCells:buildCells,deflate:deflate,show:show,load:load,say:say,_w:null};
 })();
