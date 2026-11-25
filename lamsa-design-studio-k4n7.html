@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795604549"><script>(function(){try{var me="1795604549",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
+<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795605940"><script>(function(){try{var me="1795605940",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <script>try{localStorage.setItem("kk_last","invitations.html")}catch(_){}</script><title>لمسة خاصة</title>
@@ -2640,6 +2640,37 @@ $('kdzls').addEventListener('click',async function(e){var b=e.target.closest('[d
   else if(b.dataset.a==='del'){if(!confirm('حذف «'+(p.name||'')+'»؟ ينتقل للمحذوفات.'))return;await db().collection('designs').doc(id).update({del:true,on:false});if(EID===id)EID=null;toast('نُقل إلى المحذوفات.');}
  }catch(er){toast('تعذّر: '+String((er&&er.message)||er).slice(0,100),1);}});
 cnt();setInterval(cnt,3000);
+})();</script>
+<style>
+:root{--kdh:calc(46px + env(safe-area-inset-top,0px))}
+body{padding-top:var(--kdh)!important}
+#kdtb{position:fixed;top:0;left:0;right:0;z-index:9800;height:var(--kdh);padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;background:#16264a;display:flex;direction:rtl}
+#kdtb button{flex:1;font:inherit;font-size:14px;font-weight:600;color:#cfd6ea;background:transparent;border:0;border-bottom:3px solid transparent;min-width:0;padding:0 4px;white-space:nowrap}
+#kdtb button.on{color:#fff;border-bottom-color:#c9a04a}
+#kdzov{top:var(--kdh)!important;inset:var(--kdh) 0 0 0!important}
+#kdzov .kdzh button#kdzcl{display:none}
+.kdpn{position:fixed;left:0;right:0;bottom:0;top:var(--kdh);z-index:9450;background:#fff;display:none}
+.kdpn.on{display:block}
+.kdpn iframe{width:100%;height:100%;border:0;background:#fff}
+#kdzb2{display:none!important}
+</style>
+<div id="kdtb" role="tablist"><button type="button" data-p="o">الطلبات</button><button type="button" data-p="d" class="on">التصميم</button><button type="button" data-p="m" id="kdtm">تصاميمي</button><button type="button" data-p="b">الصناديق</button></div>
+<div class="kdpn" id="kdpo"></div>
+<div class="kdpn" id="kdpb"></div>
+<script>(function(){
+var $=function(i){return document.getElementById(i)},U={o:['kdpo','invitations-admin.html'],b:['kdpb','lamsa-shapes-maker.html']};
+function show(p){
+ [].forEach.call(document.querySelectorAll('#kdtb button'),function(b){b.classList.toggle('on',b.dataset.p===p)});
+ $('kdpo').classList.toggle('on',p==='o');$('kdpb').classList.toggle('on',p==='b');
+ var ov=$('kdzov');if(ov){if(p==='m'){var m=$('kdzb2');if(m)m.click();}else ov.classList.remove('on');}
+ if(U[p]){var d=$(U[p][0]);if(!d.firstChild){var f=document.createElement('iframe');f.src=U[p][1];f.setAttribute('title',p);d.appendChild(f);}}
+ if(p==='d')try{window.scrollTo(0,0)}catch(e){}}
+$('kdtb').addEventListener('click',function(e){var b=e.target.closest('button[data-p]');if(b)show(b.dataset.p);});
+var cl=$('kdzcl');if(cl)cl.addEventListener('click',function(){show('d')},true);
+/* بعد «تعديل» أو الحفظ نعود لتبويب التصميم */
+setInterval(function(){var ov=$('kdzov'),on=ov&&ov.classList.contains('on'),a=document.querySelector('#kdtb button.on');
+ var m=$('kdzb2'),t=$('kdtm');if(m&&t){var s=m.textContent.replace('تصاميمي','').trim();t.textContent='تصاميمي'+(s?' '+s:'');}
+ if(a&&a.dataset.p==='m'&&!on)show('d');},400);
 })();</script>
 <style>
 #kfd{position:fixed;inset:0;z-index:9500;background:#f4f1ea;display:none;flex-direction:column;font-family:inherit;color:#16264a;direction:rtl;-webkit-user-select:none;user-select:none}
