@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795608141"><script>(function(){try{var me="1795607632",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
+<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795617634"><script>(function(){try{var me="1795607632",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <script>try{localStorage.setItem("kk_last","invitations.html")}catch(_){}</script><title>لمسة خاصة</title>
@@ -2693,6 +2693,7 @@ window.addEventListener('message',function(e){var d=e.data;if(!d||!d.kshape||!K)
  try{var L=JSON.parse(localStorage.getItem(KX)||'[]').filter(function(r){return r.key!==key});L.push({key:key,o:{n:o.n,cm:o.cm,vb:o.vb,d:o.d}});localStorage.setItem(KX,JSON.stringify(L.slice(-10)));}catch(x){}
  var i=K.sz(key).findIndex(function(z){return z[0]===o.cm[0]&&z[1]===o.cm[1]});if(i<0)i=0;
  K.useShape(key,i);show('d');
+ if(d.art&&d.art.png)setTimeout(function(){try{K.addImg(d.art.png,d.art.w,d.art.h)}catch(x){}},250);
  if(d.open&&window.__KFG)setTimeout(function(){window.__KFG.openOn(key,i)},200);
 
 });
