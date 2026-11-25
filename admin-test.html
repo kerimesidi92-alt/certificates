@@ -2199,12 +2199,6 @@ function zipButton(){
     zb.disabled=false;zb.textContent='تنزيل الصور (ZIP)';};
   return zb;
 }
-/* test order (10 names, both genders) created on demand, for testing only */
-function makeTestOrder(){const d=JSON.parse(JSON.stringify(designConfig(false)));
-  d.nm={m:['محمد الأمين ولد أحمد','سيدي محمد ولد عبد الرحمن','أحمد','عبد الله ولد محمد المختار ولد داداه','المختار'],f:['مريم بنت محمد','فاطمة الزهراء بنت سيدي','خديجة','عائشة بنت عبد الله ولد الشيخ سيديا','آمنة']};
-  d.alt={g:'f',t:{intro:'تقديراً للجد والاجتهاد والتميز\nتمنح هذه الشهادة للتلميذة',body:'تقديراً لتفوقكِ المتميز، ولجدّكِ واجتهادكِ وحسن سلوككِ، نهنئكِ على هذا الإنجاز، ونتمنى لكِ دوام النجاح والتألق.'}};
-  return store.add({client:'طلب تجريبي (10 أسماء) احذفيه بعد الاختبار',phone:'',email:'',item:'شهادة تفوق',qty:10,price:0,status:'new',notes:'',design:d,createdAt:Date.now(),source:'manual'});}
-setTimeout(()=>{try{const q=document.getElementById('osearch');if(q&&!document.getElementById('btn-testorder')){const b=document.createElement('button');b.type='button';b.id='btn-testorder';b.className='btn';b.textContent='إنشاء طلب تجريبي (10 أسماء)';b.onclick=()=>{b.disabled=true;makeTestOrder().then(()=>{b.disabled=false;try{toast('أُنشئ الطلب التجريبي. احذفيه بعد الاختبار.');}catch(_){}});};q.after(b);}}catch(_){}},800);
 /* ---- review one name at a time: size / position for that name only ---- */
 function nmDiscard(){try{const k=window.__nmSnapFor;if(k==null)return;const sn=JSON.parse(window.__nmSnap||'null');S.nov=S.nov||{};if(sn)S.nov[k]=sn;else delete S.nov[k];}catch(_){}}
 function nmBar(idx){const L=(window.__nl||[]);if(!L[idx])return;const it=L[idx];
