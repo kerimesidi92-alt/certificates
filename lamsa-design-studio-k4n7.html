@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795646067"><script>(function(){try{var me="1795607632",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
+<html lang="ar" dir="rtl"><head><meta name="kbuild" content="1795651157"><script>(function(){try{var me="1795607632",u=location.pathname;fetch(u+"?chk="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/name="kbuild" content="(\d+)"/);if(m&&m[1]!==me&&location.search.indexOf("b="+m[1])<0)location.replace(u+"?b="+m[1])}).catch(function(){})}catch(e){}})();</script><meta name="robots" content="noindex,nofollow"><script src="modal-lock.js?v=2"></script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#16264a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <script>try{localStorage.setItem("kk_last","invitations.html")}catch(_){}</script><title>لمسة خاصة</title>
@@ -1061,6 +1061,13 @@ function paperMake(src,t){return new Promise(function(res){var im=new Image();im
   var cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;var cx=cv.getContext('2d');cx.drawImage(im,0,0);
   var d=cx.getImageData(0,0,cv.width,cv.height),a=d.data,n=a.length,sr=0,sg=0,sb=0,c=0,i;
   for(i=0;i<n;i+=28){var r=a[i],g=a[i+1],b=a[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if(mx>200&&mx-mn<30){sr+=r;sg+=g;sb+=b;c++;}}
+  if(/lib\/(gown|bfly)\//.test(src)){var lr=0,lg=0,lb=0,nb=0,j;
+   for(j=0;j<n;j+=28){var r0=a[j],g0=a[j+1],b0=a[j+2],L0=.299*r0+.587*g0+.114*b0;if(a[j+3]>200&&Math.min(r0,g0,b0)<200&&L0>=22){lr+=r0;lg+=g0;lb+=b0;nb++;}}
+   if(!nb){res(null);return;}
+   var Lm=Math.max(1,(.299*lr+.587*lg+.114*lb)/nb),TT=hex2rgb(t);
+   for(i=0;i<n;i+=4){var r=a[i],g=a[i+1],b=a[i+2],Lp=.299*r+.587*g+.114*b,mn2=Math.min(r,g,b),wh=Math.min(1,Math.max(0,(245-mn2)/25)),wk=Math.min(1,Math.max(0,(Lp-18)/10)),w=wh*wk,k=Lp/Lm;
+    if(w>0){a[i]=r+(Math.min(255,TT[0]*k)-r)*w;a[i+1]=g+(Math.min(255,TT[1]*k)-g)*w;a[i+2]=b+(Math.min(255,TT[2]*k)-b)*w;}}
+   cx.putImageData(d,0,0);cv.toBlob(function(bl){res(bl?URL.createObjectURL(bl):null);},'image/png');return;}
   if(!c){res(null);return;}
   var pr=sr/c,pg=sg/c,pb=sb/c,T=hex2rgb(t),fr=T[0]/pr,fg=T[1]/pg,fb=T[2]/pb;
   for(i=0;i<n;i+=4){var r=a[i],g=a[i+1],b=a[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),s=mx-mn;
@@ -1791,11 +1798,12 @@ function __buildCtl(){
   }
   if(k==='color'){var tpc=TPL.filter(function(x){return x.id===S.tpl})[0],ar3=UL==='ar',cur=String(S.paper||'').toLowerCase();
     if(tpc&&tpc.bimg){
+      var bodyT=/^sh_(gown|bfly)$/.test(tpc.shape);
       var pb='<div class="row">';[['','الأصلي','Original'],['#ffffff','أبيض','Blanc'],['#f7f1e3','عاجي','Ivoire'],['#efe3cc','كريمي','Crème'],['#e4e1dc','رمادي فاتح','Gris clair'],['#2a2a2d','داكن','Sombre']].forEach(function(q){pb+=btn('opt',cur===q[0],'data-paper="'+q[0]+'"',ar3?q[1]:q[2]);});
       pb+='</div><div class="msg">'+(ar3?'كل الألوان':'Toutes les couleurs')+'</div><div class="row">';
-      ['#ffffff','#fbf8f1','#f7f1e3','#f3e9d2','#efe3cc','#e8dcc6','#fdf2d0','#fbe5d6','#f9e4e4','#f6dcdc','#f1e0ec','#e6e1f1','#dde8f3','#dcebe3','#e4efe0','#e4e1dc','#cfcac2','#a9a7a2','#6b6a68','#2a2a2d','#14203f','#1f3a2e','#4a1f2a'].forEach(function(c){pb+=btn('sw',cur===c,'data-paper="'+c+'" aria-label="'+c+'"','','background:'+c);});
+      (bodyT?['#c0392b','#e8590c','#f59f00','#e0b84a','#2f9e44','#0b7a4b','#1f3a2e','#20c997','#1c7ed6','#14203f','#4263eb','#7048e8','#9c36b5','#d6336c','#f783ac','#e8dcc6','#868e96','#212529','#ffffff']:['#ffffff','#fbf8f1','#f7f1e3','#f3e9d2','#efe3cc','#e8dcc6','#fdf2d0','#fbe5d6','#f9e4e4','#f6dcdc','#f1e0ec','#e6e1f1','#dde8f3','#dcebe3','#e4efe0','#e4e1dc','#cfcac2','#a9a7a2','#6b6a68','#2a2a2d','#14203f','#1f3a2e','#4a1f2a']).forEach(function(c){pb+=btn('sw',cur===c,'data-paper="'+c+'" aria-label="'+c+'"','','background:'+c);});
       pb+='<input class="cin" type="color" data-paperc value="'+(S.paper||'#ffffff')+'" title="'+(ar3?'لون آخر':'Autre couleur')+'"></div>';
-      h+=panel(ar3?'لون الورق (الخلفية)':'Couleur du papier (fond)',pb+'<div class="msg">'+(ar3?'الزهور والرسمة تبقى كما هي، ويتغير الورق فقط.':'Les fleurs gardent leurs couleurs.')+'</div>');
+      h+=panel(bodyT?(ar3?'لون الثيم (اختاري أي لون)':'Couleur du thème'):(ar3?'لون الورق (الخلفية)':'Couleur du papier (fond)'),pb+'<div class="msg">'+(bodyT?(ar3?'يتغير لون الجسم كله، وتبقى العروق والحواف.':'Les nervures et le contour restent.'):(ar3?'الزهور والرسمة تبقى كما هي، ويتغير الورق فقط.':'Les fleurs gardent leurs couleurs.'))+'</div>');
       var hs=rgb2hsl.apply(null,hex2rgb(tpc.ac)),hb='<div class="row">'+btn('opt',String(S.bh||'0')==='0','data-k="bh" data-v="0"',ar3?'الأصلي':'Original')+'</div><div class="row" style="margin-top:8px">';
       [-150,-120,-90,-60,-30,30,60,90,120,150,180].forEach(function(d){var rg=hsl2rgb((hs[0]+d+720)%360,Math.max(.45,Math.min(.8,hs[1]+.15)),Math.max(.4,Math.min(.6,hs[2]))),cc='rgb('+rg.map(Math.round).join(',')+')';hb+=btn('sw',String(S.bh||'0')===String(d),'data-k="bh" data-v="'+d+'" aria-label="'+d+'"','','background:'+cc);});
       hb+='<input class="cin" type="color" data-huec value="'+tpc.ac+'" title="'+(ar3?'لون آخر':'Autre couleur')+'"></div>';
