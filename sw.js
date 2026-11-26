@@ -1,4 +1,4 @@
-const V='kerima-v179';
+const V='kerima-v180';
 let WP=null;
 function warm(){if(WP)return WP;WP=(async()=>{try{const L=await (await fetch('offline.json',{cache:'no-cache'})).json();const c=await caches.open(V);await addAll(c,L.core.filter(u=>!/^images\.js/.test(u)),3);await ext(c,L.ext);await addAll(c,L.frames,4);await addAll(c,L.thumbs,4);let sd=false;try{sd=navigator.connection&&navigator.connection.saveData}catch(_){}if(!sd)await addAll(c,L.full,3);}catch(_){}WP=null;})();return WP;}
 async function addAll(c,list,conc){let i=0;async function w(){while(i<list.length){const u=list[i++];try{if(await c.match(u))continue;const r=await fetch(u);if(r&&r.ok)await c.put(u,r);}catch(_){}}}await Promise.all(Array.from({length:conc||6},w));}
@@ -10,5 +10,5 @@ self.addEventListener('activate',e=>{e.waitUntil((async()=>{try{const c0=await c
  })());});
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin){if(XH.test(u.hostname))e.respondWith(caches.open(V).then(c=>c.match(r).then(h=>h||fetch(r).then(res=>{if(res&&(res.ok||res.type==='opaque'))c.put(r,res.clone());return res;}))));return;}if(/admin\.html/.test(u.pathname))return;
  const page=r.mode==='navigate'||/\.html$/.test(u.pathname)||/\/$/.test(u.pathname);
- if(page){e.waitUntil(warm());e.respondWith(caches.match(r,{ignoreSearch:true}).then(hit=>{const net=fetch(r,{cache:'no-cache'}).then(res=>{if(res&&res.ok){const k=res.clone();caches.open(V).then(c=>c.put(r,k));}return res;});if(hit){net.catch(()=>{});return hit;}return net.catch(()=>caches.match('index.html').then(h=>h||Response.error()));}));return;}
+ if(page){e.waitUntil(warm());e.respondWith((async()=>{const hit=await caches.match(r,{ignoreSearch:true});const net=fetch(r,{cache:'no-cache'}).then(res=>{if(res&&res.ok){const k=res.clone();caches.open(V).then(c=>c.put(r,k));}return res;});if(!hit)return net.catch(()=>caches.match('index.html').then(h=>h||Response.error()));try{return await Promise.race([net,new Promise((_,rj)=>setTimeout(rj,2500))]);}catch(_){net.catch(()=>{});return hit;}})());return;}
  e.respondWith(caches.open(V).then(c=>c.match(r).then(hit=>{if(hit&&/[?&]v=/.test(u.search))return hit;const go=()=>fetch(r).then(res=>{if(res&&res.ok)c.put(r,res.clone());return res;});const net=go().catch(()=>hit||new Promise(z=>setTimeout(z,500)).then(go)).catch(()=>hit||Response.error());return hit||net;})));});
